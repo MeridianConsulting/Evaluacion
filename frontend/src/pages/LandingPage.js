@@ -25,20 +25,39 @@ function LandingPage() {
         <button>Comenzar Evaluación</button>
       </section>
 
-      <section className="content">
-        <img src={mainImage} alt="Evaluación" className="content-image" />
-        <div className="content-text">
-          <p>
-            Las evaluaciones de desempeño ayudan a identificar áreas de mejora para los empleados,
-            lo que puede llevar a un aumento en la productividad y eficiencia.
-          </p>
-        </div>
-      </section>
+
 
       <footer>
-        <p>Email: contact@meridianconsulting.co</p>
-        <p>Teléfono: (571) 7469699 en Bogotá</p>
+        <div className="footer-top">
+          <div className="footer-branding">
+            <img src={logoMeridian} alt="Meridian Logo Footer" className="footer-logo" />
+          </div>
+          <div className="footer-contact">
+            <p>Email: contacto@meridianconsulting.com</p>
+            <p>Teléfono: (571) 7469090 Ext 1190.</p>
+            <p>Dirección: Cl. 67 #7-94, Bogotá</p>
+          </div>
+          <div className="footer-links">
+            <a href="#services">Servicios</a>
+            <a href="#about">Acerca de</a>
+            <a href="#contact">Contacto</a>
+          </div>
+          <div className="footer-social">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">Twitter</a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          </div>
+        </div>
+        <hr className="footer-divider" />
+        <div className="footer-bottom">
+          <p>© 2025 Meridian Consulting LTDA. Todos los derechos reservados.</p>
+          <p>
+            <a href="#privacy">Política de Privacidad</a> | <a href="#terms">Términos de Uso</a>
+          </p>
+        </div>
       </footer>
+
+
     </div>
     
   );
