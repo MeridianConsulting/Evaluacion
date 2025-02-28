@@ -9,19 +9,19 @@ html, body {
 
 /* Paleta de colores */
 :root {
-  --color-primary: #1A2F4B;   /* Color principal */
-  --color-secondary: #8C9EAD; /* Color secundario */
-  --color-tertiary: #4A4D52;  /* Color terciario */
-  --color-background: #F5F7FA;/* Fondo claro */
-  --color-dark: #2A2A2A;      /* Color oscuro para textos */
+  --color-primary: #1A2F4B;    /* Color principal */
+  --color-secondary: #8C9EAD;  /* Color secundario */
+  --color-tertiary: #4A4D52;   /* Color terciario */
+  --color-background: #F5F7FA; /* Fondo claro */
+  --color-dark: #2A2A2A;       /* Color oscuro para textos */
 }
 
-/* Aplicar la fuente Libre Franklin a toda la página */
+/* Fuente principal */
 body {
   font-family: "Libre Franklin", sans-serif;
 }
 
-/* Contenedor principal en flex columna */
+/* Layout principal */
 .landing-page {
   margin: 0;
   padding: 0;
@@ -36,6 +36,9 @@ header, nav, section, footer {
   padding: 0;
 }
 
+/* ---------------------
+   NAVBAR
+---------------------- */
 .navbar {
   background-color: var(--color-primary);
   display: flex;
@@ -44,17 +47,31 @@ header, nav, section, footer {
   padding: 1rem;
 }
 
-/* Logo */
 .navbar-logo img {
   height: 60px;
   display: block;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.navbar-logo img:hover {
+  transform: scale(1.05);
+  filter: brightness(1.2);
 }
 
 .navbar-menu img {
   height: 40px;
   cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
+.navbar-menu:hover img {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+/* ---------------------
+   HERO
+---------------------- */
 .hero {
   text-align: center;
   max-width: 800px;
@@ -82,12 +99,18 @@ header, nav, section, footer {
   font-size: 1.2rem;
   cursor: pointer;
   border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
 .hero button:hover {
-  background-color: var(--color-primary);
+  transform: scale(1.03);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: var(--color-secondary);
 }
 
+/* ---------------------
+   CONTENIDO ADICIONAL
+---------------------- */
 .content {
   display: flex;
   flex-direction: column;
@@ -120,87 +143,139 @@ header, nav, section, footer {
 }
 
 /* ========================
-   Footer
-   ======================== */
-   footer {
-    background-color: var(--color-primary);
-    color: #fff;
-    margin-top: auto; /* Empuja el footer al fondo */
-    padding: 2rem 3rem;
-    text-align: center;
-    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .footer-top {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 2rem;
-    padding-bottom: 1rem;
-  }
-  
-  /* Branding */
-  .footer-branding {
-    flex: 1;
-    min-width: 150px;
-  }
-  
-  .footer-branding .footer-logo {
-    height: 50px;
-  }
-  
-  /* Contacto, enlaces y redes */
-  .footer-contact,
-  .footer-links,
-  .footer-social {
-    flex: 1;
-    min-width: 150px;
-  }
-  
-  .footer-contact p,
-  .footer-links a,
-  .footer-social a {
-    margin: 0.5rem 0;
-    color: #fff;
-    font-size: 0.9rem;
-    text-decoration: none;
-  }
-  
-  .footer-links a,
-  .footer-social a {
-    transition: color 0.3s ease;
-  }
-  
-  .footer-links a:hover,
-  .footer-social a:hover {
-    color: var(--color-secondary);
-  }
-  
-  /* Línea divisoria */
-  .footer-divider {
-    border: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.4);
-    margin: 1rem auto;
-    width: 80%;
-  }
-  
-  /* Parte inferior */
-  .footer-bottom {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.8);
-  }
-  
-  .footer-bottom p {
-    margin: 0.3rem 0;
-  }
-  
-  .footer-bottom a {
-    color: rgba(255, 255, 255, 0.8);
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-  
-  .footer-bottom a:hover {
-    color: var(--color-secondary);
-  }
+   FOOTER
+======================== */
+footer {
+  background-color: var(--color-primary);
+  color: #fff;
+  margin-top: auto; /* Empuja el footer al fondo */
+  padding: 2rem 3rem;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Layout con 3 columnas en la parte superior */
+.footer-top {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(200px, 1fr));
+  gap: 2rem;
+  align-items: start;
+  text-align: center;
+  padding-bottom: 1rem;
+}
+
+/* Logo del footer */
+.footer-logo {
+  height: 50px;
+  transition: transform 0.3s ease;
+}
+
+.footer-logo:hover {
+  transform: scale(1.05);
+}
+
+/* Contacto, enlaces */
+.footer-contact p,
+.footer-links a {
+  margin: 0.5rem 0;
+  color: #fff;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.footer-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.5rem;
+}
+
+/* ========================
+   Parte inferior del Footer
+======================== */
+.footer-divider {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  margin: 1rem auto;
+  width: 80%;
+}
+
+.footer-bottom {
+  text-align: center; /* Centra el texto y lo que contenga */
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Texto legal y enlaces de privacidad */
+.footer-bottom p {
+  margin: 0.3rem 0;
+}
+
+.footer-bottom a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-bottom a:hover {
+  color: var(--color-secondary);
+}
+
+/* Redes sociales en la parte inferior */
+.footer-social {
+  margin-top: 1rem;
+}
+
+.footer-social a {
+  margin: 0 0.5rem;
+  display: inline-block;
+}
+
+.social-logo {
+  height: 30px;
+  transition: transform 0.3s ease;
+}
+
+.social-logo:hover {
+  transform: scale(1.1);
+}
+
+/* ========================
+   MENÚ LATERAL (opcional)
+======================== */
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background-color: var(--color-primary);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  z-index: 1000;
+}
+
+.side-menu.open {
+  transform: translateX(0);
+}
+
+.side-menu .menu-item {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+  cursor: pointer;
+  font-weight: 700;
+  transition: color 0.3s ease;
+}
+
+.side-menu .menu-item:hover {
+  color: var(--color-secondary);
+}
