@@ -9,8 +9,8 @@ function LandingPage() {
       <Header />
 
       <section className="hero">
-        <h1>Evalúa y Potencia el Desempeño de tu Equipo</h1>
-        <p>Optimiza el rendimiento de tus colaboradores con nuestra evaluación profesional</p>
+        <h1>Evaluación de Desempeño</h1>
+        <p>Descubre tu potencial con nuestra evaluación de desempeño.</p>
         <button>Comenzar Evaluación</button>
       </section>
 

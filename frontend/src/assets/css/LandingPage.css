@@ -25,10 +25,12 @@ body {
 .landing-page {
   margin: 0;
   padding: 0;
-  background-color: var(--color-background);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)), 
+              url('../img/fondo.jpeg') no-repeat center center;
+  background-size: cover;
 }
 
 header, nav, section, footer {
@@ -77,17 +79,18 @@ header, nav, section, footer {
   max-width: 800px;
   margin: 2rem auto;
   padding: 2rem;
+  color: white; /* Hace que el texto sea legible sobre el fondo */
 }
 
 .hero h1 {
   font-size: 3rem;
-  color: var(--color-dark);
+  color: white;
   margin-bottom: 1rem;
 }
 
 .hero p {
   font-size: 1.5rem;
-  color: var(--color-dark);
+  color: white;
   margin-bottom: 2rem;
 }
 
