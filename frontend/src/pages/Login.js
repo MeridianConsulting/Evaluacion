@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../assets/css/login.css";
+// Importa la imagen (ajusta la ruta según la ubicación real)
+import logoMeridian from "../assets/img/logo_meridian_blanco.png";
 
 const Login = ({ onLogin }) => {
   const [usuario, setUsuario] = useState("");
@@ -33,8 +35,6 @@ const Login = ({ onLogin }) => {
       const data = await response.json();
 
       if (data.success) {
-        // Si deseas usar el "recordarme" para persistir la sesión, podrías guardarlo en localStorage
-        // localStorage.setItem("recordarme", recordarme);
         onLogin(true);
         navigate("/admin");
       } else {
@@ -49,87 +49,94 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className="login-container">
-      {/* Cabecera opcional: puedes agregar aquí un ícono o imagen de perfil */}
-      <div className="login-header">
-        {/* <img className="login-avatar" src="ruta-de-tu-avatar.png" alt="Avatar" /> */}
-        <h2>Iniciar Sesión</h2>
+    <div>
+      <div className="logo-meridian">
+        <img
+          src={logoMeridian}
+          alt="Logo Meridian"
+          className="meridian-logo"
+        />
       </div>
+      <div className="login-container">
 
-      <form onSubmit={(e) => e.preventDefault()}>
-        <div className="input-container">
-          <label>Usuario</label>
-          <input
-            type="text"
-            value={usuario}
-            onChange={(e) => setUsuario(e.target.value)}
-            placeholder="Ingrese su usuario"
-          />
+        <div className="login-header">
+          <h2>Iniciar Sesión</h2>
         </div>
 
-        <div className="password-input-container">
-          <label>Contraseña</label>
-          <div className="password-wrapper">
+        <form onSubmit={(e) => e.preventDefault()}>
+          <div className="input-container">
+            <label>Usuario</label>
             <input
-              type={mostrarContrasena ? "text" : "password"}
-              value={contrasena}
-              onChange={(e) => setContrasena(e.target.value)}
-              placeholder="Ingrese su contraseña"
+              type="text"
+              value={usuario}
+              onChange={(e) => setUsuario(e.target.value)}
+              placeholder="Ingrese su usuario"
             />
-            <button
-              type="button"
-              className="toggle-password"
-              onClick={() => setMostrarContrasena(!mostrarContrasena)}
-              aria-label={
-                mostrarContrasena ? "Ocultar contraseña" : "Mostrar contraseña"
-              }
-            >
-              {/* Íconos de “ver” y “ocultar” (puedes usar SVG propios o librerías de íconos) */}
-              {mostrarContrasena ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8-4 8-11 8-11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-                  <line x1="1" y1="1" x2="23" y2="23" />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-              )}
-            </button>
           </div>
-        </div>
 
-        <div className="extra-options">
-          <a className="forgot-password" href="#">
-            ¿Olvidaste tu contraseña?
-          </a>
-        </div>
+          <div className="password-input-container">
+            <label>Contraseña</label>
+            <div className="password-wrapper">
+              <input
+                type={mostrarContrasena ? "text" : "password"}
+                value={contrasena}
+                onChange={(e) => setContrasena(e.target.value)}
+                placeholder="Ingrese su contraseña"
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setMostrarContrasena(!mostrarContrasena)}
+                aria-label={
+                  mostrarContrasena ? "Ocultar contraseña" : "Mostrar contraseña"
+                }
+              >
+                {mostrarContrasena ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8-4 8-11 8-11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                    <line x1="1" y1="1" x2="23" y2="23" />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </div>
 
-        <button type="button" className="login-button" onClick={handleLogin}>
-          Iniciar Sesión
-        </button>
+          <div className="extra-options">
+            <a className="forgot-password" href="#">
+              ¿Olvidaste tu contraseña?
+            </a>
+          </div>
 
-        {error && <p className="error-message">{error}</p>}
-      </form>
+          <button type="button" className="login-button" onClick={handleLogin}>
+            Iniciar Sesión
+          </button>
+
+          {error && <p className="error-message">{error}</p>}
+        </form>
+      </div>
     </div>
   );
 };

@@ -1,192 +1,188 @@
 /* Fondo degradado en todo el body */
 body {
-    margin: 0;
-    padding: 0;
-    font-family: "Libre Franklin", sans-serif;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)), 
+  margin: 0;
+  padding: 0;
+  font-family: "Libre Franklin", sans-serif;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)),
     url('../img/fondo.jpeg') no-repeat center center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  /* Contenedor principal del login */
-  .login-container {
-    box-sizing: border-box;
-    width: 100%;
-    max-width: 500px;
-    padding: 30px;
-  
-    /* Efecto "glassmorphism" */
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-  
-    text-align: left;
-    animation: fadeIn 0.5s ease-in-out;
-    color: #333;
-  }
-  
-  /* Asegura que los elementos hijos usen el mismo box-sizing */
-  .login-container * {
-    box-sizing: inherit;
-  }
-  
-  /* Cabecera del formulario: título y/o avatar */
-  .login-header {
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-  
-  /* Si quieres mostrar una imagen de avatar */
-  .login-header .login-avatar {
-    width: 80px;
-    height: 80px;
-    margin-bottom: 1rem;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-  
-  .login-header h2 {
-    font-size: 1.8rem;
-    color: #fff;
-    margin: 0;
-  }
-  
-  /* Labels en bloque */
-  .login-container label {
-    display: block;
-    margin-bottom: 0.3rem;
-    font-weight: 500;
-    color: #fff;
-  }
-  
-  /* Contenedores de inputs */
-  .input-container,
-  .password-input-container {
-    width: 100%;
-    margin-bottom: 1rem;
-  }
-  
-  /* Envoltura del campo de contraseña */
-  .password-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-  
-  /* Inputs */
-  .login-container input {
-    width: 100%;
-    padding: 12px 40px 12px 12px;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 5px;
-    font-size: 16px;
-    background: rgba(255, 255, 255, 0.2);
-    color: #fff;
-    outline: none;
-    transition: border-color 0.3s ease-in-out;
-  }
-  
-  /* Placeholder en color claro */
-  .login-container input::placeholder {
-    color: rgba(255, 255, 255, 0.7);
-  }
-  
-  /* Efecto al enfocar */
-  .login-container input:focus {
-    border-color: #fff;
-  }
-  
-  /* Botón para mostrar/ocultar contraseña */
-  .toggle-password {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-    opacity: 0.7;
-    transition: opacity 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .toggle-password:hover {
-    opacity: 1;
-  }
-  
-  .toggle-password svg {
-    width: 20px;
-    height: auto;
-    color: #fff;
-  }
-  
-  /* Sección "Recordarme" y "¿Olvidaste tu contraseña?" */
-  .extra-options {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-  }
+  background-size: cover;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  
-  .forgot-password {
-    font-size: 0.9rem;
-    text-decoration: none;
-    color: #fff;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
+/* Logo en la esquina superior izquierda */
+.logo-meridian {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+}
+
+.meridian-logo {
+  max-width: 200px;
+  width: 100%;
+  height: auto;
+}
+
+/* Contenedor principal del login */
+.login-container {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 500px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  text-align: left;
+  animation: fadeIn 0.5s ease-in-out;
+  color: #333;
+}
+
+/* Asegura que los elementos hijos usen el mismo box-sizing */
+.login-container * {
+  box-sizing: inherit;
+}
+
+/* Cabecera del formulario: título y/o avatar */
+.login-header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.login-header h2 {
+  font-size: 1.8rem;
+  color: #fff;
+  margin: 0;
+}
+
+/* Labels en bloque */
+.login-container label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+/* Contenedores de inputs */
+.input-container,
+.password-input-container {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+/* Envoltura del campo de contraseña */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Inputs */
+.login-container input {
+  width: 100%;
+  padding: 12px 40px 12px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 5px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  outline: none;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.login-container input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.login-container input:focus {
+  border-color: #fff;
+}
+
+/* Botón para mostrar/ocultar contraseña */
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-password:hover {
+  opacity: 1;
+}
+
+.toggle-password svg {
+  width: auto;
+  height: auto;
+  color: #fff;
+}
+
+/* Sección "Recordarme" y "¿Olvidaste tu contraseña?" */
+.extra-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.forgot-password {
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: #fff;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.forgot-password:hover {
+  opacity: 1;
+}
+
+/* Botón de login */
+.login-button {
+  width: 100%;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+  margin-top: 15px;
+}
+
+.login-button:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* Mensaje de error */
+.error-message {
+  color: #ff8080;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* Animación de aparición */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
   }
-  
-  .forgot-password:hover {
+  to {
     opacity: 1;
+    transform: translateY(0);
   }
-  
-  /* Botón de login */
-  .login-button {
-    width: 100%;
-    padding: 12px;
-    background: rgba(0, 0, 0, 0.6);
-    color: #fff;
-    font-size: 16px;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s ease-in-out;
-    margin-top: 15px;
-  }
-  
-  .login-button:hover {
-    background: rgba(0, 0, 0, 0.8);
-  }
-  
-  /* Mensaje de error */
-  .error-message {
-    color: #ff8080;
-    font-size: 14px;
-    margin-top: 10px;
-    text-align: center;
-  }
-  
-  /* Animación de aparición */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
+}
