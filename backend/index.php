@@ -8,7 +8,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 
 // Base path
-define('BASE_PATH', '/EvaluacionDesempeño/backend');
+define('BASE_PATH', '/Evaluacion/backend');
 
 // Captura el método y la ruta de la solicitud
 $method = $_SERVER['REQUEST_METHOD'];
