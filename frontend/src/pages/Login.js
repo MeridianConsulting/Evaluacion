@@ -20,7 +20,6 @@ const Login = ({ onLogin }) => {
 
     try {
       const apiUrl = process.env.REACT_APP_API_BASE_URL;
-      console.log("URL de la API:", `${apiUrl}/login`);
       const response = await fetch(`${apiUrl}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
