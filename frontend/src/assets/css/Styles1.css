@@ -477,3 +477,54 @@ footer {
     transform: translateY(0);
   }
 }
+
+
+/* =============================
+   ESTILOS DEL LOGIN (Responsive)
+============================= */
+
+/* Estilos generales ya existentes para .login-page, .login-container, etc. */
+
+/* Ajustes para dispositivos con ancho máximo de 768px (tablets y móviles pequeños) */
+@media (max-width: 768px) {
+  .login-container {
+    width: 90%;           /* Usa casi el 100% del ancho disponible */
+    max-width: none;      /* Elimina la restricción de 500px */
+    padding: 20px;        /* Menos padding para pantallas pequeñas */
+  }
+
+  .login-header h2 {
+    font-size: 1.6rem;    /* Disminuye el tamaño del título */
+  }
+
+  .login-container input {
+    padding: 10px 35px 10px 10px; /* Ajusta el padding de los inputs */
+    font-size: 14px;
+  }
+
+  .login-button {
+    font-size: 14px;      /* Reduce el tamaño de la fuente del botón */
+    padding: 10px;        /* Reduce el padding para que se ajuste mejor */
+  }
+}
+
+/* Ajustes adicionales para dispositivos muy pequeños (max-width: 480px) */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 15px;
+  }
+
+  .login-header h2 {
+    font-size: 1.4rem;
+  }
+
+  .login-container input {
+    padding: 8px 30px 8px 8px;
+    font-size: 13px;
+  }
+
+  .login-button {
+    font-size: 13px;
+    padding: 8px;
+  }
+}
