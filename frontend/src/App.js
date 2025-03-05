@@ -7,23 +7,30 @@ import "./App.css";
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Esta función se llama desde Login y actualiza el estado de autenticación
+  // Función para actualizar el estado al iniciar sesión
   const handleLoginStatus = (loggedIn) => {
     setIsAuthenticated(loggedIn);
+  };
+
+  // Función para cerrar sesión (cambia isAuthenticated a false)
+  const handleLogout = () => {
+    setIsAuthenticated(false);
   };
 
   return (
     <Router>
       <Routes>
         {/* Si está autenticado, redirige a LandingPage, sino muestra Login */}
-        <Route 
-          path="/" 
-          element={ isAuthenticated ? <Navigate to="/LandingPage" replace /> : <Login onLogin={handleLoginStatus} /> } 
+        <Route
+          path="/"
+          element={
+            isAuthenticated ? <Navigate to="/LandingPage" replace /> : <Login onLogin={handleLoginStatus} />
+          }
         />
         {/* Ruta protegida: si no está autenticado, redirige a Login */}
-        <Route 
-          path="/LandingPage" 
-          element={ isAuthenticated ? <LandingPage /> : <Navigate to="/" replace /> } 
+        <Route
+          path="/LandingPage"
+          element={isAuthenticated ? <LandingPage onLogout={handleLogout} /> : <Navigate to="/" replace />}
         />
       </Routes>
     </Router>

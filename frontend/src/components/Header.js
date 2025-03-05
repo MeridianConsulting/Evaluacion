@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import logoMeridian from '../assets/img/logo_meridian_blanco.png';
 import burgerMenu from '../assets/img/burger.png';
 
-function Header() {
+function Header({ onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Función para alternar la visibilidad del menú
   const handleToggleMenu = () => {
     setMenuOpen(prev => !prev);
+  };
+
+  // Función para cerrar sesión
+  const handleLogout = () => {
+    if (onLogout) {
+      onLogout();
+    }
+    navigate('/');
   };
 
   return (
@@ -17,7 +27,6 @@ function Header() {
           <img src={logoMeridian} alt="Meridian Logo" />
         </div>
         <div className="menu-container">
-          {/* Se usa solo onClick para abrir/cerrar el menú */}
           <div className="navbar-menu" onClick={handleToggleMenu}>
             <img src={burgerMenu} alt="Menú" className="burger-icon" />
           </div>
@@ -25,6 +34,9 @@ function Header() {
             <button className="menu-item">Inicio</button>
             <button className="menu-item">Resultados</button>
             <button className="menu-item">Perfil</button>
+            <button className="menu-item logout" onClick={handleLogout}>
+              Cerrar Sesión
+            </button>
           </div>
         </div>
       </nav>

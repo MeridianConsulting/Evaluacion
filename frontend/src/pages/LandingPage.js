@@ -3,10 +3,10 @@ import '../assets/css/Styles1.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-function LandingPage() {
+function LandingPage({ onLogout }) {
   return (
     <div className="landing-page">
-      <Header />
+      <Header onLogout={onLogout} />
 
       <section className="hero">
         <h1>Evaluación de Desempeño</h1>
