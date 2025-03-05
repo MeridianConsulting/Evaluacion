@@ -65,15 +65,16 @@ header, nav, section, footer {
   position: fixed;
   top: 0;
   left: 0;
-  width: 250px;
+  width: 280px; /* Se aumenta ligeramente el ancho para mayor comodidad */
   height: 100vh;
   background-color: var(--color-primary);
   transform: translateX(-100%);
   transition: transform 0.3s ease-in-out;
   display: flex;
   flex-direction: column;
-  padding: 2rem;
+  padding: 2rem 1.5rem;
   z-index: 1000;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2); /* Sutil sombra para darle profundidad */
 }
 .side-menu.open {
   transform: translateX(0);
@@ -82,14 +83,50 @@ header, nav, section, footer {
   background: none;
   border: none;
   color: #fff;
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 500;
   cursor: pointer;
-  font-weight: 700;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, background-color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
 }
+/* Efecto hover con fondo sutil y pequeña animación */
 .side-menu .menu-item:hover {
   color: var(--color-secondary);
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.02);
+}
+
+@media (min-width: 769px) {
+  .navbar-menu {
+    display: none;
+  }
+  .menu-container .side-menu {
+    transform: none !important;
+    position: static;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+    padding: 0;
+    background: none;
+    height: auto;
+    width: auto;
+    box-shadow: none;
+  }
+  .side-menu .menu-item {
+    margin: 0;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-bottom: none;
+    transition: color 0.3s ease;
+  }
+  .side-menu .menu-item:hover {
+    background-color: transparent;
+  } 
 }
 @media (min-width: 769px) {
   .navbar-menu {
