@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../assets/css/login.css";
-// Importa la imagen (ajusta la ruta según la ubicación real)
+import '../assets/css/Styles1.css';
 import logoMeridian from "../assets/img/logo_meridian_blanco.png";
 
 const Login = ({ onLogin }) => {
@@ -14,7 +13,6 @@ const Login = ({ onLogin }) => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    // Validación simple
     if (!usuario || !contrasena) {
       setError("Por favor, complete todos los campos.");
       return;
@@ -26,9 +24,7 @@ const Login = ({ onLogin }) => {
       const apiUrl = process.env.REACT_APP_API_BASE_URL;
       const response = await fetch(`${apiUrl}/admin/login`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: usuario, password: contrasena }),
       });
 
@@ -49,22 +45,17 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div>
-      <div className="logo-meridian">
-        <img
-          src={logoMeridian}
-          alt="Logo Meridian"
-          className="meridian-logo"
-        />
+    <div className="login-page">
+      {/* Logo en la esquina superior izquierda */}
+      <div className="login-logo">
+        <img src={logoMeridian} alt="Logo Meridian" className="login-logo-img" />
       </div>
       <div className="login-container">
-
         <div className="login-header">
           <h2>Iniciar Sesión</h2>
         </div>
-
         <form onSubmit={(e) => e.preventDefault()}>
-          <div className="input-container">
+          <div className="login-input-container">
             <label>Usuario</label>
             <input
               type="text"
@@ -73,10 +64,9 @@ const Login = ({ onLogin }) => {
               placeholder="Ingrese su usuario"
             />
           </div>
-
-          <div className="password-input-container">
+          <div className="login-password-container">
             <label>Contraseña</label>
-            <div className="password-wrapper">
+            <div className="login-password-wrapper">
               <input
                 type={mostrarContrasena ? "text" : "password"}
                 value={contrasena}
@@ -85,7 +75,7 @@ const Login = ({ onLogin }) => {
               />
               <button
                 type="button"
-                className="toggle-password"
+                className="login-toggle-password"
                 onClick={() => setMostrarContrasena(!mostrarContrasena)}
                 aria-label={
                   mostrarContrasena ? "Ocultar contraseña" : "Mostrar contraseña"
@@ -123,18 +113,15 @@ const Login = ({ onLogin }) => {
               </button>
             </div>
           </div>
-
-          <div className="extra-options">
-            <a className="forgot-password" href="#">
+          <div className="login-extra-options">
+            <a className="login-forgot-password" href="#">
               ¿Olvidaste tu contraseña?
             </a>
           </div>
-
           <button type="button" className="login-button" onClick={handleLogin}>
             Iniciar Sesión
           </button>
-
-          {error && <p className="error-message">{error}</p>}
+          {error && <p className="login-error-message">{error}</p>}
         </form>
       </div>
     </div>
