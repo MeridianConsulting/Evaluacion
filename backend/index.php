@@ -8,7 +8,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 
 // Base path
-define('BASE_PATH', '/tarjetasqr/server-php');
+define('BASE_PATH', '/EvaluacionDesempeño/backend');
 
 // Captura el método y la ruta de la solicitud
 $method = $_SERVER['REQUEST_METHOD'];
@@ -38,6 +38,17 @@ function handleRequest($method, $path) {
         $id = $matches[1];
         $controller = new UserController();
         $controller->obtenerEmpleadoPorId($id);
+
+    } elseif ($path === "login" && $method === "POST") {
+        // Ruta para login de empleados
+        $data = json_decode(file_get_contents("php://input"), true);
+        if (!$data) {
+            http_response_code(400);
+            echo json_encode(["message" => "Datos inválidos"]);
+            return;
+        }
+        $controller = new UserController();
+        $controller->loginEmpleado($data);
 
     } elseif ($path === "admin/employees" && $method === "GET") {
         $controller = new AdminController();
@@ -85,6 +96,6 @@ function handleRequest($method, $path) {
     }
 }
 
-// Llamar al manejador de rutas
+// Llamada al manejador de rutas
 handleRequest($method, $path);
 ?>

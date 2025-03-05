@@ -4,42 +4,41 @@ import '../assets/css/Styles1.css';
 import logoMeridian from "../assets/img/logo_meridian_blanco.png";
 
 const Login = ({ onLogin }) => {
-  const [usuario, setUsuario] = useState("");
+  const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
   const [mostrarContrasena, setMostrarContrasena] = useState(false);
-  const [recordarme, setRecordarme] = useState(false);
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    if (!usuario || !contrasena) {
+    if (!correo || !contrasena) {
       setError("Por favor, complete todos los campos.");
       return;
     }
-
     setError("");
 
     try {
       const apiUrl = process.env.REACT_APP_API_BASE_URL;
-      const response = await fetch(`${apiUrl}/admin/login`, {
+      console.log("URL de la API:", `${apiUrl}/login`);
+      const response = await fetch(`${apiUrl}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: usuario, password: contrasena }),
+        body: JSON.stringify({ correo, contrasena }),
       });
 
       const data = await response.json();
 
       if (data.success) {
         onLogin(true);
-        navigate("/admin");
+        navigate("/LandingPage");
       } else {
         setError(data.message || "Credenciales inválidas.");
         onLogin(false);
       }
     } catch (err) {
-      console.error("Error al iniciar sesión:", err);
-      setError("No se pudo conectar con el servidor. Verifique su conexión.");
+      console.error("Error en el login:", err);
+      setError("No se pudo conectar con el servidor.");
       onLogin(false);
     }
   };
@@ -56,12 +55,12 @@ const Login = ({ onLogin }) => {
         </div>
         <form onSubmit={(e) => e.preventDefault()}>
           <div className="login-input-container">
-            <label>Usuario</label>
+            <label>Correo</label>
             <input
               type="text"
-              value={usuario}
-              onChange={(e) => setUsuario(e.target.value)}
-              placeholder="Ingrese su usuario"
+              value={correo}
+              onChange={(e) => setCorreo(e.target.value)}
+              placeholder="Ingrese su correo"
             />
           </div>
           <div className="login-password-container">
