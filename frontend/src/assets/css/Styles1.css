@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;700&display=swap');
+
 html, body {
   margin: 0;
   padding: 0;
@@ -6,16 +7,24 @@ html, body {
   height: 100%;
   overflow-x: hidden; 
 }
+
+/* Nueva paleta de colores */
 :root {
-  --color-primary: #1A2B49;
-  --color-secondary: #8C9EAD; 
-  --color-tertiary: #4A4D52;  
-  --color-background: #F5F7FA; 
-  --color-dark: #2A2A2A;  
+  --color-primary: #000000;    /* Negro: elementos clave (navbar, footer, etc.) */
+  --color-secondary: #ffffff;  /* Blanco: textos, fondos y resaltes */
+  --color-tertiary: #b0b0b0;     /* Gris suave para detalles o hover sutil */
+  --color-background: #f7f7f7;   /* Fondo muy claro */
+  --color-dark: #1a1a1a;         /* Gris oscuro para acentos o hover en botones */
+  --color-accent: #B0A990;       /* Acento metálico para detalles específicos */
 }
+
 body {
   font-family: "Libre Franklin", sans-serif;
 }
+
+/* ---------------------
+   LANDING PAGE
+---------------------- */
 .landing-page {
   margin: 0;
   padding: 0;
@@ -26,10 +35,12 @@ body {
               url('../img/fondo.jpeg') no-repeat center center;
   background-size: cover;
 }
+
 header, nav, section, footer {
   margin: 0;
   padding: 0;
 }
+
 /* ---------------------
    HEADER Y NAVBAR
 ---------------------- */
@@ -40,27 +51,33 @@ header, nav, section, footer {
   align-items: center;
   padding: 1rem;
 }
+
 .navbar-logo img {
   height: 60px;
   display: block;
   transition: transform 0.3s ease, filter 0.3s ease;
 }
+
 .navbar-logo img:hover {
   transform: scale(1.05);
   filter: brightness(1.2);
 }
+
 .menu-container {
   position: relative;
 }
+
 .navbar-menu img {
   height: 40px;
   cursor: pointer;
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
+
 .navbar-menu:hover img {
   opacity: 0.8;
   transform: scale(1.05);
 }
+
 .side-menu {
   position: fixed;
   top: 0;
@@ -76,13 +93,15 @@ header, nav, section, footer {
   z-index: 1000;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2); /* Sutil sombra para darle profundidad */
 }
+
 .side-menu.open {
   transform: translateX(0);
 }
+
 .side-menu .menu-item {
   background: none;
   border: none;
-  color: #fff;
+  color: var(--color-secondary);
   font-size: 1.5rem;
   font-weight: 500;
   cursor: pointer;
@@ -93,6 +112,7 @@ header, nav, section, footer {
   border-radius: 4px;
   margin-bottom: 1rem;
 }
+
 /* Efecto hover con fondo sutil y pequeña animación */
 .side-menu .menu-item:hover {
   color: var(--color-secondary);
@@ -126,8 +146,9 @@ header, nav, section, footer {
   }
   .side-menu .menu-item:hover {
     background-color: transparent;
-  } 
+  }
 }
+
 @media (min-width: 769px) {
   .navbar-menu {
     display: none;
@@ -148,6 +169,7 @@ header, nav, section, footer {
     font-size: 1.2rem;
   }
 }
+
 /* ---------------------
    HERO (Landing Page)
 ---------------------- */
@@ -156,7 +178,7 @@ header, nav, section, footer {
   max-width: 800px;
   margin: 2rem auto;
   padding: 2rem;
-  color: #fff;
+  color: var(--color-secondary);
 }
 
 .hero h1 {
@@ -170,8 +192,8 @@ header, nav, section, footer {
 }
 
 .hero button {
-  background-color: #062353;
-  color: #fff;
+  background-color: var(--color-primary);
+  color: var(--color-secondary);
   border: none;
   padding: 1rem 2rem;
   font-size: 1.6rem;
@@ -183,8 +205,9 @@ header, nav, section, footer {
 .hero button:hover {
   transform: scale(1.03);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  background-color: #133872;
+  background-color: var(--color-dark);
 }
+
 /* ================================
    HERO RESPONSIVE
 ================================ */
@@ -219,6 +242,7 @@ header, nav, section, footer {
     padding: 1.5rem 1rem;
   }
 }
+
 @media (max-width: 480px) {
   .hero {
     margin: 1rem auto;
@@ -236,12 +260,13 @@ header, nav, section, footer {
     padding: 0.7rem 1rem;
   }
 }
+
 /* ---------------------
    FOOTER
 ---------------------- */
 footer {
   background-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-secondary);
   margin-top: auto;
   padding: 2rem 3rem;
   box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
@@ -249,6 +274,7 @@ footer {
   flex-direction: column;
   align-items: center;
 }
+
 .footer-top {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -259,6 +285,7 @@ footer {
   max-width: 1200px;
   padding-bottom: 1rem;
 }
+
 .footer-branding,
 .footer-contact,
 .footer-links {
@@ -272,34 +299,41 @@ footer {
   transition: transform 0.3s ease;
   margin-bottom: 0.5rem;
 }
+
 .footer-logo:hover {
   transform: scale(1.05);
 }
+
 .footer-contact p,
 .footer-links a {
   margin: 0.5rem 0;
-  color: #fff;
+  color: var(--color-secondary);
   font-size: 0.9rem;
   text-decoration: none;
   transition: color 0.3s ease;
 }
+
 .footer-links ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
+
 .footer-links li {
   margin-bottom: 0.5rem;
 }
+
 .footer-links a:hover {
   color: var(--color-secondary);
 }
+
 .footer-divider {
   border: none;
   border-top: 1px solid rgba(255, 255, 255, 0.4);
   margin: 1rem auto;
   width: 80%;
 }
+
 .footer-bottom {
   text-align: center;
   font-size: 0.8rem;
@@ -307,32 +341,40 @@ footer {
   width: 100%;
   max-width: 1200px;
 }
+
 .footer-bottom p {
   margin: 0.3rem 0;
 }
+
 .footer-bottom a {
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
   transition: color 0.3s ease;
 }
+
 .footer-bottom a:hover {
   color: var(--color-secondary);
 }
+
 .footer-social {
   margin-top: 1rem;
   text-align: center;
 }
+
 .footer-social a {
   margin: 0 0.5rem;
   display: inline-block;
 }
+
 .social-logo {
   height: 30px;
   transition: transform 0.3s ease;
 }
+
 .social-logo:hover {
   transform: scale(1.1);
 }
+
 /* ---------------------
    RESPONSIVE FOOTER
 ---------------------- */
@@ -342,6 +384,7 @@ footer {
     gap: 1rem;
   }
 }
+
 /* ================================
    ESTILOS DEL LOGIN (NO MODIFICAR)
 ================================ */
@@ -357,12 +400,14 @@ footer {
   align-items: center;
   justify-content: center;
 }
+
 .login-logo {
   position: absolute;
   top: 20px;
   left: 20px;
   z-index: 10;
 }
+
 .login-logo-img {
   max-width: 200px;
   width: 100%;
@@ -386,21 +431,25 @@ footer {
 .login-container * {
   box-sizing: inherit;
 }
+
 .login-header {
   text-align: center;
   margin-bottom: 1rem;
 }
+
 .login-header h2 {
   font-size: 1.8rem;
   color: #fff;
   margin: 0;
 }
+
 .login-container label {
   display: block;
   margin-bottom: 0.3rem;
   font-weight: 500;
   color: #fff;
 }
+
 .login-input-container,
 .login-password-container {
   width: 100%;
@@ -491,6 +540,7 @@ footer {
   transition: background 0.3s ease-in-out;
   margin-top: 15px;
 }
+
 .login-button:hover {
   background: rgba(0, 0, 0, 0.8);
 }
@@ -516,7 +566,6 @@ footer {
 /* =============================
    ESTILOS DEL LOGIN (Responsive)
 ============================= */
-
 @media (max-width: 768px) {
   .login-container {
     width: 90%;
@@ -538,6 +587,7 @@ footer {
     padding: 10px;
   }
 }
+
 @media (max-width: 480px) {
   .login-container {
     padding: 15px;
