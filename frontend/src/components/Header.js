@@ -18,9 +18,10 @@ function Header({ onLogout }) {
     navigate('/');
   };
 
-  // Función para ir a la LandingPage
-  const handleGoToLanding = () => {
-    navigate('/LandingPage');
+  // Función para redirigir a las distintas páginas
+  const goToPage = (path) => {
+    navigate(path);
+    setMenuOpen(false);
   };
 
   return (
@@ -36,9 +37,9 @@ function Header({ onLogout }) {
             <img src={burgerMenu} alt="Menú" className="burger-icon" />
           </div>
           <div className={`side-menu ${menuOpen ? 'open' : ''}`}>
-            <button className="menu-item" onClick={handleGoToLanding}>Inicio</button>
-            <button className="menu-item">Resultados</button>
-            <button className="menu-item">Perfil</button>
+            <button className="menu-item" onClick={() => goToPage('/LandingPage')}>Inicio</button>
+            <button className="menu-item" onClick={() => goToPage('/results')}>Resultados</button>
+            <button className="menu-item" onClick={() => goToPage('/profile')}>Perfil</button>
             <button className="menu-item logout" onClick={handleLogout}>
               Cerrar Sesión
             </button>

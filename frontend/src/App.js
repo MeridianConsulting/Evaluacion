@@ -5,8 +5,10 @@ import Login from "./pages/Login";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
 import Services from "./pages/Services";
-import Privacy from "./pages/Privacy"; 
-import Terms from "./pages/Terms"; // Nueva importación para Términos de Uso
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import Profile from "./pages/Profile";       // Nueva importación para Profile
+import Results from "./pages/Results";       // Nueva importación para Results
 import "./App.css";
 
 function App() {
@@ -106,6 +108,28 @@ function App() {
           element={
             isAuthenticated ? (
               <Terms onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
+        {/* Ruta protegida para Profile */}
+        <Route
+          path="/profile"
+          element={
+            isAuthenticated ? (
+              <Profile onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
+        {/* Ruta protegida para Results */}
+        <Route
+          path="/results"
+          element={
+            isAuthenticated ? (
+              <Results onLogout={handleLogout} />
             ) : (
               <Navigate to="/" replace />
             )
