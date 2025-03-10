@@ -55,7 +55,7 @@ function Services({ onLogout }) {
           </div>
 
           <p className="services-tagline-unique">
-            <strong>Tu satisfacción, nuestra prioridad.</strong>
+            <strong className="services-strong">Tu satisfacción, nuestra prioridad.</strong>
           </p>
         </div>
       </main>

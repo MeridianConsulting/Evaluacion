@@ -846,7 +846,7 @@ footer {
   margin: 0 auto;
   text-align: center;
   padding: 2rem;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(7, 7, 7, 0.5);
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
@@ -855,7 +855,7 @@ footer {
 .services-title-unique {
   font-size: 2.8rem;
   margin-bottom: 1rem;
-  color: var(--color-primary);
+  color: var(--color-secondary);
   text-transform: uppercase;
 }
 
@@ -863,7 +863,7 @@ footer {
 .services-subtitle-unique {
   font-size: 1.4rem;
   margin-bottom: 2rem;
-  color: var(--color-dark);
+  color: var(--color-secondary);
   line-height: 1.4;
 }
 
@@ -874,14 +874,16 @@ footer {
   gap: 2rem;
   justify-content: center;
 }
-
+.services-strong{
+  color: white
+}
 /* Cada ítem de servicio */
 .service-item-unique {
-  background-color: var(--color-secondary);
-  color: var(--color-primary);
+  background-color: var(--color-primary);
+  color: var(--color-secondary);
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
   width: 300px;
   transition: transform 0.3s ease;
 }
@@ -941,7 +943,7 @@ footer {
 .about-container-unique {
   max-width: 1000px;
   margin: 0 auto;
-  background-color: #fff;
+  background-color: #000000;
   border-radius: 8px;
   padding: 2rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -950,7 +952,7 @@ footer {
 /* Títulos de sección */
 .about-title-unique {
   font-size: 2.5rem;
-  color: var(--color-primary);
+  color: var(--color-secondary);
   margin: 2rem 0 1rem;
   text-transform: uppercase;
   border-bottom: 2px solid var(--color-tertiary);
@@ -960,7 +962,7 @@ footer {
 /* Texto descriptivo */
 .about-text-unique {
   font-size: 1.2rem;
-  color: var(--color-dark);
+  color: var(--color-secondary);
   line-height: 1.6;
   margin-bottom: 1.5rem;
 }
@@ -970,7 +972,7 @@ footer {
   list-style-type: disc;
   padding-left: 2rem;
   font-size: 1.2rem;
-  color: var(--color-dark);
+  color: var(--color-secondary);
   margin-bottom: 1.5rem;
 }
 
@@ -1013,7 +1015,7 @@ footer {
 .privacy-container-unique {
   max-width: 1000px;
   margin: 0 auto;
-  background-color: #fff;
+  background-color: #000000;
   border-radius: 8px;
   padding: 2rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -1022,7 +1024,7 @@ footer {
 /* Título principal */
 .privacy-title-unique {
   font-size: 2.8rem;
-  color: var(--color-primary);
+  color: var(--color-secondary);
   margin-bottom: 1rem;
   text-transform: uppercase;
   border-bottom: 2px solid var(--color-tertiary);
@@ -1032,14 +1034,14 @@ footer {
 /* Subtítulos de secciones */
 .privacy-subtitle-unique {
   font-size: 2rem;
-  color: var(--color-primary);
+  color: var(--color-secondary);
   margin: 2rem 0 0.5rem;
 }
 
 /* Texto de párrafos */
 .privacy-text-unique {
   font-size: 1.2rem;
-  color: var(--color-dark);
+  color: var(--color-secondary);
   line-height: 1.6;
   margin-bottom: 1.5rem;
 }
@@ -1084,7 +1086,7 @@ footer {
 .terms-container-unique {
   max-width: 1000px;
   margin: 0 auto;
-  background-color: #fff;
+  background-color: #000000;
   border-radius: 8px;
   padding: 2rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -1093,7 +1095,7 @@ footer {
 /* Título principal */
 .terms-title-unique {
   font-size: 2.8rem;
-  color: var(--color-primary);
+  color: var(--color-secondary);
   margin-bottom: 1rem;
   text-transform: uppercase;
   border-bottom: 2px solid var(--color-tertiary);
@@ -1103,14 +1105,14 @@ footer {
 /* Subtítulos de sección */
 .terms-subtitle-unique {
   font-size: 2rem;
-  color: var(--color-primary);
+  color: var(--color-secondary);
   margin: 2rem 0 0.5rem;
 }
 
 /* Texto descriptivo */
 .terms-text-unique {
   font-size: 1.2rem;
-  color: var(--color-dark);
+  color: var(--color-secondary);
   line-height: 1.6;
   margin-bottom: 1.5rem;
 }
@@ -1163,7 +1165,7 @@ footer {
 
 /* Tarjeta que contiene la información del empleado */
 .profile-card {
-  background-color: #ffffff;  /* fondo blanco */
+  background-color: #000000;  /* fondo blanco */
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 20px;
@@ -1178,7 +1180,7 @@ footer {
 .profile-header h1 {
   margin: 0;
   font-size: 1.8rem;
-  color: #333333;
+  color: #ffffff;
 }
 
 /* Sección de detalles del empleado en una sola columna */
@@ -1192,12 +1194,12 @@ footer {
   width: 100%;
   margin-bottom: 10px;
   font-size: 1rem;
-  color: #555555;
+  color: #c7c7c7;
 }
 
 /* Aseguramos que los labels (strong) destaquen */
 .profile-detail strong {
   display: inline-block;
   width: 150px;       /* ancho fijo para alinear */
-  color: #333333;
+  color: #ffffff;
 }
