@@ -17,7 +17,7 @@ const Login = ({ onLogin }) => {
       return;
     }
     setError("");
-
+  
     try {
       const apiUrl = process.env.REACT_APP_API_BASE_URL;
       const response = await fetch(`${apiUrl}/login`, {
@@ -25,10 +25,13 @@ const Login = ({ onLogin }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ correo, contrasena }),
       });
-
+  
       const data = await response.json();
-
+  
       if (data.success) {
+        // Revisa el contenido de data.empleado para confirmar el nombre de la propiedad del ID
+        // Suponiendo que la columna se llama 'id_empleado'
+        localStorage.setItem('employeeId', data.empleado.id_empleado);
         onLogin(true);
         navigate("/LandingPage");
       } else {
@@ -41,6 +44,7 @@ const Login = ({ onLogin }) => {
       onLogin(false);
     }
   };
+  
 
   return (
     <div className="login-page">
