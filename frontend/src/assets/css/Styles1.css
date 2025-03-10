@@ -1059,3 +1059,74 @@ footer {
     font-size: 1rem;
   }
 }
+
+/* ================================
+   TERMS PAGE UNIQUE STYLES
+================================ */
+
+/* Contenedor principal de la página de Términos de Uso */
+.terms-page-unique {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-background);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)),
+  url('../img/fondo.jpeg') no-repeat center center;
+}
+
+/* Área principal de la página */
+.terms-main-unique {
+  flex: 1;
+  padding: 2rem 1rem;
+}
+
+/* Contenedor central para el contenido */
+.terms-container-unique {
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Título principal */
+.terms-title-unique {
+  font-size: 2.8rem;
+  color: var(--color-primary);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--color-tertiary);
+  padding-bottom: 0.5rem;
+}
+
+/* Subtítulos de sección */
+.terms-subtitle-unique {
+  font-size: 2rem;
+  color: var(--color-primary);
+  margin: 2rem 0 0.5rem;
+}
+
+/* Texto descriptivo */
+.terms-text-unique {
+  font-size: 1.2rem;
+  color: var(--color-dark);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+/* Responsive: ajustes para pantallas pequeñas */
+@media (max-width: 768px) {
+  .terms-container-unique {
+    padding: 1.5rem;
+  }
+  
+  .terms-title-unique {
+    font-size: 2rem;
+  }
+  
+  .terms-text-unique,
+  .terms-subtitle-unique {
+    font-size: 1rem;
+  }
+}

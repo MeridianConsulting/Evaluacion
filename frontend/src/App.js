@@ -5,7 +5,8 @@ import Login from "./pages/Login";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
 import Services from "./pages/Services";
-import Privacy from "./pages/Privacy"; // Nueva importación para Privacy
+import Privacy from "./pages/Privacy"; 
+import Terms from "./pages/Terms"; // Nueva importación para Términos de Uso
 import "./App.css";
 
 function App() {
@@ -94,6 +95,17 @@ function App() {
           element={
             isAuthenticated ? (
               <Privacy onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
+        {/* Ruta protegida para Terms */}
+        <Route
+          path="/terms"
+          element={
+            isAuthenticated ? (
+              <Terms onLogout={handleLogout} />
             ) : (
               <Navigate to="/" replace />
             )
