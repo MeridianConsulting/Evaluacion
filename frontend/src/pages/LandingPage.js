@@ -106,9 +106,7 @@ function LandingPage({ onLogout }) {
 
             <div className="modal-buttons">
               <button onClick={handleCloseModal}>Cerrar</button>
-              <button onClick={handleAccept} disabled={!accepted}>
-                Acepto
-              </button>
+              <button onClick={handleAccept} disabled={!accepted}>Acepto</button>
             </div>
           </div>
         </div>

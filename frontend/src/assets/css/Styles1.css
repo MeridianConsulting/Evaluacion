@@ -620,21 +620,21 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 1rem; /* Espacio para pantallas pequeñas */
   z-index: 9999; /* Asegura que quede por encima de otros elementos */
 }
 
 .modal {
-  /* Fondo blanco y texto negro */
   background-color: var(--color-secondary);
   color: var(--color-primary);
   padding: 2rem;
   border-radius: 8px;
-  max-width: 800px; /* Ajusta el ancho máximo a tu gusto */
+  max-width: 800px;
   width: 90%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  /* Si deseas una animación de entrada, descomenta la siguiente línea:
-     animation: fadeInModal 0.3s ease forwards;
-  */
+  animation: fadeInModal 0.3s ease forwards;
+  overflow-y: auto;
+  max-height: 90vh; /* Limita la altura del modal */
 }
 
 .modal h2 {
@@ -716,6 +716,63 @@ footer {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ======================
+   ESTILOS DEL MODAL (RESPONSIVE)
+====================== */
+
+@media (max-width: 768px) {
+  .modal {
+    padding: 1.5rem;
+    max-width: 75%;
+    font-size: 0.9rem;
+  }
+  .modal h2 {
+    font-size: 1.5rem;
+  }
+  .modal h3 {
+    font-size: 1.3rem;
+  }
+  .modal p,
+  .modal ol,
+  .modal li {
+    font-size: 0.9rem;
+  }
+  .modal-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .modal button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal {
+    padding: 1rem;
+    max-width: 60%;
+    font-size: 0.85rem;
+  }
+  .modal h2 {
+    font-size: 1.4rem;
+  }
+  .modal h3 {
+    font-size: 1.2rem;
+  }
+  .modal p,
+  .modal ol,
+  .modal li {
+    font-size: 0.85rem;
+  }
+  .modal button {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+  .modal-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
 
 /* =========================
    CONTACT PAGE UNIQUE STYLES
@@ -1116,6 +1173,8 @@ footer {
   line-height: 1.6;
   margin-bottom: 1.5rem;
 }
+
+
 
 /* Responsive: ajustes para pantallas pequeñas */
 @media (max-width: 768px) {
