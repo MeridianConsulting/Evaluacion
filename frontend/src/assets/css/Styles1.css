@@ -717,4 +717,104 @@ footer {
 }
 
 
+/* =========================
+   CONTACT PAGE UNIQUE STYLES
+========================= */
+
+/* Contenedor principal de la página de contacto */
+.contact-page-unique {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-background);
+}
+
+/* Área principal donde se ubican las dos secciones (mapa e info) */
+.contact-main-unique {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* Contenedor que aloja el mapa y la información en columnas */
+.contact-container-unique {
+  display: flex;
+  gap: 2rem;
+  max-width: 1200px; /* Ajusta el ancho máximo según tu preferencia */
+  margin: 0 auto;    /* Centra el contenedor horizontalmente */
+}
+
+/* Sección izquierda: Mapa de Google */
+.contact-map-section-unique {
+  flex: 1;
+  background-color: #222; /* Fondo oscuro para simular un look similar al diseño de ejemplo */
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenido dentro de la sección del mapa */
+.contact-map-content-unique {
+  color: var(--color-secondary); /* Texto blanco sobre fondo oscuro */
+}
+
+/* Título principal (Mapa) */
+.contact-title-unique {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+/* Subtítulo (Dirección general) */
+.contact-subtitle-unique {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: var(--color-tertiary);
+}
+
+/* El iframe del mapa */
+.contact-iframe-unique {
+  width: 100%;
+  height: 350px;
+  border: none;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+/* Sección derecha: Información de contacto */
+.contact-info-section-unique {
+  flex: 1;
+  background-color: var(--color-secondary); /* Fondo claro para contraste */
+  border-radius: 8px;
+  padding: 1.5rem;
+  color: var(--color-dark);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Título de la información de contacto */
+.contact-info-title-unique {
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+/* Contenedor del texto de contacto */
+.contact-info-unique p {
+  margin: 0.3rem 0;
+  line-height: 1.4;
+  font-size: 1rem;
+}
+
+/* ================================
+   RESPONSIVE (para pantallas pequeñas)
+================================ */
+@media (max-width: 768px) {
+  .contact-container-unique {
+    flex-direction: column;
+  }
+
+  .contact-map-section-unique,
+  .contact-info-section-unique {
+    margin-bottom: 2rem;
+  }
+}
 

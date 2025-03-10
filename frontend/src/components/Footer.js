@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'; // Se importa Link
 import logoMeridian from '../assets/img/logo_meridian_blanco.png';
 import facebookLogo from '../assets/img/facebook_white.png';
 import twitterLogo from '../assets/img/twitter_white.png';
@@ -26,13 +27,13 @@ function Footer() {
         <div className="footer-links">
           <ul>
             <li>
-              <a href="#services">Servicios</a>
+              <Link to="/services">Servicios</Link>
             </li>
             <li>
-              <a href="#about">Acerca de</a>
+              <Link to="/about">Acerca de</Link>
             </li>
             <li>
-              <a href="#contact">Contacto</a>
+              <Link to="/contact">Contacto</Link>
             </li>
           </ul>
         </div>
@@ -40,7 +41,7 @@ function Footer() {
 
       <hr className="footer-divider" />
 
-      {/* Parte inferior con texto legal y redes sociales centradas */}
+      {/* Parte inferior con texto legal y redes sociales */}
       <div className="footer-bottom">
         <p>© 2025 Meridian Consulting LTDA. Todos los derechos reservados.</p>
         <p>
