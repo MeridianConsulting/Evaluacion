@@ -50,13 +50,13 @@ function Footer() {
           <Link to="/privacy">Política de Privacidad</Link> | <Link to="/terms">Términos de Uso</Link>
         </p>
         <div className="footer-social">
-          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.facebook.com/people/Meridian-Consulting/61566887615958/#" target="_blank" rel="noopener noreferrer">
             <img src={facebookLogo} alt="Facebook" className="social-logo" />
           </a>
-          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://x.com/meridiancons" target="_blank" rel="noopener noreferrer">
             <img src={twitterLogo} alt="Twitter" className="social-logo" />
           </a>
-          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://co.linkedin.com/company/meridian-consulting-ltda" target="_blank" rel="noopener noreferrer">
             <img src={linkedinLogo} alt="LinkedIn" className="social-logo" />
           </a>
         </div>
