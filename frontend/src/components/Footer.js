@@ -47,7 +47,7 @@ function Footer() {
       <div className="footer-bottom">
         <p>© 2025 Meridian Consulting LTDA. Todos los derechos reservados.</p>
         <p>
-          <a href="#privacy">Política de Privacidad</a> | <a href="#terms">Términos de Uso</a>
+          <Link to="/privacy">Política de Privacidad</Link> | <a href="#terms">Términos de Uso</a>
         </p>
         <div className="footer-social">
           <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">

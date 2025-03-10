@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
 import Services from "./pages/Services";
+import Privacy from "./pages/Privacy"; // Nueva importación para Privacy
 import "./App.css";
 
 function App() {
@@ -26,7 +27,6 @@ function App() {
   };
 
   useEffect(() => {
-    // Este efecto se ejecuta al iniciar la app, para confirmar el estado de autenticación
     console.log("Estado de autenticación:", isAuthenticated);
   }, [isAuthenticated]);
 
@@ -83,6 +83,17 @@ function App() {
           element={
             isAuthenticated ? (
               <Services onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
+        {/* Ruta protegida para Privacy */}
+        <Route
+          path="/privacy"
+          element={
+            isAuthenticated ? (
+              <Privacy onLogout={handleLogout} />
             ) : (
               <Navigate to="/" replace />
             )
