@@ -733,6 +733,8 @@ footer {
 .contact-main-unique {
   flex: 1;
   padding: 2rem;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+  url('../img/fondo.jpeg') no-repeat center center;
 }
 
 /* Contenedor que aloja el mapa y la información en columnas */
@@ -817,4 +819,173 @@ footer {
     margin-bottom: 2rem;
   }
 }
+/* ==============================
+   SERVICES PAGE UNIQUE STYLES
+================================ */
 
+/* Contenedor principal de la página de servicios */
+.services-page-unique {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* Fondo combinado: gradiente y la imagen */
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+              url('../img/fondo.jpeg') no-repeat center center;
+  background-size: cover;
+}
+
+/* Área principal de la página */
+.services-main-unique {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* Contenedor para centrar el contenido con fondo semitransparente */
+.services-container-unique {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 2rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Título principal de la sección de servicios */
+.services-title-unique {
+  font-size: 2.8rem;
+  margin-bottom: 1rem;
+  color: var(--color-primary);
+  text-transform: uppercase;
+}
+
+/* Subtítulo descriptivo */
+.services-subtitle-unique {
+  font-size: 1.4rem;
+  margin-bottom: 2rem;
+  color: var(--color-dark);
+  line-height: 1.4;
+}
+
+/* Lista de servicios con disposición en columnas */
+.services-list-unique {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+}
+
+/* Cada ítem de servicio */
+.service-item-unique {
+  background-color: var(--color-secondary);
+  color: var(--color-primary);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  transition: transform 0.3s ease;
+}
+
+.service-item-unique:hover {
+  transform: translateY(-5px);
+}
+
+/* Título de cada servicio */
+.service-item-title-unique {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Descripción de cada servicio */
+.service-item-description-unique {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Ajustes responsive */
+@media (max-width: 768px) {
+  .services-list-unique {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+/* Responsive para pantallas pequeñas */
+@media (max-width: 480px) {
+  .service-item-unique {
+    width: 90%;  /* Ocupa el 90% del ancho disponible */
+    padding: 1rem;  /* Ajuste de padding para pantallas más pequeñas */
+  }
+}
+
+/* ===============================
+   ESTILOS EXCLUSIVOS - ABOUT PAGE
+================================= */
+
+/* Contenedor principal de la página Acerca de */
+.about-page-unique {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-background);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)),
+  url('../img/fondo.jpeg') no-repeat center center;
+}
+
+/* Área principal de la página */
+.about-main-unique {
+  flex: 1;
+  padding: 2rem 1rem;
+}
+
+/* Contenedor para el contenido central */
+.about-container-unique {
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Títulos de sección */
+.about-title-unique {
+  font-size: 2.5rem;
+  color: var(--color-primary);
+  margin: 2rem 0 1rem;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--color-tertiary);
+  padding-bottom: 0.5rem;
+}
+
+/* Texto descriptivo */
+.about-text-unique {
+  font-size: 1.2rem;
+  color: var(--color-dark);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+/* Lista de valores */
+.about-list-unique {
+  list-style-type: disc;
+  padding-left: 2rem;
+  font-size: 1.2rem;
+  color: var(--color-dark);
+  margin-bottom: 1.5rem;
+}
+
+/* Responsive: Ajustes para pantallas pequeñas */
+@media (max-width: 768px) {
+  .about-container-unique {
+    padding: 1.5rem;
+  }
+  
+  .about-title-unique {
+    font-size: 2rem;
+  }
+  
+  .about-text-unique,
+  .about-list-unique {
+    font-size: 1.1rem;
+  }
+}
