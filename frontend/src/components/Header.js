@@ -19,6 +19,7 @@ function Header({ onLogout }) {
     }
     navigate('/');
   };
+  
 
   return (
     <header>

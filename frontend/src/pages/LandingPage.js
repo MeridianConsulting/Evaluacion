@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Se agregó useEffect
 import '../assets/css/Styles1.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -9,7 +9,7 @@ function LandingPage({ onLogout }) {
 
   const handleOpenModal = () => {
     setShowModal(true);
-    setAccepted(false); // Por si se vuelve a abrir el modal, se reinicia la casilla
+    setAccepted(false);
   };
 
   const handleCloseModal = () => {
@@ -17,10 +17,27 @@ function LandingPage({ onLogout }) {
   };
 
   const handleAccept = () => {
-    // Aquí puedes manejar cualquier lógica adicional al aceptar
-    // Por ejemplo, redirigir o simplemente cerrar el modal
     setShowModal(false);
   };
+
+  useEffect(() => {
+    console.log(
+      "%c🚀 Developed by José Mateo López Cifuentes",
+      "font-size: 14px; color: #2ecc71; font-weight: bold;"
+    );
+    console.log(
+      "%c📧 Email: josemateolopezcifuentes@gmail.com",
+      "font-size: 12px; color: #3498db;"
+    );
+    console.log(
+      "%c🔗 LinkedIn: José Mateo López Cifuentes (Visit: https://shorturl.at/Sx0PY)",
+      "font-size: 12px; color: #e74c3c;"
+    );
+
+    if (!localStorage.getItem("authorMessageShown")) {
+      localStorage.setItem("authorMessageShown", "true");
+    }
+  }, []);
 
   return (
     <div className="landing-page">
@@ -87,7 +104,6 @@ function LandingPage({ onLogout }) {
               la firma electrónica y el resguardo del archivo final para fines de control y gestión interna.
             </p>
 
-            {/* Aceptación */}
             <div className="acceptance-container">
               <label className="checkbox-label">
                 <input
@@ -99,7 +115,6 @@ function LandingPage({ onLogout }) {
               </label>
             </div>
 
-            {/* Botones de acción */}
             <div className="modal-buttons">
               <button onClick={handleCloseModal}>Cerrar</button>
               <button onClick={handleAccept} disabled={!accepted}>
