@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // Se agregó useEffect
+import React, { useState, useEffect } from 'react';
 import '../assets/css/Styles1.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -52,56 +52,45 @@ function LandingPage({ onLogout }) {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal">
-            <h2>INSTRUCCIONES DE MANEJO DE LA EVALUACIÓN DE DESEMPEÑO</h2>
+            <h2>Instrucciones de manejo de la evaluación de desempeño</h2>
 
-            <h3>AUTOEVALUACIÓN (Trabajador):</h3>
+            <h3>Autoevaluación (trabajador):</h3>
             <ol>
               <li>
-                Una vez abra el archivo desde el menú de INICIO ingresar su nombre en la parte de arriba,
-                en donde el botón Generar, guárdelo con su nombre completo y la fecha de hoy.
-                Después, presionar el botón GENERAR.
+                Una vez que abra el archivo desde el menú de Inicio, ingrese su nombre en la parte superior, guárdelo con su nombre completo y la fecha actual, y luego presione el botón "Generar".
               </li>
               <li>
-                Este archivo se rellena y queda resguardado en el servidor y no es posible volver a abrirlo.
-                INICIAR EVALUACIÓN y cuando se guarde y finalice la edición, quedará en la hoja respectiva.
+                El archivo se completará y quedará resguardado en el servidor, por lo que no será posible volver a abrirlo. Inicie la evaluación; cuando se guarde y finalice la edición, quedará registrado en la hoja correspondiente.
               </li>
               <li>
-                Todo lo que quede registrado en el PDF y en la primera hoja con el botón INICIAR EVALUACIÓN
-                quedará registrado en la hoja correspondiente.
+                Todo lo registrado en el PDF y en la primera hoja con el botón "Iniciar Evaluación" se consignará en la hoja correspondiente.
               </li>
               <li>
-                Se deben registrar los aspectos a evaluar y el primer y segundo Observador.
-                Recuerde que esta información se envía por PDF a su Jefe Inmediato.
+                Registre los aspectos a evaluar y los nombres del primer y segundo observador. Recuerde que esta información se enviará en PDF a su jefe inmediato.
               </li>
               <li>
-                La evaluación final al finalizar da el link a Jefe Inmediato con la Evaluación en Excel
-                para su revisión y firma de conformidad.
+                Al finalizar, la evaluación mostrará un enlace para que el jefe inmediato acceda a la evaluación en Excel, la revise y firme de conformidad.
               </li>
             </ol>
 
-            <h3>JEFE INMEDIATO</h3>
+            <h3>Jefe inmediato:</h3>
             <ol>
               <li>
-                Recibe en su correo o en la hoja de Jefe Inmediato un link para la evaluación.
-                (INICIAR EVALUACIÓN).
+                Recibirá, ya sea en su correo o en la hoja de "Jefe Inmediato", un enlace para iniciar la evaluación.
               </li>
               <li>
-                Revisa y aprueba y/o deniega los Aspectos a Mejorar.
+                Revisará y aprobará o denegará los aspectos a mejorar.
               </li>
               <li>
-                Registra su firma y la envía al evaluado.
+                Registrará su firma y la enviará al evaluado.
               </li>
               <li>
-                Recibe la confirmación final. Y el PDF final se envía al departamento de OUTLOOK
-                para archivar el informe.
+                Recibirá la confirmación final, y el PDF definitivo se enviará al departamento de Outlook para archivar el informe.
               </li>
             </ol>
 
             <p style={{ marginTop: '1rem' }}>
-              <strong>Meridan Consulting Ltda.</strong>, en cumplimiento y mantenimiento de sus certificaciones
-              y procesos de mejora continua, estará resguardando electrónicamente esta evaluación de desempeño.
-              Al proceder con la misma, se da por entendido y aceptado el tratamiento de datos, la validez de
-              la firma electrónica y el resguardo del archivo final para fines de control y gestión interna.
+              <strong>Meridan Consulting Ltda.</strong> – En cumplimiento y mantenimiento de sus certificaciones y procesos de mejora continua, se resguardará electrónicamente esta evaluación de desempeño. Al proceder, se entiende y acepta el tratamiento de datos, la validez de la firma electrónica y el almacenamiento del archivo final para fines de control y gestión interna.
             </p>
 
             <div className="acceptance-container">
