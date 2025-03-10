@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // Se importa Link
+import { Link } from 'react-router-dom';
 import logoMeridian from '../assets/img/logo_meridian_blanco.png';
 import facebookLogo from '../assets/img/facebook_white.png';
 import twitterLogo from '../assets/img/twitter_white.png';
@@ -11,11 +11,13 @@ function Footer() {
       {/* Parte superior con 3 columnas */}
       <div className="footer-top">
         <div className="footer-branding">
-          <img
-            src={logoMeridian}
-            alt="Meridian Logo Footer"
-            className="footer-logo"
-          />
+          <Link to="/LandingPage">
+            <img
+              src={logoMeridian}
+              alt="Meridian Logo Footer"
+              className="footer-logo"
+            />
+          </Link>
         </div>
 
         <div className="footer-contact">
