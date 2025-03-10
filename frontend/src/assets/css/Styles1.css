@@ -748,7 +748,7 @@ footer {
 /* Sección izquierda: Mapa de Google */
 .contact-map-section-unique {
   flex: 1;
-  background-color: #222; /* Fondo oscuro para simular un look similar al diseño de ejemplo */
+  background-color: rgba(7, 7, 7, 0.9); /* Fondo oscuro para simular un look similar al diseño de ejemplo */
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -785,10 +785,10 @@ footer {
 /* Sección derecha: Información de contacto */
 .contact-info-section-unique {
   flex: 1;
-  background-color: var(--color-secondary); /* Fondo claro para contraste */
+  background-color: rgba(7, 7, 7, 0.9); /* Fondo claro para contraste */
   border-radius: 8px;
   padding: 1.5rem;
-  color: var(--color-dark);
+  color: var(--color-secondary);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -943,7 +943,7 @@ footer {
 .about-container-unique {
   max-width: 1000px;
   margin: 0 auto;
-  background-color: #000000;
+  background-color: rgba(7, 7, 7, 0.9);
   border-radius: 8px;
   padding: 2rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -1015,7 +1015,7 @@ footer {
 .privacy-container-unique {
   max-width: 1000px;
   margin: 0 auto;
-  background-color: #000000;
+  background-color: rgba(7, 7, 7, 0.9);
   border-radius: 8px;
   padding: 2rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -1086,7 +1086,7 @@ footer {
 .terms-container-unique {
   max-width: 1000px;
   margin: 0 auto;
-  background-color: #000000;
+  background-color: rgba(7, 7, 7, 0.9);
   border-radius: 8px;
   padding: 2rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -1165,7 +1165,7 @@ footer {
 
 /* Tarjeta que contiene la información del empleado */
 .profile-card {
-  background-color: #000000;  /* fondo blanco */
+  background-color: rgba(7, 7, 7, 0.9); /* fondo blanco */
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 20px;
