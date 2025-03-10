@@ -9,7 +9,6 @@ const Profile = ({ onLogout }) => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // Obtenemos el ID del empleado del localStorage
     const employeeId = localStorage.getItem('employeeId');
     if (!employeeId) {
       setError('No se encontró el ID del empleado.');
@@ -38,25 +37,42 @@ const Profile = ({ onLogout }) => {
   }, []);
 
   return (
-    <div className="Profile-page-unique">
+    <div className="profile-page-unique">
       <Header onLogout={onLogout} />
-      
+
       <div className="profile-container">
         {loading ? (
-          <p>Cargando información...</p>
+          <p className="profile-loading">Cargando información...</p>
         ) : error ? (
-          <p className="error-message">{error}</p>
+          <p className="profile-error">{error}</p>
         ) : (
-          <div className="employee-info">
-            <h1>Bienvenido, {employee.nombre}</h1>
-            <p><strong>Email:</strong> {employee.email}</p>
-            <p><strong>Cargo:</strong> {employee.cargo}</p>
-            <p><strong>Teléfono:</strong> {employee.numero_telefonico}</p>
-            {/* Agrega aquí otros campos que quieras mostrar */}
-          </div>
+          employee && (
+            <div className="profile-card">
+              <div className="profile-header">
+                <h1>Bienvenido, {employee.nombre}</h1>
+              </div>
+              <div className="profile-details">
+                <div className="profile-detail">
+                  <strong>Cédula:</strong> {employee.cedula}
+                </div>
+                <div className="profile-detail">
+                  <strong>Nombre:</strong> {employee.nombre}
+                </div>
+                <div className="profile-detail">
+                  <strong>Cargo:</strong> {employee.cargo}
+                </div>
+                <div className="profile-detail">
+                  <strong>Teléfono Personal:</strong> {employee.numero_telefonico}
+                </div>
+                <div className="profile-detail">
+                  <strong>Email:</strong> {employee.email}
+                </div>
+              </div>
+            </div>
+          )
         )}
       </div>
-      
+
       <Footer />
     </div>
   );
