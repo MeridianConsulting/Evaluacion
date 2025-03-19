@@ -31,6 +31,9 @@ def procesar_excel(ruta_archivo):
       - "Funciones_Profesional" y "Funciones específicas del cargo"
     Se extrae la información a partir del primer encabezado detectado (insensible a mayúsculas/minúsculas),
     evitando duplicados y omitiendo el resto de la hoja.
+    
+    Importante: Se recomienda contar con un índice único en (id_cargo, titulo_funcion) en la tabla 'funciones'
+    para evitar duplicados.
     """
     if not os.path.exists(ruta_archivo):
         raise FileNotFoundError(f"Archivo no encontrado: {ruta_archivo}")
@@ -49,15 +52,15 @@ def procesar_excel(ruta_archivo):
     campo_desc_cargo   = "descripcion_cargo"  # opcional
     
     # Campos de la tabla empleados
-    campo_cedula          = "cedula"
-    campo_nombre_empleado = "nombre"
-    campo_cargo_empleado  = "cargo"  # FK que referencia cargo.nombre_cargo
+    campo_cedula            = "cedula"
+    campo_nombre_empleado   = "nombre"
+    campo_cargo_empleado    = "cargo"  # FK que referencia cargo.nombre_cargo
     campo_numero_telefonico = "numero_telefonico"
-    campo_email           = "email"
-    campo_compania        = "compania"
-    campo_telefono_empresa = "telefono_empresa"
+    campo_email             = "email"
+    campo_compania          = "compania"
+    campo_telefono_empresa  = "telefono_empresa"
     campo_telefono_internacional = "telefono_internacional"
-    campo_contrasena      = "contrasena"
+    campo_contrasena        = "contrasena"
     
     # Campos de la tabla funciones
     campo_id_cargo_func    = "id_cargo"  # FK a cargo.id_cargo
@@ -127,11 +130,12 @@ def procesar_excel(ruta_archivo):
                 nombre_empleado_extraido = " ".join(parts[1:])
                 
                 # 3) Upsert en la tabla cargo (para asegurar que exista el cargo)
+                # Se actualiza 'descripcion_cargo' en caso de duplicado
                 cargo_safe = cargo_extraido.replace("'", "''")
                 upsert_cargo = (
                     f"INSERT INTO {tabla_cargo} ({campo_nombre_cargo}, {campo_desc_cargo}) "
                     f"VALUES ('{cargo_safe}', '') "
-                    f"ON DUPLICATE KEY UPDATE {campo_nombre_cargo} = VALUES({campo_nombre_cargo});"
+                    f"ON DUPLICATE KEY UPDATE {campo_desc_cargo} = VALUES({campo_desc_cargo});"
                 )
                 
                 # 4) Upsert en la tabla empleados
@@ -184,13 +188,15 @@ def procesar_excel(ruta_archivo):
                     continue
                 
                 # 6) Para cada función, generar la sentencia de upsert en la tabla funciones.
+                # Se utiliza el título completo de la función sin limitación de longitud.
                 for funcion in funciones_list:
                     funcion_safe = funcion.replace("'", "''")
+                    titulo_funcion = funcion_safe
                     upsert_funcion = (
                         f"INSERT INTO {tabla_funciones} "
                         f"({campo_id_cargo_func}, {campo_titulo_funcion}, {campo_descripcion_func}, "
                         f"{campo_tipo_funcion}, {campo_fecha_creacion}, {campo_fecha_actualiz}, {campo_estado}) "
-                        f"SELECT {tabla_cargo}.id_cargo, '{funcion_safe}', '', 'Específica', NOW(), NOW(), 'ACTIVO' "
+                        f"SELECT {tabla_cargo}.id_cargo, '{titulo_funcion}', '', 'Específica', NOW(), NOW(), 'ACTIVO' "
                         f"FROM {tabla_cargo} "
                         f"WHERE {campo_nombre_cargo} = '{cargo_safe}' "
                         f"ON DUPLICATE KEY UPDATE "
