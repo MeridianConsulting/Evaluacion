@@ -79,6 +79,67 @@ def procesar_excel(ruta_archivo):
     default_tel_internac = "N/A"
     default_contrasena  = "123456"
     
+    # Cargos ya existentes en la tabla "cargo" (almacenados en forma normalizada)
+    cargos_existentes = {
+        normalizar_texto("Soporte Operativo Tipo 3A"),
+        normalizar_texto("Asesor Administrativo"),
+        normalizar_texto("Supervisor de Operaciones en Pozos Tipo 3"),
+        normalizar_texto("Supervisor de Operaciones en Pozos Tipo 2"),
+        normalizar_texto("Soporte Operativo Tipo 3B"),
+        normalizar_texto("Profesional Senior para la ejecucion de actividades de la ODS No. 9770807 del contrato Matriz No. 30"),
+        normalizar_texto("Director de Proyecto Ecopetrol"),
+        normalizar_texto("Profesional Junior para la ejecucion de actividades de la ODS No. 9532986 del contrato Matriz No. 30"),
+        normalizar_texto("Soporte Operativo Tipo 4A"),
+        normalizar_texto("Profesional Junior para la ejecucion de actividades de la ODS No. 9770807 del contrato Matriz No. 30"),
+        normalizar_texto("Supervisor de Operaciones en Pozos Tipo 1"),
+        normalizar_texto("Soporte Operativo Tipo 2"),
+        normalizar_texto("Subgerente"),
+        normalizar_texto("Gerente General"),
+        normalizar_texto("Analista de Gestion Humana y Nomina"),
+        normalizar_texto("Asistente de Logistica"),
+        normalizar_texto("Servicio Especializado Tipo 2 - Integridad"),
+        normalizar_texto("Coordinador Contable y Financiero"),
+        normalizar_texto("Gerente Administrativa Y Financiera"),
+        normalizar_texto("Servicios Generales"),
+        normalizar_texto("Aprendiz Etapa Lectiva"),
+        normalizar_texto("Practicante Universitario"),
+        normalizar_texto("Analista Contable"),
+        normalizar_texto("Profesional de Proyectos"),
+        normalizar_texto("Soporte Hseq"),
+        normalizar_texto("Soporte Hseq II"),
+        normalizar_texto("Programador Aprendiz SENA"),
+        normalizar_texto("Soporte Operativo Tipo 5A"),
+        normalizar_texto("Asistente administrativa y de gestion humana"),
+        normalizar_texto("Asistente Administrativo"),
+        normalizar_texto("Asistente de Nomina y gestion humana"),
+        normalizar_texto("Asistente Contable"),
+        normalizar_texto("Coordinador de Gestion Humana"),
+        normalizar_texto("Tecnico Asistente Administrativa"),
+        normalizar_texto("Asistente de Gestion Humana y Nomina"),
+        normalizar_texto("Ingeniero(a) Asistente de Company Man para operaciones de Perforacion Completamiento y Workover  D1"),
+        normalizar_texto("Ingeniero(a) Asistente de Company Man para operaciones de Perforacion Completamiento y Workover  D3"),
+        normalizar_texto("Profesional B sico para la ejecucion de actividades de la ODS No. 9532986 del contrato Matriz No. 30"),
+        normalizar_texto("Profesional de proyectos M1"),
+        normalizar_texto("Profesional Senior para la ejecucion de actividades de la ODS No. 9532986 del contrato Matriz No. 30"),
+        normalizar_texto("Ingeniero(a) Asistente de Company Man para operaciones de Perforacion Completamiento y Workover D2"),
+        normalizar_texto("Profesional Junior para la ejecucion de actividades de la ODS No.9532986 del contrato Matriz No.303"),
+        normalizar_texto("Profesional Junior para la ejecucion de actividades de la ODS No. 9814358 del contrato Matriz No. 30"),
+        normalizar_texto("Coordinador Hseq"),
+        normalizar_texto("Profesional Administrativa y de Gestion Humana, Proyectos"),
+        normalizar_texto("Profesional Soporte en Campo"),
+        normalizar_texto("Servicio Especializado Tipo 3A"),
+        normalizar_texto("valor exacto del cargo"),
+        normalizar_texto("Supervisor de Operaciones en Pozos Tipo 4"),
+        normalizar_texto("Soporte IT Primer Nivel"),
+        normalizar_texto("Contador Junior"),
+        normalizar_texto("Aprendiz Etapa Practica"),
+        normalizar_texto("Profesional Junior para la ejecucion de actividades de la ODS No.9532986 del contrato Matriz No. 303"),
+        normalizar_texto("Soporte Hseq Proyectos")
+    }
+    
+    # Establecemos el próximo id disponible (según los registros existentes, el máximo es 55)
+    next_id = 56
+    
     try:
         wb = load_workbook(ruta_archivo, read_only=True)
         
@@ -129,16 +190,25 @@ def procesar_excel(ruta_archivo):
                 cargo_extraido = parts[0]
                 nombre_empleado_extraido = " ".join(parts[1:])
                 
-                # 3) Upsert en la tabla cargo (para asegurar que exista el cargo)
-                # Se actualiza 'descripcion_cargo' en caso de duplicado
+                # 3) Generar sentencia para la tabla cargo:
+                # Se verifica si el cargo ya existe (según su forma normalizada).
+                normalized_cargo = normalizar_texto(cargo_extraido)
                 cargo_safe = cargo_extraido.replace("'", "''")
-                upsert_cargo = (
-                    f"INSERT INTO {tabla_cargo} ({campo_nombre_cargo}, {campo_desc_cargo}) "
-                    f"VALUES ('{cargo_safe}', '') "
-                    f"ON DUPLICATE KEY UPDATE {campo_desc_cargo} = VALUES({campo_desc_cargo});"
-                )
+                if normalized_cargo in cargos_existentes:
+                    # Si ya existe, generamos un UPDATE (aunque en este ejemplo, actualizamos la descripción a vacía)
+                    upsert_cargo = (
+                        f"UPDATE {tabla_cargo} SET {campo_desc_cargo} = '' WHERE {campo_nombre_cargo} = '{cargo_safe}';"
+                    )
+                else:
+                    # Si no existe, generamos un INSERT con un id manual y luego lo añadimos al conjunto.
+                    upsert_cargo = (
+                        f"INSERT INTO {tabla_cargo} (id_cargo, {campo_nombre_cargo}, {campo_desc_cargo}) "
+                        f"VALUES ({next_id}, '{cargo_safe}', '');"
+                    )
+                    cargos_existentes.add(normalized_cargo)
+                    next_id += 1
                 
-                # 4) Upsert en la tabla empleados
+                # 4) Generar sentencia para la tabla empleados
                 cedula_safe = sheet_name.replace("'", "''")
                 nombre_safe = nombre_empleado_extraido.replace("'", "''")
                 upsert_empleado = (
