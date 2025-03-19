@@ -27,10 +27,10 @@ def procesar_excel(ruta_archivo):
             y es una FK que apunta a cargo.nombre_cargo.
       - Tabla funciones: Insert/Update de funciones, relacionando con cargo mediante id_cargo.
     
-    Se asume que:
-      - Cada hoja del Excel tiene una fila que inicia con "Funciones_Profesional <cargo> <nombre>"
-      - Luego, en la misma hoja se encuentra una fila con "Funciones específicas del cargo"
-        y a partir de ella se listan las funciones.
+    Se buscan dos posibles encabezados:
+      - "Funciones_Profesional" y "Funciones específicas del cargo"
+    Se extrae la información a partir del primer encabezado detectado (insensible a mayúsculas/minúsculas),
+    evitando duplicados y omitiendo el resto de la hoja.
     """
     if not os.path.exists(ruta_archivo):
         raise FileNotFoundError(f"Archivo no encontrado: {ruta_archivo}")
@@ -49,7 +49,6 @@ def procesar_excel(ruta_archivo):
     campo_desc_cargo   = "descripcion_cargo"  # opcional
     
     # Campos de la tabla empleados
-    # NOTA: En tu tabla 'empleados' no existe el campo id_cargo, sino "cargo" (VARCHAR)
     campo_cedula          = "cedula"
     campo_nombre_empleado = "nombre"
     campo_cargo_empleado  = "cargo"  # FK que referencia cargo.nombre_cargo
@@ -85,29 +84,39 @@ def procesar_excel(ruta_archivo):
                 df = pd.read_excel(ruta_archivo, sheet_name=sheet_name, header=None, engine='openpyxl')
                 df = df.fillna('')
                 
-                # 1) Buscar la fila con "Funciones_Profesional" para extraer cargo y nombre
+                # 1) Buscar el primer encabezado disponible: "Funciones_Profesional" o "Funciones específicas del cargo"
                 header_row = None
+                header_type = None
                 for i in range(len(df)):
                     cell_value = df.iloc[i, 0]
-                    if normalizar_texto(cell_value).startswith("funciones_profesional"):
+                    norm_cell = normalizar_texto(cell_value)
+                    if norm_cell.startswith("funciones_profesional"):
                         header_row = i
+                        header_type = "funciones_profesional"
+                        break
+                    elif norm_cell.startswith("funciones especificas del cargo"):
+                        header_row = i
+                        header_type = "funciones_especificas"
                         break
                 
                 if header_row is None:
-                    print(f"[{sheet_name}] No se encontró 'Funciones_Profesional'. Se omite esta hoja.")
+                    print(f"[{sheet_name}] No se encontró ningún encabezado válido ('Funciones_Profesional' o 'Funciones específicas del cargo'). Se omite esta hoja.")
                     continue
                 
-                # 2) Extraer cargo y nombre del empleado
-                # Ejemplo: "Funciones_Profesional Junior paola gomez"
+                # 2) Extraer cargo y nombre del empleado usando comparación insensible a mayúsculas/minúsculas
                 cell_text = str(df.iloc[header_row, 0]).strip()
-                prefix = "Funciones_Profesional"
-                if prefix in cell_text:
-                    cargo_nombre = cell_text.replace(prefix, "", 1).strip()
+                if header_type == "funciones_profesional":
+                    prefix = "Funciones_Profesional"
                 else:
-                    norm_original = normalizar_texto(cell_text)
-                    norm_prefix = normalizar_texto(prefix)
-                    idx = norm_original.find(norm_prefix)
-                    cargo_nombre = cell_text[idx + len(prefix):].strip() if idx != -1 else cell_text
+                    prefix = "Funciones específicas del cargo"
+                
+                cell_text_lower = cell_text.lower()
+                prefix_lower = prefix.lower()
+                idx = cell_text_lower.find(prefix_lower)
+                if idx != -1:
+                    cargo_nombre = cell_text[idx + len(prefix):].strip()
+                else:
+                    cargo_nombre = cell_text
                 
                 parts = cargo_nombre.split()
                 if len(parts) < 2:
@@ -126,11 +135,8 @@ def procesar_excel(ruta_archivo):
                 )
                 
                 # 4) Upsert en la tabla empleados
-                # Usamos el nombre de la hoja como cédula de ejemplo (ya que el Excel no lo provee)
                 cedula_safe = sheet_name.replace("'", "''")
                 nombre_safe = nombre_empleado_extraido.replace("'", "''")
-                # Dado que en la tabla empleados el campo para cargo es "cargo" (varchar),
-                # se inserta el valor del cargo (texto) y no el id.
                 upsert_empleado = (
                     f"INSERT INTO {tabla_empleados} "
                     f"({campo_cedula}, {campo_nombre_empleado}, {campo_cargo_empleado}, "
@@ -158,34 +164,28 @@ def procesar_excel(ruta_archivo):
                     f"{campo_contrasena} = VALUES({campo_contrasena});"
                 )
                 
-                # Agregar las sentencias (asegurando primero cargo, luego empleado)
                 sql_empleados.append(upsert_cargo)
                 sql_empleados.append(upsert_empleado)
                 
-                # 5) Buscar la fila con "Funciones específicas del cargo"
-                funciones_especificas_header = None
-                for i in range(header_row + 1, len(df)):
-                    if "funciones especificas del cargo" in normalizar_texto(df.iloc[i, 0]):
-                        funciones_especificas_header = i
-                        break
-                
-                if funciones_especificas_header is None:
-                    print(f"[{sheet_name}] No se encontró 'Funciones específicas del cargo'.")
-                    continue
-                
-                # 6) Extraer las funciones (hasta encontrar una fila vacía)
+                # 5) Extraer las funciones a partir de la fila siguiente al encabezado detectado,
+                # evitando duplicados si se detecta otro encabezado similar
                 funciones_list = []
-                for j in range(funciones_especificas_header + 1, len(df)):
+                for j in range(header_row + 1, len(df)):
                     funcion_text = str(df.iloc[j, 0]).strip()
+                    norm_funcion = normalizar_texto(funcion_text)
+                    if norm_funcion.startswith("funciones_profesional") or norm_funcion.startswith("funciones especificas del cargo"):
+                        break
                     if not funcion_text:
                         break
                     funciones_list.append(funcion_text)
                 
-                # 7) Para cada función, generar la sentencia de upsert en la tabla funciones.
-                # Se relaciona usando el id_cargo obtenido de la tabla cargo, para lo cual se hace un SELECT.
+                if not funciones_list:
+                    print(f"[{sheet_name}] No se encontraron funciones para extraer después del encabezado.")
+                    continue
+                
+                # 6) Para cada función, generar la sentencia de upsert en la tabla funciones.
                 for funcion in funciones_list:
                     funcion_safe = funcion.replace("'", "''")
-                    
                     upsert_funcion = (
                         f"INSERT INTO {tabla_funciones} "
                         f"({campo_id_cargo_func}, {campo_titulo_funcion}, {campo_descripcion_func}, "
