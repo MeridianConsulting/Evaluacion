@@ -167,7 +167,7 @@ def procesar_excel(ruta_archivo):
                     print(f"[{sheet_name}] No se encontró ningún encabezado válido ('Funciones_Profesional' o 'Funciones específicas del cargo'). Se omite esta hoja.")
                     continue
                 
-                # 2) Extraer cargo y nombre del empleado usando comparación insensible a mayúsculas/minúsculas
+                # 2) Extraer cargo y nombre del empleado (comparación insensible a mayúsculas)
                 cell_text = str(df.iloc[header_row, 0]).strip()
                 if header_type == "funciones_profesional":
                     prefix = "Funciones_Profesional"
@@ -191,16 +191,16 @@ def procesar_excel(ruta_archivo):
                 nombre_empleado_extraido = " ".join(parts[1:])
                 
                 # 3) Generar sentencia para la tabla cargo:
-                # Se verifica si el cargo ya existe (según su forma normalizada).
+                # Se verifica si el cargo ya existe (comparando su forma normalizada).
                 normalized_cargo = normalizar_texto(cargo_extraido)
                 cargo_safe = cargo_extraido.replace("'", "''")
                 if normalized_cargo in cargos_existentes:
-                    # Si ya existe, generamos un UPDATE (aunque en este ejemplo, actualizamos la descripción a vacía)
+                    # Si ya existe, generamos un UPDATE (actualizando la descripción a vacía)
                     upsert_cargo = (
                         f"UPDATE {tabla_cargo} SET {campo_desc_cargo} = '' WHERE {campo_nombre_cargo} = '{cargo_safe}';"
                     )
                 else:
-                    # Si no existe, generamos un INSERT con un id manual y luego lo añadimos al conjunto.
+                    # Si no existe, generamos un INSERT asignando manualmente el id (con next_id)
                     upsert_cargo = (
                         f"INSERT INTO {tabla_cargo} (id_cargo, {campo_nombre_cargo}, {campo_desc_cargo}) "
                         f"VALUES ({next_id}, '{cargo_safe}', '');"
@@ -241,8 +241,8 @@ def procesar_excel(ruta_archivo):
                 sql_empleados.append(upsert_cargo)
                 sql_empleados.append(upsert_empleado)
                 
-                # 5) Extraer las funciones a partir de la fila siguiente al encabezado detectado,
-                # evitando duplicados si se detecta otro encabezado similar
+                # 5) Extraer las funciones a partir de la fila siguiente al encabezado detectado.
+                # Se omiten las filas vacías para continuar la extracción.
                 funciones_list = []
                 for j in range(header_row + 1, len(df)):
                     funcion_text = str(df.iloc[j, 0]).strip()
@@ -250,7 +250,7 @@ def procesar_excel(ruta_archivo):
                     if norm_funcion.startswith("funciones_profesional") or norm_funcion.startswith("funciones especificas del cargo"):
                         break
                     if not funcion_text:
-                        break
+                        continue
                     funciones_list.append(funcion_text)
                 
                 if not funciones_list:
@@ -258,7 +258,6 @@ def procesar_excel(ruta_archivo):
                     continue
                 
                 # 6) Para cada función, generar la sentencia de upsert en la tabla funciones.
-                # Se utiliza el título completo de la función sin limitación de longitud.
                 for funcion in funciones_list:
                     funcion_safe = funcion.replace("'", "''")
                     titulo_funcion = funcion_safe
