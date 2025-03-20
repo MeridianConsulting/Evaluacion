@@ -47,7 +47,6 @@ def procesar_excel_cargo_funciones(ruta_archivo):
             df = pd.read_excel(ruta_archivo, sheet_name=sheet_name, header=None, engine='openpyxl')
             df = df.fillna('')
             header_row = None
-            # Buscar la fila que contenga el encabezado ("funciones profesional" o "funciones especificas del cargo")
             for i in range(len(df)):
                 cell_value = str(df.iloc[i, 0]).strip()
                 if not cell_value:
@@ -61,7 +60,7 @@ def procesar_excel_cargo_funciones(ruta_archivo):
             if header_row is None:
                 print(f"[{sheet_name}] No se encontró encabezado válido. Se omite esta hoja.")
                 continue
-            # Utilizar el nombre de la hoja como el cargo a asociar
+            # Usar el nombre de la hoja como el cargo y para el campo hoja_funciones
             cargo_str_final = sheet_name.strip().title()
             print(f"Cargo asignado (de la hoja): {cargo_str_final}")
             cargo_safe = cargo_str_final.replace("'", "''")
@@ -79,7 +78,6 @@ def procesar_excel_cargo_funciones(ruta_archivo):
                 print(f"Generando INSERT para el cargo: {cargo_str_final}")
                 next_id_cargo += 1
             sql_cargo.append(upsert_cargo)
-            # Recorrer todas las filas siguientes (sin romper si aparece otro encabezado)
             funciones_list = []
             for j in range(header_row + 1, len(df)):
                 funcion_text = str(df.iloc[j, 0]).strip()
@@ -90,18 +88,22 @@ def procesar_excel_cargo_funciones(ruta_archivo):
                 print(f"[{sheet_name}] No se encontraron funciones después del encabezado.")
                 continue
             print(f"Se encontraron {len(funciones_list)} funciones en la hoja {sheet_name}.")
+            # Usar un contador para generar una clave única para cada función
+            function_counter = 1
             for funcion in funciones_list:
                 funcion_safe = funcion.replace("'", "''")
-                # Se coloca el texto extraído en descripcion_funcion
-                # y se usa el nombre de la hoja (cargo_safe) para el campo hoja_funciones.
+                # El título de la función lo fijamos como "Función" (opcional) 
+                # y movemos el texto extraído a descripcion_funcion
+                titulo_funcion = "Función"
+                descripcion_funcion = funcion_safe
+                # Para la columna hoja_funciones, generamos una clave única combinando el nombre de la hoja y un contador
+                hoja_funciones_val = cargo_safe + "_" + str(function_counter)
+                function_counter += 1
                 upsert_funcion = (f"INSERT INTO {tabla_funciones} ({campo_id_cargo_func}, {campo_titulo_funcion}, {campo_descripcion_func}, "
                                   f"{campo_tipo_funcion}, {campo_hoja_funciones}, {campo_fecha_creacion}, {campo_fecha_actualiz}, {campo_estado}) "
-                                  f"SELECT {tabla_cargo}.{campo_id_cargo}, '{cargo_safe}', '{funcion_safe}', '{default_tipo_funcion}', "
-                                  f"'{cargo_safe}', NOW(), NOW(), '{default_estado}' FROM {tabla_cargo} "
-                                  f"WHERE {campo_nombre_cargo}='{cargo_safe}' "
-                                  f"ON DUPLICATE KEY UPDATE {campo_descripcion_func}=VALUES({campo_descripcion_func}), "
-                                  f"{campo_tipo_funcion}=VALUES({campo_tipo_funcion}), {campo_fecha_actualiz}=NOW(), "
-                                  f"{campo_estado}=VALUES({campo_estado});")
+                                  f"SELECT {tabla_cargo}.{campo_id_cargo}, '{titulo_funcion}', '{descripcion_funcion}', '{default_tipo_funcion}', "
+                                  f"'{hoja_funciones_val}', NOW(), NOW(), '{default_estado}' FROM {tabla_cargo} "
+                                  f"WHERE {campo_nombre_cargo}='{cargo_safe}';")
                 sql_funciones.append(upsert_funcion)
         except Exception as e:
             print(f"Error en la hoja [{sheet_name}]: {str(e)}")
