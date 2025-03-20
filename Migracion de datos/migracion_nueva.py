@@ -5,7 +5,7 @@ import unicodedata
 def normalizar_texto(texto):
     """
     Normaliza el texto a minúsculas y sin acentos para comparación,
-    además de quitar espacios en exceso.
+    además de quitar espacios extra.
     """
     texto = str(texto).strip()
     # Elimina acentos
@@ -15,6 +15,13 @@ def normalizar_texto(texto):
     )
     # Convierte a minúsculas y quita espacios extra
     return " ".join(texto.lower().split())
+
+def normalizar_espacios(texto):
+    """
+    Elimina espacios extra sin alterar la capitalización.
+    Ejemplo: "Profesional  Junior" -> "Profesional Junior"
+    """
+    return " ".join(str(texto).strip().split())
 
 def generar_sql_migracion(ruta_excel):
     """
@@ -37,7 +44,7 @@ def generar_sql_migracion(ruta_excel):
     
     # Definimos los nombres normalizados que esperamos
     encabezados_esperados = {
-        "nombres y apellidos": "nombres y  apellidos",  # Nota: se respeta el doble espacio si es necesario
+        "nombres y apellidos": "nombres y  apellidos",  # Nota: respeta el doble espacio si es necesario
         "tipo de documento": "tipo de documento",
         "n. de cedula": "n. de cedula",
         "correo": "correo",
@@ -54,7 +61,7 @@ def generar_sql_migracion(ruta_excel):
     }
     
     # Verificamos que todas las claves esperadas existan en el diccionario normalizado
-    for key, literal in encabezados_esperados.items():
+    for key in encabezados_esperados:
         if key not in columnas_map:
             raise ValueError(f"No se encontró la columna esperada (normalizada: '{key}'). Columnas detectadas: {list(columnas_map.keys())}")
     
@@ -75,29 +82,32 @@ def generar_sql_migracion(ruta_excel):
     
     # Recorremos cada fila del Excel
     for idx, row in df.iterrows():
-        # Extraemos los datos usando los nombres normalizados definidos
-        nombre_empleado     = row["nombres y apellidos"].strip()
-        tipo_documento      = row["tipo de documento"].strip()
-        cedula              = str(row["n. de cedula"]).strip()
-        correo              = row["correo"].strip()
-        cargo               = row["cargo"].strip()
-        area                = row["area"].strip()
-        fecha_inicio        = row["fecha inicio de contrato"]
-        reporta_directamente= row["a quien reporta directamente"].strip()
-        nivel               = row["nivel"].strip()
-        hoja_funciones      = row["hoja funciones"].strip()
-        objetivo_cargo      = row["objetivo del cargo a evaluar"].strip()
-        proceso_gestion     = row["proceso de gestion"].strip()
-        proyecto            = row["proyecto"].strip()
-        ods                 = row["ods"].strip()
+        # Extraemos y normalizamos los datos; convertimos a string donde sea necesario
+        nombre_empleado      = str(row["nombres y apellidos"]).strip()
+        tipo_documento       = str(row["tipo de documento"]).strip()
+        cedula               = str(row["n. de cedula"]).strip()
+        correo               = str(row["correo"]).strip()
+        # Normalizamos espacios en el cargo para evitar dobles espacios
+        cargo_original       = str(row["cargo"]).strip()
+        cargo_normalizado    = normalizar_espacios(cargo_original)
+        area                 = str(row["area"]).strip()
+        fecha_inicio         = row["fecha inicio de contrato"]
+        reporta_directamente = str(row["a quien reporta directamente"]).strip()
+        nivel                = str(row["nivel"]).strip()
+        hoja_funciones       = str(row["hoja funciones"]).strip()
+        objetivo_cargo       = str(row["objetivo del cargo a evaluar"]).strip()
+        proceso_gestion      = str(row["proceso de gestion"]).strip()
+        proyecto             = str(row["proyecto"]).strip()
+        ods                  = str(row["ods"]).strip()
         
         # --- Generación de sentencia para tabla cargo ---
-        norm_cargo = normalizar_texto(cargo)
+        # Usamos normalizar_texto para comparar sin mayúsculas y acentos
+        norm_cargo = normalizar_texto(cargo_normalizado)
         if norm_cargo not in cargo_mapping:
-            # Si es un cargo nuevo, se genera INSERT en cargo
-            cargo_safe = cargo.replace("'", "''")
-            objetivo_safe = objetivo_cargo.replace("'", "''")
-            proceso_safe = proceso_gestion.replace("'", "''")
+            # Insertamos el cargo con el valor normalizado (para evitar espacios extra)
+            cargo_safe     = cargo_normalizado.replace("'", "''")
+            objetivo_safe  = objetivo_cargo.replace("'", "''")
+            proceso_safe   = proceso_gestion.replace("'", "''")
             sql = f"INSERT INTO cargo (id_cargo, nombre_cargo, descripcion_cargo, objetivo_cargo, proceso_gestion) VALUES ({next_id_cargo}, '{cargo_safe}', '', '{objetivo_safe}', '{proceso_safe}');"
             sql_cargo.append(sql)
             cargo_mapping[norm_cargo] = next_id_cargo
@@ -105,18 +115,18 @@ def generar_sql_migracion(ruta_excel):
         id_cargo = cargo_mapping[norm_cargo]
         
         # --- Generación de sentencia para tabla empleados ---
-        # Valores por defecto para campos que no vienen en el Excel
-        default_telefono           = "000000"
-        default_compania           = "Desconocida"
-        default_telefono_empresa   = "000000"
-        default_telefono_internac  = "N/A"
-        default_contrasena         = "123456"
+        default_telefono          = "000000"
+        default_compania          = "Desconocida"
+        default_telefono_empresa  = "000000"
+        default_telefono_internac = "N/A"
+        default_contrasena        = "123456"
         
         nombre_safe   = nombre_empleado.replace("'", "''")
         tipo_doc_safe = tipo_documento.replace("'", "''")
         cedula_safe   = cedula.replace("'", "''")
         correo_safe   = correo.replace("'", "''")
-        cargo_safe    = cargo.replace("'", "''")
+        # Usamos el cargo normalizado para que coincida con lo insertado en la tabla cargo
+        cargo_safe    = cargo_normalizado.replace("'", "''")
         area_safe     = area.replace("'", "''")
         reporta_safe  = reporta_directamente.replace("'", "''")
         nivel_safe    = nivel.replace("'", "''")
@@ -128,24 +138,24 @@ def generar_sql_migracion(ruta_excel):
         else:
             fecha_str = str(fecha_inicio).strip()
         
-        sql = (
+        sql_emp = (
             "INSERT INTO empleados (cedula, nombre, tipo_documento, cargo, area, fecha_inicio_contrato, reporta_directamente, nivel, "
             "numero_telefonico, email, compania, telefono_empresa, telefono_internacional, contrasena, proyecto, ods) "
             f"VALUES ('{cedula_safe}', '{nombre_safe}', '{tipo_doc_safe}', '{cargo_safe}', '{area_safe}', '{fecha_str}', "
             f"'{reporta_safe}', '{nivel_safe}', '{default_telefono}', '{correo_safe}', '{default_compania}', '{default_telefono_empresa}', "
             f"'{default_telefono_internac}', '{default_contrasena}', '{proyecto_safe}', '{ods_safe}');"
         )
-        sql_empleados.append(sql)
+        sql_empleados.append(sql_emp)
         
         # --- Generación de sentencia para tabla funciones ---
         hoja_funciones_safe = hoja_funciones.replace("'", "''")
         titulo_funcion = hoja_funciones_safe  # Se utiliza el mismo valor para título y PK
-        sql = (
+        sql_func = (
             "INSERT INTO funciones (id_cargo, titulo_funcion, descripcion_funcion, tipo_funcion, hoja_funciones, fecha_creacion, fecha_actualizacion, estado) "
             f"VALUES ({id_cargo}, '{titulo_funcion}', '', 'Específica', '{hoja_funciones_safe}', NOW(), NOW(), 'ACTIVO') "
             "ON DUPLICATE KEY UPDATE descripcion_funcion = VALUES(descripcion_funcion), tipo_funcion = VALUES(tipo_funcion), fecha_actualizacion = NOW(), estado = VALUES(estado);"
         )
-        sql_funciones.append(sql)
+        sql_funciones.append(sql_func)
     
     return sql_cargo, sql_empleados, sql_funciones
 
