@@ -51,33 +51,23 @@ def procesar_excel_cargo_funciones(ruta_archivo):
             df = pd.read_excel(ruta_archivo, sheet_name=sheet_name, header=None, engine='openpyxl')
             df = df.fillna('')
             header_row = None
-            cargo_nombre = None
             for i in range(len(df)):
                 cell_value = str(df.iloc[i, 0]).strip()
                 if not cell_value:
                     continue
                 norm_cell = limpiar_puntuacion(normalizar_texto(cell_value))
-                if ("funciones" in norm_cell and "profesional" in norm_cell):
+                if ("funciones" in norm_cell and "profesional" in norm_cell) or \
+                   ("funciones" in norm_cell and "especificas" in norm_cell and "del" in norm_cell and "cargo" in norm_cell):
                     header_row = i
-                    cargo_nombre = cell_value
-                    print(f"Encabezado detectado en fila {i} con clave 'funciones profesional'")
+                    print(f"Encabezado detectado en fila {i}")
                     break
-                elif ("funciones" in norm_cell and "especificas" in norm_cell and "del" in norm_cell and "cargo" in norm_cell):
-                    header_row = i
-                    cargo_nombre = cell_value
-                    print(f"Encabezado detectado en fila {i} con clave 'funciones especificas del cargo'")
-                    break
-            if header_row is None or not cargo_nombre:
+            if header_row is None:
                 print(f"[{sheet_name}] No se encontró encabezado válido. Se omite esta hoja.")
                 continue
 
-            norm_cargo_str = limpiar_puntuacion(normalizar_texto(cargo_nombre))
-            for remove_word in ["funciones", "profesional", "especificas", "del", "cargo"]:
-                norm_cargo_str = norm_cargo_str.replace(remove_word, "")
-            cargo_str_final = norm_cargo_str.strip().title()
-            if not cargo_str_final:
-                cargo_str_final = "Cargo Sin Nombre"
-            print(f"Cargo extraído: {cargo_str_final}")
+            # Se usa el nombre de la hoja como cargo, para asociar las funciones
+            cargo_str_final = sheet_name.strip().title()
+            print(f"Cargo asignado (de la hoja): {cargo_str_final}")
             cargo_safe = cargo_str_final.replace("'", "''")
             norm_cargo = normalizar_texto(cargo_str_final)
             if norm_cargo in cargos_existentes:
