@@ -15,7 +15,6 @@ def limpiar_puntuacion(texto):
 def procesar_excel_cargo_funciones(ruta_archivo):
     if not os.path.exists(ruta_archivo):
         raise FileNotFoundError(f"Archivo no encontrado: {ruta_archivo}")
-
     sql_cargo = []
     sql_funciones = []
     tabla_cargo = "cargo"
@@ -33,16 +32,13 @@ def procesar_excel_cargo_funciones(ruta_archivo):
     campo_fecha_creacion = "fecha_creacion"
     campo_fecha_actualiz = "fecha_actualizacion"
     campo_estado = "estado"
-
     default_desc_cargo = ""
     default_objetivo_cargo = ""
     default_proceso_gestion = ""
     default_tipo_funcion = "Específica"
     default_estado = "ACTIVO"
-
     cargos_existentes = set()
     next_id_cargo = 110
-
     wb = load_workbook(ruta_archivo, read_only=True)
     print("Iniciando procesamiento del archivo Excel...")
     for sheet_name in wb.sheetnames:
@@ -51,6 +47,7 @@ def procesar_excel_cargo_funciones(ruta_archivo):
             df = pd.read_excel(ruta_archivo, sheet_name=sheet_name, header=None, engine='openpyxl')
             df = df.fillna('')
             header_row = None
+            # Buscar la fila que contenga el encabezado ("funciones profesional" o "funciones especificas del cargo")
             for i in range(len(df)):
                 cell_value = str(df.iloc[i, 0]).strip()
                 if not cell_value:
@@ -64,8 +61,7 @@ def procesar_excel_cargo_funciones(ruta_archivo):
             if header_row is None:
                 print(f"[{sheet_name}] No se encontró encabezado válido. Se omite esta hoja.")
                 continue
-
-            # Se usa el nombre de la hoja como cargo, para asociar las funciones
+            # Utilizar el nombre de la hoja como el cargo a asociar
             cargo_str_final = sheet_name.strip().title()
             print(f"Cargo asignado (de la hoja): {cargo_str_final}")
             cargo_safe = cargo_str_final.replace("'", "''")
@@ -83,16 +79,12 @@ def procesar_excel_cargo_funciones(ruta_archivo):
                 print(f"Generando INSERT para el cargo: {cargo_str_final}")
                 next_id_cargo += 1
             sql_cargo.append(upsert_cargo)
-
+            # Recorrer todas las filas siguientes (sin romper si aparece otro encabezado)
             funciones_list = []
             for j in range(header_row + 1, len(df)):
                 funcion_text = str(df.iloc[j, 0]).strip()
                 if not funcion_text:
                     continue
-                check_func = limpiar_puntuacion(normalizar_texto(funcion_text))
-                if ("funciones" in check_func and "profesional" in check_func) or \
-                   ("funciones" in check_func and "especificas" in check_func and "del" in check_func and "cargo" in check_func):
-                    break
                 funciones_list.append(funcion_text)
             if not funciones_list:
                 print(f"[{sheet_name}] No se encontraron funciones después del encabezado.")
@@ -100,12 +92,12 @@ def procesar_excel_cargo_funciones(ruta_archivo):
             print(f"Se encontraron {len(funciones_list)} funciones en la hoja {sheet_name}.")
             for funcion in funciones_list:
                 funcion_safe = funcion.replace("'", "''")
-                titulo_funcion = funcion_safe
-                hoja_funciones_val = funcion_safe
+                # Se coloca el texto extraído en descripcion_funcion
+                # y se usa el nombre de la hoja (cargo_safe) para el campo hoja_funciones.
                 upsert_funcion = (f"INSERT INTO {tabla_funciones} ({campo_id_cargo_func}, {campo_titulo_funcion}, {campo_descripcion_func}, "
                                   f"{campo_tipo_funcion}, {campo_hoja_funciones}, {campo_fecha_creacion}, {campo_fecha_actualiz}, {campo_estado}) "
-                                  f"SELECT {tabla_cargo}.{campo_id_cargo}, '{titulo_funcion}', '', '{default_tipo_funcion}', "
-                                  f"'{hoja_funciones_val}', NOW(), NOW(), '{default_estado}' FROM {tabla_cargo} "
+                                  f"SELECT {tabla_cargo}.{campo_id_cargo}, '{cargo_safe}', '{funcion_safe}', '{default_tipo_funcion}', "
+                                  f"'{cargo_safe}', NOW(), NOW(), '{default_estado}' FROM {tabla_cargo} "
                                   f"WHERE {campo_nombre_cargo}='{cargo_safe}' "
                                   f"ON DUPLICATE KEY UPDATE {campo_descripcion_func}=VALUES({campo_descripcion_func}), "
                                   f"{campo_tipo_funcion}=VALUES({campo_tipo_funcion}), {campo_fecha_actualiz}=NOW(), "
@@ -114,7 +106,6 @@ def procesar_excel_cargo_funciones(ruta_archivo):
         except Exception as e:
             print(f"Error en la hoja [{sheet_name}]: {str(e)}")
             continue
-
     print("Procesamiento completado.")
     return sql_cargo, sql_funciones
 
