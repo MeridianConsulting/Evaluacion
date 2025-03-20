@@ -4,8 +4,7 @@ import unicodedata
 
 def normalizar_texto(texto):
     """
-    Normaliza el texto a minúsculas y sin acentos para comparación,
-    además de quitar espacios extra.
+    Normaliza el texto a minúsculas, elimina acentos y quita espacios extras.
     """
     texto = str(texto).strip()
     # Elimina acentos
@@ -13,7 +12,7 @@ def normalizar_texto(texto):
         c for c in unicodedata.normalize('NFD', texto)
         if unicodedata.category(c) != 'Mn'
     )
-    # Convierte a minúsculas y quita espacios extra
+    # Convierte a minúsculas y quita espacios extras
     return " ".join(texto.lower().split())
 
 def normalizar_espacios(texto):
@@ -27,37 +26,53 @@ def generar_sql_migracion(ruta_excel):
     """
     Lee el archivo Excel y genera sentencias SQL para insertar datos en:
       - Tabla cargo (si no existe el cargo, se inserta).
-      - Tabla empleados.
+      - Tabla empleados (omitiendo registros con cédulas duplicadas).
       - Tabla funciones (usando el campo 'Hoja Funciones' como identificador).
     
-    Se espera que el Excel tenga los siguientes encabezados:
+    Se espera que el Excel tenga los siguientes encabezados literales:
       "Nombres y  Apellidos", "Tipo de documento", "N. de cedula", "Correo", "Cargo", "Area", 
       "Fecha Inicio de Contrato", " A quien reporta directamente", "Nivel", "Hoja Funciones", 
       "OBJETIVO DEL CARGO A EVALUAR", "PROCESO DE GESTION", "proyecto", "ODS"
+    
+    Después de la normalización, se usarán las siguientes claves:
+      - "nombres y apellidos"
+      - "tipo de documento"
+      - "n. de cedula"
+      - "correo"
+      - "cargo"
+      - "area"
+      - "fecha inicio de contrato"
+      - "a quien reporta directamente"
+      - "nivel"
+      - "hoja funciones"
+      - "objetivo del cargo a evaluar"
+      - "proceso de gestion"
+      - "proyecto"
+      - "ods"
     """
     # Lee el Excel usando la primera fila como encabezado
     df = pd.read_excel(ruta_excel, engine='openpyxl', header=0)
     
     # Normaliza los nombres de las columnas y construye un diccionario de mapeo
-    # (normalizado -> nombre original)
+    # (clave normalizada -> nombre original)
     columnas_map = { normalizar_texto(col): col for col in df.columns }
     
-    # Definimos los nombres normalizados que esperamos
+    # Definimos los encabezados esperados usando las claves normalizadas
     encabezados_esperados = {
-        "nombres y apellidos": "nombres y  apellidos",  # Nota: respeta el doble espacio si es necesario
-        "tipo de documento": "tipo de documento",
-        "n. de cedula": "n. de cedula",
-        "correo": "correo",
-        "cargo": "cargo",
-        "area": "area",
-        "fecha inicio de contrato": "fecha inicio de contrato",
-        "a quien reporta directamente": "a quien reporta directamente",
-        "nivel": "nivel",
-        "hoja funciones": "hoja funciones",
-        "objetivo del cargo a evaluar": "objetivo del cargo a evaluar",
-        "proceso de gestion": "proceso de gestion",
+        "nombres y apellidos": "Nombres y  Apellidos",
+        "tipo de documento": "Tipo de documento",
+        "n. de cedula": "N. de cedula",
+        "correo": "Correo",
+        "cargo": "Cargo",
+        "area": "Area",
+        "fecha inicio de contrato": "Fecha Inicio de Contrato",
+        "a quien reporta directamente": " A quien reporta directamente",
+        "nivel": "Nivel",
+        "hoja funciones": "Hoja Funciones",
+        "objetivo del cargo a evaluar": "OBJETIVO DEL CARGO A EVALUAR",
+        "proceso de gestion": "PROCESO DE GESTION",
         "proyecto": "proyecto",
-        "ods": "ods"
+        "ods": "ODS"
     }
     
     # Verificamos que todas las claves esperadas existan en el diccionario normalizado
@@ -65,7 +80,7 @@ def generar_sql_migracion(ruta_excel):
         if key not in columnas_map:
             raise ValueError(f"No se encontró la columna esperada (normalizada: '{key}'). Columnas detectadas: {list(columnas_map.keys())}")
     
-    # Renombramos las columnas del DataFrame para trabajar con claves normalizadas
+    # Renombramos las columnas del DataFrame para trabajar con las claves normalizadas
     df.rename(columns={ columnas_map[key]: key for key in encabezados_esperados }, inplace=True)
     
     # Reemplaza NaN por cadena vacía
@@ -76,13 +91,16 @@ def generar_sql_migracion(ruta_excel):
     sql_empleados = []
     sql_funciones = []
     
-    # Diccionario para mapear cargo normalizado a id_cargo (para evitar duplicados)
+    # Diccionario para mapear cargo normalizado a id_cargo (evitar duplicados)
     cargo_mapping = {}
     next_id_cargo = 56  # Ajusta según el AUTO_INCREMENT de tu tabla 'cargo'
     
+    # Set para llevar control de cédulas ya procesadas (evita duplicados)
+    cedulas_procesadas = set()
+    
     # Recorremos cada fila del Excel
     for idx, row in df.iterrows():
-        # Extraemos y normalizamos los datos; convertimos a string donde sea necesario
+        # Extraemos y normalizamos los datos (convertimos a string donde sea necesario)
         nombre_empleado      = str(row["nombres y apellidos"]).strip()
         tipo_documento       = str(row["tipo de documento"]).strip()
         cedula               = str(row["n. de cedula"]).strip()
@@ -100,11 +118,14 @@ def generar_sql_migracion(ruta_excel):
         proyecto             = str(row["proyecto"]).strip()
         ods                  = str(row["ods"]).strip()
         
-        # --- Generación de sentencia para tabla cargo ---
-        # Usamos normalizar_texto para comparar sin mayúsculas y acentos
+        # Si la cédula ya fue procesada, se omite esta fila para evitar duplicados
+        if cedula in cedulas_procesadas:
+            continue
+        cedulas_procesadas.add(cedula)
+        
+        # --- Sentencia para tabla cargo ---
         norm_cargo = normalizar_texto(cargo_normalizado)
         if norm_cargo not in cargo_mapping:
-            # Insertamos el cargo con el valor normalizado (para evitar espacios extra)
             cargo_safe     = cargo_normalizado.replace("'", "''")
             objetivo_safe  = objetivo_cargo.replace("'", "''")
             proceso_safe   = proceso_gestion.replace("'", "''")
@@ -114,7 +135,7 @@ def generar_sql_migracion(ruta_excel):
             next_id_cargo += 1
         id_cargo = cargo_mapping[norm_cargo]
         
-        # --- Generación de sentencia para tabla empleados ---
+        # --- Sentencia para tabla empleados ---
         default_telefono          = "000000"
         default_compania          = "Desconocida"
         default_telefono_empresa  = "000000"
@@ -147,7 +168,7 @@ def generar_sql_migracion(ruta_excel):
         )
         sql_empleados.append(sql_emp)
         
-        # --- Generación de sentencia para tabla funciones ---
+        # --- Sentencia para tabla funciones ---
         hoja_funciones_safe = hoja_funciones.replace("'", "''")
         titulo_funcion = hoja_funciones_safe  # Se utiliza el mismo valor para título y PK
         sql_func = (
