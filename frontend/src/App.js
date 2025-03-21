@@ -7,8 +7,9 @@ import About from "./pages/About";
 import Services from "./pages/Services";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
-import Profile from "./pages/Profile";       // Nueva importación para Profile
-import Results from "./pages/Results";       // Nueva importación para Results
+import Profile from "./pages/Profile";
+import Results from "./pages/Results";
+import PerformanceEvaluation from "./pages/PerformanceEvaluation"; // Se corrigió la importación duplicada
 import "./App.css";
 
 function App() {
@@ -134,6 +135,17 @@ function App() {
               <Navigate to="/" replace />
             )
           }
+        />
+        {/* Ruta protegida para PerformanceEvaluation */}
+        <Route  
+          path="/performance"
+          element={
+            isAuthenticated ? (
+              <PerformanceEvaluation onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }  
         />
       </Routes>
     </Router>

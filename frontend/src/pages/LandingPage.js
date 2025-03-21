@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../assets/css/Styles1.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -6,6 +7,7 @@ import Footer from '../components/Footer';
 function LandingPage({ onLogout }) {
   const [showModal, setShowModal] = useState(false);
   const [accepted, setAccepted] = useState(false);
+  const navigate = useNavigate();
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -18,6 +20,10 @@ function LandingPage({ onLogout }) {
 
   const handleAccept = () => {
     setShowModal(false);
+    // Si se ha marcado la casilla, redirige a la página de evaluación de desempeño
+    if (accepted) {
+      navigate('/performance');
+    }
   };
 
   useEffect(() => {
