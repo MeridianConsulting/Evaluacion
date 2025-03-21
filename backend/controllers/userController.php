@@ -7,18 +7,16 @@ class UserController {
     public function loginEmpleado($data) {
         global $db;
         
-        // Verifica que se envíen los datos necesarios
-        if (!isset($data['correo']) || !isset($data['contrasena'])) {
+        if (!isset($data['cedula']) || !isset($data['contrasena'])) {
             http_response_code(400);
             echo json_encode(["success" => false, "message" => "Faltan datos"]);
             return;
         }
         
-        $correo = $data['correo'];
+        $cedula = $data['cedula'];
         $contrasena = $data['contrasena'];
         
-        // Consulta para validar que exista un empleado con el email y la contraseña proporcionados
-        $sql = "SELECT * FROM empleados WHERE email = ? AND contrasena = ?";
+        $sql = "SELECT * FROM empleados WHERE cedula = ? AND contrasena = ?";
         $stmt = $db->prepare($sql);
         if (!$stmt) {
             http_response_code(500);
@@ -26,13 +24,12 @@ class UserController {
             return;
         }
         
-        $stmt->bind_param("ss", $correo, $contrasena);
+        $stmt->bind_param("ss", $cedula, $contrasena);
         $stmt->execute();
         $result = $stmt->get_result();
         
         if ($result->num_rows > 0) {
             $empleado = $result->fetch_assoc();
-            // Aquí podrías iniciar sesión, establecer variables de sesión, etc.
             echo json_encode(["success" => true, "message" => "Login exitoso", "empleado" => $empleado]);
         } else {
             http_response_code(401);
