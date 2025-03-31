@@ -2,35 +2,15 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../assets/css/Styles1.css";          // Tu hoja de estilos principal
 import logoMeridian from "../assets/img/logo_meridian_blanco.png";
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 const PerformanceEvaluation = () => {
   const navigate = useNavigate();
-
-  // Aquí podrías manejar funciones si hace falta: 
-  // por ejemplo para iniciar la evaluación, guardar datos, etc.
-  const handleStartEvaluation = () => {
-    console.log("Iniciando Evaluación...");
-    // navigate("/otra-ruta") si deseas redirigir
-  };
-
   return (
     <div className="evaluation-page-unique"> 
       {/* HEADER / NAVBAR */}
-      <header className="navbar">
-        <div className="navbar-logo">
-          <img 
-            src={logoMeridian} 
-            alt="Meridian Solutions Logo" 
-          />
-        </div>
-        {/* Si no usas menú lateral, puedes dejarlo vacío 
-            o incluir tus links de navegación */}
-        <div className="menu-container">
-          {/* ejemplo: */}
-          {/* <button className="menu-item">Opción1</button> */}
-          {/* <button className="menu-item">Opción2</button> */}
-        </div>
-      </header>
+      <Header onLogout={onLogout} />
 
       {/* TÍTULO PRINCIPAL */}
       <div className="hero" style={{ textAlign: "center", padding: "2rem" }}>
@@ -40,13 +20,6 @@ const PerformanceEvaluation = () => {
           <span style={{ marginRight: "2rem" }}>Versión: NX</span>
           <span>GMF 1.0</span>
         </div>
-        <button 
-          className="hero-button" 
-          onClick={handleStartEvaluation}
-          style={{ marginTop: "1rem" }}
-        >
-          Iniciar Evaluación
-        </button>
       </div>
 
       {/* SECCIÓN: DATOS PERSONALES / OBJETIVO DEL CARGO / INSTRUCCIONES */}
@@ -282,13 +255,6 @@ const PerformanceEvaluation = () => {
           </button>
         </section>
       </main>
-
-      {/* FOOTER */}
-      <footer className="footer">
-        <div className="footer-bottom">
-          <p>© {new Date().getFullYear()} Meridian Solutions - Todos los derechos reservados.</p>
-        </div>
-      </footer>
     </div>
   );
 };
