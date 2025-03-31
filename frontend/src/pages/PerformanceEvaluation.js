@@ -1,14 +1,19 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import "../assets/css/Styles1.css";          // Tu hoja de estilos principal
-import logoMeridian from "../assets/img/logo_meridian_blanco.png";
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+// Eliminado: import { useNavigate } from "react-router-dom";
+import "../assets/css/Styles1.css";          // Hoja de estilos principal
+// Eliminado: import logoMeridian from "../assets/img/logo_meridian_blanco.png";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const PerformanceEvaluation = () => {
-  const navigate = useNavigate();
+  // Función de cierre de sesión que recibe el Header
+  const onLogout = () => {
+    console.log("Cerrando sesión...");
+    // Aquí podrías manejar la lógica de logout real, si corresponde.
+  };
+
   return (
-    <div className="evaluation-page-unique"> 
+    <div className="evaluation-page-unique">
       {/* HEADER / NAVBAR */}
       <Header onLogout={onLogout} />
 
@@ -22,9 +27,9 @@ const PerformanceEvaluation = () => {
         </div>
       </div>
 
-      {/* SECCIÓN: DATOS PERSONALES / OBJETIVO DEL CARGO / INSTRUCCIONES */}
+      {/* CONTENIDO PRINCIPAL */}
       <main className="evaluation-container-unique" style={{ padding: "2rem" }}>
-        {/* DATOS PERSONALES SIMPLIFICADOS */}
+        {/* DATOS PERSONALES */}
         <section className="evaluation-section">
           <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
             <div>
@@ -67,13 +72,10 @@ const PerformanceEvaluation = () => {
         <section className="evaluation-section">
           <h2 style={{ marginBottom: "1rem" }}>INSTRUCCIONES</h2>
           <p>
-            1. Lea detenidamente cada competencia y/o función.  
-            <br/>
-            2. Seleccione la calificación correspondiente (1 a 5).  
-            <br/>
-            3. Complete cada sección antes de continuar con la siguiente.  
-            <br/>
-            4. Al finalizar, guarde e imprima el formulario.  
+            1. Lea detenidamente cada competencia y/o función. <br/>
+            2. Seleccione la calificación correspondiente (1 a 5). <br/>
+            3. Complete cada sección antes de continuar con la siguiente. <br/>
+            4. Al finalizar, guarde e imprima el formulario.
           </p>
         </section>
 
@@ -98,7 +100,10 @@ const PerformanceEvaluation = () => {
               <tbody>
                 <tr>
                   <td>Orientación al cliente</td>
-                  <td>Demuestra interés y compromiso por satisfacer necesidades del cliente interno y externo.</td>
+                  <td>
+                    Demuestra interés y compromiso por satisfacer necesidades 
+                    del cliente interno y externo.
+                  </td>
                   {[1,2,3,4,5].map(num => (
                     <td key={`orientacion-${num}`}>
                       <input type="radio" name="orientacion" value={num} />
@@ -107,7 +112,10 @@ const PerformanceEvaluation = () => {
                 </tr>
                 <tr>
                   <td>Colaboración</td>
-                  <td>Trabaja de forma cooperativa con compañeros, promueve la cohesión y el trabajo en equipo.</td>
+                  <td>
+                    Trabaja de forma cooperativa con compañeros, promueve la 
+                    cohesión y el trabajo en equipo.
+                  </td>
                   {[1,2,3,4,5].map(num => (
                     <td key={`colaboracion-${num}`}>
                       <input type="radio" name="colaboracion" value={num} />
@@ -116,7 +124,10 @@ const PerformanceEvaluation = () => {
                 </tr>
                 <tr>
                   <td>Planificación</td>
-                  <td>Organiza y prioriza el trabajo de manera efectiva, respetando tiempos y recursos.</td>
+                  <td>
+                    Organiza y prioriza el trabajo de manera efectiva, 
+                    respetando tiempos y recursos.
+                  </td>
                   {[1,2,3,4,5].map(num => (
                     <td key={`planificacion-${num}`}>
                       <input type="radio" name="planificacion" value={num} />
@@ -131,7 +142,7 @@ const PerformanceEvaluation = () => {
 
         <hr style={{ margin: "2rem 0" }}/>
 
-        {/* CALIFICACIÓN GENERAL POR COMPETENCIAS / FUNCIONES */}
+        {/* CALIFICACIÓN GENERAL POR COMPETENCIAS */}
         <section className="evaluation-section">
           <h2>CALIFICACIÓN GENERAL POR COMPETENCIAS</h2>
           <table className="evaluation-table" style={{ marginTop: "1rem" }}>
@@ -233,14 +244,31 @@ const PerformanceEvaluation = () => {
 
         {/* FIRMAS Y BOTÓN FINAL */}
         <section className="evaluation-section" style={{ textAlign: "center" }}>
-          <div style={{ display: "flex", justifyContent: "space-around", flexWrap: "wrap", gap: "1rem" }}>
+          <div style={{ 
+            display: "flex", 
+            justifyContent: "space-around", 
+            flexWrap: "wrap", 
+            gap: "1rem" 
+          }}>
             <div>
               <label>Firma (Evaluado)</label>
-              <div style={{ border: "1px solid #ccc", height: "60px", width: "200px" }}></div>
+              <div 
+                style={{ 
+                  border: "1px solid #ccc", 
+                  height: "60px", 
+                  width: "200px" 
+                }}
+              />
             </div>
             <div>
               <label>Firma (Jefe Directo)</label>
-              <div style={{ border: "1px solid #ccc", height: "60px", width: "200px" }}></div>
+              <div 
+                style={{ 
+                  border: "1px solid #ccc", 
+                  height: "60px", 
+                  width: "200px" 
+                }}
+              />
             </div>
             <div>
               <label>Fecha</label>
@@ -255,6 +283,9 @@ const PerformanceEvaluation = () => {
           </button>
         </section>
       </main>
+
+      {/* FOOTER (Fragmento requerido) */}
+      <Footer />
     </div>
   );
 };
