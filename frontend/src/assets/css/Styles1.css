@@ -1263,3 +1263,68 @@ footer {
   color: #ffffff;
 }
 
+/* ============================
+   PERFORMANCE EVALUATION PAGE
+============================ */
+.evaluation-page-unique {
+  /* Ajusta según prefieras, por ejemplo: */
+  background-color: var(--color-background);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.evaluation-container-unique {
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #fff; /* o usa alguna variable de color, ej. var(--color-secondary) */
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.evaluation-section {
+  margin-bottom: 2rem;
+  /* Puedes agregar color, fuentes, etc. 
+     Ejemplo: color: var(--color-primary); */
+}
+
+/* En caso de querer un ancho flexible en tablas,
+   puedes agregar la clase .evaluation-table-wrapper si no existe
+   (aunque en tu ejemplo se usa style inline). */
+.evaluation-table-wrapper {
+  overflow-x: auto;
+}
+
+/* Tabla básica de evaluación */
+.evaluation-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.evaluation-table th, 
+.evaluation-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+/* Botón final y cualquier botón estilo "hero-button" */
+.hero-button {
+  background-color: var(--color-primary);
+  color: var(--color-secondary);
+  border: none;
+  padding: 0.8rem 1.6rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.hero-button:hover {
+  background-color: var(--color-dark);
+}
+
+.evaluacion-desempeno{
+  color: black;
+}

@@ -1,35 +1,20 @@
 import React from "react";
-// Eliminado: import { useNavigate } from "react-router-dom";
-import "../assets/css/Styles1.css";          // Hoja de estilos principal
-// Eliminado: import logoMeridian from "../assets/img/logo_meridian_blanco.png";
+import "../assets/css/Styles1.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 const PerformanceEvaluation = () => {
-  // Función de cierre de sesión que recibe el Header
+
   const onLogout = () => {
-    console.log("Cerrando sesión...");
-    // Aquí podrías manejar la lógica de logout real, si corresponde.
   };
 
   return (
     <div className="evaluation-page-unique">
-      {/* HEADER / NAVBAR */}
       <Header onLogout={onLogout} />
-
-      {/* TÍTULO PRINCIPAL */}
       <div className="hero" style={{ textAlign: "center", padding: "2rem" }}>
-        <h1>EVALUACIÓN DE DESEMPEÑO</h1>
-        <div style={{ margin: "1rem 0" }}>
-          <span style={{ marginRight: "2rem" }}>Fondo: XX/XX/XXXX</span>
-          <span style={{ marginRight: "2rem" }}>Versión: NX</span>
-          <span>GMF 1.0</span>
-        </div>
+        <h1 className="evaluacion-desempeno">EVALUACIÓN DE DESEMPEÑO</h1>
       </div>
-
-      {/* CONTENIDO PRINCIPAL */}
       <main className="evaluation-container-unique" style={{ padding: "2rem" }}>
-        {/* DATOS PERSONALES */}
         <section className="evaluation-section">
           <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
             <div>
@@ -54,10 +39,7 @@ const PerformanceEvaluation = () => {
             </div>
           </div>
         </section>
-
         <hr style={{ margin: "2rem 0" }}/>
-
-        {/* OBJETIVO DEL CARGO */}
         <section className="evaluation-section">
           <h2 style={{ marginBottom: "1rem" }}>OBJETIVO DEL CARGO A EVALUAR</h2>
           <p>
@@ -65,10 +47,7 @@ const PerformanceEvaluation = () => {
             Incluye responsabilidades generales, alcance y actividades clave.
           </p>
         </section>
-
         <hr style={{ margin: "2rem 0" }}/>
-
-        {/* INSTRUCCIONES */}
         <section className="evaluation-section">
           <h2 style={{ marginBottom: "1rem" }}>INSTRUCCIONES</h2>
           <p>
@@ -78,10 +57,7 @@ const PerformanceEvaluation = () => {
             4. Al finalizar, guarde e imprima el formulario.
           </p>
         </section>
-
         <hr style={{ margin: "2rem 0" }}/>
-
-        {/* COMPETENCIAS */}
         <section className="evaluation-section">
           <h2 style={{ marginBottom: "1rem" }}>COMPETENCIAS</h2>
           <div className="evaluation-table-wrapper" style={{ overflowX: "auto" }}>
@@ -134,7 +110,6 @@ const PerformanceEvaluation = () => {
                     </td>
                   ))}
                 </tr>
-                {/* Agrega más filas según tus competencias */}
               </tbody>
             </table>
           </div>
@@ -142,7 +117,6 @@ const PerformanceEvaluation = () => {
 
         <hr style={{ margin: "2rem 0" }}/>
 
-        {/* CALIFICACIÓN GENERAL POR COMPETENCIAS */}
         <section className="evaluation-section">
           <h2>CALIFICACIÓN GENERAL POR COMPETENCIAS</h2>
           <table className="evaluation-table" style={{ marginTop: "1rem" }}>
@@ -163,14 +137,11 @@ const PerformanceEvaluation = () => {
                 <td><input type="radio" name="comp-generales-1" value="por-mejorar" /></td>
                 <td><input type="radio" name="comp-generales-1" value="insuficiente" /></td>
               </tr>
-              {/* Más filas según requieras */}
             </tbody>
           </table>
         </section>
 
         <hr style={{ margin: "2rem 0" }}/>
-
-        {/* RESPONSABILIDADES HSEQ */}
         <section className="evaluation-section">
           <h2>CALIFICACIÓN GENERAL POR RESPONSABILIDADES HSEQ</h2>
           <table className="evaluation-table" style={{ marginTop: "1rem" }}>
@@ -194,14 +165,11 @@ const PerformanceEvaluation = () => {
                   </select>
                 </td>
               </tr>
-              {/* Más filas según tus necesidades */}
             </tbody>
           </table>
         </section>
 
         <hr style={{ margin: "2rem 0" }}/>
-
-        {/* MEJORAMIENTO Y DESARROLLO */}
         <section className="evaluation-section">
           <h2>MEJORAMIENTO Y DESARROLLO</h2>
           <div style={{ marginBottom: "1rem" }}>
@@ -213,10 +181,7 @@ const PerformanceEvaluation = () => {
             <textarea id="aspectosMejorar" rows="3" style={{ width: "100%" }} />
           </div>
         </section>
-
         <hr style={{ margin: "2rem 0" }}/>
-
-        {/* PLAN DE ACCIÓN */}
         <section className="evaluation-section">
           <h2>PLAN DE ACCIÓN</h2>
           <table className="evaluation-table" style={{ marginTop: "1rem" }}>
@@ -235,14 +200,12 @@ const PerformanceEvaluation = () => {
                 <td><input type="text" placeholder="Indicadores / Frecuencia" /></td>
                 <td><input type="date" /></td>
               </tr>
-              {/* Más filas si lo requieres */}
             </tbody>
           </table>
         </section>
 
         <hr style={{ margin: "2rem 0" }}/>
 
-        {/* FIRMAS Y BOTÓN FINAL */}
         <section className="evaluation-section" style={{ textAlign: "center" }}>
           <div style={{ 
             display: "flex", 
@@ -283,8 +246,6 @@ const PerformanceEvaluation = () => {
           </button>
         </section>
       </main>
-
-      {/* FOOTER (Fragmento requerido) */}
       <Footer />
     </div>
   );
