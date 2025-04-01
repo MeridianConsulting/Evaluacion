@@ -106,17 +106,26 @@ const PerformanceEvaluation = () => {
         <hr style={{ margin: "2rem 0" }}/>
         <section className="evaluation-section">
           {/* Tabla de Competencias */}
-          <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "Arial, sans-serif" }}>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              fontFamily: "Arial, sans-serif",
+            }}
+          >
             {/* Fila de cabecera general (barra negra) */}
             <thead>
               <tr>
-                <th colSpan={7} style={{ 
-                  backgroundColor: "#000", 
-                  color: "#fff", 
-                  padding: "1rem", 
-                  textAlign: "center", 
-                  fontSize: "1.2rem" 
-                }}>
+                <th
+                  colSpan={7}
+                  style={{
+                    backgroundColor: "#000",
+                    color: "#fff",
+                    padding: "1rem",
+                    textAlign: "center",
+                    fontSize: "1.2rem",
+                  }}
+                >
                   COMPETENCIAS
                 </th>
               </tr>
@@ -137,71 +146,152 @@ const PerformanceEvaluation = () => {
               {/* Primera fila: se utiliza rowSpan=4 para las dos primeras columnas */}
               <tr>
                 {/* Columna 1: Competencia */}
-                <td rowSpan={4} style={{ 
-                  backgroundColor: "#DCDCDC", 
-                  verticalAlign: "middle", 
-                  textAlign: "center", 
-                  fontWeight: "bold", 
-                  padding: "1rem", 
-                  width: "12%" 
-                }}>
-                  Comunicación<br />efectiva
+                <td
+                  rowSpan={4}
+                  style={{
+                    backgroundColor: "#DCDCDC",
+                    verticalAlign: "middle",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                    padding: "1rem",
+                    width: "12%",
+                  }}
+                >
+                  Comunicación<br />
+                  efectiva
                 </td>
 
                 {/* Columna 2: Definición de la competencia */}
-                <td rowSpan={4} style={{ 
-                  backgroundColor: "#fff", 
-                  verticalAlign: "middle", 
-                  padding: "1rem", 
-                  width: "25%" 
-                }}>
+                <td
+                  rowSpan={4}
+                  style={{
+                    backgroundColor: "#fff",
+                    verticalAlign: "middle",
+                    padding: "1rem",
+                    width: "25%",
+                  }}
+                >
                   Establecer comunicación efectiva y positiva con superiores jerárquicos,
                   pares y clientes, tanto en la expresión escrita como verbal y gestual.
                 </td>
 
                 {/* Columna 3: Aspecto a evaluar (fila 1) */}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem", width: "23%" }}>
-                  Utiliza canales de comunicación, en su diversa expresión, con claridad, 
+                  Utiliza canales de comunicación, en su diversa expresión, con claridad,
                   precisión y tono agradable para el receptor.
                 </td>
-                
+
                 {/* Columna 4: TRABAJADOR (Autoevaluación) */}
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem", width: "10%" }} />
-                
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem", width: "10%" }}>
+                  <input
+                    type="number"
+                    min="1"
+                    max="5"
+                    placeholder="1-5"
+                    style={{ width: "100%" }}
+                  />
+                </td>
+
                 {/* Columna 5: JEFE INMEDIATO (Evaluación) */}
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem", width: "10%" }} />
-                
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem", width: "10%" }}>
+                  {/* Opcional: Podrías usar un input o select si requieres que el jefe lo edite en el mismo formulario */}
+                  <select style={{ width: "100%" }}>
+                    <option value="">Seleccione</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+
                 {/* Columna 6: PROMEDIO */}
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem", width: "10%" }} />
-                
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem", width: "10%" }}>
+                  {/* Este campo podría calcularse automáticamente con JS/React, o permitir edición manual */}
+                  <input type="text" style={{ width: "100%" }} placeholder="Prom." />
+                </td>
+
                 {/* Columna 7: JUSTIFICACIÓN */}
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem", width: "10%" }} />
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem", width: "10%" }}>
+                  <textarea
+                    rows={2}
+                    style={{ width: "100%" }}
+                    placeholder="Justifique (si 5 o ≤2)"
+                  />
+                </td>
               </tr>
 
               {/* Segunda fila: solo la 3ª columna en adelante (aspecto a evaluar 2) */}
               <tr>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  Redacta textos, informes, mensajes, cuadros o gráficas con claridad 
-                  en la expresión para ser efectiva y sencilla la comprensión.
+                  Redacta textos, informes, mensajes, cuadros o gráficas con claridad
+                  en la expresión para una comprensión sencilla.
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }} />
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }} />
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }} />
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }} />
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }} />
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="number"
+                    min="1"
+                    max="5"
+                    placeholder="1-5"
+                    style={{ width: "100%" }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select style={{ width: "100%" }}>
+                    <option value="">Seleccione</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input type="text" style={{ width: "100%" }} placeholder="Prom." />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    rows={2}
+                    style={{ width: "100%" }}
+                    placeholder="Justifique (si 5 o ≤2)"
+                  />
+                </td>
               </tr>
 
               {/* Tercera fila: aspecto a evaluar 3 */}
               <tr>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  Mantiene escucha y lectura atenta a efectos de comprender mejor 
-                  los mensajes o información recibida.
+                  Mantiene escucha y lectura atenta para comprender mejor los mensajes.
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }} />
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }} />
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }} />
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }} />
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }} />
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="number"
+                    min="1"
+                    max="5"
+                    placeholder="1-5"
+                    style={{ width: "100%" }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select style={{ width: "100%" }}>
+                    <option value="">Seleccione</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input type="text" style={{ width: "100%" }} placeholder="Prom." />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    rows={2}
+                    style={{ width: "100%" }}
+                    placeholder="Justifique (si 5 o ≤2)"
+                  />
+                </td>
               </tr>
 
               {/* Cuarta fila: aspecto a evaluar 4 */}
@@ -209,15 +299,40 @@ const PerformanceEvaluation = () => {
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   Da respuesta a cada comunicación recibida de modo inmediato.
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }} />
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }} />
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }} />
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }} />
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }} />
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="number"
+                    min="1"
+                    max="5"
+                    placeholder="1-5"
+                    style={{ width: "100%" }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select style={{ width: "100%" }}>
+                    <option value="">Seleccione</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input type="text" style={{ width: "100%" }} placeholder="Prom." />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    rows={2}
+                    style={{ width: "100%" }}
+                    placeholder="Justifique (si 5 o ≤2)"
+                  />
+                </td>
               </tr>
             </tbody>
           </table>
         </section>
+
 
 
         <hr style={{ margin: "2rem 0" }}/>
