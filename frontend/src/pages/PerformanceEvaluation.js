@@ -75,12 +75,33 @@ const PerformanceEvaluation = () => {
         <hr style={{ margin: "2rem 0" }}/>
         <section className="evaluation-section">
           <h2 style={{ marginBottom: "1rem" }}>INSTRUCCIONES</h2>
-          <p>
-            1. Lea detenidamente cada competencia y/o función. <br/>
-            2. Seleccione la calificación correspondiente (1 a 5). <br/>
-            3. Complete cada sección antes de continuar con la siguiente. <br/>
-            4. Al finalizar, guarde e imprima el formulario.
-          </p>
+            <ol>
+              <li>
+                <strong>Lea detenidamente la definición de los aspectos a evaluar.</strong><br />
+                Asegúrese de comprender cada criterio antes de asignar una calificación.
+              </li>
+              <li>
+                <strong>Seleccione la categoría de desempeño correspondiente para cada aspecto.</strong><br />
+                <ul>
+                  <li><strong>1 = No Cumple:</strong> No hay evidencia de cumplimiento o no alcanza lo esperado.</li>
+                  <li><strong>2 = Cumplimiento Regular:</strong> Cumple de forma limitada, con oportunidades de mejora.</li>
+                  <li><strong>3 = Cumple Parcialmente:</strong> Cumple en lo esencial, pero presenta áreas susceptibles de perfeccionamiento.</li>
+                  <li><strong>4 = Cumple Satisfactoriamente:</strong> Cumple a cabalidad con todos los aspectos evaluados.</li>
+                  <li><strong>5 = Cumple de Manera Excelente:</strong> Además de cumplir con todos los aspectos, aporta un valor agregado notable para la organización.</li>
+                </ul>
+              </li>
+              <li>
+                <strong>Justifique las calificaciones extremas.</strong><br />
+                <em>
+                  Si otorga una calificación de 5, explique los factores de excelencia.<br />
+                  Si otorga una calificación de 2 o menor, justifique las razones de la deficiencia.
+                </em>
+              </li>
+              <li>
+                <strong>Proponga un plan de acción obligatorio</strong> para calificaciones de 5, 2 o menor.<br />
+                Este plan debe detallar los pasos para mantener la excelencia o corregir las deficiencias.
+              </li>
+            </ol>
         </section>
         <hr style={{ margin: "2rem 0" }}/>
         <section className="evaluation-section">
