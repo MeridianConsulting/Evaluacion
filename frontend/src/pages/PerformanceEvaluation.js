@@ -76,6 +76,69 @@ function PerformanceEvaluation() {
       boss: "",
       average: "",
     },
+    {
+      id: 11,
+      aspecto: "Articula sus actuaciones con las de los demás",
+      worker: "",
+      boss: "",
+      average: "",
+    },
+    {
+      id: 12,
+      aspecto: "Cumple los compromisos adquiridos",
+      worker: "",
+      boss: "",
+      average: "",
+    },
+    {
+      id: 13,
+      aspecto: "Facilita la labor de sus supervisores y compañeros de trabajo",
+      worker: "",
+      boss: "",
+      average: "",
+    },
+    {
+      id: 13,
+      aspecto: "Escucha con interés y capta las necesidades de los demás.",
+      worker: "",
+      boss: "",
+      average: "",
+    },
+    {
+      id: 14,
+      aspecto: "Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.",
+      worker: "",
+      boss: "",
+      average: "",
+    },
+    {
+      id: 15,
+      aspecto: "Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.",
+      worker: "",
+      boss: "",
+      average: "",
+    },
+    {
+      id: 16,
+      aspecto: "Ejecuta sus tareas con los criterios de calidad establecidos.",
+      worker: "",
+      boss: "",
+      average: "",
+    },
+    {
+      id: 17,
+      aspecto: "Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.",
+      worker: "",
+      boss: "",
+      average: "",
+    },
+    {
+      id: 18,
+      aspecto: "Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.",
+      worker: "",
+      boss: "",
+      average: "",
+    },
   ]);
 
   // Calcula promedio cada vez que cambie autoevaluación o evaluación
@@ -456,368 +519,926 @@ function PerformanceEvaluation() {
                 </td>
               </tr>
             </tbody>
+            <tr>
+              <td colSpan={7} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
+            </tr>
+
             {/* Nueva Competencia: Instrumentalidad de decisiones */}
-<tr>
-  {/* Primera fila: fila con rowSpan para competencia y definición */}
-  <td
-    rowSpan={2}
-    style={{
-      backgroundColor: "#DCDCDC",
-      verticalAlign: "middle",
-      textAlign: "center",
-      fontWeight: "bold",
-      padding: "1rem",
-      width: "12%",
-    }}
-  >
-    Instrumentalidad de <br /> decisiones
-  </td>
-  <td
-    rowSpan={2}
-    style={{
-      backgroundColor: "#fff",
-      verticalAlign: "middle",
-      padding: "1rem",
-      width: "25%",
-    }}
-  >
-    Decidir sobre las acciones en las que es responsable con criterios
-    de economía, eficacia, eficiencia y transparencia de la decisión.
-  </td>
+              <tr>
+                {/* Primera fila: fila con rowSpan para competencia y definición */}
+                <td
+                  rowSpan={2}
+                  style={{
+                    backgroundColor: "#DCDCDC",
+                    verticalAlign: "middle",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                    padding: "1rem",
+                    width: "12%",
+                  }}
+                >
+                  Instrumentalidad de <br /> decisiones
+                </td>
+                <td
+                  rowSpan={2}
+                  style={{
+                    backgroundColor: "#fff",
+                    verticalAlign: "middle",
+                    padding: "1rem",
+                    width: "25%",
+                  }}
+                >
+                  Decidir sobre las acciones en las que es responsable con criterios
+                  de economía, eficacia, eficiencia y transparencia de la decisión.
+                </td>
 
-  {/* Aspecto 1 */}
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    {rows[4].aspecto}
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <select
-      style={{ width: "100%" }}
-      value={rows[4].worker === 0 ? "" : rows[4].worker}
-      onChange={(e) => handleSelectChange(rows[4].id, "worker", e.target.value)}
-    >
-      <option value="">1 - 5</option>
-      <option value="1">1 - No Cumple</option>
-      <option value="2">2 - Regular</option>
-      <option value="3">3 - Parcial</option>
-      <option value="4">4 - Satisfactorio</option>
-      <option value="5">5 - Excelente</option>
-    </select>
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <select
-      style={{ width: "100%" }}
-      value={rows[4].boss === 0 ? "" : rows[4].boss}
-      onChange={(e) => handleSelectChange(rows[4].id, "boss", e.target.value)}
-    >
-      <option value="">1 - 5</option>
-      <option value="1">1 - No Cumple</option>
-      <option value="2">2 - Regular</option>
-      <option value="3">3 - Parcial</option>
-      <option value="4">4 - Satisfactorio</option>
-      <option value="5">5 - Excelente</option>
-    </select>
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <input
-      type="text"
-      className="promedio-input"
-      readOnly
-      value={rows[4].average}
-      placeholder=""
-    />
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <textarea
-      className="justificacion-textarea"
-      rows={2}
-      placeholder="Explique la calificación (si 5 o ≤2)"
-    />
-  </td>
-</tr>
+                {/* Aspecto 1 */}
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  {rows[4].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[4].worker === 0 ? "" : rows[4].worker}
+                    onChange={(e) => handleSelectChange(rows[4].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[4].boss === 0 ? "" : rows[4].boss}
+                    onChange={(e) => handleSelectChange(rows[4].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    className="promedio-input"
+                    readOnly
+                    value={rows[4].average}
+                    placeholder=""
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
+                </td>
+              </tr>
 
-{/* Segunda fila para el segundo aspecto */}
-<tr>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    {rows[5].aspecto}
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <select
-      style={{ width: "100%" }}
-      value={rows[5].worker === 0 ? "" : rows[5].worker}
-      onChange={(e) => handleSelectChange(rows[5].id, "worker", e.target.value)}
-    >
-      <option value="">1 - 5</option>
-      <option value="1">1 - No Cumple</option>
-      <option value="2">2 - Regular</option>
-      <option value="3">3 - Parcial</option>
-      <option value="4">4 - Satisfactorio</option>
-      <option value="5">5 - Excelente</option>
-    </select>
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <select
-      style={{ width: "100%" }}
-      value={rows[5].boss === 0 ? "" : rows[5].boss}
-      onChange={(e) => handleSelectChange(rows[5].id, "boss", e.target.value)}
-    >
-      <option value="">1 - 5</option>
-      <option value="1">1 - No Cumple</option>
-      <option value="2">2 - Regular</option>
-      <option value="3">3 - Parcial</option>
-      <option value="4">4 - Satisfactorio</option>
-      <option value="5">5 - Excelente</option>
-    </select>
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <input
-      type="text"
-      className="promedio-input"
-      readOnly
-      value={rows[5].average}
-      placeholder=""
-    />
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <textarea
-      className="justificacion-textarea"
-      rows={2}
-      placeholder="Explique la calificación (si 5 o ≤2)"
-    />
-  </td>
-</tr>
-{/* Nueva Competencia: Aporte profesional */}
-<tr>
-  {/* Primera fila con rowSpan de 4 para el nombre y la definición de la competencia */}
-  <td
-    rowSpan={4}
-    style={{
-      backgroundColor: "#DCDCDC",
-      verticalAlign: "middle",
-      textAlign: "center",
-      fontWeight: "bold",
-      padding: "1rem",
-      width: "12%",
-    }}
-  >
-    Aporte <br /> profesional
-  </td>
-  <td
-    rowSpan={4}
-    style={{
-      backgroundColor: "#fff",
-      verticalAlign: "middle",
-      padding: "1rem",
-      width: "25%",
-    }}
-  >
-    Poner a disposición de la administración sus saberes, experiencias previas,
-    asesorando la actualización de sus saberes expertos.
-  </td>
+              {/* Segunda fila para el segundo aspecto */}
+              <tr>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  {rows[5].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[5].worker === 0 ? "" : rows[5].worker}
+                    onChange={(e) => handleSelectChange(rows[5].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[5].boss === 0 ? "" : rows[5].boss}
+                    onChange={(e) => handleSelectChange(rows[5].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    className="promedio-input"
+                    readOnly
+                    value={rows[5].average}
+                    placeholder=""
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
+                </td>
+              </tr>
+              <tr>
+              <td colSpan={7} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
+            </tr>
 
-  {/* Aspecto 1 */}
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    {rows[6].aspecto}
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <select
-      style={{ width: "100%" }}
-      value={rows[6].worker === 0 ? "" : rows[6].worker}
-      onChange={(e) => handleSelectChange(rows[6].id, "worker", e.target.value)}
-    >
-      <option value="">1 - 5</option>
-      <option value="1">1 - No Cumple</option>
-      <option value="2">2 - Regular</option>
-      <option value="3">3 - Parcial</option>
-      <option value="4">4 - Satisfactorio</option>
-      <option value="5">5 - Excelente</option>
-    </select>
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <select
-      style={{ width: "100%" }}
-      value={rows[6].boss === 0 ? "" : rows[6].boss}
-      onChange={(e) => handleSelectChange(rows[6].id, "boss", e.target.value)}
-    >
-      <option value="">1 - 5</option>
-      <option value="1">1 - No Cumple</option>
-      <option value="2">2 - Regular</option>
-      <option value="3">3 - Parcial</option>
-      <option value="4">4 - Satisfactorio</option>
-      <option value="5">5 - Excelente</option>
-    </select>
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <input
-      type="text"
-      className="promedio-input"
-      readOnly
-      placeholder=""
-      value={rows[6].average}
-    />
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <textarea
-      className="justificacion-textarea"
-      rows={2}
-      placeholder="Explique la calificación (si 5 o ≤2)"
-    />
-  </td>
-</tr>
+              {/* Nueva Competencia: Aporte profesional */}
+              <tr>
+                {/* Primera fila con rowSpan de 4 para el nombre y la definición de la competencia */}
+                <td
+                  rowSpan={4}
+                  style={{
+                    backgroundColor: "#DCDCDC",
+                    verticalAlign: "middle",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                    padding: "1rem",
+                    width: "12%",
+                  }}
+                >
+                  Aporte <br /> profesional
+                </td>
+                <td
+                  rowSpan={4}
+                  style={{
+                    backgroundColor: "#fff",
+                    verticalAlign: "middle",
+                    padding: "1rem",
+                    width: "25%",
+                  }}
+                >
+                  Poner a disposición de la administración sus saberes, experiencias previas,
+                  asesorando la actualización de sus saberes expertos.
+                </td>
 
-{/* Fila 2 de la competencia: Aspecto 2 */}
-<tr>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    {rows[7].aspecto}
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <select
-      style={{ width: "100%" }}
-      value={rows[7].worker === 0 ? "" : rows[7].worker}
-      onChange={(e) => handleSelectChange(rows[7].id, "worker", e.target.value)}
-    >
-      <option value="">1 - 5</option>
-      <option value="1">1 - No Cumple</option>
-      <option value="2">2 - Regular</option>
-      <option value="3">3 - Parcial</option>
-      <option value="4">4 - Satisfactorio</option>
-      <option value="5">5 - Excelente</option>
-    </select>
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <select
-      style={{ width: "100%" }}
-      value={rows[7].boss === 0 ? "" : rows[7].boss}
-      onChange={(e) => handleSelectChange(rows[7].id, "boss", e.target.value)}
-    >
-      <option value="">1 - 5</option>
-      <option value="1">1 - No Cumple</option>
-      <option value="2">2 - Regular</option>
-      <option value="3">3 - Parcial</option>
-      <option value="4">4 - Satisfactorio</option>
-      <option value="5">5 - Excelente</option>
-    </select>
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <input
-      type="text"
-      className="promedio-input"
-      readOnly
-      placeholder=""
-      value={rows[7].average}
-    />
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <textarea
-      className="justificacion-textarea"
-      rows={2}
-      placeholder="Explique la calificación (si 5 o ≤2)"
-    />
-  </td>
-</tr>
+                {/* Aspecto 1 */}
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  {rows[6].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[6].worker === 0 ? "" : rows[6].worker}
+                    onChange={(e) => handleSelectChange(rows[6].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[6].boss === 0 ? "" : rows[6].boss}
+                    onChange={(e) => handleSelectChange(rows[6].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    className="promedio-input"
+                    readOnly
+                    placeholder=""
+                    value={rows[6].average}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
+                </td>
+              </tr>
 
-{/* Fila 3 de la competencia: Aspecto 3 */}
-<tr>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    {rows[8].aspecto}
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <select
-      style={{ width: "100%" }}
-      value={rows[8].worker === 0 ? "" : rows[8].worker}
-      onChange={(e) => handleSelectChange(rows[8].id, "worker", e.target.value)}
-    >
-      <option value="">1 - 5</option>
-      <option value="1">1 - No Cumple</option>
-      <option value="2">2 - Regular</option>
-      <option value="3">3 - Parcial</option>
-      <option value="4">4 - Satisfactorio</option>
-      <option value="5">5 - Excelente</option>
-    </select>
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <select
-      style={{ width: "100%" }}
-      value={rows[8].boss === 0 ? "" : rows[8].boss}
-      onChange={(e) => handleSelectChange(rows[8].id, "boss", e.target.value)}
-    >
-      <option value="">1 - 5</option>
-      <option value="1">1 - No Cumple</option>
-      <option value="2">2 - Regular</option>
-      <option value="3">3 - Parcial</option>
-      <option value="4">4 - Satisfactorio</option>
-      <option value="5">5 - Excelente</option>
-    </select>
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <input
-      type="text"
-      className="promedio-input"
-      readOnly
-      placeholder=""
-      value={rows[8].average}
-    />
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <textarea
-      className="justificacion-textarea"
-      rows={2}
-      placeholder="Explique la calificación (si 5 o ≤2)"
-    />
-  </td>
-</tr>
+              {/* Fila 2 de la competencia: Aspecto 2 */}
+              <tr>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  {rows[7].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[7].worker === 0 ? "" : rows[7].worker}
+                    onChange={(e) => handleSelectChange(rows[7].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[7].boss === 0 ? "" : rows[7].boss}
+                    onChange={(e) => handleSelectChange(rows[7].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    className="promedio-input"
+                    readOnly
+                    placeholder=""
+                    value={rows[7].average}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
+                </td>
+              </tr>
 
-{/* Fila 4 de la competencia: Aspecto 4 */}
-<tr>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    {rows[9].aspecto}
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <select
-      style={{ width: "100%" }}
-      value={rows[9].worker === 0 ? "" : rows[9].worker}
-      onChange={(e) => handleSelectChange(rows[9].id, "worker", e.target.value)}
-    >
-      <option value="">1 - 5</option>
-      <option value="1">1 - No Cumple</option>
-      <option value="2">2 - Regular</option>
-      <option value="3">3 - Parcial</option>
-      <option value="4">4 - Satisfactorio</option>
-      <option value="5">5 - Excelente</option>
-    </select>
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <select
-      style={{ width: "100%" }}
-      value={rows[9].boss === 0 ? "" : rows[9].boss}
-      onChange={(e) => handleSelectChange(rows[9].id, "boss", e.target.value)}
-    >
-      <option value="">1 - 5</option>
-      <option value="1">1 - No Cumple</option>
-      <option value="2">2 - Regular</option>
-      <option value="3">3 - Parcial</option>
-      <option value="4">4 - Satisfactorio</option>
-      <option value="5">5 - Excelente</option>
-    </select>
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <input
-      type="text"
-      className="promedio-input"
-      readOnly
-      placeholder=""
-      value={rows[9].average}
-    />
-  </td>
-  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-    <textarea
-      className="justificacion-textarea"
-      rows={2}
-      placeholder="Explique la calificación (si 5 o ≤2)"
-    />
-  </td>
-</tr>
+              {/* Fila 3 de la competencia: Aspecto 3 */}
+              <tr>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  {rows[8].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[8].worker === 0 ? "" : rows[8].worker}
+                    onChange={(e) => handleSelectChange(rows[8].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[8].boss === 0 ? "" : rows[8].boss}
+                    onChange={(e) => handleSelectChange(rows[8].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    className="promedio-input"
+                    readOnly
+                    placeholder=""
+                    value={rows[8].average}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
+                </td>
+              </tr>
 
+              {/* Fila 4 de la competencia: Aspecto 4 */}
+              <tr>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  {rows[9].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[9].worker === 0 ? "" : rows[9].worker}
+                    onChange={(e) => handleSelectChange(rows[9].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[9].boss === 0 ? "" : rows[9].boss}
+                    onChange={(e) => handleSelectChange(rows[9].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    className="promedio-input"
+                    readOnly
+                    placeholder=""
+                    value={rows[9].average}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
+                </td>
+              </tr>
+              <tr>
+              <td colSpan={7} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
+            </tr>
 
+              {/* Nueva Competencia: Colaboración */}
+              <tr>
+                {/* Primera fila con rowSpan=3 para la competencia y su definición */}
+                <td
+                  rowSpan={3}
+                  style={{
+                    backgroundColor: "#DCDCDC",
+                    verticalAlign: "middle",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                    padding: "1rem",
+                    width: "12%",
+                  }}
+                >
+                  Colaboración
+                </td>
+                <td
+                  rowSpan={3}
+                  style={{
+                    backgroundColor: "#fff",
+                    verticalAlign: "middle",
+                    padding: "1rem",
+                    width: "25%",
+                  }}
+                >
+                  Coopera con los demás con el fin de alcanzar los objetivos de la compañía.
+                </td>
+
+                {/* Aspecto 1 */}
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  {rows[10].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[10].worker === 0 ? "" : rows[10].worker}
+                    onChange={(e) => handleSelectChange(rows[10].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[10].boss === 0 ? "" : rows[10].boss}
+                    onChange={(e) => handleSelectChange(rows[10].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    className="promedio-input"
+                    readOnly
+                    placeholder=""
+                    value={rows[10].average}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
+                </td>
+              </tr>
+
+              {/* Fila 2 de la competencia: Aspecto 2 */}
+              <tr>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  {rows[11].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[11].worker === 0 ? "" : rows[11].worker}
+                    onChange={(e) => handleSelectChange(rows[11].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[11].boss === 0 ? "" : rows[11].boss}
+                    onChange={(e) => handleSelectChange(rows[11].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    className="promedio-input"
+                    readOnly
+                    placeholder=""
+                    value={rows[11].average}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
+                </td>
+              </tr>
+
+              {/* Fila 3 de la competencia: Aspecto 3 */}
+              <tr>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  {rows[12].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[12].worker === 0 ? "" : rows[12].worker}
+                    onChange={(e) => handleSelectChange(rows[12].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[12].boss === 0 ? "" : rows[12].boss}
+                    onChange={(e) => handleSelectChange(rows[12].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    className="promedio-input"
+                    readOnly
+                    placeholder=""
+                    value={rows[12].average}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
+                </td>
+              </tr>
+              <tr>
+              <td colSpan={7} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
+            </tr>
+
+              {/* Nueva Competencia: Relaciones interpersonales */}
+              <tr>
+                {/* Primera fila con rowSpan=3 para la competencia y su definición */}
+                <td
+                  rowSpan={3}
+                  style={{
+                    backgroundColor: "#DCDCDC",
+                    verticalAlign: "middle",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                    padding: "1rem",
+                    width: "12%",
+                  }}
+                >
+                  Relaciones <br /> interpersonales
+                </td>
+                <td
+                  rowSpan={3}
+                  style={{
+                    backgroundColor: "#fff",
+                    verticalAlign: "middle",
+                    padding: "1rem",
+                    width: "25%",
+                  }}
+                >
+                  Establecer y mantener relaciones de trabajo positivas, basadas en la comunicación
+                  abierta y fluida y el respeto por los demás.
+                </td>
+
+                {/* Aspecto 1 */}
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  {rows[13].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[13].worker === 0 ? "" : rows[13].worker}
+                    onChange={(e) => handleSelectChange(rows[13].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[13].boss === 0 ? "" : rows[13].boss}
+                    onChange={(e) => handleSelectChange(rows[13].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    className="promedio-input"
+                    readOnly
+                    placeholder=""
+                    value={rows[13].average}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
+                </td>
+              </tr>
+
+              {/* Fila 2 de la competencia: Aspecto 2 */}
+              <tr>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  {rows[14].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[14].worker === 0 ? "" : rows[14].worker}
+                    onChange={(e) => handleSelectChange(rows[14].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[14].boss === 0 ? "" : rows[14].boss}
+                    onChange={(e) => handleSelectChange(rows[14].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    className="promedio-input"
+                    readOnly
+                    placeholder=""
+                    value={rows[14].average}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
+                </td>
+              </tr>
+
+              {/* Fila 3 de la competencia: Aspecto 3 */}
+              <tr>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  {rows[15].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[15].worker === 0 ? "" : rows[15].worker}
+                    onChange={(e) => handleSelectChange(rows[15].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[15].boss === 0 ? "" : rows[15].boss}
+                    onChange={(e) => handleSelectChange(rows[15].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    className="promedio-input"
+                    readOnly
+                    placeholder=""
+                    value={rows[15].average}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
+                </td>
+              </tr>
+              <tr>
+              <td colSpan={7} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
+            </tr>
+
+              {/* Nueva Competencia: Gestión de procedimientos */}
+              <tr>
+                {/* Primera fila con rowSpan=3 para la competencia y su definición */}
+                <td
+                  rowSpan={3}
+                  style={{
+                    backgroundColor: "#DCDCDC",
+                    verticalAlign: "middle",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                    padding: "1rem",
+                    width: "12%",
+                  }}
+                >
+                  Gestión de <br /> procedimientos
+                </td>
+                <td
+                  rowSpan={3}
+                  style={{
+                    backgroundColor: "#fff",
+                    verticalAlign: "middle",
+                    padding: "1rem",
+                    width: "25%",
+                  }}
+                >
+                  Desarrollar las tareas a cargo en el marco de los procedimientos vigentes
+                  y proponer e introducir acciones para acelerar la entrega continua
+                  y la productividad.
+                </td>
+
+                {/* Aspecto 1 */}
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  {rows[16].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[16].worker === 0 ? "" : rows[16].worker}
+                    onChange={(e) => handleSelectChange(rows[16].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[16].boss === 0 ? "" : rows[16].boss}
+                    onChange={(e) => handleSelectChange(rows[16].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    className="promedio-input"
+                    readOnly
+                    placeholder=""
+                    value={rows[16].average}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
+                </td>
+              </tr>
+
+              {/* Fila 2 de la competencia: Aspecto 2 */}
+              <tr>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  {rows[17].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[17].worker === 0 ? "" : rows[17].worker}
+                    onChange={(e) => handleSelectChange(rows[17].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[17].boss === 0 ? "" : rows[17].boss}
+                    onChange={(e) => handleSelectChange(rows[17].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    className="promedio-input"
+                    readOnly
+                    placeholder=""
+                    value={rows[17].average}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
+                </td>
+              </tr>
+
+              {/* Fila 3 de la competencia: Aspecto 3 */}
+              <tr>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  {rows[18].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[18].worker === 0 ? "" : rows[18].worker}
+                    onChange={(e) => handleSelectChange(rows[18].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[18].boss === 0 ? "" : rows[18].boss}
+                    onChange={(e) => handleSelectChange(rows[18].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    className="promedio-input"
+                    readOnly
+                    placeholder=""
+                    value={rows[18].average}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
+                </td>
+              </tr>
           </table>
         </section>
 
