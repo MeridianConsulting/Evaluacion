@@ -1412,3 +1412,34 @@ footer {
      min-height: 60px; /* Altura mínima */
    }
    
+   /* === Estilos exclusivos para el campo de Promedio === */
+.promedio-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: "Libre Franklin", sans-serif; /* Mantén la misma fuente que el resto */
+  font-weight: 500;
+  color: #333;               /* Texto oscuro */
+  background-color: #f7f7f7; /* Ligero tono gris, diferente a los demás inputs */
+  text-align: center;        /* Centra el valor numérico */
+  cursor: default;           /* El cursor no muestra que sea editable */
+  outline: none;             /* Elimina bordes al hacer clic */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Placeholder estilizado y más profesional */
+.promedio-input::placeholder {
+  color: #999;         /* Un gris un poco más claro */
+  font-style: italic;  /* Acento para diferenciarlo del texto real */
+}
+
+/* Opcional: efecto hover sutil */
+.promedio-input:hover {
+  background-color: #f0f0f0;
+}
+  .promedio-input {
+    user-select: none;
+    pointer-events: none;
+  }

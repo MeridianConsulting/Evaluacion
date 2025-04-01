@@ -150,6 +150,7 @@ function PerformanceEvaluation() {
               </li>
             </ol>
         </section>
+
         <hr style={{ margin: "2rem 0" }}/>
         <section className="evaluation-section">
           <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "Arial, sans-serif" }}>
@@ -242,9 +243,9 @@ function PerformanceEvaluation() {
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <input
                     type="text"
-                    style={{ width: "100%" }}
+                    className="promedio-input"
                     readOnly
-                    placeholder="Prom."
+                    placeholder=""
                     value={rows[0].average}
                   />
                 </td>
@@ -289,9 +290,9 @@ function PerformanceEvaluation() {
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <input
                     type="text"
-                    style={{ width: "100%" }}
+                    className="promedio-input"
                     readOnly
-                    placeholder="Prom."
+                    placeholder=""
                     value={rows[1].average}
                   />
                 </td>
@@ -336,9 +337,9 @@ function PerformanceEvaluation() {
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <input
                     type="text"
-                    style={{ width: "100%" }}
+                    className="promedio-input"
                     readOnly
-                    placeholder="Prom."
+                    placeholder=""
                     value={rows[2].average}
                   />
                 </td>
@@ -383,9 +384,9 @@ function PerformanceEvaluation() {
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <input
                     type="text"
-                    style={{ width: "100%" }}
+                    className="promedio-input"
                     readOnly
-                    placeholder="Prom."
+                    placeholder=""
                     value={rows[3].average}
                   />
                 </td>
@@ -395,7 +396,8 @@ function PerformanceEvaluation() {
               </tr>
             </tbody>
           </table>
-      </section>
+        </section>
+
 
         <hr style={{ margin: "2rem 0" }}/>
 
