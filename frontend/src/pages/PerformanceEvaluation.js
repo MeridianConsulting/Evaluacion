@@ -1,16 +1,63 @@
-import React from "react";
+import React, { useState } from "react";
 import "../assets/css/Styles1.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
-const PerformanceEvaluation = () => {
+function PerformanceEvaluation() {
+  // Manejo de estado para filas
+  const [rows, setRows] = useState([
+    {
+      id: 1,
+      aspecto: "Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor",
+      worker: "",
+      boss: "",
+      average: "",
+    },
+    {
+      id: 2,
+      aspecto: "Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión",
+      worker: "",
+      boss: "",
+      average: "",
+    },
+    {
+      id: 3,
+      aspecto: "Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.",
+      worker: "",
+      boss: "",
+      average: "",
+    },
+    {
+      id: 4,
+      aspecto: "Da respuesta a cada comunicación recibida de modo inmediato",
+      worker: "",
+      boss: "",
+      average: "",
+    },
+  ]);
 
-  const onLogout = () => {
+  // Calcula promedio cada vez que cambie autoevaluación o evaluación
+  const handleSelectChange = (rowId, field, value) => {
+    const numericValue = value === "" ? 0 : Number(value);
+
+    setRows((prevRows) =>
+      prevRows.map((row) => {
+        if (row.id === rowId) {
+          const newRow = { ...row, [field]: numericValue };
+          const workerVal = newRow.worker || 0;
+          const bossVal = newRow.boss || 0;
+          const avg = (workerVal + bossVal) / 2;
+          newRow.average = workerVal === 0 && bossVal === 0 ? "" : avg.toFixed(1);
+          return newRow;
+        }
+        return row;
+      })
+    );
   };
 
   return (
     <div className="evaluation-page-unique">
-      <Header onLogout={onLogout} />
+      <Header/>
       <div className="hero" style={{ textAlign: "center", padding: "2rem" }}>
         <h1 className="evaluacion-desempeno">EVALUACIÓN DE DESEMPEÑO</h1>
       </div>
@@ -105,15 +152,7 @@ const PerformanceEvaluation = () => {
         </section>
         <hr style={{ margin: "2rem 0" }}/>
         <section className="evaluation-section">
-          {/* Tabla de Competencias */}
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              fontFamily: "Arial, sans-serif",
-            }}
-          >
-            {/* Fila de cabecera general (barra negra) */}
+          <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "Arial, sans-serif" }}>
             <thead>
               <tr>
                 <th
@@ -129,23 +168,20 @@ const PerformanceEvaluation = () => {
                   COMPETENCIAS
                 </th>
               </tr>
-              {/* Fila de títulos de columnas (gris) */}
               <tr style={{ backgroundColor: "#E0E0E0", textAlign: "left" }}>
-                <th style={{ padding: "0.5rem" }}>COMPETENCIA</th>
-                <th style={{ padding: "0.5rem" }}>DEFINICIÓN DE LA COMPETENCIA</th>
-                <th style={{ padding: "0.5rem" }}>ASPECTO A EVALUAR</th>
-                <th style={{ padding: "0.5rem" }}>TRABAJADOR<br />(Autoevaluación)</th>
-                <th style={{ padding: "0.5rem" }}>JEFE INMEDIATO<br />(Evaluación)</th>
-                <th style={{ padding: "0.5rem" }}>PROMEDIO</th>
-                <th style={{ padding: "0.5rem" }}>JUSTIFICACIÓN</th>
+                <th>COMPETENCIA</th>
+                <th>DEFINICIÓN DE LA COMPETENCIA</th>
+                <th>ASPECTO A EVALUAR</th>
+                <th>TRABAJADOR (Autoevaluación)</th>
+                <th>JEFE INMEDIATO (Evaluación)</th>
+                <th>PROMEDIO</th>
+                <th>JUSTIFICACIÓN</th>
               </tr>
             </thead>
 
-            {/* Contenido de la tabla (tbody) */}
             <tbody>
-              {/* Primera fila: se utiliza rowSpan=4 para las dos primeras columnas */}
+              {/* Primera fila de la tabla, con rowSpan para Competencia y Definición */}
               <tr>
-                {/* Columna 1: Competencia */}
                 <td
                   rowSpan={4}
                   style={{
@@ -157,11 +193,8 @@ const PerformanceEvaluation = () => {
                     width: "12%",
                   }}
                 >
-                  Comunicación<br />
-                  efectiva
+                  Comunicación <br /> efectiva
                 </td>
-
-                {/* Columna 2: Definición de la competencia */}
                 <td
                   rowSpan={4}
                   style={{
@@ -174,166 +207,195 @@ const PerformanceEvaluation = () => {
                   Establecer comunicación efectiva y positiva con superiores jerárquicos,
                   pares y clientes, tanto en la expresión escrita como verbal y gestual.
                 </td>
-
-                {/* Columna 3: Aspecto a evaluar (fila 1) */}
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem", width: "23%" }}>
-                  Utiliza canales de comunicación, en su diversa expresión, con claridad,
-                  precisión y tono agradable para el receptor.
+                {/* Aspecto 1 */}
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  {rows[0].aspecto}
                 </td>
-
-                {/* Columna 4: TRABAJADOR (Autoevaluación) */}
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem", width: "10%" }}>
-                  <select style={{ width: "100%" }}>
-                    <option value="">1 - 5</option>
-                    <option value="1">1 - No Cumple</option>
-                    <option value="2">2 - Regular</option>
-                    <option value="3">3 - Parcial</option>
-                    <option value="4">4 - Satisfactorio</option>
-                    <option value="5">5 - Excelente</option>
-                  </select>
-                </td>
-
-                {/* Columna 5: JEFE INMEDIATO (Evaluación) */}
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem", width: "10%" }}>
-                  <select style={{ width: "100%" }}>
-                    <option value="">1 - 5</option>
-                    <option value="1">1 - No Cumple</option>
-                    <option value="2">2 - Regular</option>
-                    <option value="3">3 - Parcial</option>
-                    <option value="4">4 - Satisfactorio</option>
-                    <option value="5">5 - Excelente</option>
-                  </select>
-                </td>
-
-                {/* Columna 6: PROMEDIO */}
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem", width: "10%" }}>
-                  <input type="text" style={{ width: "100%" }} placeholder="Prom." />
-                </td>
-
-                {/* Columna 7: JUSTIFICACIÓN */}
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem", width: "10%" }}>
-                  <textarea
-                    rows={2}
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
                     style={{ width: "100%" }}
-                    placeholder="Justifique (si 5 o ≤2)"
+                    value={rows[0].worker === 0 ? "" : rows[0].worker}
+                    onChange={(e) => handleSelectChange(rows[0].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[0].boss === 0 ? "" : rows[0].boss}
+                    onChange={(e) => handleSelectChange(rows[0].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    style={{ width: "100%" }}
+                    readOnly
+                    placeholder="Prom."
+                    value={rows[0].average}
                   />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea rows={2} style={{ width: "100%" }} placeholder="Justifique (si 5 o ≤2)" />
                 </td>
               </tr>
 
-              {/* Segunda fila: Aspecto a evaluar 2 */}
+              {/* Aspecto 2 */}
               <tr>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  Redacta textos, informes, mensajes, cuadros o gráficas con claridad
-                  en la expresión para una comprensión sencilla.
+                  {rows[1].aspecto}
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <select style={{ width: "100%" }}>
-                    <option value="">1 - 5</option>
-                    <option value="1">1 - No Cumple</option>
-                    <option value="2">2 - Regular</option>
-                    <option value="3">3 - Parcial</option>
-                    <option value="4">4 - Satisfactorio</option>
-                    <option value="5">5 - Excelente</option>
-                  </select>
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <select style={{ width: "100%" }}>
-                    <option value="">1 - 5</option>
-                    <option value="1">1 - No Cumple</option>
-                    <option value="2">2 - Regular</option>
-                    <option value="3">3 - Parcial</option>
-                    <option value="4">4 - Satisfactorio</option>
-                    <option value="5">5 - Excelente</option>
-                  </select>
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input type="text" style={{ width: "100%" }} placeholder="Prom." />
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <textarea
-                    rows={2}
+                  <select
                     style={{ width: "100%" }}
-                    placeholder="Justifique (si 5 o ≤2)"
+                    value={rows[1].worker === 0 ? "" : rows[1].worker}
+                    onChange={(e) => handleSelectChange(rows[1].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[1].boss === 0 ? "" : rows[1].boss}
+                    onChange={(e) => handleSelectChange(rows[1].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    style={{ width: "100%" }}
+                    readOnly
+                    placeholder="Prom."
+                    value={rows[1].average}
                   />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea rows={2} style={{ width: "100%" }} placeholder="Justifique (si 5 o ≤2)" />
                 </td>
               </tr>
 
-              {/* Tercera fila: Aspecto a evaluar 3 */}
+              {/* Aspecto 3 */}
               <tr>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  Mantiene escucha y lectura atenta para comprender mejor los mensajes.
+                  {rows[2].aspecto}
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <select style={{ width: "100%" }}>
-                    <option value="">1 - 5</option>
-                    <option value="1">1 - No Cumple</option>
-                    <option value="2">2 - Regular</option>
-                    <option value="3">3 - Parcial</option>
-                    <option value="4">4 - Satisfactorio</option>
-                    <option value="5">5 - Excelente</option>
-                  </select>
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <select style={{ width: "100%" }}>
-                    <option value="">1 - 5</option>
-                    <option value="1">1 - No Cumple</option>
-                    <option value="2">2 - Regular</option>
-                    <option value="3">3 - Parcial</option>
-                    <option value="4">4 - Satisfactorio</option>
-                    <option value="5">5 - Excelente</option>
-                  </select>
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input type="text" style={{ width: "100%" }} placeholder="Prom." />
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <textarea
-                    rows={2}
+                  <select
                     style={{ width: "100%" }}
-                    placeholder="Justifique (si 5 o ≤2)"
+                    value={rows[2].worker === 0 ? "" : rows[2].worker}
+                    onChange={(e) => handleSelectChange(rows[2].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[2].boss === 0 ? "" : rows[2].boss}
+                    onChange={(e) => handleSelectChange(rows[2].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    style={{ width: "100%" }}
+                    readOnly
+                    placeholder="Prom."
+                    value={rows[2].average}
                   />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea rows={2} style={{ width: "100%" }} placeholder="Justifique (si 5 o ≤2)" />
                 </td>
               </tr>
 
-              {/* Cuarta fila: Aspecto a evaluar 4 */}
+              {/* Aspecto 4 */}
               <tr>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  Da respuesta a cada comunicación recibida de modo inmediato.
+                  {rows[3].aspecto}
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <select style={{ width: "100%" }}>
-                    <option value="">1 - 5</option>
-                    <option value="1">1 - No Cumple</option>
-                    <option value="2">2 - Regular</option>
-                    <option value="3">3 - Parcial</option>
-                    <option value="4">4 - Satisfactorio</option>
-                    <option value="5">5 - Excelente</option>
-                  </select>
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <select style={{ width: "100%" }}>
-                    <option value="">1 - 5</option>
-                    <option value="1">1 - No Cumple</option>
-                    <option value="2">2 - Regular</option>
-                    <option value="3">3 - Parcial</option>
-                    <option value="4">4 - Satisfactorio</option>
-                    <option value="5">5 - Excelente</option>
-                  </select>
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input type="text" style={{ width: "100%" }} placeholder="Prom." />
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <textarea
-                    rows={2}
+                  <select
                     style={{ width: "100%" }}
-                    placeholder="Justifique (si 5 o ≤2)"
+                    value={rows[3].worker === 0 ? "" : rows[3].worker}
+                    onChange={(e) => handleSelectChange(rows[3].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <select
+                    style={{ width: "100%" }}
+                    value={rows[3].boss === 0 ? "" : rows[3].boss}
+                    onChange={(e) => handleSelectChange(rows[3].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <input
+                    type="text"
+                    style={{ width: "100%" }}
+                    readOnly
+                    placeholder="Prom."
+                    value={rows[3].average}
                   />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea rows={2} style={{ width: "100%" }} placeholder="Justifique (si 5 o ≤2)" />
                 </td>
               </tr>
             </tbody>
           </table>
-        </section>
+      </section>
 
         <hr style={{ margin: "2rem 0" }}/>
 
@@ -470,5 +532,7 @@ const PerformanceEvaluation = () => {
     </div>
   );
 };
+
+
 
 export default PerformanceEvaluation;
