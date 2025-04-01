@@ -1275,13 +1275,15 @@ footer {
 }
 
 .evaluation-container-unique {
-  max-width: 1200px;
-  margin: 0 auto;
-  background-color: #fff; /* o usa alguna variable de color, ej. var(--color-secondary) */
+  width: 95%;                 /* Ocupará el 95% del espacio horizontal */
+  max-width: 1400px;          /* Límite para pantallas muy grandes */
+  margin: 2rem auto;          /* Centra el contenedor y separa verticalmente */
+  background-color: #fff;     /* Ajusta según tu diseño o variable */
   border-radius: 8px;
   padding: 2rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
+
 
 /* === Estilos para la sección de evaluación === */
 
@@ -1443,3 +1445,55 @@ footer {
     user-select: none;
     pointer-events: none;
   }
+
+  /* === Campo de PROMEDIO === */
+.promedio-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: "Libre Franklin", sans-serif; /* Ajusta para mantener la misma fuente */
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  background-color: #f7f7f7; /* Tono gris claro para diferenciarlo del resto */
+  text-align: center;        /* Centra el número */
+  cursor: default;           /* No indica que sea editable */
+  outline: none;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.promedio-input::placeholder {
+  color: #999;         /* Placeholder gris */
+  font-style: italic;  /* Diferencia del texto real */
+}
+
+/* Si deseas un ligero efecto hover */
+.promedio-input:hover {
+  background-color: #f0f0f0;
+}
+
+/* === Campo de JUSTIFICACIÓN === */
+.justificacion-textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: "Libre Franklin", sans-serif; 
+  font-size: 1rem;
+  color: #333;
+  background-color: #fff;
+  resize: vertical;           /* Permite al usuario ampliar si necesita */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.justificacion-textarea::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.justificacion-textarea:focus {
+  outline: none;
+  border-color: #B0A990;       /* Ejemplo con un tono “acento” */
+  box-shadow: 0 0 4px rgba(176, 169, 144, 0.3);
+}

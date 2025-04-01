@@ -153,7 +153,9 @@ function PerformanceEvaluation() {
 
         <hr style={{ margin: "2rem 0" }}/>
         <section className="evaluation-section">
-          <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "Arial, sans-serif" }}>
+          <table
+            style={{ width: "100%", borderCollapse: "collapse", fontFamily: "Arial, sans-serif" }}
+          >
             <thead>
               <tr>
                 <th
@@ -181,7 +183,7 @@ function PerformanceEvaluation() {
             </thead>
 
             <tbody>
-              {/* Primera fila de la tabla, con rowSpan para Competencia y Definición */}
+              {/* Fila con rowSpan para "Comunicación efectiva" y su definición */}
               <tr>
                 <td
                   rowSpan={4}
@@ -208,6 +210,7 @@ function PerformanceEvaluation() {
                   Establecer comunicación efectiva y positiva con superiores jerárquicos,
                   pares y clientes, tanto en la expresión escrita como verbal y gestual.
                 </td>
+
                 {/* Aspecto 1 */}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   {rows[0].aspecto}
@@ -250,7 +253,11 @@ function PerformanceEvaluation() {
                   />
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <textarea rows={2} style={{ width: "100%" }} placeholder="Justifique (si 5 o ≤2)" />
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
                 </td>
               </tr>
 
@@ -297,7 +304,11 @@ function PerformanceEvaluation() {
                   />
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <textarea rows={2} style={{ width: "100%" }} placeholder="Justifique (si 5 o ≤2)" />
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
                 </td>
               </tr>
 
@@ -344,7 +355,11 @@ function PerformanceEvaluation() {
                   />
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <textarea rows={2} style={{ width: "100%" }} placeholder="Justifique (si 5 o ≤2)" />
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
                 </td>
               </tr>
 
@@ -391,12 +406,17 @@ function PerformanceEvaluation() {
                   />
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <textarea rows={2} style={{ width: "100%" }} placeholder="Justifique (si 5 o ≤2)" />
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
                 </td>
               </tr>
             </tbody>
           </table>
         </section>
+
 
 
         <hr style={{ margin: "2rem 0" }}/>
