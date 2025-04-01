@@ -1283,15 +1283,57 @@ footer {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* === Estilos para la sección de evaluación === */
+
 .evaluation-section {
-  margin-bottom: 2rem;
-  /* Puedes agregar color, fuentes, etc. 
-     Ejemplo: color: var(--color-primary); */
+  margin: 2rem auto;        /* separa la sección de los demás contenidos */
+  max-width: 1200px;        /* ajusta un ancho máximo si deseas */
+  background-color: #fff;   /* color de fondo (ajusta según tu gusto o variables) */
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* En caso de querer un ancho flexible en tablas,
-   puedes agregar la clase .evaluation-table-wrapper si no existe
-   (aunque en tu ejemplo se usa style inline). */
+/* Cada fila contendrá tres "columnas" (fields) */
+.evaluation-row {
+  display: flex;
+  justify-content: space-between; 
+  gap: 1rem;            /* espacio horizontal entre las columnas */
+  margin-bottom: 1rem;  /* espacio entre filas */
+}
+
+/* Cada "campo" (label + input) */
+.evaluation-field {
+  display: flex;
+  flex-direction: column;
+  flex: 1;              /* se expandirá ocupando todo el espacio posible */
+}
+
+/* Estilo para los labels e inputs */
+.evaluation-field label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;          /* ajusta el color de texto */
+}
+
+.evaluation-field input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.evaluation-field input[type="date"] {
+  color: #333;  /* algunos navegadores aplican estilos distintos a date */
+}
+
+/* Responsive: en pantallas pequeñas las tres columnas se acomodan en una sola columna */
+@media (max-width: 768px) {
+  .evaluation-row {
+    flex-direction: column;
+  }
+}
+
 .evaluation-table-wrapper {
   overflow-x: auto;
 }

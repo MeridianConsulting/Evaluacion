@@ -16,29 +16,54 @@ const PerformanceEvaluation = () => {
       </div>
       <main className="evaluation-container-unique" style={{ padding: "2rem" }}>
         <section className="evaluation-section">
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
-            <div>
-              <label>Nombre del evaluado:</label>
-              <input type="text" placeholder="Nombre" />
+            <div className="evaluation-row">
+              <div className="evaluation-field">
+                <label>Nombre del evaluado:</label>
+                <input type="text" placeholder="Ingrese el nombre del evaluado" />
+              </div>
+              <div className="evaluation-field">
+                <label>No. de Identificación:</label>
+                <input type="text" placeholder="Cédula / ID" />
+              </div>
+              <div className="evaluation-field">
+                <label>Cargo/servicio:</label>
+                <input type="text" placeholder="Cargo o servicio" />
+              </div>
             </div>
-            <div>
-              <label>Identificación:</label>
-              <input type="text" placeholder="Cédula / ID" />
+
+            {/* Fila 2 */}
+            <div className="evaluation-row">
+              <div className="evaluation-field">
+                <label>Fecha de ingreso:</label>
+                <input type="date" />
+              </div>
+              <div className="evaluation-field">
+                <label>Fecha de la evaluación:</label>
+                <input type="date" />
+              </div>
+              <div className="evaluation-field">
+                <label>Proceso de gestión:</label>
+                <input type="text" placeholder="Proceso asociado" />
+              </div>
             </div>
-            <div>
-              <label>Cargo:</label>
-              <input type="text" placeholder="Cargo" />
+
+            {/* Fila 3 */}
+            <div className="evaluation-row">
+              <div className="evaluation-field">
+                <label>Nombre del evaluador:</label>
+                <input type="text" placeholder="Ingrese el nombre del evaluador" />
+              </div>
+              <div className="evaluation-field">
+                <label>Cargo/servicio prestado:</label>
+                <input type="text" placeholder="Cargo o servicio prestado" />
+              </div>
+              <div className="evaluation-field">
+                <label>Proceso de gestión:</label>
+                <input type="text" placeholder="Proceso asociado" />
+              </div>
             </div>
-            <div>
-              <label>Área / Dependencia:</label>
-              <input type="text" placeholder="Área" />
-            </div>
-            <div>
-              <label>Fecha de evaluación:</label>
-              <input type="date" />
-            </div>
-          </div>
         </section>
+
         <hr style={{ margin: "2rem 0" }}/>
         <section className="evaluation-section">
           <h2 style={{ marginBottom: "1rem" }}>OBJETIVO DEL CARGO A EVALUAR</h2>
