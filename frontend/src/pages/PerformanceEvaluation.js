@@ -1585,40 +1585,27 @@ function PerformanceEvaluation() {
         {/* Después de la sección de competencias, antes de la sección de mejoramiento */}
         <hr style={{ margin: "2rem 0" }}/>
         <section className="evaluation-section">
-          <table
-            style={{ width: "100%", borderCollapse: "collapse", fontFamily: "Arial, sans-serif" }}
-          >
+          <table className="hseq-table">
             <thead>
               <tr>
-                <th
-                  colSpan={3}
-                  style={{
-                    backgroundColor: "#000",
-                    color: "#fff",
-                    padding: "1rem",
-                    textAlign: "center",
-                    fontSize: "1.2rem",
-                  }}
-                >
+                <th colSpan={4} className="hseq-header">
                   CALIFICACIÓN GENERAL POR RESPONSABILIDADES HSEQ
                 </th>
               </tr>
-              <tr style={{ backgroundColor: "#E0E0E0", textAlign: "left" }}>
-                <th style={{ width: "60%" }}>RESPONSABILIDAD</th>
-                <th style={{ width: "15%" }}>TRABAJADOR (Autoevaluación)</th>
-                <th style={{ width: "15%" }}>JEFE INMEDIATO (Evaluación)</th>
-                <th style={{ width: "10%" }}>JUSTIFICACIÓN</th>
+              <tr>
+                <th className="hseq-subheader" style={{ width: "60%" }}>RESPONSABILIDAD</th>
+                <th className="hseq-subheader" style={{ width: "15%" }}>TRABAJADOR (Autoevaluación)</th>
+                <th className="hseq-subheader" style={{ width: "15%" }}>JEFE INMEDIATO (Evaluación)</th>
+                <th className="hseq-subheader" style={{ width: "10%" }}>JUSTIFICACIÓN</th>
               </tr>
             </thead>
             <tbody>
               {hseqItems.map(item => (
                 <tr key={item.id}>
-                  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                    {item.responsabilidad}
-                  </td>
-                  <td style={{ backgroundColor: "#fff", padding: "0.8rem", textAlign: "center" }}>
+                  <td>{item.responsabilidad}</td>
+                  <td className="text-center">
                     <select
-                      style={{ width: "90%" }}
+                      className="hseq-select"
                       value={item.autoevaluacion}
                       onChange={(e) => handleHseqChange(item.id, "autoevaluacion", e.target.value)}
                     >
@@ -1630,9 +1617,9 @@ function PerformanceEvaluation() {
                       <option value="5">5 - Excelente</option>
                     </select>
                   </td>
-                  <td style={{ backgroundColor: "#fff", padding: "0.8rem", textAlign: "center" }}>
+                  <td className="text-center">
                     <select
-                      style={{ width: "90%" }}
+                      className="hseq-select"
                       value={item.evaluacionJefe}
                       onChange={(e) => handleHseqChange(item.id, "evaluacionJefe", e.target.value)}
                     >
@@ -1644,9 +1631,9 @@ function PerformanceEvaluation() {
                       <option value="5">5 - Excelente</option>
                     </select>
                   </td>
-                  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <td>
                     <textarea
-                      className="justificacion-textarea"
+                      className="hseq-textarea"
                       rows={1}
                       placeholder="Justificación"
                     />
@@ -1654,13 +1641,13 @@ function PerformanceEvaluation() {
                 </tr>
               ))}
               <tr>
-                <td style={{ backgroundColor: "#E0E0E0", padding: "0.8rem", fontWeight: "bold", textAlign: "right" }}>
+                <td className="hseq-promedio">
                   PROMEDIO CALIFICACIÓN HSEQ:
                 </td>
-                <td colSpan="2" style={{ backgroundColor: "#E0E0E0", padding: "0.8rem", fontWeight: "bold", textAlign: "center" }}>
+                <td colSpan="2" className="hseq-promedio-valor">
                   {calcularPromedioHseq()}
                 </td>
-                <td style={{ backgroundColor: "#E0E0E0", padding: "0.8rem" }}></td>
+                <td className="hseq-promedio-valor"></td>
               </tr>
             </tbody>
           </table>
@@ -1668,34 +1655,65 @@ function PerformanceEvaluation() {
 
         <hr style={{ margin: "2rem 0" }}/>
         <section className="evaluation-section">
-          <h2>MEJORAMIENTO Y DESARROLLO</h2>
-          <div style={{ marginBottom: "1rem" }}>
-            <label htmlFor="fortalezas">Fortalezas</label><br />
-            <textarea id="fortalezas" rows="3" style={{ width: "100%" }} />
+          <h2 className="seccion-titulo">MEJORAMIENTO Y DESARROLLO</h2>
+          <div style={{ marginBottom: "1.5rem" }}>
+            <label htmlFor="fortalezas" className="campo-label">Fortalezas</label>
+            <textarea 
+              id="fortalezas" 
+              rows="3" 
+              className="campo-textarea"
+            />
           </div>
           <div>
-            <label htmlFor="aspectosMejorar">Aspectos a mejorar</label><br />
-            <textarea id="aspectosMejorar" rows="3" style={{ width: "100%" }} />
+            <label htmlFor="aspectosMejorar" className="campo-label">Aspectos a mejorar</label>
+            <textarea 
+              id="aspectosMejorar" 
+              rows="3" 
+              className="campo-textarea"
+            />
           </div>
         </section>
         <hr style={{ margin: "2rem 0" }}/>
         <section className="evaluation-section">
-          <h2>PLAN DE ACCIÓN</h2>
-          <table className="evaluation-table" style={{ marginTop: "1rem" }}>
+          <h2 className="seccion-titulo">PLAN DE ACCIÓN</h2>
+          <table className="plan-accion-table">
             <thead>
               <tr>
-                <th>Actividades</th>
-                <th>Responsable</th>
-                <th>Seguimiento</th>
-                <th>Fecha</th>
+                <th className="plan-accion-th">Actividades</th>
+                <th className="plan-accion-th">Responsable</th>
+                <th className="plan-accion-th">Seguimiento</th>
+                <th className="plan-accion-th">Fecha</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><input type="text" placeholder="Actividad" /></td>
-                <td><input type="text" placeholder="Responsable" /></td>
-                <td><input type="text" placeholder="Indicadores / Frecuencia" /></td>
-                <td><input type="date" /></td>
+                <td className="plan-accion-td">
+                  <input 
+                    type="text" 
+                    placeholder="Actividad" 
+                    className="plan-accion-input"
+                  />
+                </td>
+                <td className="plan-accion-td">
+                  <input 
+                    type="text" 
+                    placeholder="Responsable" 
+                    className="plan-accion-input"
+                  />
+                </td>
+                <td className="plan-accion-td">
+                  <input 
+                    type="text" 
+                    placeholder="Indicadores / Frecuencia" 
+                    className="plan-accion-input"
+                  />
+                </td>
+                <td className="plan-accion-td">
+                  <input 
+                    type="date" 
+                    className="plan-accion-input"
+                  />
+                </td>
               </tr>
             </tbody>
           </table>
@@ -1704,41 +1722,21 @@ function PerformanceEvaluation() {
         <hr style={{ margin: "2rem 0" }}/>
 
         <section className="evaluation-section" style={{ textAlign: "center" }}>
-          <div style={{ 
-            display: "flex", 
-            justifyContent: "space-around", 
-            flexWrap: "wrap", 
-            gap: "1rem" 
-          }}>
-            <div>
-              <label>Firma (Evaluado)</label>
-              <div 
-                style={{ 
-                  border: "1px solid #ccc", 
-                  height: "60px", 
-                  width: "200px" 
-                }}
-              />
+          <div className="firmas-container">
+            <div className="firma-item">
+              <label className="campo-label">Firma (Evaluado)</label>
+              <div className="firma-box"></div>
             </div>
-            <div>
-              <label>Firma (Jefe Directo)</label>
-              <div 
-                style={{ 
-                  border: "1px solid #ccc", 
-                  height: "60px", 
-                  width: "200px" 
-                }}
-              />
+            <div className="firma-item">
+              <label className="campo-label">Firma (Jefe Directo)</label>
+              <div className="firma-box"></div>
             </div>
-            <div>
-              <label>Fecha</label>
-              <input type="date" />
+            <div className="firma-item">
+              <label className="campo-label">Fecha</label>
+              <input type="date" className="fecha-input" />
             </div>
           </div>
-          <button 
-            className="hero-button" 
-            style={{ marginTop: "2rem" }}
-          >
+          <button className="finalizar-btn">
             Finalizar Evaluación
           </button>
         </section>

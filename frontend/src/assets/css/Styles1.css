@@ -1267,33 +1267,38 @@ footer {
    PERFORMANCE EVALUATION PAGE
 ============================ */
 .evaluation-page-unique {
-  /* Ajusta según prefieras, por ejemplo: */
-  background-color: var(--color-background);
+  background-color: #f7f7f7;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
 .evaluation-container-unique {
-  width: 95%;                 /* Ocupará el 95% del espacio horizontal */
-  max-width: 1400px;          /* Límite para pantallas muy grandes */
-  margin: 2rem auto;          /* Centra el contenedor y separa verticalmente */
-  background-color: #fff;     /* Ajusta según tu diseño o variable */
-  border-radius: 8px;
+  width: 95%;
+  max-width: 1400px;
+  margin: 2rem auto;
+  background-color: #fff;
+  border-radius: 12px;
   padding: 2rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
 }
 
 
 /* === Estilos para la sección de evaluación === */
 
 .evaluation-section {
-  margin: 2rem auto;        /* separa la sección de los demás contenidos */
-  max-width: 1200px;        /* ajusta un ancho máximo si deseas */
-  background-color: #fff;   /* color de fondo (ajusta según tu gusto o variables) */
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  margin: 2rem auto;
+  max-width: 1200px;
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.evaluation-section:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
 }
 
 /* Cada fila contendrá tres "columnas" (fields) */
@@ -1338,6 +1343,8 @@ footer {
 
 .evaluation-table-wrapper {
   overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
 }
 
 /* Tabla básica de evaluación */
@@ -1348,9 +1355,13 @@ footer {
 
 .evaluation-table th, 
 .evaluation-table td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: left;
+  border: 1px solid #e0e0e0;
+  padding: 10px;
+}
+
+.evaluation-table th {
+  background-color: #000;
+  color: #fff;
 }
 
 /* Botón final y cualquier botón estilo "hero-button" */
@@ -1473,91 +1484,307 @@ footer {
   background-color: #f0f0f0;
 }
 
-/* === Campo de JUSTIFICACIÓN === */
+/* === Campo de JUSTIFICACIÓN MEJORADO === */
 .justificacion-textarea {
   width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 0.8rem;
+  border: 1px solid #B0A990;
+  border-radius: 8px;
   font-family: "Libre Franklin", sans-serif; 
-  font-size: 1rem;
+  font-size: 1.05rem;
   color: #333;
   background-color: #fff;
-  resize: vertical;           /* Permite al usuario ampliar si necesita */
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  resize: vertical;
+  transition: all 0.3s ease;
+  min-height: 80px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  position: relative;
 }
 
 .justificacion-textarea::placeholder {
-  color: #999;
+  color: #888;
   font-style: italic;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
 }
 
 .justificacion-textarea:focus {
   outline: none;
-  border-color: #B0A990;       /* Ejemplo con un tono "acento" */
-  box-shadow: 0 0 4px rgba(176, 169, 144, 0.3);
+  border-color: #B0A990;
+  box-shadow: 0 0 8px rgba(176, 169, 144, 0.4);
+  transform: translateY(-2px);
 }
 
-/* Estilos para la sección HSEQ */
-.hseq-section {
-  margin: 2rem 0;
+.justificacion-textarea:focus::placeholder {
+  opacity: 0.5;
 }
 
+/* Indicador de campo obligatorio */
+.campo-obligatorio::after {
+  content: "*";
+  color: #ff3b30;
+  margin-left: 4px;
+  font-size: 1.2rem;
+  display: inline-block;
+}
+
+/* Mejoras estéticas globales */
+.evaluation-page-unique {
+  background-color: #f7f7f7;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.evaluation-container-unique {
+  width: 95%;
+  max-width: 1400px;
+  margin: 2rem auto;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.evaluation-section {
+  margin: 2rem auto;
+  max-width: 1200px;
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.evaluation-section:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+/* Mejoras en los inputs y selects */
+.evaluation-section select {
+  padding: 0.6rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  background-color: #fcfcfc;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B0A990' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 1em;
+}
+
+.evaluation-section select:hover {
+  border-color: #B0A990;
+  background-color: #f9f9f9;
+}
+
+/* Mejoras para tablas de evaluación */
+.evaluation-table-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.evaluation-table th, 
+.evaluation-table td {
+  border: 1px solid #e0e0e0;
+  padding: 10px;
+}
+
+.evaluation-table th {
+  background-color: #000;
+  color: #fff;
+}
+
+/* Animación sutil para mejora de interacción */
+@keyframes highlightField {
+  0% { background-color: rgba(176, 169, 144, 0.2); }
+  100% { background-color: transparent; }
+}
+
+.campo-destacado {
+  animation: highlightField 1s ease;
+}
+
+/* Estilos mejorados para la sección HSEQ */
 .hseq-table {
   width: 100%;
   border-collapse: collapse;
   font-family: Arial, sans-serif;
-  margin-top: 1rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border: 1px solid #ddd;
 }
 
-.hseq-table th,
-.hseq-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
+.hseq-header {
+  background-color: #000;
+  color: #fff;
+  padding: 1rem;
+  text-align: center;
+  font-size: 1.2rem;
+  width: 100%;
+}
+
+.hseq-subheader {
+  background-color: #E0E0E0;
+  text-align: center;
+  padding: 0.8rem;
 }
 
 .hseq-table th {
   padding-top: 12px;
   padding-bottom: 12px;
-  text-align: left;
   background-color: #E0E0E0;
 }
 
-.hseq-table textarea {
-  width: 100%;
-  resize: vertical;
-  min-height: 30px;
+.hseq-table td {
+  background-color: #fff;
+  padding: 0.8rem;
+  border-bottom: 1px solid #eee;
 }
 
-.hseq-table select {
+.hseq-select {
+  width: 90%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.hseq-textarea {
   width: 100%;
-  padding: 5px;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  resize: vertical;
 }
 
 .hseq-promedio {
-  font-weight: bold;
   background-color: #E0E0E0;
+  padding: 1rem;
+  font-weight: bold;
   text-align: right;
 }
 
-@media (max-width: 768px) {
-  .hseq-table {
-    font-size: 0.9rem;
-  }
-  
-  .hseq-table th,
-  .hseq-table td {
-    padding: 5px;
-  }
+.hseq-promedio-valor {
+  background-color: #E0E0E0;
+  padding: 1rem;
+  font-weight: bold;
+  text-align: center;
+  font-size: 1.1rem;
 }
 
-@media (max-width: 480px) {
-  .hseq-table {
-    font-size: 0.8rem;
+/* Estilos para las secciones inferiores */
+.seccion-titulo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #000;
+  padding-bottom: 0.5rem;
+}
+
+.campo-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.campo-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+}
+
+/* Estilos para la tabla de plan de acción */
+.plan-accion-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin-top: 1rem;
+}
+
+.plan-accion-th {
+  background-color: #000;
+  color: #fff;
+  padding: 0.8rem;
+  text-align: center;
+}
+
+.plan-accion-td {
+  padding: 0.8rem;
+  border-bottom: 1px solid #eee;
+}
+
+.plan-accion-input {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* Estilos para la sección de firmas */
+.firmas-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.firma-item {
+  min-width: 200px;
+}
+
+.firma-box {
+  border: 1px solid #ccc;
+  height: 70px;
+  width: 200px;
+  margin: 0 auto;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.fecha-input {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 200px;
+}
+
+.finalizar-btn {
+  margin-top: 2rem;
+  background-color: #000;
+  color: #fff;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.finalizar-btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  background-color: #1a1a1a;
+}
+
+.text-center {
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .firmas-container {
+    flex-direction: column;
+    align-items: center;
   }
-  
-  .hseq-table select,
-  .hseq-table textarea {
-    font-size: 0.8rem;
+
+  .firma-item {
+    width: 100%;
+    max-width: 250px;
   }
 }
