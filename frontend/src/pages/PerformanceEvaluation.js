@@ -146,12 +146,14 @@ function PerformanceEvaluation() {
     {
       id: 1,
       responsabilidad: "Procurar el cuidado integral de su salud.",
-      calificacion: "",
+      autoevaluacion: "",
+      evaluacionJefe: "",
     },
     {
       id: 2,
       responsabilidad: "Suministrar información clara, veraz y completa sobre su estado de salud.",
-      calificacion: "",
+      autoevaluacion: "",
+      evaluacionJefe: "",
     },
     {
       id: 3,
@@ -265,24 +267,37 @@ function PerformanceEvaluation() {
   };
 
   // Manejador para cambios en la calificación HSEQ
-  const handleHseqChange = (id, value) => {
+  const handleHseqChange = (id, field, value) => {
     setHseqItems(prevItems => 
       prevItems.map(item => 
-        item.id === id ? { ...item, calificacion: value } : item
+        item.id === id ? { ...item, [field]: value } : item
       )
     );
   };
 
   // Calcular promedio de calificaciones HSEQ
   const calcularPromedioHseq = () => {
-    const calificaciones = hseqItems
-      .map(item => Number(item.calificacion))
-      .filter(cal => cal > 0);
+    let sumaTotal = 0;
+    let contadorValidos = 0;
     
-    if (calificaciones.length === 0) return 0;
+    hseqItems.forEach(item => {
+      const auto = Number(item.autoevaluacion) || 0;
+      const jefe = Number(item.evaluacionJefe) || 0;
+      
+      if (auto > 0 && jefe > 0) {
+        sumaTotal += (auto + jefe) / 2;
+        contadorValidos++;
+      } else if (auto > 0) {
+        sumaTotal += auto;
+        contadorValidos++;
+      } else if (jefe > 0) {
+        sumaTotal += jefe;
+        contadorValidos++;
+      }
+    });
     
-    const suma = calificaciones.reduce((a, b) => a + b, 0);
-    return (suma / calificaciones.length).toFixed(2);
+    if (contadorValidos === 0) return 0;
+    return (sumaTotal / contadorValidos).toFixed(2);
   };
 
   return (
@@ -1589,8 +1604,9 @@ function PerformanceEvaluation() {
                 </th>
               </tr>
               <tr style={{ backgroundColor: "#E0E0E0", textAlign: "left" }}>
-                <th style={{ width: "75%" }}>RESPONSABILIDAD</th>
-                <th style={{ width: "15%" }}>CALIFICACIÓN</th>
+                <th style={{ width: "60%" }}>RESPONSABILIDAD</th>
+                <th style={{ width: "15%" }}>TRABAJADOR (Autoevaluación)</th>
+                <th style={{ width: "15%" }}>JEFE INMEDIATO (Evaluación)</th>
                 <th style={{ width: "10%" }}>JUSTIFICACIÓN</th>
               </tr>
             </thead>
@@ -1603,8 +1619,22 @@ function PerformanceEvaluation() {
                   <td style={{ backgroundColor: "#fff", padding: "0.8rem", textAlign: "center" }}>
                     <select
                       style={{ width: "90%" }}
-                      value={item.calificacion}
-                      onChange={(e) => handleHseqChange(item.id, e.target.value)}
+                      value={item.autoevaluacion}
+                      onChange={(e) => handleHseqChange(item.id, "autoevaluacion", e.target.value)}
+                    >
+                      <option value="">1 - 5</option>
+                      <option value="1">1 - No Cumple</option>
+                      <option value="2">2 - Regular</option>
+                      <option value="3">3 - Parcial</option>
+                      <option value="4">4 - Satisfactorio</option>
+                      <option value="5">5 - Excelente</option>
+                    </select>
+                  </td>
+                  <td style={{ backgroundColor: "#fff", padding: "0.8rem", textAlign: "center" }}>
+                    <select
+                      style={{ width: "90%" }}
+                      value={item.evaluacionJefe}
+                      onChange={(e) => handleHseqChange(item.id, "evaluacionJefe", e.target.value)}
                     >
                       <option value="">1 - 5</option>
                       <option value="1">1 - No Cumple</option>
@@ -1627,7 +1657,7 @@ function PerformanceEvaluation() {
                 <td style={{ backgroundColor: "#E0E0E0", padding: "0.8rem", fontWeight: "bold", textAlign: "right" }}>
                   PROMEDIO CALIFICACIÓN HSEQ:
                 </td>
-                <td style={{ backgroundColor: "#E0E0E0", padding: "0.8rem", fontWeight: "bold", textAlign: "center" }}>
+                <td colSpan="2" style={{ backgroundColor: "#E0E0E0", padding: "0.8rem", fontWeight: "bold", textAlign: "center" }}>
                   {calcularPromedioHseq()}
                 </td>
                 <td style={{ backgroundColor: "#E0E0E0", padding: "0.8rem" }}></td>
