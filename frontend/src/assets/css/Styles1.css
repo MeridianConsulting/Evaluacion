@@ -1494,6 +1494,70 @@ footer {
 
 .justificacion-textarea:focus {
   outline: none;
-  border-color: #B0A990;       /* Ejemplo con un tono “acento” */
+  border-color: #B0A990;       /* Ejemplo con un tono "acento" */
   box-shadow: 0 0 4px rgba(176, 169, 144, 0.3);
+}
+
+/* Estilos para la sección HSEQ */
+.hseq-section {
+  margin: 2rem 0;
+}
+
+.hseq-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  margin-top: 1rem;
+}
+
+.hseq-table th,
+.hseq-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.hseq-table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #E0E0E0;
+}
+
+.hseq-table textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 30px;
+}
+
+.hseq-table select {
+  width: 100%;
+  padding: 5px;
+}
+
+.hseq-promedio {
+  font-weight: bold;
+  background-color: #E0E0E0;
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .hseq-table {
+    font-size: 0.9rem;
+  }
+  
+  .hseq-table th,
+  .hseq-table td {
+    padding: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hseq-table {
+    font-size: 0.8rem;
+  }
+  
+  .hseq-table select,
+  .hseq-table textarea {
+    font-size: 0.8rem;
+  }
 }

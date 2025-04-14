@@ -141,6 +141,110 @@ function PerformanceEvaluation() {
     },
   ]);
 
+  // Agregamos el estado para las responsabilidades HSEQ
+  const [hseqItems, setHseqItems] = useState([
+    {
+      id: 1,
+      responsabilidad: "Procurar el cuidado integral de su salud.",
+      calificacion: "",
+    },
+    {
+      id: 2,
+      responsabilidad: "Suministrar información clara, veraz y completa sobre su estado de salud.",
+      calificacion: "",
+    },
+    {
+      id: 3,
+      responsabilidad: "Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.",
+      calificacion: "",
+    },
+    {
+      id: 4,
+      responsabilidad: "Informar oportunamente al empleador o contratante acerca de los riesgos y/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.",
+      calificacion: "",
+    },
+    {
+      id: 5,
+      responsabilidad: "Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.",
+      calificacion: "",
+    },
+    {
+      id: 6,
+      responsabilidad: "Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.",
+      calificacion: "",
+    },
+    {
+      id: 7,
+      responsabilidad: "Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.",
+      calificacion: "",
+    },
+    {
+      id: 8,
+      responsabilidad: "Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.",
+      calificacion: "",
+    },
+    {
+      id: 9,
+      responsabilidad: "Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.",
+      calificacion: "",
+    },
+    {
+      id: 10,
+      responsabilidad: "Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.",
+      calificacion: "",
+    },
+    {
+      id: 11,
+      responsabilidad: "Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.",
+      calificacion: "",
+    },
+    {
+      id: 12,
+      responsabilidad: "Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.",
+      calificacion: "",
+    },
+    {
+      id: 13,
+      responsabilidad: "Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.",
+      calificacion: "",
+    },
+    {
+      id: 14,
+      responsabilidad: "Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.",
+      calificacion: "",
+    },
+    {
+      id: 15,
+      responsabilidad: "Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.",
+      calificacion: "",
+    },
+    {
+      id: 16,
+      responsabilidad: "Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.",
+      calificacion: "",
+    },
+    {
+      id: 17,
+      responsabilidad: "Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.",
+      calificacion: "",
+    },
+    {
+      id: 18,
+      responsabilidad: "Participar en simulacros, elección de COPASST y elección de comité de convivencia.",
+      calificacion: "",
+    },
+    {
+      id: 19,
+      responsabilidad: "Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y/o comité de emergencias.",
+      calificacion: "",
+    },
+    {
+      id: 20,
+      responsabilidad: "Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.",
+      calificacion: "",
+    }
+  ]);
+
   // Calcula promedio cada vez que cambie autoevaluación o evaluación
   const handleSelectChange = (rowId, field, value) => {
     const numericValue = value === "" ? 0 : Number(value);
@@ -158,6 +262,27 @@ function PerformanceEvaluation() {
         return row;
       })
     );
+  };
+
+  // Manejador para cambios en la calificación HSEQ
+  const handleHseqChange = (id, value) => {
+    setHseqItems(prevItems => 
+      prevItems.map(item => 
+        item.id === id ? { ...item, calificacion: value } : item
+      )
+    );
+  };
+
+  // Calcular promedio de calificaciones HSEQ
+  const calcularPromedioHseq = () => {
+    const calificaciones = hseqItems
+      .map(item => Number(item.calificacion))
+      .filter(cal => cal > 0);
+    
+    if (calificaciones.length === 0) return 0;
+    
+    const suma = calificaciones.reduce((a, b) => a + b, 0);
+    return (suma / calificaciones.length).toFixed(2);
   };
 
   return (
@@ -1442,57 +1567,70 @@ function PerformanceEvaluation() {
           </table>
         </section>
 
-
-
+        {/* Después de la sección de competencias, antes de la sección de mejoramiento */}
         <hr style={{ margin: "2rem 0" }}/>
-
         <section className="evaluation-section">
-          <h2>CALIFICACIÓN GENERAL POR COMPETENCIAS</h2>
-          <table className="evaluation-table" style={{ marginTop: "1rem" }}>
+          <table
+            style={{ width: "100%", borderCollapse: "collapse", fontFamily: "Arial, sans-serif" }}
+          >
             <thead>
               <tr>
-                <th style={{ minWidth: "250px" }}>Descripción / Actividades</th>
-                <th>Sobresaliente</th>
-                <th>Aceptable</th>
-                <th>Por mejorar</th>
-                <th>Insuficiente</th>
+                <th
+                  colSpan={3}
+                  style={{
+                    backgroundColor: "#000",
+                    color: "#fff",
+                    padding: "1rem",
+                    textAlign: "center",
+                    fontSize: "1.2rem",
+                  }}
+                >
+                  CALIFICACIÓN GENERAL POR RESPONSABILIDADES HSEQ
+                </th>
+              </tr>
+              <tr style={{ backgroundColor: "#E0E0E0", textAlign: "left" }}>
+                <th style={{ width: "75%" }}>RESPONSABILIDAD</th>
+                <th style={{ width: "15%" }}>CALIFICACIÓN</th>
+                <th style={{ width: "10%" }}>JUSTIFICACIÓN</th>
               </tr>
             </thead>
             <tbody>
+              {hseqItems.map(item => (
+                <tr key={item.id}>
+                  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                    {item.responsabilidad}
+                  </td>
+                  <td style={{ backgroundColor: "#fff", padding: "0.8rem", textAlign: "center" }}>
+                    <select
+                      style={{ width: "90%" }}
+                      value={item.calificacion}
+                      onChange={(e) => handleHseqChange(item.id, e.target.value)}
+                    >
+                      <option value="">1 - 5</option>
+                      <option value="1">1 - No Cumple</option>
+                      <option value="2">2 - Regular</option>
+                      <option value="3">3 - Parcial</option>
+                      <option value="4">4 - Satisfactorio</option>
+                      <option value="5">5 - Excelente</option>
+                    </select>
+                  </td>
+                  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                    <textarea
+                      className="justificacion-textarea"
+                      rows={1}
+                      placeholder="Justificación"
+                    />
+                  </td>
+                </tr>
+              ))}
               <tr>
-                <td>Ejemplo de actividad / competencia 1</td>
-                <td><input type="radio" name="comp-generales-1" value="sobresaliente" /></td>
-                <td><input type="radio" name="comp-generales-1" value="aceptable" /></td>
-                <td><input type="radio" name="comp-generales-1" value="por-mejorar" /></td>
-                <td><input type="radio" name="comp-generales-1" value="insuficiente" /></td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-
-        <hr style={{ margin: "2rem 0" }}/>
-        <section className="evaluation-section">
-          <h2>CALIFICACIÓN GENERAL POR RESPONSABILIDADES HSEQ</h2>
-          <table className="evaluation-table" style={{ marginTop: "1rem" }}>
-            <thead>
-              <tr>
-                <th>Responsabilidad</th>
-                <th>Calificación</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Cumplimiento de normas de seguridad</td>
-                <td>
-                  <select name="hseq-1">
-                    <option value="">Seleccione</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                  </select>
+                <td style={{ backgroundColor: "#E0E0E0", padding: "0.8rem", fontWeight: "bold", textAlign: "right" }}>
+                  PROMEDIO CALIFICACIÓN HSEQ:
                 </td>
+                <td style={{ backgroundColor: "#E0E0E0", padding: "0.8rem", fontWeight: "bold", textAlign: "center" }}>
+                  {calcularPromedioHseq()}
+                </td>
+                <td style={{ backgroundColor: "#E0E0E0", padding: "0.8rem" }}></td>
               </tr>
             </tbody>
           </table>
@@ -1579,7 +1717,5 @@ function PerformanceEvaluation() {
     </div>
   );
 };
-
-
 
 export default PerformanceEvaluation;
