@@ -98,42 +98,42 @@ function PerformanceEvaluation() {
       average: "",
     },
     {
-      id: 13,
+      id: 14,
       aspecto: "Escucha con interés y capta las necesidades de los demás.",
       worker: "",
       boss: "",
       average: "",
     },
     {
-      id: 14,
+      id: 15,
       aspecto: "Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.",
       worker: "",
       boss: "",
       average: "",
     },
     {
-      id: 15,
+      id: 16,
       aspecto: "Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.",
       worker: "",
       boss: "",
       average: "",
     },
     {
-      id: 16,
+      id: 17,
       aspecto: "Ejecuta sus tareas con los criterios de calidad establecidos.",
       worker: "",
       boss: "",
       average: "",
     },
     {
-      id: 17,
+      id: 18,
       aspecto: "Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.",
       worker: "",
       boss: "",
       average: "",
     },
     {
-      id: 18,
+      id: 19,
       aspecto: "Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.",
       worker: "",
       boss: "",
@@ -431,7 +431,6 @@ function PerformanceEvaluation() {
                 <th>JUSTIFICACIÓN</th>
               </tr>
             </thead>
-
             <tbody>
               {/* Fila con rowSpan para "Comunicación efectiva" y su definición */}
               <tr>
