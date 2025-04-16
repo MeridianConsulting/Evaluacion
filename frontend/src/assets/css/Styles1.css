@@ -1968,3 +1968,32 @@ td .rating-select {
 .rating-cell {
   padding: 0.5rem 0.4rem !important;
 }
+
+.instrucciones {
+  background-color: #f9f9f9; /* Fondo suave */
+  border: 1px solid #ccc; /* Borde sutil */
+  border-radius: 8px; /* Bordes redondeados */
+  padding: 20px; /* Espaciado interno */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  margin-bottom: 2rem; /* Espaciado inferior */
+}
+
+.instrucciones h2 {
+  color: #333; /* Color del texto */
+}
+
+.instrucciones ol {
+  list-style-type: decimal; /* Numeración */
+}
+
+.instrucciones li {
+  margin-bottom: 1rem; /* Espaciado entre elementos de la lista */
+}
+
+.instrucciones strong {
+  color: #000; /* Color del texto en negrita */
+}
+
+.instrucciones em {
+  color: #555; /* Color del texto en cursiva */
+}
