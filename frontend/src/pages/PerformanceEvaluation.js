@@ -490,7 +490,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[0].worker === 0 ? "" : rows[0].worker}
                     onChange={(e) => handleSelectChange(rows[0].id, "worker", e.target.value)}
                   >
@@ -504,7 +504,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[0].boss === 0 ? "" : rows[0].boss}
                     onChange={(e) => handleSelectChange(rows[0].id, "boss", e.target.value)}
                   >
@@ -532,7 +532,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[1].worker === 0 ? "" : rows[1].worker}
                     onChange={(e) => handleSelectChange(rows[1].id, "worker", e.target.value)}
                   >
@@ -546,7 +546,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[1].boss === 0 ? "" : rows[1].boss}
                     onChange={(e) => handleSelectChange(rows[1].id, "boss", e.target.value)}
                   >
@@ -574,7 +574,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[2].worker === 0 ? "" : rows[2].worker}
                     onChange={(e) => handleSelectChange(rows[2].id, "worker", e.target.value)}
                   >
@@ -588,7 +588,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[2].boss === 0 ? "" : rows[2].boss}
                     onChange={(e) => handleSelectChange(rows[2].id, "boss", e.target.value)}
                   >
@@ -616,7 +616,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[3].worker === 0 ? "" : rows[3].worker}
                     onChange={(e) => handleSelectChange(rows[3].id, "worker", e.target.value)}
                   >
@@ -630,7 +630,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[3].boss === 0 ? "" : rows[3].boss}
                     onChange={(e) => handleSelectChange(rows[3].id, "boss", e.target.value)}
                   >
@@ -690,7 +690,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[4].worker === 0 ? "" : rows[4].worker}
                     onChange={(e) => handleSelectChange(rows[4].id, "worker", e.target.value)}
                   >
@@ -704,7 +704,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[4].boss === 0 ? "" : rows[4].boss}
                     onChange={(e) => handleSelectChange(rows[4].id, "boss", e.target.value)}
                   >
@@ -732,7 +732,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[5].worker === 0 ? "" : rows[5].worker}
                     onChange={(e) => handleSelectChange(rows[5].id, "worker", e.target.value)}
                   >
@@ -746,7 +746,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[5].boss === 0 ? "" : rows[5].boss}
                     onChange={(e) => handleSelectChange(rows[5].id, "boss", e.target.value)}
                   >
@@ -805,7 +805,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[6].worker === 0 ? "" : rows[6].worker}
                     onChange={(e) => handleSelectChange(rows[6].id, "worker", e.target.value)}
                   >
@@ -819,7 +819,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[6].boss === 0 ? "" : rows[6].boss}
                     onChange={(e) => handleSelectChange(rows[6].id, "boss", e.target.value)}
                   >
@@ -847,7 +847,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[7].worker === 0 ? "" : rows[7].worker}
                     onChange={(e) => handleSelectChange(rows[7].id, "worker", e.target.value)}
                   >
@@ -861,7 +861,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[7].boss === 0 ? "" : rows[7].boss}
                     onChange={(e) => handleSelectChange(rows[7].id, "boss", e.target.value)}
                   >
@@ -889,7 +889,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[8].worker === 0 ? "" : rows[8].worker}
                     onChange={(e) => handleSelectChange(rows[8].id, "worker", e.target.value)}
                   >
@@ -903,7 +903,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[8].boss === 0 ? "" : rows[8].boss}
                     onChange={(e) => handleSelectChange(rows[8].id, "boss", e.target.value)}
                   >
@@ -931,7 +931,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[9].worker === 0 ? "" : rows[9].worker}
                     onChange={(e) => handleSelectChange(rows[9].id, "worker", e.target.value)}
                   >
@@ -945,7 +945,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[9].boss === 0 ? "" : rows[9].boss}
                     onChange={(e) => handleSelectChange(rows[9].id, "boss", e.target.value)}
                   >
@@ -1003,7 +1003,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[10].worker === 0 ? "" : rows[10].worker}
                     onChange={(e) => handleSelectChange(rows[10].id, "worker", e.target.value)}
                   >
@@ -1017,7 +1017,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[10].boss === 0 ? "" : rows[10].boss}
                     onChange={(e) => handleSelectChange(rows[10].id, "boss", e.target.value)}
                   >
@@ -1045,7 +1045,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[11].worker === 0 ? "" : rows[11].worker}
                     onChange={(e) => handleSelectChange(rows[11].id, "worker", e.target.value)}
                   >
@@ -1059,7 +1059,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[11].boss === 0 ? "" : rows[11].boss}
                     onChange={(e) => handleSelectChange(rows[11].id, "boss", e.target.value)}
                   >
@@ -1087,7 +1087,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[12].worker === 0 ? "" : rows[12].worker}
                     onChange={(e) => handleSelectChange(rows[12].id, "worker", e.target.value)}
                   >
@@ -1101,7 +1101,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[12].boss === 0 ? "" : rows[12].boss}
                     onChange={(e) => handleSelectChange(rows[12].id, "boss", e.target.value)}
                   >
@@ -1160,7 +1160,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[13].worker === 0 ? "" : rows[13].worker}
                     onChange={(e) => handleSelectChange(rows[13].id, "worker", e.target.value)}
                   >
@@ -1174,7 +1174,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[13].boss === 0 ? "" : rows[13].boss}
                     onChange={(e) => handleSelectChange(rows[13].id, "boss", e.target.value)}
                   >
@@ -1202,7 +1202,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[14].worker === 0 ? "" : rows[14].worker}
                     onChange={(e) => handleSelectChange(rows[14].id, "worker", e.target.value)}
                   >
@@ -1216,7 +1216,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[14].boss === 0 ? "" : rows[14].boss}
                     onChange={(e) => handleSelectChange(rows[14].id, "boss", e.target.value)}
                   >
@@ -1244,7 +1244,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[15].worker === 0 ? "" : rows[15].worker}
                     onChange={(e) => handleSelectChange(rows[15].id, "worker", e.target.value)}
                   >
@@ -1258,7 +1258,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[15].boss === 0 ? "" : rows[15].boss}
                     onChange={(e) => handleSelectChange(rows[15].id, "boss", e.target.value)}
                   >
@@ -1318,7 +1318,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[16].worker === 0 ? "" : rows[16].worker}
                     onChange={(e) => handleSelectChange(rows[16].id, "worker", e.target.value)}
                   >
@@ -1332,7 +1332,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[16].boss === 0 ? "" : rows[16].boss}
                     onChange={(e) => handleSelectChange(rows[16].id, "boss", e.target.value)}
                   >
@@ -1360,7 +1360,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[17].worker === 0 ? "" : rows[17].worker}
                     onChange={(e) => handleSelectChange(rows[17].id, "worker", e.target.value)}
                   >
@@ -1374,7 +1374,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[17].boss === 0 ? "" : rows[17].boss}
                     onChange={(e) => handleSelectChange(rows[17].id, "boss", e.target.value)}
                   >
@@ -1402,7 +1402,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[18].worker === 0 ? "" : rows[18].worker}
                     onChange={(e) => handleSelectChange(rows[18].id, "worker", e.target.value)}
                   >
@@ -1416,7 +1416,7 @@ function PerformanceEvaluation() {
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <select
-                    style={{ width: "100%" }}
+                    className="rating-select"
                     value={rows[18].boss === 0 ? "" : rows[18].boss}
                     onChange={(e) => handleSelectChange(rows[18].id, "boss", e.target.value)}
                   >
@@ -1462,7 +1462,7 @@ function PerformanceEvaluation() {
                   <td>{item.responsabilidad}</td>
                   <td className="text-center">
                     <select
-                      className="hseq-select"
+                      className="rating-select"
                       value={item.autoevaluacion}
                       onChange={(e) => handleHseqChange(item.id, "autoevaluacion", e.target.value)}
                     >
@@ -1476,7 +1476,7 @@ function PerformanceEvaluation() {
                   </td>
                   <td className="text-center">
                     <select
-                      className="hseq-select"
+                      className="rating-select"
                       value={item.evaluacionJefe}
                       onChange={(e) => handleHseqChange(item.id, "evaluacionJefe", e.target.value)}
                     >
