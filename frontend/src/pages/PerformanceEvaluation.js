@@ -450,8 +450,8 @@ function PerformanceEvaluation() {
                 <th>COMPETENCIA</th>
                 <th>DEFINICIÓN DE LA COMPETENCIA</th>
                 <th>ASPECTO A EVALUAR</th>
-                <th>TRABAJADOR (Autoevaluación)</th>
-                <th>JEFE INMEDIATO (Evaluación)</th>
+                <th>TRABAJADOR</th>
+                <th>JEFE INMEDIATO</th>
                 <th>JUSTIFICACIÓN</th>
               </tr>
             </thead>
@@ -1451,8 +1451,8 @@ function PerformanceEvaluation() {
               </tr>
               <tr>
                 <th className="hseq-subheader" style={{ width: "60%", backgroundColor: "#f0f0f0" }}>RESPONSABILIDAD</th>
-                <th className="hseq-subheader" style={{ width: "15%", backgroundColor: "#f0f0f0" }}>TRABAJADOR (Autoevaluación)</th>
-                <th className="hseq-subheader" style={{ width: "15%", backgroundColor: "#f0f0f0" }}>JEFE INMEDIATO (Evaluación)</th>
+                <th className="hseq-subheader" style={{ width: "15%", backgroundColor: "#f0f0f0" }}>TRABAJADOR</th>
+                <th className="hseq-subheader" style={{ width: "15%", backgroundColor: "#f0f0f0" }}>JEFE INMEDIATO</th>
                 <th className="hseq-subheader" style={{ width: "10%", backgroundColor: "#f0f0f0" }}>JUSTIFICACIÓN</th>
               </tr>
             </thead>
