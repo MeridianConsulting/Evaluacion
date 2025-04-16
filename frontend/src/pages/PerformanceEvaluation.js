@@ -300,6 +300,31 @@ function PerformanceEvaluation() {
     return (sumaTotal / contadorValidos).toFixed(2);
   };
 
+  // Calcular promedio de calificaciones de competencias
+  const calcularPromedioCompetencias = () => {
+    let sumaTotal = 0;
+    let contadorValidos = 0;
+    
+    rows.forEach(row => {
+      const workerVal = Number(row.worker) || 0;
+      const bossVal = Number(row.boss) || 0;
+      
+      if (workerVal > 0 && bossVal > 0) {
+        sumaTotal += (workerVal + bossVal) / 2;
+        contadorValidos++;
+      } else if (workerVal > 0) {
+        sumaTotal += workerVal;
+        contadorValidos++;
+      } else if (bossVal > 0) {
+        sumaTotal += bossVal;
+        contadorValidos++;
+      }
+    });
+    
+    if (contadorValidos === 0) return 0;
+    return (sumaTotal / contadorValidos).toFixed(2);
+  };
+
   return (
     <div className="evaluation-page-unique">
       <Header/>
@@ -427,7 +452,6 @@ function PerformanceEvaluation() {
                 <th>ASPECTO A EVALUAR</th>
                 <th>TRABAJADOR (Autoevaluación)</th>
                 <th>JEFE INMEDIATO (Evaluación)</th>
-                <th>PROMEDIO</th>
                 <th>JUSTIFICACIÓN</th>
               </tr>
             </thead>
@@ -493,15 +517,6 @@ function PerformanceEvaluation() {
                   </select>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    placeholder=""
-                    value={rows[0].average}
-                  />
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
@@ -542,15 +557,6 @@ function PerformanceEvaluation() {
                     <option value="4">4 - Satisfactorio</option>
                     <option value="5">5 - Excelente</option>
                   </select>
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    placeholder=""
-                    value={rows[1].average}
-                  />
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
@@ -595,15 +601,6 @@ function PerformanceEvaluation() {
                   </select>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    placeholder=""
-                    value={rows[2].average}
-                  />
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
@@ -644,15 +641,6 @@ function PerformanceEvaluation() {
                     <option value="4">4 - Satisfactorio</option>
                     <option value="5">5 - Excelente</option>
                   </select>
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    placeholder=""
-                    value={rows[3].average}
-                  />
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
@@ -729,15 +717,6 @@ function PerformanceEvaluation() {
                   </select>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    value={rows[4].average}
-                    placeholder=""
-                  />
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
@@ -778,15 +757,6 @@ function PerformanceEvaluation() {
                     <option value="4">4 - Satisfactorio</option>
                     <option value="5">5 - Excelente</option>
                   </select>
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    value={rows[5].average}
-                    placeholder=""
-                  />
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
@@ -862,15 +832,6 @@ function PerformanceEvaluation() {
                   </select>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    placeholder=""
-                    value={rows[6].average}
-                  />
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
@@ -911,15 +872,6 @@ function PerformanceEvaluation() {
                     <option value="4">4 - Satisfactorio</option>
                     <option value="5">5 - Excelente</option>
                   </select>
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    placeholder=""
-                    value={rows[7].average}
-                  />
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
@@ -964,15 +916,6 @@ function PerformanceEvaluation() {
                   </select>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    placeholder=""
-                    value={rows[8].average}
-                  />
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
@@ -1013,15 +956,6 @@ function PerformanceEvaluation() {
                     <option value="4">4 - Satisfactorio</option>
                     <option value="5">5 - Excelente</option>
                   </select>
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    placeholder=""
-                    value={rows[9].average}
-                  />
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
@@ -1096,15 +1030,6 @@ function PerformanceEvaluation() {
                   </select>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    placeholder=""
-                    value={rows[10].average}
-                  />
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
@@ -1147,15 +1072,6 @@ function PerformanceEvaluation() {
                   </select>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    placeholder=""
-                    value={rows[11].average}
-                  />
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
@@ -1196,15 +1112,6 @@ function PerformanceEvaluation() {
                     <option value="4">4 - Satisfactorio</option>
                     <option value="5">5 - Excelente</option>
                   </select>
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    placeholder=""
-                    value={rows[12].average}
-                  />
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
@@ -1280,15 +1187,6 @@ function PerformanceEvaluation() {
                   </select>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    placeholder=""
-                    value={rows[13].average}
-                  />
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
@@ -1331,15 +1229,6 @@ function PerformanceEvaluation() {
                   </select>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    placeholder=""
-                    value={rows[14].average}
-                  />
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
@@ -1380,15 +1269,6 @@ function PerformanceEvaluation() {
                     <option value="4">4 - Satisfactorio</option>
                     <option value="5">5 - Excelente</option>
                   </select>
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    placeholder=""
-                    value={rows[15].average}
-                  />
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
@@ -1465,15 +1345,6 @@ function PerformanceEvaluation() {
                   </select>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    placeholder=""
-                    value={rows[16].average}
-                  />
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
@@ -1516,15 +1387,6 @@ function PerformanceEvaluation() {
                   </select>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    placeholder=""
-                    value={rows[17].average}
-                  />
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
@@ -1565,15 +1427,6 @@ function PerformanceEvaluation() {
                     <option value="4">4 - Satisfactorio</option>
                     <option value="5">5 - Excelente</option>
                   </select>
-                </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input
-                    type="text"
-                    className="promedio-input"
-                    readOnly
-                    placeholder=""
-                    value={rows[18].average}
-                  />
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
