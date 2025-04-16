@@ -446,7 +446,7 @@ function PerformanceEvaluation() {
                   COMPETENCIAS
                 </th>
               </tr>
-              <tr style={{ backgroundColor: "#E0E0E0", textAlign: "left" }}>
+              <tr style={{ backgroundColor: "#f0f0f0", textAlign: "left" }}>
                 <th>COMPETENCIA</th>
                 <th>DEFINICIÓN DE LA COMPETENCIA</th>
                 <th>ASPECTO A EVALUAR</th>
@@ -461,7 +461,7 @@ function PerformanceEvaluation() {
                 <td
                   rowSpan={4}
                   style={{
-                    backgroundColor: "#DCDCDC",
+                    backgroundColor: "#f5f5f5",
                     verticalAlign: "middle",
                     textAlign: "center",
                     fontWeight: "bold",
@@ -661,7 +661,7 @@ function PerformanceEvaluation() {
                 <td
                   rowSpan={2}
                   style={{
-                    backgroundColor: "#DCDCDC",
+                    backgroundColor: "#f5f5f5",
                     verticalAlign: "middle",
                     textAlign: "center",
                     fontWeight: "bold",
@@ -776,7 +776,7 @@ function PerformanceEvaluation() {
                 <td
                   rowSpan={4}
                   style={{
-                    backgroundColor: "#DCDCDC",
+                    backgroundColor: "#f5f5f5",
                     verticalAlign: "middle",
                     textAlign: "center",
                     fontWeight: "bold",
@@ -975,7 +975,7 @@ function PerformanceEvaluation() {
                 <td
                   rowSpan={3}
                   style={{
-                    backgroundColor: "#DCDCDC",
+                    backgroundColor: "#f5f5f5",
                     verticalAlign: "middle",
                     textAlign: "center",
                     fontWeight: "bold",
@@ -1131,7 +1131,7 @@ function PerformanceEvaluation() {
                 <td
                   rowSpan={3}
                   style={{
-                    backgroundColor: "#DCDCDC",
+                    backgroundColor: "#f5f5f5",
                     verticalAlign: "middle",
                     textAlign: "center",
                     fontWeight: "bold",
@@ -1288,7 +1288,7 @@ function PerformanceEvaluation() {
                 <td
                   rowSpan={3}
                   style={{
-                    backgroundColor: "#DCDCDC",
+                    backgroundColor: "#f5f5f5",
                     verticalAlign: "middle",
                     textAlign: "center",
                     fontWeight: "bold",
@@ -1445,15 +1445,15 @@ function PerformanceEvaluation() {
           <table className="hseq-table">
             <thead>
               <tr>
-                <th colSpan={4} className="hseq-header">
+                <th colSpan={4} className="hseq-header" style={{ backgroundColor: "#000", color: "#fff" }}>
                   CALIFICACIÓN GENERAL POR RESPONSABILIDADES HSEQ
                 </th>
               </tr>
               <tr>
-                <th className="hseq-subheader" style={{ width: "60%" }}>RESPONSABILIDAD</th>
-                <th className="hseq-subheader" style={{ width: "15%" }}>TRABAJADOR (Autoevaluación)</th>
-                <th className="hseq-subheader" style={{ width: "15%" }}>JEFE INMEDIATO (Evaluación)</th>
-                <th className="hseq-subheader" style={{ width: "10%" }}>JUSTIFICACIÓN</th>
+                <th className="hseq-subheader" style={{ width: "60%", backgroundColor: "#f0f0f0" }}>RESPONSABILIDAD</th>
+                <th className="hseq-subheader" style={{ width: "15%", backgroundColor: "#f0f0f0" }}>TRABAJADOR (Autoevaluación)</th>
+                <th className="hseq-subheader" style={{ width: "15%", backgroundColor: "#f0f0f0" }}>JEFE INMEDIATO (Evaluación)</th>
+                <th className="hseq-subheader" style={{ width: "10%", backgroundColor: "#f0f0f0" }}>JUSTIFICACIÓN</th>
               </tr>
             </thead>
             <tbody>
@@ -1498,13 +1498,13 @@ function PerformanceEvaluation() {
                 </tr>
               ))}
               <tr>
-                <td className="hseq-promedio">
+                <td className="hseq-promedio" style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}>
                   PROMEDIO CALIFICACIÓN HSEQ:
                 </td>
-                <td colSpan="2" className="hseq-promedio-valor">
+                <td colSpan="2" className="hseq-promedio-valor" style={{ backgroundColor: "#f5f5f5" }}>
                   {calcularPromedioHseq()}
                 </td>
-                <td className="hseq-promedio-valor"></td>
+                <td className="hseq-promedio-valor" style={{ backgroundColor: "#f5f5f5" }}></td>
               </tr>
             </tbody>
           </table>
@@ -1536,10 +1536,10 @@ function PerformanceEvaluation() {
           <table className="plan-accion-table">
             <thead>
               <tr>
-                <th className="plan-accion-th">Actividades</th>
-                <th className="plan-accion-th">Responsable</th>
-                <th className="plan-accion-th">Seguimiento</th>
-                <th className="plan-accion-th">Fecha</th>
+                <th className="plan-accion-th" style={{ backgroundColor: "#f0f0f0" }}>Actividades</th>
+                <th className="plan-accion-th" style={{ backgroundColor: "#f0f0f0" }}>Responsable</th>
+                <th className="plan-accion-th" style={{ backgroundColor: "#f0f0f0" }}>Seguimiento</th>
+                <th className="plan-accion-th" style={{ backgroundColor: "#f0f0f0" }}>Fecha</th>
               </tr>
             </thead>
             <tbody>
@@ -1582,18 +1582,23 @@ function PerformanceEvaluation() {
           <div className="firmas-container">
             <div className="firma-item">
               <label className="campo-label">Firma (Evaluado)</label>
-              <div className="firma-box"></div>
+              <div className="firma-box" style={{ border: "1px solid #000" }}></div>
             </div>
             <div className="firma-item">
               <label className="campo-label">Firma (Jefe Directo)</label>
-              <div className="firma-box"></div>
+              <div className="firma-box" style={{ border: "1px solid #000" }}></div>
             </div>
             <div className="firma-item">
               <label className="campo-label">Fecha</label>
               <input type="date" className="fecha-input" />
             </div>
           </div>
-          <button className="finalizar-btn">
+          <button className="finalizar-btn" style={{ 
+            backgroundColor: "#000", 
+            color: "#fff", 
+            borderColor: "#000",
+            transition: "background-color 0.3s, color 0.3s"
+          }}>
             Finalizar Evaluación
           </button>
         </section>
