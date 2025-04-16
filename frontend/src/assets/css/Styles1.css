@@ -1970,7 +1970,7 @@ td .rating-select {
 }
 
 .instrucciones {
-  background-color: #f9f9f9; /* Fondo suave */
+  background-color: #ffffff; /* Fondo suave */
   border: 1px solid #ccc; /* Borde sutil */
   border-radius: 8px; /* Bordes redondeados */
   padding: 20px; /* Espaciado interno */
@@ -1979,7 +1979,7 @@ td .rating-select {
 }
 
 .instrucciones h2 {
-  color: #333; /* Color del texto */
+  color: #000000; /* Color del texto */
 }
 
 .instrucciones ol {
