@@ -485,10 +485,10 @@ function PerformanceEvaluation() {
                 </td>
 
                 {/* Aspecto 1 */}
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[0].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[0].worker === 0 ? "" : rows[0].worker}
@@ -502,7 +502,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[0].boss === 0 ? "" : rows[0].boss}
@@ -527,10 +527,10 @@ function PerformanceEvaluation() {
 
               {/* Aspecto 2 */}
               <tr>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[1].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[1].worker === 0 ? "" : rows[1].worker}
@@ -544,7 +544,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[1].boss === 0 ? "" : rows[1].boss}
@@ -569,10 +569,10 @@ function PerformanceEvaluation() {
 
               {/* Aspecto 3 */}
               <tr>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[2].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[2].worker === 0 ? "" : rows[2].worker}
@@ -586,7 +586,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[2].boss === 0 ? "" : rows[2].boss}
@@ -611,10 +611,10 @@ function PerformanceEvaluation() {
 
               {/* Aspecto 4 */}
               <tr>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[3].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[3].worker === 0 ? "" : rows[3].worker}
@@ -628,7 +628,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[3].boss === 0 ? "" : rows[3].boss}
@@ -685,10 +685,10 @@ function PerformanceEvaluation() {
                 </td>
 
                 {/* Aspecto 1 */}
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[4].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[4].worker === 0 ? "" : rows[4].worker}
@@ -702,7 +702,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[4].boss === 0 ? "" : rows[4].boss}
@@ -727,10 +727,10 @@ function PerformanceEvaluation() {
 
               {/* Segunda fila para el segundo aspecto */}
               <tr>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[5].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[5].worker === 0 ? "" : rows[5].worker}
@@ -744,7 +744,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[5].boss === 0 ? "" : rows[5].boss}
@@ -800,10 +800,10 @@ function PerformanceEvaluation() {
                 </td>
 
                 {/* Aspecto 1 */}
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[6].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[6].worker === 0 ? "" : rows[6].worker}
@@ -817,7 +817,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[6].boss === 0 ? "" : rows[6].boss}
@@ -842,10 +842,10 @@ function PerformanceEvaluation() {
 
               {/* Fila 2 de la competencia: Aspecto 2 */}
               <tr>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[7].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[7].worker === 0 ? "" : rows[7].worker}
@@ -859,7 +859,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[7].boss === 0 ? "" : rows[7].boss}
@@ -884,10 +884,10 @@ function PerformanceEvaluation() {
 
               {/* Fila 3 de la competencia: Aspecto 3 */}
               <tr>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[8].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[8].worker === 0 ? "" : rows[8].worker}
@@ -901,7 +901,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[8].boss === 0 ? "" : rows[8].boss}
@@ -926,10 +926,10 @@ function PerformanceEvaluation() {
 
               {/* Fila 4 de la competencia: Aspecto 4 */}
               <tr>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[9].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[9].worker === 0 ? "" : rows[9].worker}
@@ -943,7 +943,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[9].boss === 0 ? "" : rows[9].boss}
@@ -998,10 +998,10 @@ function PerformanceEvaluation() {
                 </td>
 
                 {/* Aspecto 1 */}
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[10].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[10].worker === 0 ? "" : rows[10].worker}
@@ -1015,7 +1015,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[10].boss === 0 ? "" : rows[10].boss}
@@ -1040,10 +1040,10 @@ function PerformanceEvaluation() {
 
               {/* Fila 2 de la competencia: Aspecto 2 */}
               <tr>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[11].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[11].worker === 0 ? "" : rows[11].worker}
@@ -1057,7 +1057,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[11].boss === 0 ? "" : rows[11].boss}
@@ -1082,10 +1082,10 @@ function PerformanceEvaluation() {
 
               {/* Fila 3 de la competencia: Aspecto 3 */}
               <tr>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[12].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[12].worker === 0 ? "" : rows[12].worker}
@@ -1099,7 +1099,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[12].boss === 0 ? "" : rows[12].boss}
@@ -1155,10 +1155,10 @@ function PerformanceEvaluation() {
                 </td>
 
                 {/* Aspecto 1 */}
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[13].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[13].worker === 0 ? "" : rows[13].worker}
@@ -1172,7 +1172,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[13].boss === 0 ? "" : rows[13].boss}
@@ -1197,10 +1197,10 @@ function PerformanceEvaluation() {
 
               {/* Fila 2 de la competencia: Aspecto 2 */}
               <tr>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[14].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[14].worker === 0 ? "" : rows[14].worker}
@@ -1214,7 +1214,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[14].boss === 0 ? "" : rows[14].boss}
@@ -1239,10 +1239,10 @@ function PerformanceEvaluation() {
 
               {/* Fila 3 de la competencia: Aspecto 3 */}
               <tr>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[15].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[15].worker === 0 ? "" : rows[15].worker}
@@ -1256,7 +1256,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[15].boss === 0 ? "" : rows[15].boss}
@@ -1313,10 +1313,10 @@ function PerformanceEvaluation() {
                 </td>
 
                 {/* Aspecto 1 */}
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[16].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[16].worker === 0 ? "" : rows[16].worker}
@@ -1330,7 +1330,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[16].boss === 0 ? "" : rows[16].boss}
@@ -1355,10 +1355,10 @@ function PerformanceEvaluation() {
 
               {/* Fila 2 de la competencia: Aspecto 2 */}
               <tr>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[17].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[17].worker === 0 ? "" : rows[17].worker}
@@ -1372,7 +1372,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[17].boss === 0 ? "" : rows[17].boss}
@@ -1397,10 +1397,10 @@ function PerformanceEvaluation() {
 
               {/* Fila 3 de la competencia: Aspecto 3 */}
               <tr>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[18].aspecto}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[18].worker === 0 ? "" : rows[18].worker}
@@ -1414,7 +1414,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[18].boss === 0 ? "" : rows[18].boss}
