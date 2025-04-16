@@ -1445,12 +1445,12 @@ function PerformanceEvaluation() {
           <table className="hseq-table">
             <thead>
               <tr>
-                <th colSpan={4} className="hseq-header" style={{ backgroundColor: "#000", color: "#fff" }}>
+                <th colSpan={4} className="hseq-header" style={{ backgroundColor: "#000", color: "#fff", textAlign: "center" }}>
                   CALIFICACIÓN GENERAL POR RESPONSABILIDADES HSEQ
                 </th>
               </tr>
               <tr>
-                <th className="hseq-subheader" style={{ width: "60%", backgroundColor: "#f0f0f0" }}>RESPONSABILIDAD</th>
+                <th className="hseq-subheader" style={{ width: "60%", backgroundColor: "#f0f0f0", textAlign: "center" }}>RESPONSABILIDAD</th>
                 <th className="hseq-subheader" style={{ width: "15%", backgroundColor: "#f0f0f0" }}>TRABAJADOR</th>
                 <th className="hseq-subheader" style={{ width: "15%", backgroundColor: "#f0f0f0" }}>JEFE INMEDIATO</th>
                 <th className="hseq-subheader" style={{ width: "10%", backgroundColor: "#f0f0f0" }}>JUSTIFICACIÓN</th>
