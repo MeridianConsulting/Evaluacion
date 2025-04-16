@@ -1789,3 +1789,75 @@ footer {
     max-width: 250px;
   }
 }
+
+/* Estilos responsive para tablas */
+@media (max-width: 992px) {
+  .evaluation-section table {
+    font-size: 14px;
+  }
+  
+  .evaluation-section select,
+  .evaluation-section input {
+    padding: 6px;
+  }
+  
+  .justificacion-textarea {
+    min-height: 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .evaluation-container-unique {
+    padding: 1rem !important;
+  }
+  
+  .evaluation-section table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-size: 13px;
+  }
+  
+  .evaluation-section table td,
+  .evaluation-section table th {
+    padding: 0.5rem !important;
+  }
+  
+  .evaluation-field {
+    flex: 0 0 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .hseq-table {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 576px) {
+  .evaluacion-desempeno {
+    font-size: 1.5rem;
+  }
+  
+  .evaluation-row {
+    flex-direction: column;
+  }
+  
+  .evaluation-field {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .firmas-container {
+    flex-direction: column;
+  }
+  
+  .firma-item {
+    width: 100%;
+    margin-bottom: 1.5rem;
+  }
+  
+  .finalizar-btn {
+    width: 100%;
+  }
+}

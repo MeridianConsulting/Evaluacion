@@ -303,10 +303,15 @@ function PerformanceEvaluation() {
   return (
     <div className="evaluation-page-unique">
       <Header/>
-      <div className="hero" style={{ textAlign: "center", padding: "2rem" }}>
+      <div className="hero" style={{ 
+        textAlign: "center", 
+        padding: "clamp(1rem, 5vw, 2rem)" 
+      }}>
         <h1 className="evaluacion-desempeno">EVALUACIÓN DE DESEMPEÑO</h1>
       </div>
-      <main className="evaluation-container-unique" style={{ padding: "2rem" }}>
+      <main className="evaluation-container-unique" style={{ 
+        padding: "clamp(1rem, 5vw, 2rem)" 
+      }}>
         <section className="evaluation-section">
             <div className="evaluation-row">
               <div className="evaluation-field">
