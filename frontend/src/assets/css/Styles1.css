@@ -1276,7 +1276,7 @@ footer {
 }
 
 .evaluation-container-unique {
-  width: 96%;
+  width: 80%;
   max-width: 1400px;
   margin: 2rem auto 3rem;
   background-color: var(--color-secondary);
@@ -1388,7 +1388,7 @@ footer {
 .evaluacion-desempeno {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--color-secondary);
+  color: black;
   margin-bottom: 1.5rem;
   text-align: center;
   letter-spacing: -0.02em;
