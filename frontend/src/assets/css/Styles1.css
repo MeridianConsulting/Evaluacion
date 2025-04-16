@@ -1267,790 +1267,544 @@ footer {
    PERFORMANCE EVALUATION PAGE
 ============================ */
 .evaluation-page-unique {
-  background-color: #f7f7f7;
+  background-color: #f5f7fa;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+  color: #2c3e50;
 }
 
 .evaluation-container-unique {
-  width: 95%;
-  max-width: 1400px;
-  margin: 2rem auto;
+  width: 92%;
+  max-width: 1300px;
+  margin: 2rem auto 3rem;
   background-color: #fff;
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  border-radius: 8px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  transition: all 0.3s ease;
 }
 
-
-/* === Estilos para la sección de evaluación === */
-
+/* === Estilos para las secciones === */
 .evaluation-section {
-  margin: 2rem auto;
-  max-width: 1200px;
-  background-color: #fff;
+  margin-bottom: 2.5rem;
   padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 6px;
+  background-color: #ffffff;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(0,0,0,0.03);
 }
 
 .evaluation-section:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.04);
+  border-color: rgba(0,0,0,0.08);
 }
 
-/* Cada fila contendrá tres "columnas" (fields) */
+/* === Estilos para filas y campos === */
 .evaluation-row {
   display: flex;
-  justify-content: space-between; 
-  gap: 1rem;            /* espacio horizontal entre las columnas */
-  margin-bottom: 1rem;  /* espacio entre filas */
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  margin-bottom: 1.2rem;
 }
 
-/* Cada "campo" (label + input) */
 .evaluation-field {
-  display: flex;
-  flex-direction: column;
-  flex: 1;              /* se expandirá ocupando todo el espacio posible */
+  flex: 1 1 calc(33.333% - 1.2rem);
+  min-width: 250px;
 }
 
-/* Estilo para los labels e inputs */
 .evaluation-field label {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #333;          /* ajusta el color de texto */
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.6rem;
+  color: #334155;
+  font-size: 0.9rem;
 }
 
 .evaluation-field input {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  background-color: #f8fafc;
+  color: #1e293b;
 }
 
 .evaluation-field input[type="date"] {
-  color: #333;  /* algunos navegadores aplican estilos distintos a date */
+  font-family: inherit;
 }
 
-/* Responsive: en pantallas pequeñas las tres columnas se acomodan en una sola columna */
-@media (max-width: 768px) {
-  .evaluation-row {
-    flex-direction: column;
-  }
-}
-
+/* === Estilos para las tablas === */
 .evaluation-table-wrapper {
   overflow-x: auto;
+  margin: 1.5rem 0;
   border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
 }
 
-/* Tabla básica de evaluación */
 .evaluation-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .evaluation-table th, 
 .evaluation-table td {
-  border: 1px solid #e0e0e0;
-  padding: 10px;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #edf2f7;
 }
 
 .evaluation-table th {
-  background-color: #000;
-  color: #fff;
+  background-color: #f1f5f9;
+  font-weight: 600;
+  color: #334155;
 }
 
-/* Botón final y cualquier botón estilo "hero-button" */
+/* === Botones === */
 .hero-button {
-  background-color: var(--color-primary);
-  color: var(--color-secondary);
+  padding: 0.8rem 1.8rem;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
   border: none;
-  padding: 0.8rem 1.6rem;
-  font-size: 1rem;
+  border-radius: 6px;
+  font-weight: 600;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.25);
 }
 
 .hero-button:hover {
-  background-color: var(--color-dark);
-}
-
-.evaluacion-desempeno{
-  color: black;
-}
-
-/* === Estilos específicos para campos de Competencias === */
-
-/* Campos numéricos (autoevaluación), selects (evaluación del jefe) y
-   textarea (justificación) dentro de la .evaluation-section */
-   .evaluation-section input[type="number"],
-   .evaluation-section select,
-   .evaluation-section textarea {
-     width: 100%;
-     padding: 0.5rem;
-     margin: 0;                 /* Aseguramos que no haya margen adicional */
-     border: 1px solid #ccc;    /* Borde gris claro */
-     border-radius: 4px;        /* Borde redondeado para un look moderno */
-     font-size: 1rem;
-     color: #333;               /* Texto oscuro */
-     background-color: #fff;    /* Fondo blanco */
-     transition: border-color 0.3s ease, box-shadow 0.3s ease;
-     font-family: "Libre Franklin", sans-serif; /* Mantiene la fuente principal */
-   }
-   
-   /* Placeholder con tono gris y ligera cursiva */
-   .evaluation-section input[type="number"]::placeholder,
-   .evaluation-section textarea::placeholder {
-     color: #aaa;
-     font-style: italic;
-   }
-   
-   /* Efecto de foco: borde resaltado y shadow sutil */
-   .evaluation-section input[type="number"]:focus,
-   .evaluation-section select:focus,
-   .evaluation-section textarea:focus {
-     outline: none;
-     border-color: var(--color-accent);  /* Usa el acento metálico (#B0A990) */
-     box-shadow: 0 0 5px rgba(176, 169, 144, 0.3); 
-   }
-   
-   /* Opcional: para ajustar altura del textarea */
-   .evaluation-section textarea {
-     resize: vertical; /* Permite redimensionar verticalmente */
-     min-height: 60px; /* Altura mínima */
-   }
-   
-   /* === Estilos exclusivos para el campo de Promedio === */
-.promedio-input {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-  font-family: "Libre Franklin", sans-serif; /* Mantén la misma fuente que el resto */
-  font-weight: 500;
-  color: #333;               /* Texto oscuro */
-  background-color: #f7f7f7; /* Ligero tono gris, diferente a los demás inputs */
-  text-align: center;        /* Centra el valor numérico */
-  cursor: default;           /* El cursor no muestra que sea editable */
-  outline: none;             /* Elimina bordes al hacer clic */
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Placeholder estilizado y más profesional */
-.promedio-input::placeholder {
-  color: #999;         /* Un gris un poco más claro */
-  font-style: italic;  /* Acento para diferenciarlo del texto real */
-}
-
-/* Opcional: efecto hover sutil */
-.promedio-input:hover {
-  background-color: #f0f0f0;
-}
-  .promedio-input {
-    user-select: none;
-    pointer-events: none;
-  }
-
-  /* === Campo de PROMEDIO === */
-.promedio-input {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-family: "Libre Franklin", sans-serif; /* Ajusta para mantener la misma fuente */
-  font-size: 1rem;
-  font-weight: 500;
-  color: #333;
-  background-color: #f7f7f7; /* Tono gris claro para diferenciarlo del resto */
-  text-align: center;        /* Centra el número */
-  cursor: default;           /* No indica que sea editable */
-  outline: none;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.promedio-input::placeholder {
-  color: #999;         /* Placeholder gris */
-  font-style: italic;  /* Diferencia del texto real */
-}
-
-/* Si deseas un ligero efecto hover */
-.promedio-input:hover {
-  background-color: #f0f0f0;
-}
-
-/* === Campo de JUSTIFICACIÓN MEJORADO === */
-.justificacion-textarea {
-  width: 100%;
-  padding: 0.8rem;
-  border: 1px solid #B0A990;
-  border-radius: 8px;
-  font-family: "Libre Franklin", sans-serif; 
-  font-size: 1.05rem;
-  color: #333;
-  background-color: #fff;
-  resize: vertical;
-  transition: all 0.3s ease;
-  min-height: 80px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  position: relative;
-}
-
-.justificacion-textarea::placeholder {
-  color: #888;
-  font-style: italic;
-  opacity: 0.8;
-  transition: opacity 0.3s ease;
-}
-
-.justificacion-textarea:focus {
-  outline: none;
-  border-color: #B0A990;
-  box-shadow: 0 0 8px rgba(176, 169, 144, 0.4);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   transform: translateY(-2px);
 }
 
-.justificacion-textarea:focus::placeholder {
-  opacity: 0.5;
+/* === Título de evaluación === */
+.evaluacion-desempeno {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  letter-spacing: -0.02em;
+  position: relative;
+  padding-bottom: 0.8rem;
 }
 
-/* Indicador de campo obligatorio */
-.campo-obligatorio::after {
-  content: "*";
-  color: #ff3b30;
-  margin-left: 4px;
-  font-size: 1.2rem;
-  display: inline-block;
+.evaluacion-desempeno::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  border-radius: 2px;
 }
 
-/* Mejoras estéticas globales */
-.evaluation-page-unique {
-  background-color: #f7f7f7;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.evaluation-container-unique {
-  width: 95%;
-  max-width: 1400px;
-  margin: 2rem auto;
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-}
-
-.evaluation-section {
-  margin: 2rem auto;
-  max-width: 1200px;
-  background-color: #fff;
-  padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.evaluation-section:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-}
-
-/* Mejoras en los inputs y selects */
+/* === Campos personalizados === */
+.evaluation-section input[type="number"],
 .evaluation-section select {
-  padding: 0.6rem;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #e2e8f0;
   border-radius: 6px;
-  transition: all 0.3s ease;
-  background-color: #fcfcfc;
-  cursor: pointer;
+  font-size: 0.95rem;
+  background-color: #f8fafc;
+  transition: all 0.2s ease;
+  -webkit-appearance: none;
   appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B0A990' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
   background-repeat: no-repeat;
-  background-position: right 0.7rem center;
-  background-size: 1em;
+  background-position: right 0.7rem top 50%;
+  background-size: 0.8rem auto;
 }
 
-.evaluation-section select:hover {
-  border-color: #B0A990;
-  background-color: #f9f9f9;
+.evaluation-section input[type="number"]::placeholder,
+.evaluation-section select::placeholder {
+  color: #a0aec0;
 }
 
-/* Mejoras para tablas de evaluación */
-.evaluation-table-wrapper {
-  overflow-x: auto;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+.evaluation-section input[type="number"]:focus,
+.evaluation-section select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  outline: none;
 }
 
-.evaluation-table th, 
-.evaluation-table td {
-  border: 1px solid #e0e0e0;
-  padding: 10px;
+.evaluation-section textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background-color: #f8fafc;
+  resize: vertical;
+  transition: all 0.2s ease;
 }
 
-.evaluation-table th {
-  background-color: #000;
-  color: #fff;
+/* === Promedio === */
+.promedio-input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background-color: #f1f5f9;
+  text-align: center;
+  font-weight: 600;
+  color: #2563eb;
+  cursor: not-allowed;
 }
 
-/* Animación sutil para mejora de interacción */
+.promedio-input::placeholder {
+  color: #94a3b8;
+  font-weight: normal;
+}
+
+.promedio-input:hover {
+  background-color: #e2e8f0;
+}
+
+/* === Textarea de justificación === */
+.justificacion-textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background-color: #f8fafc;
+  resize: vertical;
+  min-height: 80px;
+  transition: all 0.2s ease;
+}
+
+.justificacion-textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  outline: none;
+}
+
+/* === Animaciones === */
 @keyframes highlightField {
-  0% { background-color: rgba(176, 169, 144, 0.2); }
-  100% { background-color: transparent; }
+  0% { background-color: #fff; }
+  50% { background-color: rgba(59, 130, 246, 0.1); }
+  100% { background-color: #fff; }
 }
 
 .campo-destacado {
-  animation: highlightField 1s ease;
+  animation: highlightField 2s ease-in-out;
 }
 
-/* Estilos mejorados para la sección HSEQ */
+/* === Tabla HSEQ === */
 .hseq-table {
   width: 100%;
-  border-collapse: collapse;
-  font-family: Arial, sans-serif;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  border: 1px solid #ddd;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
 }
 
 .hseq-header {
-  background-color: #000;
-  color: #fff;
-  padding: 1rem;
+  background: linear-gradient(90deg, #1e293b, #334155);
+  color: white;
+  padding: 1.2rem;
+  font-size: 1.1rem;
   text-align: center;
-  font-size: 1.2rem;
-  width: 100%;
+  letter-spacing: 0.02em;
 }
 
 .hseq-subheader {
-  background-color: #E0E0E0;
-  text-align: center;
-  padding: 0.8rem;
+  background-color: #f1f5f9;
+  color: #334155;
+  padding: 1rem;
+  font-weight: 600;
+  text-align: left;
 }
 
 .hseq-table th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  background-color: #000000;
-  color: white;
+  background-color: #f1f5f9;
+  font-weight: 600;
+  color: #334155;
+  text-align: left;
+  padding: 1rem;
 }
 
 .hseq-table td {
-  background-color: #fff;
-  padding: 0.8rem;
-  border-bottom: 1px solid #eee;
+  padding: 1rem;
+  border-bottom: 1px solid #edf2f7;
 }
 
 .hseq-select {
-  width: 90%;
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background-color: #f8fafc;
 }
 
 .hseq-textarea {
   width: 100%;
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  resize: vertical;
+  padding: 0.7rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background-color: #f8fafc;
 }
 
 .hseq-promedio {
-  background-color: #E0E0E0;
-  padding: 1rem;
-  font-weight: bold;
+  font-weight: 600;
   text-align: right;
+  padding: 1rem;
+  color: #334155;
 }
 
 .hseq-promedio-valor {
-  background-color: #E0E0E0;
-  padding: 1rem;
-  font-weight: bold;
+  font-weight: 600;
   text-align: center;
-  font-size: 1.1rem;
+  padding: 1rem;
+  color: #2563eb;
+  background-color: #f8fafc;
 }
 
-/* Estilos para las secciones inferiores */
+/* === Campos de sección === */
 .seccion-titulo {
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 1.4rem;
+  font-weight: 600;
   margin-bottom: 1.5rem;
-  border-bottom: 2px solid #000;
+  color: #1e293b;
+  position: relative;
   padding-bottom: 0.5rem;
+}
+
+.seccion-titulo::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  border-radius: 2px;
 }
 
 .campo-label {
   display: block;
-  margin-bottom: 0.5rem;
   font-weight: 500;
+  margin-bottom: 0.6rem;
+  color: #334155;
 }
 
 .campo-textarea {
   width: 100%;
-  padding: 0.75rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-family: inherit;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background-color: #f8fafc;
+  resize: vertical;
+  min-height: 100px;
+  transition: all 0.2s ease;
 }
 
-/* Estilos para la tabla de plan de acción */
+/* === Plan de acción === */
 .plan-accion-table {
   width: 100%;
-  border-collapse: collapse;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  margin-top: 1rem;
-}
-
-.plan-accion-th {
-  background-color: #000;
-  color: #fff;
-  padding: 0.8rem;
-  text-align: center;
-}
-
-.plan-accion-td {
-  padding: 0.8rem;
-  border-bottom: 1px solid #eee;
-}
-
-.plan-accion-input {
-  width: 100%;
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-/* Estilos para la sección de firmas */
-.firmas-container {
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+  border-collapse: separate;
+  border-spacing: 0;
   margin: 1.5rem 0;
 }
 
-.firma-item {
-  min-width: 200px;
-}
-
-.firma-box {
-  border: 1px solid #ccc;
-  height: 70px;
-  width: 200px;
-  margin: 0 auto;
-  border-radius: 4px;
-  background-color: #f9f9f9;
-}
-
-.fecha-input {
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  width: 200px;
-}
-
-.finalizar-btn {
-  margin-top: 2rem;
-  background-color: #000;
-  color: #fff;
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.finalizar-btn:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  background-color: #1a1a1a;
-}
-
-.text-center {
-  text-align: center;
-}
-
-@media (max-width: 768px) {
-  .firmas-container {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .firma-item {
-    width: 100%;
-    max-width: 250px;
-  }
-}
-
-/* Estilos responsivos para tablas */
-@media (max-width: 992px) {
-  .evaluation-section table {
-    font-size: 14px;
-  }
-  
-  .evaluation-section select,
-  .evaluation-section input {
-    padding: 6px;
-  }
-  
-  .justificacion-textarea {
-    min-height: 60px;
-  }
-}
-
-@media (max-width: 768px) {
-  .evaluation-container-unique {
-    padding: 1rem !important;
-  }
-  
-  .evaluation-section table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-    font-size: 13px;
-  }
-  
-  .evaluation-section table td,
-  .evaluation-section table th {
-    padding: 0.5rem !important;
-  }
-  
-  .evaluation-field {
-    flex: 0 0 100%;
-    margin-bottom: 1rem;
-  }
-  
-  .hseq-table {
-    font-size: 13px;
-  }
-}
-
-@media (max-width: 576px) {
-  .evaluacion-desempeno {
-    font-size: 1.5rem;
-  }
-  
-  .evaluation-row {
-    flex-direction: column;
-  }
-  
-  .evaluation-field {
-    width: 100%;
-    margin-right: 0;
-    margin-bottom: 1rem;
-  }
-  
-  .firmas-container {
-    flex-direction: column;
-  }
-  
-  .firma-item {
-    width: 100%;
-    margin-bottom: 1.5rem;
-  }
-  
-  .finalizar-btn {
-    width: 100%;
-  }
-}
-
-/* Estilos mejorados para la evaluación de desempeño */
-.evaluation-hero {
-  background: linear-gradient(135deg, #2c3e50, #34495e);
-  padding: 2.5rem 1rem;
-  text-align: center;
-}
-
-.evaluation-description {
-  color: #ddd;
-  font-size: 1.1rem;
-  margin-top: 0.5rem;
-}
-
-.card-shadow {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background-color: #fff;
-  transition: box-shadow 0.3s ease;
-}
-
-.section-title {
-  margin-bottom: 1.5rem;
-  color: #333;
-  font-size: 1.4rem;
+.plan-accion-th {
+  background-color: #f1f5f9;
+  color: #334155;
+  padding: 1rem;
   font-weight: 600;
-  border-bottom: 2px solid #ddd;
-  padding-bottom: 0.7rem;
-}
-
-/* Mejora para campos obligatorios */
-.campo-obligatorio label::after {
-  content: " *";
-  color: #e74c3c;
-  font-weight: bold;
-}
-
-
-
-
-.competencia-cell {
-  background-color: #f2f2f2;
-  font-weight: bold;
-  text-align: center;
-  vertical-align: middle;
-}
-
-.definicion-cell {
-  background-color: #f9f9f9;
-  vertical-align: middle;
-}
-
-/* Mejoras para inputs y selects */
-.evaluation-section select, 
-.hseq-select {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background-color: #f8f9fa;
-  transition: border-color 0.3s;
-}
-
-.evaluation-section select:hover,
-.hseq-select:hover {
-  border-color: #3498db;
-}
-
-.promedio-input {
-  background-color: #ecf0f1;
-  font-weight: bold;
-  color: #2c3e50;
-  text-align: center;
-}
-
-.justificacion-textarea {
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 0.5rem;
-  transition: border-color 0.3s;
-  min-height: 60px;
-}
-
-.justificacion-textarea:focus {
-  border-color: #3498db;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-}
-
-/* Mejoras para plan de acción */
-.plan-accion-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 1.5rem;
+  text-align: left;
 }
 
 .plan-accion-td {
   padding: 0.8rem;
-  border-bottom: 1px solid #ddd;
 }
 
 .plan-accion-input {
   width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 0.8rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background-color: #f8fafc;
+  transition: all 0.2s ease;
 }
 
-/* Mejoras para firmas */
+/* === Firmas === */
 .firmas-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  gap: 2rem;
+  margin: 2rem 0;
+  justify-content: center;
 }
 
 .firma-item {
   flex: 1;
   min-width: 200px;
+  max-width: 300px;
 }
 
 .firma-box {
   height: 100px;
-  border: 1px dashed #95a5a6;
-  border-radius: 4px;
-  background-color: #f8f9fa;
-  margin-bottom: 0.5rem;
+  border: 1px dashed #cbd5e1;
+  border-radius: 6px;
+  margin-top: 0.5rem;
+  background-color: #f8fafc;
   position: relative;
+  transition: all 0.2s ease;
+}
+
+.firma-box:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
 }
 
 .firma-box::after {
-  content: "Firma aquí";
+  content: "Firmar aquí";
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #95a5a6;
-  font-style: italic;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  pointer-events: none;
 }
 
 .fecha-input {
   width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 0.8rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background-color: #f8fafc;
+  transition: all 0.2s ease;
+  font-family: inherit;
 }
 
-/* Mejora para el botón finalizar */
 .finalizar-btn {
-  background-color: #27ae60;
+  padding: 0.9rem 2.2rem;
+  margin-top: 2rem;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: white;
   border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 4px;
-  font-weight: bold;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s;
-  margin: 0 auto;
-  display: block;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
 }
 
 .finalizar-btn:hover {
-  background-color: #219653;
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.25);
 }
 
-/* Estilos responsivos */
+/* === Campos requeridos === */
+.campo-obligatorio label::after {
+  content: " *";
+  color: #ef4444;
+  font-weight: bold;
+}
+
+/* === Estilos de Tabla === */
+.competencia-cell {
+  background-color: #f1f5f9;
+  vertical-align: middle;
+  text-align: center;
+  font-weight: 600;
+  padding: 1rem;
+  color: #334155;
+}
+
+.definicion-cell {
+  background-color: #fff;
+  vertical-align: middle;
+  padding: 1rem;
+  color: #475569;
+}
+
+/* === Media queries === */
+@media (max-width: 992px) {
+  .evaluation-section table {
+    font-size: 0.9rem;
+  }
+  
+  .evaluation-section select,
+  .promedio-input {
+    padding: 0.7rem;
+  }
+  
+  .justificacion-textarea {
+    min-height: 70px;
+  }
+}
+
 @media (max-width: 768px) {
-  .evaluation-row {
-    flex-direction: column;
+  .evaluation-container-unique {
+    width: 95%;
+    padding: 1.5rem;
+    margin: 1.5rem auto;
+  }
+  
+  .evaluation-section table {
+    font-size: 0.85rem;
+  }
+  
+  .evaluation-section table th,
+  .evaluation-section table td {
+    padding: 0.8rem 0.5rem;
   }
   
   .evaluation-field {
-    width: 100%;
-    margin-right: 0;
-    margin-bottom: 1rem;
+    flex: 1 1 100%;
+  }
+  
+  .hseq-table {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .evaluacion-desempeno {
+    font-size: 1.6rem;
+  }
+  
+  .evaluation-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .evaluation-field {
+    min-width: 100%;
   }
   
   .firmas-container {
     flex-direction: column;
+    gap: 1.5rem;
   }
   
   .firma-item {
-    width: 100%;
-    margin-bottom: 1.5rem;
+    max-width: 100%;
   }
   
   .finalizar-btn {
     width: 100%;
+    padding: 0.8rem;
   }
 }
