@@ -1635,7 +1635,8 @@ footer {
 .hseq-table th {
   padding-top: 12px;
   padding-bottom: 12px;
-  background-color: #E0E0E0;
+  background-color: #000000;
+  color: white;
 }
 
 .hseq-table td {
