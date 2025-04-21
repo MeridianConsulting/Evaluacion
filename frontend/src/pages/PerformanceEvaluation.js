@@ -2,11 +2,15 @@ import React, { useState, useEffect } from "react";
 import "../assets/css/Styles1.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import SignatureUploader from '../components/SignatureUploader';
 
 function PerformanceEvaluation() {
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [employeeSignature, setEmployeeSignature] = useState(null);
+  const [bossSignature, setBossSignature] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Manejo de estado para filas
   const [rows, setRows] = useState([
@@ -515,6 +519,50 @@ function PerformanceEvaluation() {
     
     if (contadorValidos === 0) return 0;
     return (sumaTotal / contadorValidos).toFixed(2);
+  };
+
+  // Agrega esta función para manejar el envío del formulario con las firmas
+  const handleSubmitEvaluation = async () => {
+    // Crear un objeto FormData para enviar la evaluación completa incluyendo las imágenes
+    const formData = new FormData();
+    
+    // Agregar datos de la evaluación
+    formData.append('employeeId', employee.id_empleado);
+    formData.append('competenciasData', JSON.stringify(rows));
+    formData.append('funcionesData', JSON.stringify(funcionesCargo));
+    formData.append('hseqData', JSON.stringify(hseqItems));
+    
+    // Agregar las firmas si existen
+    if (employeeSignature) {
+      formData.append('employeeSignature', employeeSignature);
+    }
+    
+    if (bossSignature) {
+      formData.append('bossSignature', bossSignature);
+    }
+    
+    try {
+      setIsSubmitting(true);
+      const apiUrl = process.env.REACT_APP_API_BASE_URL;
+      const response = await fetch(`${apiUrl}/evaluations/save`, {
+        method: 'POST',
+        body: formData, // No establecer Content-Type, FormData lo hace automáticamente
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        alert('Evaluación guardada exitosamente');
+        // Redirigir o mostrar mensaje de éxito
+      } else {
+        alert(`Error al guardar: ${data.message || 'Error desconocido'}`);
+      }
+    } catch (error) {
+      console.error('Error al enviar la evaluación:', error);
+      alert('Error al guardar la evaluación. Intente nuevamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -1885,18 +1933,24 @@ function PerformanceEvaluation() {
         <hr style={{ margin: "2rem 0" }}/>
 
         <section className="evaluation-section" style={{ textAlign: "center" }}>
-          <div className="firmas-container">
-            <div className="firma-item">
-              <label className="campo-label">Firma (Evaluado)</label>
-              <div className="firma-box" style={{ border: "1px solid #000" }}></div>
-            </div>
-            <div className="firma-item">
-              <label className="campo-label">Firma (Jefe Directo)</label>
-              <div className="firma-box" style={{ border: "1px solid #000" }}></div>
-            </div>
-            <div className="firma-item">
-              <label className="campo-label">Fecha</label>
-              <input type="date" className="fecha-input" />
+          <div className="signatures-container" style={{ marginTop: "2rem" }}>
+            <div className="signatures-row" style={{ 
+              display: "flex", 
+              justifyContent: "center", 
+              gap: "0.5rem",
+              marginBottom: "2rem",
+              flexWrap: "nowrap" 
+            }}>
+              <SignatureUploader 
+                label="Firma (Evaluado)" 
+                onChange={setEmployeeSignature}
+                value={employeeSignature}
+              />
+              <SignatureUploader 
+                label="Firma (Jefe Directo)" 
+                onChange={setBossSignature}
+                value={bossSignature}
+              />
             </div>
           </div>
           <button className="finalizar-btn" style={{ 
@@ -1904,8 +1958,8 @@ function PerformanceEvaluation() {
             color: "#fff", 
             borderColor: "#000",
             transition: "background-color 0.3s, color 0.3s"
-          }}>
-            Finalizar Evaluación
+          }} onClick={handleSubmitEvaluation} disabled={isSubmitting}>
+            {isSubmitting ? 'Guardando...' : 'Finalizar Evaluación'}
           </button>
         </section>
         <hr style={{ margin: "2rem 0" }}/>
