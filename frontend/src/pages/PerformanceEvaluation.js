@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../assets/css/Styles1.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 function PerformanceEvaluation() {
+  const [employee, setEmployee] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
   // Manejo de estado para filas
   const [rows, setRows] = useState([
     {
@@ -247,6 +251,34 @@ function PerformanceEvaluation() {
     }
   ]);
 
+  useEffect(() => {
+    const employeeId = localStorage.getItem('employeeId');
+    if (!employeeId) {
+      setError('No se encontró el ID del empleado.');
+      setLoading(false);
+      return;
+    }
+    
+    const fetchEmployee = async () => {
+      try {
+        const apiUrl = process.env.REACT_APP_API_BASE_URL;
+        const response = await fetch(`${apiUrl}/employees/${employeeId}`);
+        const data = await response.json();
+        
+        if (!response.ok) {
+          setError(data.error || 'Error al obtener los datos del empleado.');
+        } else {
+          setEmployee(data);
+        }
+      } catch (err) {
+        setError('Error en la conexión con el servidor.');
+      }
+      setLoading(false);
+    };
+
+    fetchEmployee();
+  }, []);
+
   // Calcula promedio cada vez que cambie autoevaluación o evaluación
   const handleSelectChange = (rowId, field, value) => {
     const numericValue = value === "" ? 0 : Number(value);
@@ -341,15 +373,30 @@ function PerformanceEvaluation() {
             <div className="evaluation-row">
               <div className="evaluation-field">
                 <label>Nombre del evaluado:</label>
-                <input type="text" placeholder="Ingrese el nombre del evaluado" />
+                <input 
+                  type="text" 
+                  placeholder="Ingrese el nombre del evaluado" 
+                  value={employee?.nombre || ''}
+                  readOnly
+                />
               </div>
               <div className="evaluation-field">
                 <label>No. de Identificación:</label>
-                <input type="text" placeholder="Cédula / ID" />
+                <input 
+                  type="text" 
+                  placeholder="Cédula / ID" 
+                  value={employee?.cedula || ''}
+                  readOnly
+                />
               </div>
               <div className="evaluation-field">
                 <label>Cargo/servicio:</label>
-                <input type="text" placeholder="Cargo o servicio" />
+                <input 
+                  type="text" 
+                  placeholder="Cargo o servicio" 
+                  value={employee?.cargo || ''}
+                  readOnly
+                />
               </div>
             </div>
 
