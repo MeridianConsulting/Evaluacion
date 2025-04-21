@@ -11,6 +11,27 @@ function PerformanceEvaluation() {
   const [employeeSignature, setEmployeeSignature] = useState(null);
   const [bossSignature, setBossSignature] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showAlert, setShowAlert] = useState(true); // Estado para mostrar la alerta inicial
+  const [validationErrors, setValidationErrors] = useState({}); // Estado para gestionar errores de validación
+  const [formTouched, setFormTouched] = useState(false); // Estado para saber si el formulario ha sido tocado
+  const [datosGenerales, setDatosGenerales] = useState({
+    fechaIngreso: '',
+    fechaEvaluacion: '',
+    procesoGestion: '',
+    nombreEvaluador: '',
+    cargoEvaluador: '',
+    procesoGestionEvaluador: '',
+  });
+  const [mejoramiento, setMejoramiento] = useState({
+    fortalezas: '',
+    aspectosMejorar: ''
+  });
+  const [planAccion, setPlanAccion] = useState({
+    actividad: '',
+    responsable: '',
+    seguimiento: '',
+    fecha: ''
+  });
 
   // Manejo de estado para filas
   const [rows, setRows] = useState([
@@ -388,6 +409,7 @@ function PerformanceEvaluation() {
         i === index ? { ...funcion, [field]: value } : funcion
       )
     );
+    setFormTouched(true);
   };
 
   // Calcular promedio de calificaciones de funciones específicas
@@ -460,6 +482,7 @@ function PerformanceEvaluation() {
         return row;
       })
     );
+    setFormTouched(true);
   };
 
   // Manejador para cambios en la calificación HSEQ
@@ -469,6 +492,7 @@ function PerformanceEvaluation() {
         item.id === id ? { ...item, [field]: value } : item
       )
     );
+    setFormTouched(true);
   };
 
   // Calcular promedio de calificaciones HSEQ
@@ -521,8 +545,126 @@ function PerformanceEvaluation() {
     return (sumaTotal / contadorValidos).toFixed(2);
   };
 
-  // Agrega esta función para manejar el envío del formulario con las firmas
+  // Función de validación de formulario
+  const validarFormulario = () => {
+    const errores = {};
+    let isValid = true;
+
+    // Validar datos generales
+    Object.keys(datosGenerales).forEach(key => {
+      if (!datosGenerales[key]) {
+        errores[`datosGenerales_${key}`] = true;
+        isValid = false;
+      }
+    });
+
+    // Validar competencias
+    rows.forEach((row, index) => {
+      if (!row.worker || row.worker === '') {
+        errores[`worker_${index}`] = true;
+        isValid = false;
+      }
+      if (!row.boss || row.boss === '') {
+        errores[`boss_${index}`] = true;
+        isValid = false;
+      }
+    });
+
+    // Validar funciones específicas
+    funcionesCargo.forEach((funcion, index) => {
+      if (!funcion.autoevaluacion || funcion.autoevaluacion === '') {
+        errores[`funcion_auto_${index}`] = true;
+        isValid = false;
+      }
+      if (!funcion.evaluacionJefe || funcion.evaluacionJefe === '') {
+        errores[`funcion_jefe_${index}`] = true;
+        isValid = false;
+      }
+    });
+
+    // Validar HSEQ
+    hseqItems.forEach((item, index) => {
+      if (!item.autoevaluacion || item.autoevaluacion === '') {
+        errores[`hseq_auto_${index}`] = true;
+        isValid = false;
+      }
+      if (!item.evaluacionJefe || item.evaluacionJefe === '') {
+        errores[`hseq_jefe_${index}`] = true;
+        isValid = false;
+      }
+    });
+
+    // Validar mejoramiento
+    if (!mejoramiento.fortalezas.trim()) {
+      errores.fortalezas = true;
+      isValid = false;
+    }
+    if (!mejoramiento.aspectosMejorar.trim()) {
+      errores.aspectosMejorar = true;
+      isValid = false;
+    }
+
+    // Validar plan de acción
+    Object.keys(planAccion).forEach(key => {
+      if (!planAccion[key]) {
+        errores[`planAccion_${key}`] = true;
+        isValid = false;
+      }
+    });
+
+    // Validar firmas
+    if (!employeeSignature) {
+      errores.employeeSignature = true;
+      isValid = false;
+    }
+    if (!bossSignature) {
+      errores.bossSignature = true;
+      isValid = false;
+    }
+
+    setValidationErrors(errores);
+    return isValid;
+  };
+
+  // Manejar cambio en datos generales
+  const handleDatosGeneralesChange = (e) => {
+    const { name, value } = e.target;
+    setDatosGenerales(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    setFormTouched(true);
+  };
+
+  // Manejar cambio en mejoramiento
+  const handleMejoramientoChange = (e) => {
+    const { id, value } = e.target;
+    setMejoramiento(prev => ({
+      ...prev,
+      [id]: value
+    }));
+    setFormTouched(true);
+  };
+
+  // Manejar cambio en plan de acción
+  const handlePlanAccionChange = (e) => {
+    const { name, value } = e.target;
+    setPlanAccion(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    setFormTouched(true);
+  };
+
+  // Modificar el manejador de envío del formulario
   const handleSubmitEvaluation = async () => {
+    // Validar el formulario antes de enviar
+    if (!validarFormulario()) {
+      window.scrollTo(0, 0); // Desplazarse al inicio para ver la alerta
+      alert('Error: Todos los campos son obligatorios. Por favor, complete todos los campos antes de enviar la evaluación.');
+      return;
+    }
+
     // Crear un objeto FormData para enviar la evaluación completa incluyendo las imágenes
     const formData = new FormData();
     
@@ -564,16 +706,60 @@ function PerformanceEvaluation() {
       setIsSubmitting(false);
     }
   };
+  
+  // Estilos para campos con error
+  const errorStyle = {
+    border: '2px solid #ff3860',
+    boxShadow: '0 0 0 1px #ff3860'
+  };
+
+  // Estilos para la alerta
+  const alertStyle = {
+    backgroundColor: '#ffdddd',
+    color: '#ff3860',
+    padding: '1rem',
+    margin: '1rem 0',
+    borderRadius: '4px',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    display: showAlert ? 'block' : 'none',
+    animation: 'fadeIn 0.5s'
+  };
 
   return (
     <div className="evaluation-page-unique">
-      <Header/>
+      <Header />
       <div className="hero" style={{ 
         textAlign: "center", 
         padding: "clamp(1rem, 5vw, 2rem)" 
       }}>
         <h1 className="evaluacion-desempeno">EVALUACIÓN DE DESEMPEÑO</h1>
       </div>
+
+      {/* Alerta de campos obligatorios */}
+      <div style={alertStyle}>
+        <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style={{ marginRight: '8px' }}>
+            <path fill="#ff3860" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+          ¡ATENCIÓN! Todos los campos de esta evaluación son obligatorios.
+        </span>
+        <button 
+          onClick={() => setShowAlert(false)} 
+          style={{ 
+            background: 'none', 
+            border: 'none', 
+            color: '#ff3860', 
+            cursor: 'pointer',
+            position: 'absolute',
+            right: '10px',
+            top: '10px'
+          }}
+        >
+          ✕
+        </button>
+      </div>
+
       <main className="evaluation-container-unique" style={{ 
         padding: "clamp(1rem, 5vw, 2rem)" 
       }}>
@@ -612,15 +798,43 @@ function PerformanceEvaluation() {
             <div className="evaluation-row">
               <div className="evaluation-field">
                 <label>Fecha de ingreso:</label>
-                <input type="date" />
+                <input 
+                  type="date" 
+                  name="fechaIngreso"
+                  value={datosGenerales.fechaIngreso}
+                  onChange={handleDatosGeneralesChange}
+                  style={validationErrors.datosGenerales_fechaIngreso ? errorStyle : {}}
+                />
+                {validationErrors.datosGenerales_fechaIngreso && (
+                  <span className="error-message">Este campo es obligatorio</span>
+                )}
               </div>
               <div className="evaluation-field">
                 <label>Fecha de la evaluación:</label>
-                <input type="date" />
+                <input 
+                  type="date" 
+                  name="fechaEvaluacion"
+                  value={datosGenerales.fechaEvaluacion}
+                  onChange={handleDatosGeneralesChange}
+                  style={validationErrors.datosGenerales_fechaEvaluacion ? errorStyle : {}}
+                />
+                {validationErrors.datosGenerales_fechaEvaluacion && (
+                  <span className="error-message">Este campo es obligatorio</span>
+                )}
               </div>
               <div className="evaluation-field">
                 <label>Proceso de gestión:</label>
-                <input type="text" placeholder="Proceso asociado" />
+                <input 
+                  type="text" 
+                  placeholder="Proceso asociado" 
+                  name="procesoGestion"
+                  value={datosGenerales.procesoGestion}
+                  onChange={handleDatosGeneralesChange}
+                  style={validationErrors.datosGenerales_procesoGestion ? errorStyle : {}}
+                />
+                {validationErrors.datosGenerales_procesoGestion && (
+                  <span className="error-message">Este campo es obligatorio</span>
+                )}
               </div>
             </div>
 
@@ -628,15 +842,45 @@ function PerformanceEvaluation() {
             <div className="evaluation-row">
               <div className="evaluation-field">
                 <label>Nombre del evaluador:</label>
-                <input type="text" placeholder="Ingrese el nombre del evaluador" />
+                <input 
+                  type="text" 
+                  placeholder="Ingrese el nombre del evaluador" 
+                  name="nombreEvaluador"
+                  value={datosGenerales.nombreEvaluador}
+                  onChange={handleDatosGeneralesChange}
+                  style={validationErrors.datosGenerales_nombreEvaluador ? errorStyle : {}}
+                />
+                {validationErrors.datosGenerales_nombreEvaluador && (
+                  <span className="error-message">Este campo es obligatorio</span>
+                )}
               </div>
               <div className="evaluation-field">
                 <label>Cargo/servicio prestado:</label>
-                <input type="text" placeholder="Cargo o servicio prestado" />
+                <input 
+                  type="text" 
+                  placeholder="Cargo o servicio prestado" 
+                  name="cargoEvaluador"
+                  value={datosGenerales.cargoEvaluador}
+                  onChange={handleDatosGeneralesChange}
+                  style={validationErrors.datosGenerales_cargoEvaluador ? errorStyle : {}}
+                />
+                {validationErrors.datosGenerales_cargoEvaluador && (
+                  <span className="error-message">Este campo es obligatorio</span>
+                )}
               </div>
               <div className="evaluation-field">
                 <label>Proceso de gestión:</label>
-                <input type="text" placeholder="Proceso asociado" />
+                <input 
+                  type="text" 
+                  placeholder="Proceso asociado" 
+                  name="procesoGestionEvaluador"
+                  value={datosGenerales.procesoGestionEvaluador}
+                  onChange={handleDatosGeneralesChange}
+                  style={validationErrors.datosGenerales_procesoGestionEvaluador ? errorStyle : {}}
+                />
+                {validationErrors.datosGenerales_procesoGestionEvaluador && (
+                  <span className="error-message">Este campo es obligatorio</span>
+                )}
               </div>
             </div>
         </section>
@@ -1873,7 +2117,13 @@ function PerformanceEvaluation() {
               id="fortalezas" 
               rows="3" 
               className="campo-textarea"
+              value={mejoramiento.fortalezas}
+              onChange={handleMejoramientoChange}
+              style={validationErrors.fortalezas ? errorStyle : {}}
             />
+            {validationErrors.fortalezas && (
+              <span className="error-message">Este campo es obligatorio</span>
+            )}
           </div>
           <div>
             <label htmlFor="aspectosMejorar" className="campo-label">Aspectos a mejorar</label>
@@ -1881,10 +2131,16 @@ function PerformanceEvaluation() {
               id="aspectosMejorar" 
               rows="3" 
               className="campo-textarea"
+              value={mejoramiento.aspectosMejorar}
+              onChange={handleMejoramientoChange}
+              style={validationErrors.aspectosMejorar ? errorStyle : {}}
             />
+            {validationErrors.aspectosMejorar && (
+              <span className="error-message">Este campo es obligatorio</span>
+            )}
           </div>
         </section>
-        <hr style={{ margin: "2rem 0" }}/>
+
         <section className="evaluation-section">
           <h2 className="seccion-titulo">PLAN DE ACCIÓN</h2>
           <table className="plan-accion-table">
@@ -1903,34 +2159,60 @@ function PerformanceEvaluation() {
                     type="text" 
                     placeholder="Actividad" 
                     className="plan-accion-input"
+                    name="actividad"
+                    value={planAccion.actividad}
+                    onChange={handlePlanAccionChange}
+                    style={validationErrors.planAccion_actividad ? errorStyle : {}}
                   />
+                  {validationErrors.planAccion_actividad && (
+                    <span className="error-message">Obligatorio</span>
+                  )}
                 </td>
                 <td className="plan-accion-td">
                   <input 
                     type="text" 
                     placeholder="Responsable" 
                     className="plan-accion-input"
+                    name="responsable"
+                    value={planAccion.responsable}
+                    onChange={handlePlanAccionChange}
+                    style={validationErrors.planAccion_responsable ? errorStyle : {}}
                   />
+                  {validationErrors.planAccion_responsable && (
+                    <span className="error-message">Obligatorio</span>
+                  )}
                 </td>
                 <td className="plan-accion-td">
                   <input 
                     type="text" 
                     placeholder="Indicadores / Frecuencia" 
                     className="plan-accion-input"
+                    name="seguimiento"
+                    value={planAccion.seguimiento}
+                    onChange={handlePlanAccionChange}
+                    style={validationErrors.planAccion_seguimiento ? errorStyle : {}}
                   />
+                  {validationErrors.planAccion_seguimiento && (
+                    <span className="error-message">Obligatorio</span>
+                  )}
                 </td>
                 <td className="plan-accion-td">
                   <input 
                     type="date" 
                     className="plan-accion-input"
+                    name="fecha"
+                    value={planAccion.fecha}
+                    onChange={handlePlanAccionChange}
+                    style={validationErrors.planAccion_fecha ? errorStyle : {}}
                   />
+                  {validationErrors.planAccion_fecha && (
+                    <span className="error-message">Obligatorio</span>
+                  )}
                 </td>
               </tr>
             </tbody>
           </table>
         </section>
-
-        <hr style={{ margin: "2rem 0" }}/>
 
         <section className="evaluation-section" style={{ textAlign: "center" }}>
           <div className="signatures-container" style={{ marginTop: "2rem" }}>
@@ -1941,30 +2223,92 @@ function PerformanceEvaluation() {
               marginBottom: "2rem",
               flexWrap: "nowrap" 
             }}>
-              <SignatureUploader 
-                label="Firma (Evaluado)" 
-                onChange={setEmployeeSignature}
-                value={employeeSignature}
-              />
-              <SignatureUploader 
-                label="Firma (Jefe Directo)" 
-                onChange={setBossSignature}
-                value={bossSignature}
-              />
+              <div style={{ position: 'relative' }}>
+                <SignatureUploader 
+                  label="Firma (Evaluado)" 
+                  onChange={setEmployeeSignature}
+                  value={employeeSignature}
+                />
+                {validationErrors.employeeSignature && (
+                  <span className="error-message" style={{ position: 'absolute', bottom: '-20px', left: '0', right: '0', textAlign: 'center' }}>
+                    La firma es obligatoria
+                  </span>
+                )}
+              </div>
+              <div style={{ position: 'relative' }}>
+                <SignatureUploader 
+                  label="Firma (Jefe Directo)" 
+                  onChange={setBossSignature}
+                  value={bossSignature}
+                />
+                {validationErrors.bossSignature && (
+                  <span className="error-message" style={{ position: 'absolute', bottom: '-20px', left: '0', right: '0', textAlign: 'center' }}>
+                    La firma es obligatoria
+                  </span>
+                )}
+              </div>
             </div>
           </div>
           <button className="finalizar-btn" style={{ 
             backgroundColor: "#000", 
             color: "#fff", 
             borderColor: "#000",
-            transition: "background-color 0.3s, color 0.3s"
+            transition: "background-color 0.3s, color 0.3s",
+            padding: "10px 20px",
+            fontSize: "16px",
+            cursor: "pointer"
           }} onClick={handleSubmitEvaluation} disabled={isSubmitting}>
             {isSubmitting ? 'Guardando...' : 'Finalizar Evaluación'}
           </button>
         </section>
-        <hr style={{ margin: "2rem 0" }}/>
       </main>
       <Footer />
+
+      {/* Estilos CSS en línea para los mensajes de error */}
+      <style jsx>{`
+        .error-message {
+          color: #ff3860;
+          font-size: 0.8rem;
+          display: block;
+          margin-top: 0.25rem;
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        .rating-select, 
+        .justificacion-textarea, 
+        .hseq-textarea,
+        .campo-textarea,
+        .plan-accion-input,
+        input[type="text"],
+        input[type="date"] {
+          transition: border 0.3s, box-shadow 0.3s;
+        }
+        
+        .rating-select:focus, 
+        .justificacion-textarea:focus, 
+        .hseq-textarea:focus,
+        .campo-textarea:focus,
+        .plan-accion-input:focus,
+        input[type="text"]:focus,
+        input[type="date"]:focus {
+          outline: none;
+          border-color: #4CAF50;
+          box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+        
+        .finalizar-btn:hover {
+          background-color: #333 !important;
+        }
+        
+        .finalizar-btn:disabled {
+          background-color: #ccc !important;
+          cursor: not-allowed;
+        }
+      `}</style>
     </div>
   );
 };
