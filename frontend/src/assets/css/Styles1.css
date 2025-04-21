@@ -1996,3 +1996,12 @@ td .rating-select {
 .instrucciones em {
   color: #555; /* Color del texto en cursiva */
 }
+
+
+#fortalezas{
+  width: 97% !important;
+}
+
+#aspectosMejorar{
+  width: 97% !important;
+}
