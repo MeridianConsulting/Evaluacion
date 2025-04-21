@@ -1483,6 +1483,15 @@ function PerformanceEvaluation() {
                   />
                 </td>
               </tr>
+              <tr>
+              <td colSpan={3} style={{ fontWeight: "bold", backgroundColor: "#f5f5f5", padding: "0.8rem", textAlign: "right" }}>
+                PROMEDIO CALIFICACIÓN COMPETENCIAS:
+              </td>
+              <td colSpan={2} style={{ backgroundColor: "#f5f5f5", padding: "0.8rem", textAlign: "center", fontWeight: "bold" }}>
+                {calcularPromedioCompetencias()}
+              </td>
+              <td style={{ backgroundColor: "#f5f5f5" }}></td>
+            </tr>
           </table>
         </section>
 
