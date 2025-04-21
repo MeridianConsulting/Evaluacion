@@ -97,6 +97,12 @@ function handleRequest($method, $path) {
         $cargoController->obtenerInfoCargo($nombreCargo);
         exit;
 
+    } elseif (preg_match('#^empleado-funciones/(\d+)$#', $path, $matches) && $method === 'GET') {
+        $idEmpleado = $matches[1];
+        $cargoController = new CargoController();
+        $cargoController->obtenerFuncionesPorEmpleadoId($idEmpleado);
+        exit;
+
     } else {
         http_response_code(404);
         echo json_encode(["message" => "Ruta no encontrada"]);

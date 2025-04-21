@@ -263,14 +263,48 @@ function PerformanceEvaluation() {
   }, [employee]);
 
   // Agregar esta función para obtener las funciones del cargo
-  const obtenerFuncionesCargo = (cargo) => {
-    // Aquí extraemos el nombre del cargo - podría ser necesario ajustar según tu estructura de datos
-    const nombreCargo = typeof cargo === 'string' ? cargo : (employee?.cargo || '');
+  const obtenerFuncionesCargo = async () => {
+    const employeeId = localStorage.getItem('employeeId');
+    if (!employeeId) {
+      console.error("No se encontró ID del empleado");
+      // Usamos fallback local si no hay ID
+      const funcionesGenericas = generarFuncionesPorCargo(employee?.cargo || '');
+      setFuncionesCargo(funcionesGenericas);
+      return;
+    }
     
-    // Aquí generamos funciones basadas en el cargo
-    // En un entorno real, esto podría ser una llamada a una API
-    const funciones = generarFuncionesPorCargo(nombreCargo);
-    setFuncionesCargo(funciones);
+    try {
+      const apiUrl = process.env.REACT_APP_API_BASE_URL;
+      // Aseguramos que la ruta coincida exactamente con lo definido en el backend
+      const response = await fetch(`${apiUrl}/empleado-funciones/${employeeId}`);
+      
+      console.log("URL solicitada:", `${apiUrl}/empleado-funciones/${employeeId}`); // Para depuración
+      
+      const data = await response.json();
+      
+      if (response.ok && data.success && data.funciones && data.funciones.length > 0) {
+        // Convertimos las funciones del backend al formato que espera nuestro componente
+        const funcionesFormateadas = data.funciones.map((funcion) => ({
+          id: funcion.id,
+          descripcion: funcion.descripcion || "Sin descripción",
+          autoevaluacion: "",
+          evaluacionJefe: "",
+          justificacion: ""
+        }));
+        
+        setFuncionesCargo(funcionesFormateadas);
+      } else {
+        // Si no obtuvimos funciones específicas, usamos la función local como fallback
+        console.log("No se obtuvieron funciones específicas, usando fallback");
+        const funciones = generarFuncionesPorCargo(employee?.cargo || '');
+        setFuncionesCargo(funciones);
+      }
+    } catch (error) {
+      console.error("Error al obtener funciones del cargo:", error);
+      // En caso de error, generamos funciones localmente como fallback
+      const funciones = generarFuncionesPorCargo(employee?.cargo || '');
+      setFuncionesCargo(funciones);
+    }
   };
 
   // Función para generar funciones específicas según el cargo
