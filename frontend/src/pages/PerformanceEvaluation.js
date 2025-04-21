@@ -11,9 +11,11 @@ function PerformanceEvaluation() {
   const [employeeSignature, setEmployeeSignature] = useState(null);
   const [bossSignature, setBossSignature] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showAlert, setShowAlert] = useState(true); // Estado para mostrar la alerta inicial
-  const [validationErrors, setValidationErrors] = useState({}); // Estado para gestionar errores de validación
-  const [formTouched, setFormTouched] = useState(false); // Estado para saber si el formulario ha sido tocado
+  const [showAlert, setShowAlert] = useState(true);
+  const [alertFading, setAlertFading] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [visibleErrors, setVisibleErrors] = useState({}); // Estado para controlar errores visibles
+  const [formTouched, setFormTouched] = useState(false);
   const [datosGenerales, setDatosGenerales] = useState({
     fechaIngreso: '',
     fechaEvaluacion: '',
@@ -662,6 +664,7 @@ function PerformanceEvaluation() {
     if (!validarFormulario()) {
       window.scrollTo(0, 0); // Desplazarse al inicio para ver la alerta
       alert('Error: Todos los campos son obligatorios. Por favor, complete todos los campos antes de enviar la evaluación.');
+      // Los errores se mostrarán automáticamente y desaparecerán en 6 segundos
       return;
     }
 
@@ -723,8 +726,52 @@ function PerformanceEvaluation() {
     fontWeight: 'bold',
     textAlign: 'center',
     display: showAlert ? 'block' : 'none',
-    animation: 'fadeIn 0.5s'
+    animation: alertFading ? 'fadeOut 0.8s ease' : 'fadeIn 0.5s ease',
+    opacity: alertFading ? '0' : '1',
+    transition: 'opacity 0.8s ease',
+    position: 'relative'
   };
+
+  // Estilo para campos con error - ahora verificando visibleErrors en lugar de validationErrors
+  const getErrorStyle = (fieldName) => {
+    return visibleErrors[fieldName] ? {
+      border: '2px solid #ff3860',
+      boxShadow: '0 0 0 1px #ff3860'
+    } : {};
+  };
+
+  // Gestionar la ocultación temporal de mensajes de error
+  useEffect(() => {
+    if (Object.keys(validationErrors).length > 0) {
+      // Mostrar los errores cuando se actualice validationErrors
+      setVisibleErrors(validationErrors);
+      
+      // Configurar un temporizador para ocultarlos después de 6 segundos
+      const timer = setTimeout(() => {
+        setVisibleErrors({});  // Limpiar mensajes visibles pero mantener la validación
+      }, 6000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [validationErrors]);
+  
+  // Mantener el resto del código para cerrar la alerta principal
+  useEffect(() => {
+    if (showAlert) {
+      const timer = setTimeout(() => {
+        setAlertFading(true);
+        
+        const fadeTimer = setTimeout(() => {
+          setShowAlert(false);
+          setAlertFading(false);
+        }, 800);
+        
+        return () => clearTimeout(fadeTimer);
+      }, 8000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [showAlert]);
 
   return (
     <div className="evaluation-page-unique">
@@ -752,8 +799,11 @@ function PerformanceEvaluation() {
             color: '#ff3860', 
             cursor: 'pointer',
             position: 'absolute',
-            right: '10px',
-            top: '10px'
+            right: '15px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            fontSize: '20px',
+            fontWeight: 'bold'
           }}
         >
           ✕
@@ -803,9 +853,9 @@ function PerformanceEvaluation() {
                   name="fechaIngreso"
                   value={datosGenerales.fechaIngreso}
                   onChange={handleDatosGeneralesChange}
-                  style={validationErrors.datosGenerales_fechaIngreso ? errorStyle : {}}
+                  style={getErrorStyle('datosGenerales_fechaIngreso')}
                 />
-                {validationErrors.datosGenerales_fechaIngreso && (
+                {visibleErrors.datosGenerales_fechaIngreso && (
                   <span className="error-message">Este campo es obligatorio</span>
                 )}
               </div>
@@ -816,9 +866,9 @@ function PerformanceEvaluation() {
                   name="fechaEvaluacion"
                   value={datosGenerales.fechaEvaluacion}
                   onChange={handleDatosGeneralesChange}
-                  style={validationErrors.datosGenerales_fechaEvaluacion ? errorStyle : {}}
+                  style={getErrorStyle('datosGenerales_fechaEvaluacion')}
                 />
-                {validationErrors.datosGenerales_fechaEvaluacion && (
+                {visibleErrors.datosGenerales_fechaEvaluacion && (
                   <span className="error-message">Este campo es obligatorio</span>
                 )}
               </div>
@@ -830,9 +880,9 @@ function PerformanceEvaluation() {
                   name="procesoGestion"
                   value={datosGenerales.procesoGestion}
                   onChange={handleDatosGeneralesChange}
-                  style={validationErrors.datosGenerales_procesoGestion ? errorStyle : {}}
+                  style={getErrorStyle('datosGenerales_procesoGestion')}
                 />
-                {validationErrors.datosGenerales_procesoGestion && (
+                {visibleErrors.datosGenerales_procesoGestion && (
                   <span className="error-message">Este campo es obligatorio</span>
                 )}
               </div>
@@ -848,9 +898,9 @@ function PerformanceEvaluation() {
                   name="nombreEvaluador"
                   value={datosGenerales.nombreEvaluador}
                   onChange={handleDatosGeneralesChange}
-                  style={validationErrors.datosGenerales_nombreEvaluador ? errorStyle : {}}
+                  style={getErrorStyle('datosGenerales_nombreEvaluador')}
                 />
-                {validationErrors.datosGenerales_nombreEvaluador && (
+                {visibleErrors.datosGenerales_nombreEvaluador && (
                   <span className="error-message">Este campo es obligatorio</span>
                 )}
               </div>
@@ -862,9 +912,9 @@ function PerformanceEvaluation() {
                   name="cargoEvaluador"
                   value={datosGenerales.cargoEvaluador}
                   onChange={handleDatosGeneralesChange}
-                  style={validationErrors.datosGenerales_cargoEvaluador ? errorStyle : {}}
+                  style={getErrorStyle('datosGenerales_cargoEvaluador')}
                 />
-                {validationErrors.datosGenerales_cargoEvaluador && (
+                {visibleErrors.datosGenerales_cargoEvaluador && (
                   <span className="error-message">Este campo es obligatorio</span>
                 )}
               </div>
@@ -876,9 +926,9 @@ function PerformanceEvaluation() {
                   name="procesoGestionEvaluador"
                   value={datosGenerales.procesoGestionEvaluador}
                   onChange={handleDatosGeneralesChange}
-                  style={validationErrors.datosGenerales_procesoGestionEvaluador ? errorStyle : {}}
+                  style={getErrorStyle('datosGenerales_procesoGestionEvaluador')}
                 />
-                {validationErrors.datosGenerales_procesoGestionEvaluador && (
+                {visibleErrors.datosGenerales_procesoGestionEvaluador && (
                   <span className="error-message">Este campo es obligatorio</span>
                 )}
               </div>
@@ -2119,9 +2169,9 @@ function PerformanceEvaluation() {
               className="campo-textarea"
               value={mejoramiento.fortalezas}
               onChange={handleMejoramientoChange}
-              style={validationErrors.fortalezas ? errorStyle : {}}
+              style={getErrorStyle('fortalezas')}
             />
-            {validationErrors.fortalezas && (
+            {visibleErrors.fortalezas && (
               <span className="error-message">Este campo es obligatorio</span>
             )}
           </div>
@@ -2133,9 +2183,9 @@ function PerformanceEvaluation() {
               className="campo-textarea"
               value={mejoramiento.aspectosMejorar}
               onChange={handleMejoramientoChange}
-              style={validationErrors.aspectosMejorar ? errorStyle : {}}
+              style={getErrorStyle('aspectosMejorar')}
             />
-            {validationErrors.aspectosMejorar && (
+            {visibleErrors.aspectosMejorar && (
               <span className="error-message">Este campo es obligatorio</span>
             )}
           </div>
@@ -2162,9 +2212,9 @@ function PerformanceEvaluation() {
                     name="actividad"
                     value={planAccion.actividad}
                     onChange={handlePlanAccionChange}
-                    style={validationErrors.planAccion_actividad ? errorStyle : {}}
+                    style={getErrorStyle('planAccion_actividad')}
                   />
-                  {validationErrors.planAccion_actividad && (
+                  {visibleErrors.planAccion_actividad && (
                     <span className="error-message">Obligatorio</span>
                   )}
                 </td>
@@ -2176,9 +2226,9 @@ function PerformanceEvaluation() {
                     name="responsable"
                     value={planAccion.responsable}
                     onChange={handlePlanAccionChange}
-                    style={validationErrors.planAccion_responsable ? errorStyle : {}}
+                    style={getErrorStyle('planAccion_responsable')}
                   />
-                  {validationErrors.planAccion_responsable && (
+                  {visibleErrors.planAccion_responsable && (
                     <span className="error-message">Obligatorio</span>
                   )}
                 </td>
@@ -2190,9 +2240,9 @@ function PerformanceEvaluation() {
                     name="seguimiento"
                     value={planAccion.seguimiento}
                     onChange={handlePlanAccionChange}
-                    style={validationErrors.planAccion_seguimiento ? errorStyle : {}}
+                    style={getErrorStyle('planAccion_seguimiento')}
                   />
-                  {validationErrors.planAccion_seguimiento && (
+                  {visibleErrors.planAccion_seguimiento && (
                     <span className="error-message">Obligatorio</span>
                   )}
                 </td>
@@ -2203,9 +2253,9 @@ function PerformanceEvaluation() {
                     name="fecha"
                     value={planAccion.fecha}
                     onChange={handlePlanAccionChange}
-                    style={validationErrors.planAccion_fecha ? errorStyle : {}}
+                    style={getErrorStyle('planAccion_fecha')}
                   />
-                  {validationErrors.planAccion_fecha && (
+                  {visibleErrors.planAccion_fecha && (
                     <span className="error-message">Obligatorio</span>
                   )}
                 </td>
@@ -2229,7 +2279,7 @@ function PerformanceEvaluation() {
                   onChange={setEmployeeSignature}
                   value={employeeSignature}
                 />
-                {validationErrors.employeeSignature && (
+                {visibleErrors.employeeSignature && (
                   <span className="error-message" style={{ position: 'absolute', bottom: '-20px', left: '0', right: '0', textAlign: 'center' }}>
                     La firma es obligatoria
                   </span>
@@ -2241,7 +2291,7 @@ function PerformanceEvaluation() {
                   onChange={setBossSignature}
                   value={bossSignature}
                 />
-                {validationErrors.bossSignature && (
+                {visibleErrors.bossSignature && (
                   <span className="error-message" style={{ position: 'absolute', bottom: '-20px', left: '0', right: '0', textAlign: 'center' }}>
                     La firma es obligatoria
                   </span>
@@ -2264,18 +2314,24 @@ function PerformanceEvaluation() {
       </main>
       <Footer />
 
-      {/* Estilos CSS en línea para los mensajes de error */}
+      {/* Estilos CSS en línea - añadir animación de fadeout */}
       <style jsx>{`
         .error-message {
           color: #ff3860;
           font-size: 0.8rem;
           display: block;
           margin-top: 0.25rem;
+          animation: fadeIn 0.3s ease-in;
         }
         
         @keyframes fadeIn {
           from { opacity: 0; }
           to { opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+          from { opacity: 1; }
+          to { opacity: 0; }
         }
         
         .rating-select, 
