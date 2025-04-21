@@ -101,22 +101,31 @@ class CargoController {
             return [];
         }
         
-        // Dividimos el objetivo en frases o segmentos
-        $segmentos = preg_split('/[.,;]/', $objetivo);
+        // En lugar de dividir por puntuación, consideramos el texto completo como una función
+        // o dividimos por saltos de línea si los hay
+        $lineas = preg_split('/\R/', $objetivo);
         
-        // Filtramos segmentos vacíos o muy cortos
-        $segmentos = array_filter($segmentos, function($segmento) {
-            return strlen(trim($segmento)) > 10;
+        // Filtramos líneas vacías
+        $lineas = array_filter($lineas, function($linea) {
+            return !empty(trim($linea));
         });
         
-        // Convertimos los segmentos en funciones
+        // Si después de filtrar no hay líneas, usamos el objetivo completo
+        if (empty($lineas)) {
+            return [
+                [
+                    "id" => 1,
+                    "descripcion" => trim($objetivo)
+                ]
+            ];
+        }
+        
+        // Convertimos las líneas en funciones
         $funciones = [];
-        foreach ($segmentos as $index => $segmento) {
-            if ($index >= 5) break; // Limitamos a 5 funciones máximo
-            
+        foreach ($lineas as $index => $linea) {
             $funciones[] = [
                 "id" => $index + 1,
-                "descripcion" => trim($segmento)
+                "descripcion" => trim($linea)
             ];
         }
         
@@ -263,23 +272,128 @@ class CargoController {
             return [];
         }
         
-        // Dividimos el objetivo en frases o segmentos
-        $segmentos = preg_split('/[.,;]/', $objetivo);
+        // En lugar de dividir por puntuación, consideramos el texto completo como una función
+        // o dividimos por saltos de línea si los hay
+        $lineas = preg_split('/\R/', $objetivo);
         
-        // Filtramos segmentos vacíos o muy cortos
-        $segmentos = array_filter($segmentos, function($segmento) {
-            return strlen(trim($segmento)) > 10;
+        // Filtramos líneas vacías
+        $lineas = array_filter($lineas, function($linea) {
+            return !empty(trim($linea));
         });
         
-        // Convertimos los segmentos en funciones
+        // Si después de filtrar no hay líneas, usamos el objetivo completo
+        if (empty($lineas)) {
+            return [
+                [
+                    "id" => 1,
+                    "descripcion" => trim($objetivo)
+                ]
+            ];
+        }
+        
+        // Convertimos las líneas en funciones
         $funciones = [];
-        foreach ($segmentos as $index => $segmento) {
-            if ($index >= 5) break; // Limitamos a 5 funciones máximo
-            
+        foreach ($lineas as $index => $linea) {
             $funciones[] = [
                 "id" => $index + 1,
-                "descripcion" => trim($segmento)
+                "descripcion" => trim($linea)
             ];
+        }
+        
+        return $funciones;
+    }
+
+    // Función pública para obtener funciones del empleado (para usar desde otros controladores)
+    public function obtenerFuncionesEmpleado($idEmpleado, $nombreCargo) {
+        global $db;
+        
+        // Obtenemos el ID del cargo a partir del nombre
+        $sql = "SELECT id_cargo FROM cargo WHERE nombre_cargo = ?";
+        $stmt = $db->prepare($sql);
+        
+        if (!$stmt) {
+            return [];
+        }
+        
+        $stmt->bind_param("s", $nombreCargo);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows === 0) {
+            $stmt->close();
+            return [];
+        }
+        
+        $cargo = $result->fetch_assoc();
+        $idCargo = $cargo['id_cargo'];
+        $stmt->close();
+        
+        // Primero, intentamos obtener funciones completas de la tabla "funciones"
+        $sql = "SELECT * FROM funciones WHERE id_cargo = ?";
+        $stmt = $db->prepare($sql);
+        
+        if (!$stmt) {
+            return [];
+        }
+        
+        $stmt->bind_param("i", $idCargo);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $funciones = [];
+        
+        if ($result->num_rows > 0) {
+            // Si encontramos funciones específicas, las usamos
+            while ($row = $result->fetch_assoc()) {
+                if (!empty($row['descripcion_funcion'])) {
+                    $funciones[] = [
+                        "id" => count($funciones) + 1,
+                        "descripcion" => $row['descripcion_funcion']
+                    ];
+                } else if (!empty($row['titulo_funcion'])) {
+                    $funciones[] = [
+                        "id" => count($funciones) + 1,
+                        "descripcion" => $row['titulo_funcion']
+                    ];
+                }
+            }
+        }
+        
+        // Si no encontramos funciones en la tabla, intentamos usar el objetivo del cargo como un todo
+        if (empty($funciones)) {
+            $sql = "SELECT objetivo_cargo FROM cargo WHERE id_cargo = ?";
+            $stmt = $db->prepare($sql);
+            
+            if ($stmt) {
+                $stmt->bind_param("i", $idCargo);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                
+                if ($result->num_rows > 0) {
+                    $datos = $result->fetch_assoc();
+                    $objetivo = $datos['objetivo_cargo'];
+                    
+                    if (!empty($objetivo)) {
+                        // Dividir por puntos, pero manteniendo oraciones completas
+                        $pattern = '/(?<=[.!?])\s+/';
+                        $oraciones = preg_split($pattern, $objetivo, -1, PREG_SPLIT_NO_EMPTY);
+                        
+                        foreach ($oraciones as $index => $oracion) {
+                            if (strlen(trim($oracion)) > 10) {
+                                $funciones[] = [
+                                    "id" => $index + 1,
+                                    "descripcion" => trim($oracion)
+                                ];
+                            }
+                        }
+                    }
+                }
+                $stmt->close();
+            }
+        }
+        
+        // Si aún no tenemos funciones, usamos el método de generación de funciones
+        if (empty($funciones)) {
+            $funciones = $this->generarFuncionesDesdeCargo($idCargo);
         }
         
         return $funciones;
