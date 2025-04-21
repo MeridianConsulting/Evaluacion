@@ -1449,7 +1449,7 @@ footer {
 }
 
 .evaluation-section textarea {
-  width: 100%;
+  width: 300px;
   padding: 0.8rem 1rem;
   border: 1px solid #e2e8f0;
   border-radius: 6px;
@@ -1961,7 +1961,6 @@ td .rating-select {
 
 /* Reducir espacio de las áreas de texto de justificación */
 .evaluation-section table:first-of-type .justificacion-textarea {
-  min-height: 60px !important;
   padding: 0.3rem !important;
 }
 
