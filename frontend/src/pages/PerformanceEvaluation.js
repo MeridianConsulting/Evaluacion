@@ -1620,7 +1620,97 @@ function PerformanceEvaluation() {
             </tr>
           </table>
         </section>
-
+        {/* Nueva tabla para FUNCIONES CARGO O SERVICIO PRESTADO */}
+        <hr style={{ margin: "2rem 0" }}/>
+        <section className="evaluation-section">
+          <table
+            style={{ width: "100%", borderCollapse: "collapse", fontFamily: "Arial, sans-serif" }}
+          >
+            <thead>
+              <tr>
+                <th
+                  colSpan={4}
+                  style={{
+                    backgroundColor: "#000",
+                    color: "#fff",
+                    padding: "1rem",
+                    textAlign: "center",
+                    fontSize: "1.2rem",
+                  }}
+                >
+                  FUNCIONES CARGO O SERVICIO PRESTADO
+                </th>
+              </tr>
+              <tr style={{ backgroundColor: "#f0f0f0", textAlign: "left" }}>
+                <th style={{ width: "60%" }}>FUNCIÓN ESPECÍFICA</th>
+                <th style={{ width: "15%" }}>TRABAJADOR</th>
+                <th style={{ width: "15%" }}>JEFE INMEDIATO</th>
+                <th style={{ width: "10%" }}>JUSTIFICACIÓN</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* Usamos mapeo dinámico de funciones específicas del cargo */}
+              {funcionesCargo.map((funcion, index) => (
+                <tr key={index}>
+                  <td>{funcion.descripcion}</td>
+                  <td className="text-center">
+                    <select
+                      className="rating-select"
+                      value={funcion.autoevaluacion || ""}
+                      onChange={(e) => handleFuncionChange(index, "autoevaluacion", e.target.value)}
+                    >
+                      <option value="">1 - 5</option>
+                      <option value="1">1 - No Cumple</option>
+                      <option value="2">2 - Regular</option>
+                      <option value="3">3 - Parcial</option>
+                      <option value="4">4 - Satisfactorio</option>
+                      <option value="5">5 - Excelente</option>
+                    </select>
+                  </td>
+                  <td className="text-center">
+                    <select
+                      className="rating-select"
+                      value={funcion.evaluacionJefe || ""}
+                      onChange={(e) => handleFuncionChange(index, "evaluacionJefe", e.target.value)}
+                    >
+                      <option value="">1 - 5</option>
+                      <option value="1">1 - No Cumple</option>
+                      <option value="2">2 - Regular</option>
+                      <option value="3">3 - Parcial</option>
+                      <option value="4">4 - Satisfactorio</option>
+                      <option value="5">5 - Excelente</option>
+                    </select>
+                  </td>
+                  <td>
+                    <textarea
+                      className="justificacion-textarea"
+                      rows={1}
+                      placeholder="Justificación"
+                      value={funcion.justificacion || ""}
+                      onChange={(e) => handleFuncionChange(index, "justificacion", e.target.value)}
+                    />
+                  </td>
+                </tr>
+              ))}
+              {funcionesCargo.length === 0 && (
+                <tr>
+                  <td colSpan={4} style={{ textAlign: "center", padding: "1rem" }}>
+                    Cargando funciones específicas...
+                  </td>
+                </tr>
+              )}
+              <tr>
+                <td className="promedio" style={{ fontWeight: "bold", backgroundColor: "#f5f5f5", padding: "0.8rem" }}>
+                  PROMEDIO CALIFICACIÓN FUNCIONES:
+                </td>
+                <td colSpan="2" className="promedio-valor" style={{ backgroundColor: "#f5f5f5", textAlign: "center", fontWeight: "bold", padding: "0.8rem" }}>
+                  {calcularPromedioFunciones()}
+                </td>
+                <td className="promedio-valor" style={{ backgroundColor: "#f5f5f5" }}></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
         {/* Después de la sección de competencias, antes de la sección de mejoramiento */}
         <hr style={{ margin: "2rem 0" }}/>
         <section className="evaluation-section">
@@ -1784,99 +1874,6 @@ function PerformanceEvaluation() {
             Finalizar Evaluación
           </button>
         </section>
-
-        {/* Nueva tabla para FUNCIONES CARGO O SERVICIO PRESTADO */}
-        <hr style={{ margin: "2rem 0" }}/>
-        <section className="evaluation-section">
-          <table
-            style={{ width: "100%", borderCollapse: "collapse", fontFamily: "Arial, sans-serif" }}
-          >
-            <thead>
-              <tr>
-                <th
-                  colSpan={4}
-                  style={{
-                    backgroundColor: "#000",
-                    color: "#fff",
-                    padding: "1rem",
-                    textAlign: "center",
-                    fontSize: "1.2rem",
-                  }}
-                >
-                  FUNCIONES CARGO O SERVICIO PRESTADO
-                </th>
-              </tr>
-              <tr style={{ backgroundColor: "#f0f0f0", textAlign: "left" }}>
-                <th style={{ width: "60%" }}>FUNCIÓN ESPECÍFICA</th>
-                <th style={{ width: "15%" }}>TRABAJADOR</th>
-                <th style={{ width: "15%" }}>JEFE INMEDIATO</th>
-                <th style={{ width: "10%" }}>JUSTIFICACIÓN</th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* Usamos mapeo dinámico de funciones específicas del cargo */}
-              {funcionesCargo.map((funcion, index) => (
-                <tr key={index}>
-                  <td>{funcion.descripcion}</td>
-                  <td className="text-center">
-                    <select
-                      className="rating-select"
-                      value={funcion.autoevaluacion || ""}
-                      onChange={(e) => handleFuncionChange(index, "autoevaluacion", e.target.value)}
-                    >
-                      <option value="">1 - 5</option>
-                      <option value="1">1 - No Cumple</option>
-                      <option value="2">2 - Regular</option>
-                      <option value="3">3 - Parcial</option>
-                      <option value="4">4 - Satisfactorio</option>
-                      <option value="5">5 - Excelente</option>
-                    </select>
-                  </td>
-                  <td className="text-center">
-                    <select
-                      className="rating-select"
-                      value={funcion.evaluacionJefe || ""}
-                      onChange={(e) => handleFuncionChange(index, "evaluacionJefe", e.target.value)}
-                    >
-                      <option value="">1 - 5</option>
-                      <option value="1">1 - No Cumple</option>
-                      <option value="2">2 - Regular</option>
-                      <option value="3">3 - Parcial</option>
-                      <option value="4">4 - Satisfactorio</option>
-                      <option value="5">5 - Excelente</option>
-                    </select>
-                  </td>
-                  <td>
-                    <textarea
-                      className="justificacion-textarea"
-                      rows={1}
-                      placeholder="Justificación"
-                      value={funcion.justificacion || ""}
-                      onChange={(e) => handleFuncionChange(index, "justificacion", e.target.value)}
-                    />
-                  </td>
-                </tr>
-              ))}
-              {funcionesCargo.length === 0 && (
-                <tr>
-                  <td colSpan={4} style={{ textAlign: "center", padding: "1rem" }}>
-                    Cargando funciones específicas...
-                  </td>
-                </tr>
-              )}
-              <tr>
-                <td className="promedio" style={{ fontWeight: "bold", backgroundColor: "#f5f5f5", padding: "0.8rem" }}>
-                  PROMEDIO CALIFICACIÓN FUNCIONES:
-                </td>
-                <td colSpan="2" className="promedio-valor" style={{ backgroundColor: "#f5f5f5", textAlign: "center", fontWeight: "bold", padding: "0.8rem" }}>
-                  {calcularPromedioFunciones()}
-                </td>
-                <td className="promedio-valor" style={{ backgroundColor: "#f5f5f5" }}></td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-
         <hr style={{ margin: "2rem 0" }}/>
       </main>
       <Footer />
