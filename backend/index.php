@@ -2,6 +2,7 @@
 require_once __DIR__ . '/controllers/adminController.php';
 require_once __DIR__ . '/controllers/userController.php';
 require_once __DIR__ . '/middleware/cors.php';
+require_once __DIR__ . '/controllers/cargoController.php';
 
 header("Content-Type: application/json");
 error_reporting(E_ALL);
@@ -89,6 +90,12 @@ function handleRequest($method, $path) {
         }
         $controller = new AdminController();
         $controller->validateLogin($data);
+
+    } elseif (preg_match('/\/cargo-info\/(.+)/', $path, $matches) && $method === 'GET') {
+        $nombreCargo = urldecode($matches[1]);
+        $cargoController = new CargoController();
+        $cargoController->obtenerInfoCargo($nombreCargo);
+        exit;
 
     } else {
         http_response_code(404);

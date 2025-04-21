@@ -251,6 +251,132 @@ function PerformanceEvaluation() {
     }
   ]);
 
+  // Agregar después de la declaración de otros estados (rows, hseqItems, etc.)
+  const [funcionesCargo, setFuncionesCargo] = useState([]);
+
+  // Agregar este useEffect justo después del useEffect principal existente
+  useEffect(() => {
+    if (employee && employee.cargo) {
+      // Obtener funciones específicas del cargo
+      obtenerFuncionesCargo(employee.cargo);
+    }
+  }, [employee]);
+
+  // Agregar esta función para obtener las funciones del cargo
+  const obtenerFuncionesCargo = (cargo) => {
+    // Aquí extraemos el nombre del cargo - podría ser necesario ajustar según tu estructura de datos
+    const nombreCargo = typeof cargo === 'string' ? cargo : (employee?.cargo || '');
+    
+    // Aquí generamos funciones basadas en el cargo
+    // En un entorno real, esto podría ser una llamada a una API
+    const funciones = generarFuncionesPorCargo(nombreCargo);
+    setFuncionesCargo(funciones);
+  };
+
+  // Función para generar funciones específicas según el cargo
+  const generarFuncionesPorCargo = (cargo) => {
+    // Mapeo de cargos específicos a sus funciones
+    const funcionesPorCargo = {
+      'Gerente General': [
+        "Planificar y establecer los objetivos estratégicos de la compañía",
+        "Representar a la empresa ante autoridades y entidades externas",
+        "Supervisar el desempeño de los diferentes departamentos",
+        "Tomar decisiones de alto nivel que afectan la dirección de la empresa",
+        "Gestionar recursos financieros y presupuestos generales"
+      ],
+      'Coordinador HSEQ': [
+        "Diseñar e implementar el Sistema de Gestión HSEQ",
+        "Realizar auditorías internas de cumplimiento normativo",
+        "Elaborar y actualizar planes de emergencia y contingencia",
+        "Capacitar al personal en temas de salud y seguridad",
+        "Investigar incidentes y accidentes laborales"
+      ],
+      'Asistente Contable': [
+        "Registrar transacciones contables en el sistema",
+        "Preparar informes financieros periódicos",
+        "Gestionar cuentas por pagar y cuentas por cobrar",
+        "Conciliar cuentas bancarias y otros registros financieros",
+        "Apoyar en la preparación de declaraciones tributarias"
+      ],
+      'Profesional de Proyectos': [
+        "Coordinar la planificación y ejecución de proyectos asignados",
+        "Realizar seguimiento al cumplimiento de cronogramas y presupuestos",
+        "Elaborar informes de avance y resultados de proyectos",
+        "Gestionar recursos asignados a los proyectos",
+        "Identificar y mitigar riesgos en la ejecución de proyectos"
+      ]
+    };
+    
+    // Verificamos si tenemos funciones específicas para el cargo
+    let funcionesEspecificas = funcionesPorCargo[cargo];
+    
+    // Si no tenemos funciones específicas, usamos funciones genéricas
+    if (!funcionesEspecificas) {
+      // Verificamos si el cargo pertenece a alguna categoría general
+      if (cargo.includes('Gerente') || cargo.includes('Director')) {
+        funcionesEspecificas = funcionesPorCargo['Gerente General'];
+      } else if (cargo.includes('HSEQ') || cargo.includes('HSE')) {
+        funcionesEspecificas = funcionesPorCargo['Coordinador HSEQ'];
+      } else if (cargo.includes('Contable') || cargo.includes('Financier')) {
+        funcionesEspecificas = funcionesPorCargo['Asistente Contable'];
+      } else if (cargo.includes('Proyecto') || cargo.includes('Project')) {
+        funcionesEspecificas = funcionesPorCargo['Profesional de Proyectos'];
+      } else {
+        // Si no coincide con ninguna categoría, usamos funciones genéricas
+        funcionesEspecificas = [
+          "Planificación y organización de actividades relacionadas con el cargo",
+          "Gestión de información y documentación del área",
+          "Resolución de problemas específicos de su área de competencia",
+          "Cumplimiento de objetivos y metas establecidas para el cargo",
+          "Contribución al mejoramiento continuo de los procesos del área"
+        ];
+      }
+    }
+    
+    // Convertimos las descripciones en objetos completos para la evaluación
+    return funcionesEspecificas.map((desc, index) => ({
+      id: index + 1,
+      descripcion: desc,
+      autoevaluacion: "",
+      evaluacionJefe: "",
+      justificacion: ""
+    }));
+  };
+
+  // Manejador para cambios en la calificación de funciones
+  const handleFuncionChange = (index, field, value) => {
+    setFuncionesCargo(prevFunciones => 
+      prevFunciones.map((funcion, i) => 
+        i === index ? { ...funcion, [field]: value } : funcion
+      )
+    );
+  };
+
+  // Calcular promedio de calificaciones de funciones específicas
+  const calcularPromedioFunciones = () => {
+    let sumaTotal = 0;
+    let contadorValidos = 0;
+    
+    funcionesCargo.forEach(funcion => {
+      const auto = Number(funcion.autoevaluacion) || 0;
+      const jefe = Number(funcion.evaluacionJefe) || 0;
+      
+      if (auto > 0 && jefe > 0) {
+        sumaTotal += (auto + jefe) / 2;
+        contadorValidos++;
+      } else if (auto > 0) {
+        sumaTotal += auto;
+        contadorValidos++;
+      } else if (jefe > 0) {
+        sumaTotal += jefe;
+        contadorValidos++;
+      }
+    });
+    
+    if (contadorValidos === 0) return "0.00";
+    return (sumaTotal / contadorValidos).toFixed(2);
+  };
+
   useEffect(() => {
     const employeeId = localStorage.getItem('employeeId');
     if (!employeeId) {
@@ -1658,6 +1784,100 @@ function PerformanceEvaluation() {
             Finalizar Evaluación
           </button>
         </section>
+
+        {/* Nueva tabla para FUNCIONES CARGO O SERVICIO PRESTADO */}
+        <hr style={{ margin: "2rem 0" }}/>
+        <section className="evaluation-section">
+          <table
+            style={{ width: "100%", borderCollapse: "collapse", fontFamily: "Arial, sans-serif" }}
+          >
+            <thead>
+              <tr>
+                <th
+                  colSpan={4}
+                  style={{
+                    backgroundColor: "#000",
+                    color: "#fff",
+                    padding: "1rem",
+                    textAlign: "center",
+                    fontSize: "1.2rem",
+                  }}
+                >
+                  FUNCIONES CARGO O SERVICIO PRESTADO
+                </th>
+              </tr>
+              <tr style={{ backgroundColor: "#f0f0f0", textAlign: "left" }}>
+                <th style={{ width: "60%" }}>FUNCIÓN ESPECÍFICA</th>
+                <th style={{ width: "15%" }}>TRABAJADOR</th>
+                <th style={{ width: "15%" }}>JEFE INMEDIATO</th>
+                <th style={{ width: "10%" }}>JUSTIFICACIÓN</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* Usamos mapeo dinámico de funciones específicas del cargo */}
+              {funcionesCargo.map((funcion, index) => (
+                <tr key={index}>
+                  <td>{funcion.descripcion}</td>
+                  <td className="text-center">
+                    <select
+                      className="rating-select"
+                      value={funcion.autoevaluacion || ""}
+                      onChange={(e) => handleFuncionChange(index, "autoevaluacion", e.target.value)}
+                    >
+                      <option value="">1 - 5</option>
+                      <option value="1">1 - No Cumple</option>
+                      <option value="2">2 - Regular</option>
+                      <option value="3">3 - Parcial</option>
+                      <option value="4">4 - Satisfactorio</option>
+                      <option value="5">5 - Excelente</option>
+                    </select>
+                  </td>
+                  <td className="text-center">
+                    <select
+                      className="rating-select"
+                      value={funcion.evaluacionJefe || ""}
+                      onChange={(e) => handleFuncionChange(index, "evaluacionJefe", e.target.value)}
+                    >
+                      <option value="">1 - 5</option>
+                      <option value="1">1 - No Cumple</option>
+                      <option value="2">2 - Regular</option>
+                      <option value="3">3 - Parcial</option>
+                      <option value="4">4 - Satisfactorio</option>
+                      <option value="5">5 - Excelente</option>
+                    </select>
+                  </td>
+                  <td>
+                    <textarea
+                      className="justificacion-textarea"
+                      rows={1}
+                      placeholder="Justificación"
+                      value={funcion.justificacion || ""}
+                      onChange={(e) => handleFuncionChange(index, "justificacion", e.target.value)}
+                    />
+                  </td>
+                </tr>
+              ))}
+              {funcionesCargo.length === 0 && (
+                <tr>
+                  <td colSpan={4} style={{ textAlign: "center", padding: "1rem" }}>
+                    Cargando funciones específicas...
+                  </td>
+                </tr>
+              )}
+              <tr>
+                <td className="promedio" style={{ fontWeight: "bold", backgroundColor: "#f5f5f5", padding: "0.8rem" }}>
+                  PROMEDIO CALIFICACIÓN FUNCIONES:
+                </td>
+                <td colSpan="2" className="promedio-valor" style={{ backgroundColor: "#f5f5f5", textAlign: "center", fontWeight: "bold", padding: "0.8rem" }}>
+                  {calcularPromedioFunciones()}
+                </td>
+                <td className="promedio-valor" style={{ backgroundColor: "#f5f5f5" }}></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <hr style={{ margin: "2rem 0" }}/>
       </main>
       <Footer />
     </div>
