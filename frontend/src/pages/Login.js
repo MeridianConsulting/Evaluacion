@@ -20,17 +20,17 @@ const Login = ({ onLogin }) => {
     try {
       const apiUrl = process.env.REACT_APP_API_BASE_URL;
       const response = await fetch(`${apiUrl}/login`, {
-        mode: "no-cors",
         method: "POST",
-        credentials: "include",
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json"
         },
         body: JSON.stringify({ cedula, contrasena }),
       });
+      
       if (!response.ok) {
-        throw new Error('Error en la respuesta del servidor');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Error en la respuesta del servidor');
       }
       const data = await response.json();
       if (data.success) {
