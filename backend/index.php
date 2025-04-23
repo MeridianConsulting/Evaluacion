@@ -1,10 +1,16 @@
 <?php
+// Incluir el middleware CORS primero
+require_once __DIR__ . '/middleware/cors.php';
+
+// Configurar el tipo de contenido
+header('Content-Type: application/json');
+
+// Incluir los controladores
 require_once __DIR__ . '/controllers/adminController.php';
 require_once __DIR__ . '/controllers/userController.php';
-require_once __DIR__ . '/middleware/cors.php';
 require_once __DIR__ . '/controllers/cargoController.php';
 
-header("Content-Type: application/json");
+// Configurar el manejo de errores
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 
