@@ -167,6 +167,68 @@ def extract_data_for_table(file_path, table_name):
 
     return pd.DataFrame(data)
 
+# --- Función para enriquecer datos con información relacionada ---
+def enrich_dataframes(dataframes):
+    """
+    Enriquece los dataframes con información relacionada para facilitar
+    la comprensión de las relaciones entre tablas.
+    """
+    # Crear copias para no modificar los originales en caso de error
+    enriched_dfs = {}
+    
+    for table_name, df in dataframes.items():
+        enriched_dfs[table_name] = df.copy()
+    
+    # Enriquecer funciones con nombre_cargo desde cargo
+    if 'funciones' in enriched_dfs and 'cargo' in enriched_dfs and not enriched_dfs['funciones'].empty and not enriched_dfs['cargo'].empty:
+        try:
+            # Crear diccionario de mapeo id_cargo -> nombre_cargo
+            cargo_mapping = dict(zip(
+                enriched_dfs['cargo']['id_cargo'],
+                enriched_dfs['cargo']['nombre_cargo']
+            ))
+            
+            # Añadir columna nombre_cargo a funciones
+            enriched_dfs['funciones']['nombre_cargo'] = enriched_dfs['funciones']['id_cargo'].map(cargo_mapping)
+            
+            print("Relación establecida: funciones -> cargo (usando id_cargo)")
+        except Exception as e:
+            print(f"Error al enriquecer funciones con cargo: {e}")
+    
+    # Enriquecer empleados con nombre_cargo
+    if 'empleados' in enriched_dfs and 'cargo' in enriched_dfs and not enriched_dfs['empleados'].empty and not enriched_dfs['cargo'].empty:
+        try:
+            # Crear diccionario de mapeo id_cargo -> nombre_cargo
+            cargo_mapping = dict(zip(
+                enriched_dfs['cargo']['id_cargo'],
+                enriched_dfs['cargo']['nombre_cargo']
+            ))
+            
+            # Añadir columna nombre_cargo a empleados
+            enriched_dfs['empleados']['nombre_cargo'] = enriched_dfs['empleados']['cargo'].map(cargo_mapping)
+            
+            print("Relación establecida: empleados -> cargo (usando cargo)")
+        except Exception as e:
+            print(f"Error al enriquecer empleados con cargo: {e}")
+    
+    # Enriquecer evaluacion con nombre_empleado
+    if 'evaluacion' in enriched_dfs and 'empleados' in enriched_dfs and not enriched_dfs['evaluacion'].empty and not enriched_dfs['empleados'].empty:
+        try:
+            # Crear diccionario de mapeo id_empleado -> nombre
+            empleado_mapping = dict(zip(
+                enriched_dfs['empleados']['id_empleado'],
+                enriched_dfs['empleados']['nombre']
+            ))
+            
+            # Añadir columna nombre_empleado a evaluacion
+            enriched_dfs['evaluacion']['nombre_empleado'] = enriched_dfs['evaluacion']['id_empleado'].map(empleado_mapping)
+            
+            print("Relación establecida: evaluacion -> empleados (usando id_empleado)")
+        except Exception as e:
+            print(f"Error al enriquecer evaluacion con empleados: {e}")
+    
+    return enriched_dfs
+
 # --- Función Principal (actualizada) ---
 def main():
     try:
@@ -206,111 +268,132 @@ def main():
             elif table_name == 'funciones':
                  print(f"  - No se eliminarán duplicados para '{table_name}' para permitir múltiples funciones por cargo.")
 
-
             dataframes[table_name] = df
             print(f"  - {len(dataframes[table_name])} filas únicas/totales encontradas para la tabla '{table_name}'")
 
+        # Enriquecer los dataframes con relaciones
+        print("\nEstableciendo relaciones entre tablas...")
+        enriched_dfs = enrich_dataframes(dataframes)
 
-        # --- Escribir a Excel en una sola hoja ---
+        # --- Escribir a Excel con múltiples hojas y formato de tabla ---
         try:
             with pd.ExcelWriter(output_excel, engine='xlsxwriter') as writer:
                 workbook = writer.book
-                worksheet_name = 'Database Structure'
-                worksheet = workbook.add_worksheet(worksheet_name)
-
-                # Definir formatos
-                title_format = workbook.add_format({'bold': True, 'font_size': 14, 'bg_color': '#BFBFBF', 'border': 1, 'align': 'center', 'valign': 'vcenter'})
-                header_format = workbook.add_format({'bold': True, 'bg_color': '#D9EAD3', 'border': 1, 'text_wrap': True, 'align': 'center', 'valign': 'top'})
-                relation_format = workbook.add_format({'italic': True, 'font_color': '#595959', 'font_size': 9})
-                data_format = workbook.add_format({'border': 1, 'valign': 'top'}) # Formato para celdas de datos
-                empty_data_format = workbook.add_format({'italic': True, 'font_color': 'gray', 'align': 'center'})
-
-                current_row = 0 # Fila actual para escribir
-
-                # --- Función interna para escribir una sección de tabla ---
-                def write_table_section(df, table_name, start_row):
-                    nonlocal worksheet, writer # Permitir modificar variables del ámbito exterior
-                    
-                    # Schema a usar para encabezados (el original, con todos los campos)
-                    original_schema_cols = []
-                    if table_name == 'funciones':
-                         original_schema_cols = ['id_funcion'] + schema[table_name] # Añadir id_funcion de vuelta para el encabezado
-                    else:
-                         original_schema_cols = schema[table_name]
-                         
-                    num_cols = len(original_schema_cols) # Usar schema original para ancho
-
-                    # Escribir Título de la Tabla (combinando celdas)
-                    worksheet.merge_range(start_row, 0, start_row + 1, num_cols - 1, f"Tabla: {table_name}", title_format)
-                    start_row += 2 # Avanzar 2 filas para el título
-
-                    # Escribir Encabezados y Notas de Relación
-                    max_col_widths = {} # Diccionario para almacenar anchos de columna
-                    for col_num, value in enumerate(original_schema_cols):
-                        worksheet.write(start_row, col_num, value, header_format)
-                        max_col_widths[col_num] = len(value) # Ancho inicial basado en encabezado
-
-                        # Añadir notas de relación FK debajo del encabezado
-                        relation_note = ""
-                        # Usar el nombre de la tabla original
-                        if table_name == 'funciones' and value == 'id_cargo':
-                            relation_note = "-> cargo(id_cargo)"
-                        elif table_name == 'evaluacion' and value == 'id_empleado':
-                            relation_note = "-> empleados(id_empleado)"
-                        elif table_name == 'detalle_evaluacion':
-                            if value == 'id_evaluacion':
-                                relation_note = "-> evaluacion(id_evaluacion)"
-                            elif value == 'id_funcion':
-                                relation_note = "-> funciones(id_funcion)" # Asumiendo id_funcion es PK
-
-                        if relation_note:
-                             # Escribir nota en la fila siguiente
-                             worksheet.write(start_row + 1, col_num, relation_note, relation_format)
-                             max_col_widths[col_num] = max(max_col_widths.get(col_num, 0), len(relation_note))
-
-                    data_start_row = start_row + 2 # Los datos comienzan después del encabezado y la nota de relación
-
-                    # Escribir datos del DataFrame
+                
+                # Definir formatos comunes
+                title_format = workbook.add_format({
+                    'bold': True, 
+                    'font_size': 14, 
+                    'bg_color': '#4472C4', 
+                    'font_color': 'white',
+                    'border': 1, 
+                    'align': 'center', 
+                    'valign': 'vcenter'
+                })
+                
+                header_format = workbook.add_format({
+                    'bold': True, 
+                    'bg_color': '#D9EAD3', 
+                    'border': 1, 
+                    'text_wrap': True, 
+                    'align': 'center', 
+                    'valign': 'top'
+                })
+                
+                relation_format = workbook.add_format({
+                    'italic': True, 
+                    'font_color': '#1F4E79', 
+                    'font_size': 9, 
+                    'align': 'center'
+                })
+                
+                # Crear hoja de índice/instrucciones
+                index_sheet = workbook.add_worksheet('Índice')
+                index_sheet.set_column('A:A', 25)
+                index_sheet.set_column('B:B', 60)
+                
+                # Escribir título e instrucciones
+                index_sheet.merge_range('A1:B1', 'BASE DE DATOS RECURSOS HUMANOS', title_format)
+                
+                index_sheet.write('A3', 'INSTRUCCIONES:', workbook.add_format({'bold': True}))
+                index_sheet.write('A4', '1. Navegación:', workbook.add_format({'bold': True}))
+                index_sheet.write('B4', 'Use las pestañas inferiores para navegar entre las tablas.')
+                index_sheet.write('A5', '2. Filtros:', workbook.add_format({'bold': True}))
+                index_sheet.write('B5', 'Cada tabla tiene habilitados filtros. Haga clic en los íconos de filtro para buscar información específica.')
+                index_sheet.write('A6', '3. Relaciones:', workbook.add_format({'bold': True}))
+                index_sheet.write('B6', 'Las tablas están relacionadas entre sí. Las columnas de relación están marcadas en azul.')
+                index_sheet.write('A7', '4. Edición:', workbook.add_format({'bold': True}))
+                index_sheet.write('B7', 'Puede editar directamente los datos en las celdas. Guarde el archivo después de cada edición importante.')
+                
+                # Lista de tablas disponibles
+                index_sheet.write('A9', 'TABLAS DISPONIBLES:', workbook.add_format({'bold': True}))
+                
+                # Crear cada hoja de tabla y añadirla al índice
+                for i, (table_name, df) in enumerate(enriched_dfs.items(), 1):
                     if not df.empty:
-                        # Ajustar DataFrame si es 'funciones' para coincidir con encabezados originales
-                        df_to_write = df.copy()
+                        table_display_name = table_name.capitalize()
+                        
+                        # Crear hoja para la tabla
+                        print(f"Creando hoja para tabla '{table_name}'...")
+                        worksheet = workbook.add_worksheet(table_display_name)
+                        
+                        # Escribir encabezado
+                        worksheet.merge_range(0, 0, 0, len(df.columns) - 1, f"Tabla: {table_display_name}", title_format)
+                        
+                        # Determinar relaciones para esta tabla
+                        relation_cols = {}
+                        
                         if table_name == 'funciones':
-                             # Añadir una columna 'id_funcion' vacía al principio si no existe
-                             if 'id_funcion' not in df_to_write.columns:
-                                  df_to_write.insert(0, 'id_funcion', None) # O un valor por defecto como 'Auto'
-                             # Reordenar columnas para que coincidan con original_schema_cols
-                             df_to_write = df_to_write[original_schema_cols]
-
-
-                        for r_idx, row in enumerate(df_to_write.itertuples(index=False), start=data_start_row):
-                            for c_idx, val in enumerate(row):
-                                 cell_value = val if pd.notna(val) else "" # Manejar NaN
-                                 worksheet.write(r_idx, c_idx, cell_value, data_format)
-                                 # Actualizar ancho máximo de columna
-                                 current_width = max_col_widths.get(c_idx, 0)
-                                 max_col_widths[c_idx] = max(current_width, len(str(cell_value)))
-                        data_rows = len(df_to_write)
+                            relation_cols['id_cargo'] = 'Relacionado con tabla Cargo'
+                            relation_cols['nombre_cargo'] = 'Obtenido de tabla Cargo'
+                        elif table_name == 'empleados' and 'nombre_cargo' in df.columns:
+                            relation_cols['cargo'] = 'ID relacionado con tabla Cargo'
+                            relation_cols['nombre_cargo'] = 'Obtenido de tabla Cargo'
+                        elif table_name == 'evaluacion' and 'nombre_empleado' in df.columns:
+                            relation_cols['id_empleado'] = 'Relacionado con tabla Empleados'
+                            relation_cols['nombre_empleado'] = 'Obtenido de tabla Empleados'
+                        elif table_name == 'detalle_evaluacion':
+                            relation_cols['id_evaluacion'] = 'Relacionado con tabla Evaluacion'
+                            relation_cols['id_funcion'] = 'Relacionado con tabla Funciones'
+                        
+                        # Escribir encabezados con formato
+                        for col_num, col_name in enumerate(df.columns):
+                            cell_format = header_format
+                            worksheet.write(2, col_num, col_name, cell_format)
+                            
+                            # Agregar info de relación si aplica
+                            if col_name in relation_cols:
+                                worksheet.write(3, col_num, relation_cols[col_name], relation_format)
+                        
+                        # Escribir datos
+                        for row_num, (_, row) in enumerate(df.iterrows(), 4):  # Comienza en fila 4 (después de encabezados)
+                            for col_num, cell_value in enumerate(row):
+                                worksheet.write(row_num, col_num, cell_value if pd.notna(cell_value) else "")
+                        
+                        # Añadir formato de tabla con filtros
+                        table_range = f'A2:{chr(65 + len(df.columns) - 1)}{len(df) + 4}'  # A2:X20 por ejemplo
+                        worksheet.add_table(table_range, {
+                            'columns': [{'header': col} for col in df.columns],
+                            'style': 'Table Style Medium 2',
+                            'first_column': False,
+                            'header_row': True,
+                            'autofilter': True
+                        })
+                        
+                        # Ajustar ancho de columnas automáticamente
+                        for col_num, col_name in enumerate(df.columns):
+                            max_width = max(len(str(col_name)), 
+                                           df[col_name].astype(str).apply(len).max() if not df.empty else 0)
+                            worksheet.set_column(col_num, col_num, max_width + 3)  # +3 para padding
+                        
+                        # Agregar entrada en el índice
+                        index_sheet.write(f'A{9+i}', f"{i}. {table_display_name}")
+                        index_sheet.write(f'B{9+i}', f"Contiene {len(df)} registros")
                     else:
-                        # Mensaje para tablas sin datos
-                        worksheet.merge_range(data_start_row, 0, data_start_row, num_cols -1,
-                                              "(No se encontraron datos válidos en el archivo SQL)", empty_data_format)
-                        data_rows = 1 # Altura mínima para el mensaje
-
-                    # Ajustar ancho de columnas para esta sección (basado en contenido y encabezado)
-                    for col_num, width in max_col_widths.items():
-                        # Añadir un pequeño padding
-                        worksheet.set_column(col_num, col_num, width + 3 if width > 0 else 10) # Ancho mínimo
-
-                    # Devolver la siguiente fila disponible, añadiendo espacio
-                    return data_start_row + data_rows + 2 # Espacio después de la tabla
-
-
-                # --- Escribir cada tabla en la hoja ---
-                for table_name in schema.keys():
-                    print(f"Escribiendo tabla '{table_name}' en Excel...")
-                    current_row = write_table_section(dataframes[table_name], table_name, current_row)
+                        print(f"Tabla '{table_name}' sin datos, no se creará hoja.")
 
             print(f"Archivo Excel '{output_excel}' generado con éxito.")
+            print("Se han implementado relaciones entre tablas y formato para filtrado.")
 
         except Exception as e:
             print(f"Se produjo un error al generar el archivo Excel: {e}")
