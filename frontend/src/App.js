@@ -9,8 +9,11 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Profile from "./pages/Profile";
 import Results from "./pages/Results";
-import PerformanceEvaluation from "./pages/PerformanceEvaluation"; // Se corrigió la importación duplicada
-import DashboardSelector from "./admin/DashboardSelector"; // Importamos el componente DashboardSelector
+import PerformanceEvaluation from "./pages/PerformanceEvaluation";
+import DashboardSelector from "./admin/DashboardSelector";
+import EmpleadosCRUD from "./admin/EmpleadosCRUD";
+import FuncionesCRUD from "./admin/FuncionesCRUD";
+import CargosCRUD from "./admin/CargosCRUD";
 import "./App.css";
 
 function App() {
@@ -148,12 +151,42 @@ function App() {
             )
           }  
         />
-        {/* Ruta protegida para el Dashboard de Administrador */}
+        {/* Rutas del panel de administrador */}
         <Route
           path="/admin"
           element={
             isAuthenticated ? (
               <DashboardSelector onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
+        <Route
+          path="/admin/empleados"
+          element={
+            isAuthenticated ? (
+              <EmpleadosCRUD onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
+        <Route
+          path="/admin/funciones"
+          element={
+            isAuthenticated ? (
+              <FuncionesCRUD onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
+        <Route
+          path="/admin/cargos"
+          element={
+            isAuthenticated ? (
+              <CargosCRUD onLogout={handleLogout} />
             ) : (
               <Navigate to="/" replace />
             )

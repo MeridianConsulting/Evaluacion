@@ -9,19 +9,15 @@ function DashboardSelector({ onLogout }) {
 
   // Funciones para manejar los clicks en los botones
   const handleEmpleadosClick = () => {
-    alert('Redirigiendo al CRUD de Empleados');
-    // Una vez implementadas las rutas, se usaría:
-    // navigate('/admin/empleados');
+    navigate('/admin/empleados');
   };
 
   const handleFuncionesClick = () => {
-    alert('Redirigiendo al CRUD de Funciones');
-    // navigate('/admin/funciones');
+    navigate('/admin/funciones');
   };
 
   const handleCargosClick = () => {
-    alert('Redirigiendo al CRUD de Cargos');
-    // navigate('/admin/cargos');
+    navigate('/admin/cargos');
   };
 
   return (
