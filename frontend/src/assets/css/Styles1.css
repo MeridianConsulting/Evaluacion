@@ -2886,3 +2886,17 @@ input[type="date"]:focus {
   border-color: #4CAF50;
   box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
 }
+
+.evaluation-th-gradient {
+  background: linear-gradient(to right, var(--color-primary-dark), var(--color-primary));
+  color: #fff;
+  padding: 0.8rem;
+}
+
+.evaluation-th-header-gradient {
+  background: linear-gradient(to right, var(--color-primary-dark), var(--color-primary));
+  color: #fff;
+  padding: 1rem;
+  text-align: center;
+  font-size: 1.2rem;
+}

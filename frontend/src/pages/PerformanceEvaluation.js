@@ -2032,8 +2032,8 @@ function PerformanceEvaluation() {
               {/* Usamos mapeo dinámico de funciones específicas del cargo */}
               {funcionesCargo.map((funcion, index) => (
                 <tr key={index}>
-                  <td>{funcion.descripcion}</td>
-                  <td className="text-center">
+                  <td style={{ backgroundColor: "#fff", padding: "0.5rem" }}>{funcion.descripcion}</td>
+                  <td className="text-center" style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                     <select
                       className="rating-select"
                       value={funcion.autoevaluacion || ""}
@@ -2047,7 +2047,7 @@ function PerformanceEvaluation() {
                       <option value="5">5 - Excelente</option>
                     </select>
                   </td>
-                  <td className="text-center">
+                  <td className="text-center" style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                     <select
                       className="rating-select"
                       value={funcion.evaluacionJefe || ""}
@@ -2061,7 +2061,7 @@ function PerformanceEvaluation() {
                       <option value="5">5 - Excelente</option>
                     </select>
                   </td>
-                  <td>
+                  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                     <textarea
                       className="justificacion-textarea"
                       rows={1}
@@ -2111,8 +2111,8 @@ function PerformanceEvaluation() {
             <tbody>
               {hseqItems.map(item => (
                 <tr key={item.id}>
-                  <td>{item.responsabilidad}</td>
-                  <td className="text-center">
+                  <td style={{ backgroundColor: "#fff", padding: "0.5rem" }}>{item.responsabilidad}</td>
+                  <td className="text-center" style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                     <select
                       className="rating-select"
                       value={item.autoevaluacion}
@@ -2126,7 +2126,7 @@ function PerformanceEvaluation() {
                       <option value="5">5 - Excelente</option>
                     </select>
                   </td>
-                  <td className="text-center">
+                  <td className="text-center" style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                     <select
                       className="rating-select"
                       value={item.evaluacionJefe}
@@ -2140,7 +2140,7 @@ function PerformanceEvaluation() {
                       <option value="5">5 - Excelente</option>
                     </select>
                   </td>
-                  <td>
+                  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                     <textarea
                       className="hseq-textarea"
                       rows={1}
@@ -2208,7 +2208,7 @@ function PerformanceEvaluation() {
             </thead>
             <tbody>
               <tr>
-                <td className="plan-accion-td">
+                <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <input 
                     type="text" 
                     placeholder="Actividad" 
@@ -2222,7 +2222,7 @@ function PerformanceEvaluation() {
                     <span className="error-message">Obligatorio</span>
                   )}
                 </td>
-                <td className="plan-accion-td">
+                <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <input 
                     type="text" 
                     placeholder="Responsable" 
@@ -2236,7 +2236,7 @@ function PerformanceEvaluation() {
                     <span className="error-message">Obligatorio</span>
                   )}
                 </td>
-                <td className="plan-accion-td">
+                <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <input 
                     type="text" 
                     placeholder="Indicadores / Frecuencia" 
@@ -2250,7 +2250,7 @@ function PerformanceEvaluation() {
                     <span className="error-message">Obligatorio</span>
                   )}
                 </td>
-                <td className="plan-accion-td">
+                <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <input 
                     type="date" 
                     className="plan-accion-input"
