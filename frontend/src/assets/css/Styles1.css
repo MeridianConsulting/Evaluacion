@@ -5,21 +5,31 @@ html, body {
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow-x: hidden; 
+  overflow-x: hidden;
+  font-family: "Libre Franklin", sans-serif; 
 }
 
-/* Nueva paleta de colores */
+/* Nueva paleta de colores profesional */
 :root {
-  --color-primary: #000000;    /* Negro: elementos clave (navbar, footer, etc.) */
-  --color-secondary: #ffffff;  /* Blanco: textos, fondos y resaltes */
-  --color-tertiary: #b0b0b0;     /* Gris suave para detalles o hover sutil */
-  --color-background: #f7f7f7;   /* Fondo muy claro */
-  --color-dark: #1a1a1a;         /* Gris oscuro para acentos o hover en botones */
-  --color-accent: #B0A990;       /* Acento metálico para detalles específicos */
-}
-
-body {
-  font-family: "Libre Franklin", sans-serif;
+  --color-primary: #33619D;    /* Azul oscuro: elementos principales (navbar, footer) */
+  --color-primary-light: #4A78B4; /* Variante más clara del azul principal */
+  --color-primary-dark: #264C7D; /* Variante más oscura del azul principal */
+  
+  --color-secondary: #FCF7FF;  /* Blanco ligeramente púrpura: textos, fondos claros */
+  --color-secondary-dark: #E9E4EC; /* Variante más oscura del blanco para elementos sutiles */
+  
+  --color-tertiary: #63C9DB;   /* Azul turquesa: para detalles o hover sutil */
+  --color-tertiary-light: #8AD7E5; /* Variante más clara del turquesa */
+  --color-tertiary-dark: #4BA0AF; /* Variante más oscura del turquesa */
+  
+  --color-background: #FCF7FF; /* Blanco ligeramente púrpura para fondos */
+  
+  --color-dark: #04080F;       /* Negro azulado: para textos importantes o botones de acción */
+  --color-dark-alt: #122236;   /* Variante menos oscura para alternativas */
+  
+  --color-accent: #F4D35E;     /* Amarillo dorado: para acentos y llamadas a la acción */
+  --color-accent-light: #F7DE85; /* Variante más clara del amarillo */
+  --color-accent-dark: #D1B341; /* Variante más oscura del amarillo */
 }
 
 /* ---------------------
@@ -31,7 +41,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)),
+  background: linear-gradient(to bottom, rgba(4, 8, 15, 0.8), rgba(51, 97, 157, 0.5)),
               url('../img/fondo.jpeg') no-repeat center center;
   background-size: cover;
 }
@@ -44,7 +54,202 @@ th{
   text-align: center;
 }
 tr{
-  background-color: rgb(240, 240, 240);
+  background-color: var(--color-secondary-dark);
+  text-align: center;
+}
+/* ---------------------
+   HEADER Y NAVBAR
+---------------------- */
+.navbar {
+  background: linear-gradient(to right, var(--color-primary-dark), var(--color-primary));
+  box-shadow: 0 2px 10px rgba(4, 8, 15, 0.3);
+  border-bottom: 2px solid var(--color-tertiary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  position: relative;
+  z-index: 100;
+}
+
+.navbar-logo {
+  position: relative;
+}
+
+.navbar-logo::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -5px;
+  left: 0;
+  background-color: var(--color-accent);
+  transition: width 0.3s ease;
+}
+
+.navbar-logo:hover::after {
+  width: 100%;
+}
+
+.navbar-logo img {
+  height: 60px;
+  display: block;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.navbar-logo img:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 6px rgba(99, 201, 219, 0.8));
+}
+
+.menu-container {
+  position: relative;
+}
+
+.navbar-menu img {
+  height: 40px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  filter: brightness(1.2);
+}
+
+.navbar-menu:hover img {
+  transform: scale(1.1) rotate(5deg);
+  filter: brightness(1.5) drop-shadow(0 0 3px var(--color-accent));
+}
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+  box-shadow: 3px 0 15px rgba(4, 8, 15, 0.5);
+  border-right: 2px solid var(--color-tertiary);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.5rem;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.side-menu.open {
+  transform: translateX(0);
+}
+
+.side-menu .menu-item {
+  background: none;
+  border: none;
+  color: var(--color-secondary);
+  font-size: 1.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  position: relative;
+  overflow: hidden;
+  border-left: 3px solid transparent;
+}
+
+.side-menu .menu-item:hover {
+  background-color: rgba(99, 201, 219, 0.1);
+  color: var(--color-accent);
+  border-left: 3px solid var(--color-accent);
+  transform: translateX(5px);
+}
+
+.side-menu .menu-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.side-menu .menu-item:hover::before {
+  left: 100%;
+}
+
+.side-menu .menu-item.active {
+  background-color: rgba(99, 201, 219, 0.15);
+  border-left: 3px solid var(--color-accent);
+}
+
+@media (min-width: 769px) {
+  .navbar-menu {
+    display: none;
+  }
+  .menu-container .side-menu {
+    transform: none !important;
+    position: static;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+    padding: 0;
+    background: transparent;
+    height: auto;
+    width: auto;
+    box-shadow: none;
+  }
+  .side-menu .menu-item {
+    margin: 0;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-bottom: none;
+    transition: color 0.3s ease;
+  }
+  .side-menu .menu-item:hover {
+    background-color: transparent;
+  }
+  .side-menu .menu-item:hover {
+    color: var(--color-accent);
+    transform: translateY(-2px);
+  }
+  
+  .side-menu .menu-item:hover:after {
+    width: 80%;
+    left: 10%;
+  }
+  
+  .side-menu .menu-item.active {
+    border-left: none;
+    border-bottom: 2px solid var(--color-accent);
+  }
+}
+@media (min-width: 769px) {
+  .navbar-menu {
+    display: none;
+  }
+  .menu-container .side-menu {
+    transform: none !important;
+  }
+}
+
+
+/* ---------------------
+   LANDING PAGE
+---------------------- */
+
+header, nav, section, footer {
+  margin: 0;
+  padding: 0;
+}
+th{
+  text-align: center;
+}
+tr{
+  background-color: var(--color-secondary-dark);
   text-align: center;
 }
 /* ---------------------
@@ -198,20 +403,21 @@ tr{
 }
 
 .hero button {
-  background-color: var(--color-primary);
-  color: var(--color-secondary);
+  background-color: var(--color-accent-light);
+  color: var(--color-dark);
+  font-weight: 600;
   border: none;
   padding: 1rem 2rem;
   font-size: 1.6rem;
   cursor: pointer;
   border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(4, 8, 15, 0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
 .hero button:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  background-color: var(--color-dark);
+  background-color: var(--color-accent-dark);
+  box-shadow: 0 4px 8px rgba(4, 8, 15, 0.4);
 }
 
 /* ================================
@@ -271,7 +477,7 @@ tr{
    FOOTER
 ---------------------- */
 footer {
-  background-color: var(--color-primary);
+  background: linear-gradient(to right, var(--color-primary-dark), var(--color-primary));
   color: var(--color-secondary);
   margin-top: auto;
   padding: 2rem 3rem;
@@ -398,7 +604,7 @@ footer {
   margin: 0;
   padding: 0;
   font-family: "Libre Franklin", sans-serif;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)),
+  background: linear-gradient(to bottom, rgba(4, 8, 15, 0.7), rgba(51, 97, 157, 0.4)),
     url('../img/fondo.jpeg') no-repeat center center;
   background-size: cover;
   height: 100vh;
@@ -425,10 +631,10 @@ footer {
   width: 100%;
   max-width: 500px;
   padding: 30px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(51, 97, 157, 0.3);
   backdrop-filter: blur(10px);
   border-radius: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(99, 201, 219, 0.4);
   text-align: left;
   animation: fadeIn 0.5s ease-in-out;
   color: #333;
@@ -471,7 +677,7 @@ footer {
 .login-container input {
   width: 100%;
   padding: 12px 40px 12px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(99, 201, 219, 0.4);
   border-radius: 5px;
   font-size: 16px;
   background: rgba(255, 255, 255, 0.2);
@@ -536,8 +742,8 @@ footer {
 .login-button {
   width: 100%;
   padding: 12px;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
+  background: var(--color-accent);
+  color: var(--color-dark);
   font-size: 16px;
   font-weight: bold;
   border: none;
@@ -548,7 +754,7 @@ footer {
 }
 
 .login-button:hover {
-  background: rgba(0, 0, 0, 0.8);
+  background: var(--color-accent-dark);
 }
 
 .login-error-message {
@@ -695,8 +901,8 @@ footer {
 /* Estilos para los botones del modal */
 .modal button {
   padding: 0.75rem 1.5rem;
-  background-color: var(--color-primary); /* Negro */
-  color: var(--color-secondary);           /* Blanco */
+  background-color: var(--color-accent);
+  color: var(--color-dark);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -705,13 +911,14 @@ footer {
 }
 
 .modal button:hover {
-  background-color: var(--color-dark); /* Gris oscuro */
+  background-color: var(--color-accent-dark);
   transform: scale(1.02);
 }
 
 /* Estilos para el botón deshabilitado */
 .modal button:disabled {
-  background-color: var(--color-tertiary); /* Gris suave */
+  background-color: var(--color-tertiary-light);
+  color: var(--color-tertiary-dark);
   cursor: not-allowed;
   transform: none;
 }
@@ -789,7 +996,8 @@ footer {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-background);
+  background: linear-gradient(to bottom, rgba(4, 8, 15, 0.6), rgba(51, 97, 157, 0.4)),
+    url('../img/fondo.jpeg') no-repeat center center;
 }
 
 /* Área principal donde se ubican las dos secciones (mapa e info) */
@@ -811,10 +1019,11 @@ footer {
 /* Sección izquierda: Mapa de Google */
 .contact-map-section-unique {
   flex: 1;
-  background-color: rgba(7, 7, 7, 0.9); /* Fondo oscuro para simular un look similar al diseño de ejemplo */
+  background-color: rgba(51, 97, 157, 0.9);
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-tertiary-dark);
 }
 
 /* Contenido dentro de la sección del mapa */
@@ -848,11 +1057,12 @@ footer {
 /* Sección derecha: Información de contacto */
 .contact-info-section-unique {
   flex: 1;
-  background-color: rgba(7, 7, 7, 0.9); /* Fondo claro para contraste */
+  background-color: rgba(51, 97, 157, 0.9);
   border-radius: 8px;
   padding: 1.5rem;
   color: var(--color-secondary);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-tertiary-dark);
 }
 
 /* Título de la información de contacto */
@@ -909,7 +1119,7 @@ footer {
   margin: 0 auto;
   text-align: center;
   padding: 2rem;
-  background-color: rgba(7, 7, 7, 0.5);
+  background-color: rgba(51, 97, 157, 0.7);
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
@@ -949,10 +1159,13 @@ footer {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
   width: 300px;
   transition: transform 0.3s ease;
+  border-left: 4px solid var(--color-accent);
 }
 
 .service-item-unique:hover {
   transform: translateY(-5px);
+  background-color: var(--color-primary-light);
+  box-shadow: 0 8px 15px rgba(4, 8, 15, 0.2);
 }
 
 /* Título de cada servicio */
@@ -991,9 +1204,8 @@ footer {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: var(--color-background);
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)),
-  url('../img/fondo.jpeg') no-repeat center center;
+  background: linear-gradient(to bottom, rgba(4, 8, 15, 0.6), rgba(51, 97, 157, 0.4)),
+    url('../img/fondo.jpeg') no-repeat center center;
 }
 
 /* Área principal de la página */
@@ -1006,10 +1218,11 @@ footer {
 .about-container-unique {
   max-width: 1000px;
   margin: 0 auto;
-  background-color: rgba(7, 7, 7, 0.9);
+  background-color: rgba(51, 97, 157, 0.85);
   border-radius: 8px;
   padding: 2rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-tertiary);
 }
 
 /* Títulos de sección */
@@ -1018,7 +1231,7 @@ footer {
   color: var(--color-secondary);
   margin: 2rem 0 1rem;
   text-transform: uppercase;
-  border-bottom: 2px solid var(--color-tertiary);
+  border-bottom: 2px solid var(--color-accent);
   padding-bottom: 0.5rem;
 }
 
@@ -1063,9 +1276,8 @@ footer {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: var(--color-background);
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)),
-  url('../img/fondo.jpeg') no-repeat center center;
+  background: linear-gradient(to bottom, rgba(4, 8, 15, 0.6), rgba(51, 97, 157, 0.4)),
+    url('../img/fondo.jpeg') no-repeat center center;
 }
 
 /* Área principal de la página */
@@ -1078,10 +1290,11 @@ footer {
 .privacy-container-unique {
   max-width: 1000px;
   margin: 0 auto;
-  background-color: rgba(7, 7, 7, 0.9);
+  background-color: rgba(51, 97, 157, 0.85);
   border-radius: 8px;
   padding: 2rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-tertiary);
 }
 
 /* Título principal */
@@ -1090,7 +1303,7 @@ footer {
   color: var(--color-secondary);
   margin-bottom: 1rem;
   text-transform: uppercase;
-  border-bottom: 2px solid var(--color-tertiary);
+  border-bottom: 2px solid var(--color-accent);
   padding-bottom: 0.5rem;
 }
 
@@ -1134,9 +1347,8 @@ footer {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: var(--color-background);
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)),
-  url('../img/fondo.jpeg') no-repeat center center;
+  background: linear-gradient(to bottom, rgba(4, 8, 15, 0.6), rgba(51, 97, 157, 0.4)),
+    url('../img/fondo.jpeg') no-repeat center center;
 }
 
 /* Área principal de la página */
@@ -1149,10 +1361,11 @@ footer {
 .terms-container-unique {
   max-width: 1000px;
   margin: 0 auto;
-  background-color: rgba(7, 7, 7, 0.9);
+  background-color: rgba(51, 97, 157, 0.85);
   border-radius: 8px;
   padding: 2rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-tertiary);
 }
 
 /* Título principal */
@@ -1161,7 +1374,7 @@ footer {
   color: var(--color-secondary);
   margin-bottom: 1rem;
   text-transform: uppercase;
-  border-bottom: 2px solid var(--color-tertiary);
+  border-bottom: 2px solid var(--color-accent);
   padding-bottom: 0.5rem;
 }
 
@@ -1230,10 +1443,11 @@ footer {
 
 /* Tarjeta que contiene la información del empleado */
 .profile-card {
-  background-color: rgba(7, 7, 7, 0.9); /* fondo blanco */
+  background-color: rgba(51, 97, 157, 0.85);
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  border: 1px solid var(--color-tertiary);
 }
 
 /* Encabezado dentro de la tarjeta */
@@ -1369,9 +1583,9 @@ footer {
 }
 
 .evaluation-table th {
-  background-color: var(--color-background);
+  background-color: var(--color-primary-light);
+  color: var(--color-secondary);
   font-weight: 600;
-  color: var(--color-primary);
 }
 
 /* === Botones === */
@@ -1543,9 +1757,8 @@ footer {
 }
 
 .hseq-table th {
-  background-color: var(--color-background);
-  font-weight: 600;
-  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+  color: var(--color-secondary);
   text-align: left;
   padding: 1rem;
 }
@@ -1638,8 +1851,8 @@ footer {
 }
 
 .plan-accion-th {
-  background-color: var(--color-background);
-  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+  color: var(--color-secondary);
   padding: 1rem;
   font-weight: 600;
   text-align: left;
@@ -1676,7 +1889,7 @@ footer {
 
 .firma-box {
   height: 100px;
-  border: 1px solid var(--color-primary);
+  border: 1px solid var(--color-tertiary);
   border-radius: 6px;
   margin-top: 0.5rem;
   background-color: #f8fafc;
@@ -1685,8 +1898,8 @@ footer {
 }
 
 .firma-box:hover {
-  background-color: #f1f5f9;
-  border-color: #94a3b8;
+  background-color: var(--color-secondary-dark);
+  border-color: var(--color-tertiary-dark);
 }
 
 .firma-box::after {
@@ -1714,21 +1927,20 @@ footer {
 .finalizar-btn {
   padding: 0.9rem 2.2rem;
   margin-top: 2rem;
-  background-color: var(--color-primary);
-  color: var(--color-secondary);
+  background-color: var(--color-accent);
+  color: var(--color-dark);
   border: none;
   border-radius: 6px;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 15px rgba(244, 211, 94, 0.3);
 }
 
 .finalizar-btn:hover {
-  background-color: var(--color-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  background-color: var(--color-accent-dark);
+  box-shadow: 0 6px 20px rgba(244, 211, 94, 0.4);
 }
 
 /* === Campos requeridos === */
@@ -1740,7 +1952,7 @@ footer {
 
 /* === Estilos de Tabla === */
 .competencia-cell {
-  background-color: var(--color-background);
+  background-color: var(--color-secondary);
   vertical-align: middle;
   text-align: center;
   font-weight: 600;
@@ -1969,8 +2181,8 @@ td .rating-select {
 }
 
 .instrucciones {
-  background-color: #ffffff; /* Fondo suave */
-  border: 1px solid #ccc; /* Borde sutil */
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-tertiary-light);
   border-radius: 8px; /* Bordes redondeados */
   padding: 20px; /* Espaciado interno */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
@@ -1978,7 +2190,7 @@ td .rating-select {
 }
 
 .instrucciones h2 {
-  color: #000000; /* Color del texto */
+  color: var(--color-primary-dark);
 }
 
 .instrucciones ol {
@@ -1990,7 +2202,7 @@ td .rating-select {
 }
 
 .instrucciones strong {
-  color: #000; /* Color del texto en negrita */
+  color: var(--color-primary);
 }
 
 .instrucciones em {
@@ -2022,18 +2234,18 @@ td .rating-select {
 }
 
 .role-badge.empleado {
-  background-color: #e7f3fe;
-  color: #0c63e4;
+  background-color: var(--color-tertiary-light);
+  color: var(--color-dark);
 }
 
 .role-badge.jefe {
-  background-color: #fff3cd;
-  color: #997404;
+  background-color: var(--color-accent-light);
+  color: var(--color-dark);
 }
 
 .role-badge.admin {
-  background-color: #f8d7da;
-  color: #842029;
+  background-color: var(--color-primary-light);
+  color: var(--color-secondary);
 }
 
 /* Estilos para accesos rápidos en login (solo para desarrollo) */
@@ -2128,13 +2340,13 @@ td .rating-select {
 }
 
 .team-members-table th {
-  background-color: #f8f9fa;
+  background-color: var(--color-primary);
+  color: var(--color-secondary);
   font-weight: 600;
-  color: var(--color-primary);
 }
 
 .team-members-table tr:hover {
-  background-color: #f8f9fa;
+  background-color: var(--color-secondary-dark);
 }
 
 .status-badge {
@@ -2151,13 +2363,13 @@ td .rating-select {
 }
 
 .status-badge.pendiente {
-  background-color: #fcf8e3;
-  color: #8a6d3b;
+  background-color: var(--color-accent-light);
+  color: var(--color-dark);
 }
 
 .status-badge.en-progreso {
-  background-color: #d9edf7;
-  color: #31708f;
+  background-color: var(--color-tertiary-light);
+  color: var(--color-primary-dark);
 }
 
 .status-badge.no-iniciada {
@@ -2167,8 +2379,8 @@ td .rating-select {
 
 .evaluate-button {
   padding: 0.5rem 1rem;
-  background-color: #5bc0de;
-  color: white;
+  background-color: var(--color-tertiary);
+  color: var(--color-dark);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -2176,14 +2388,14 @@ td .rating-select {
 }
 
 .evaluate-button:hover {
-  background-color: #46b8da;
+  background-color: var(--color-tertiary-dark);
 }
 
 .team-evaluations-info {
-  background-color: #f9f9f9;
+  background-color: var(--color-secondary);
   padding: 1.5rem;
   border-radius: 8px;
-  border-left: 4px solid #5bc0de;
+  border-left: 4px solid var(--color-accent);
 }
 
 .team-evaluations-info h2 {
@@ -2300,7 +2512,7 @@ td .rating-select {
   justify-content: space-around;
   flex-wrap: wrap;
   margin-bottom: 2rem;
-  background-color: #f8f9fa;
+  background-color: var(--color-secondary-dark);
   padding: 1.5rem;
   border-radius: 8px;
 }
@@ -2330,11 +2542,11 @@ td .rating-select {
 }
 
 .estrella.completa {
-  color: #ffc107;
+  color: var(--color-accent);
 }
 
 .estrella.media {
-  color: #ffc107;
+  color: var(--color-accent);
   position: relative;
   overflow: hidden;
 }
@@ -2377,7 +2589,7 @@ td .rating-select {
 }
 
 .results-table tr:hover {
-  background-color: #f8f9fa;
+  background-color: var(--color-secondary-dark);
 }
 
 .calificacion-excelente {
@@ -2401,7 +2613,7 @@ td .rating-select {
 }
 
 .results-info {
-  background-color: #f8f9fa;
+  background-color: var(--color-secondary);
   padding: 1.5rem;
   border-radius: 8px;
   border-left: 4px solid var(--color-accent);
