@@ -1,11 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logoMeridian from '../assets/img/logo_meridian_blanco.png';
 import burgerMenu from '../assets/img/burger.png';
 
-function Header({ onLogout, userRole = "empleado" }) {
+function Header({ onLogout, userRole: propUserRole }) {
+  // Si no se pasa userRole como prop, lo obtenemos del localStorage
+  const [userRole, setUserRole] = useState(propUserRole || localStorage.getItem('userRole') || 'empleado');
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+
+  // Actualizamos el userRole si cambia la prop
+  useEffect(() => {
+    if (propUserRole) {
+      setUserRole(propUserRole);
+    }
+  }, [propUserRole]);
+
+  // También verificamos el localStorage por si cambia
+  useEffect(() => {
+    const storedRole = localStorage.getItem('userRole');
+    if (storedRole && storedRole !== userRole) {
+      setUserRole(storedRole);
+    }
+  }, [menuOpen]); // Verificamos cuando se abre el menú para tener datos actualizados
 
   const handleToggleMenu = () => {
     setMenuOpen(prev => !prev);
@@ -61,14 +78,6 @@ function Header({ onLogout, userRole = "empleado" }) {
                 Panel de Administración
               </button>
             )}
-            
-            {/* Mostrar el rol actual del usuario */}
-            <div className="user-role-indicator">
-              <span className={`role-badge ${userRole}`}>
-                {userRole === "admin" ? "Administrador" : 
-                 userRole === "jefe" ? "Jefe" : "Empleado"}
-              </span>
-            </div>
             
             <button className="menu-item logout" onClick={handleLogout}>
               Cerrar Sesión
