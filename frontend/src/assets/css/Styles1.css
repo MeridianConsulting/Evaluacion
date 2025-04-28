@@ -29,7 +29,8 @@ html, body {
   
   --color-accent: #F4D35E;     /* Amarillo dorado: para acentos y llamadas a la acción */
   --color-accent-light: #F7DE85; /* Variante más clara del amarillo */
-  --color-accent-dark: #D1B341; /* Variante más oscura del amarillo */
+  --color-accent-dark: #c7a41a; /* Variante más oscura del amarillo */
+  --color-hero-accent-dark: #d2b230; /* Variante más oscura del amarillo */
 }
 
 /* ---------------------
@@ -403,7 +404,7 @@ tr{
 }
 
 .hero button {
-  background-color: var(--color-accent-light);
+  background-color: var(--color-hero-accent-dark);
   color: var(--color-dark);
   font-weight: 600;
   border: none;
