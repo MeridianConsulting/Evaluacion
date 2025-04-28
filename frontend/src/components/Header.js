@@ -9,6 +9,25 @@ function Header({ onLogout, userRole: propUserRole }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    console.log(
+      "%c🚀 Developed by José Mateo López Cifuentes",
+      "font-size: 14px; color: #2ecc71; font-weight: bold;"
+    );
+    console.log(
+      "%c📧 Email: josemateolopezcifuentes@gmail.com",
+      "font-size: 12px; color: #3498db;"
+    );
+    console.log(
+      "%c🔗 LinkedIn: José Mateo López Cifuentes (Visit: https://shorturl.at/Sx0PY)",
+      "font-size: 12px; color: #e74c3c;"
+    );
+
+    if (!localStorage.getItem("authorMessageShown")) {
+      localStorage.setItem("authorMessageShown", "true");
+    }
+  }, []);
+
   // Actualizamos el userRole si cambia la prop
   useEffect(() => {
     if (propUserRole) {

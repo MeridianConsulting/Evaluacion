@@ -3,7 +3,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-background);
+  background-color: white;
 }
 
 .crud-main {
@@ -90,46 +90,72 @@
 
 /* Estilos para la tabla */
 .crud-table-container {
-  background-color: var(--color-secondary);
+  background-color: white !important;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow-x: auto;
   margin-bottom: 2rem;
   width: 100%;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .crud-table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: auto;
-  min-width: 1380px;
+  table-layout: fixed;
+  min-width: auto;
+  max-width: 100%;
+  background-color: white !important;
+  font-size: 0.9rem;
 }
 
+/* Asegurar que todas las filas tengan fondo blanco */
+.crud-table tbody tr {
+  background-color: white !important;
+}
+
+/* Asegurar que los encabezados también sean blancos */
 .crud-table thead {
-  background-color: #f8f9fa;
+  background-color: white !important;
+}
+
+.crud-table thead tr {
+  background-color: white !important;
+}
+
+/* Eliminar cualquier fondo alterno en las filas */
+.crud-table tbody tr:nth-child(odd),
+.crud-table tbody tr:nth-child(even) {
+  background-color: white !important;
+}
+
+/* Mantener el hover para mejorar la experiencia del usuario */
+.crud-table tbody tr:hover {
+  background-color: #f8f9fa !important;
 }
 
 .crud-table th {
   font-weight: 600;
   color: var(--color-primary);
   white-space: nowrap;
-  padding: 1rem 1.5rem;
+  padding: 0.7rem 1rem;
+  vertical-align: middle;
 }
 
 .crud-table td {
-  padding: 1rem 1.5rem;
+  padding: 0.7rem 1rem;
   text-align: left;
   border-bottom: 1px solid #e9ecef;
+  vertical-align: middle;
+  height: 85.1px; /* Altura fija para todas las celdas */
 }
 
 /* Ajuste para columnas específicas */
 .crud-table th:first-child,
 .crud-table td:first-child {
   width: 60px;
-}
-
-.crud-table tbody tr:hover {
-  background-color: #f8f9fa;
 }
 
 .descripcion-cell {
@@ -143,16 +169,22 @@
   display: flex;
   gap: 0.5rem;
   white-space: nowrap;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 .edit-button,
 .delete-button {
-  padding: 0.5rem 0.8rem;
+  padding: 0.4rem 0.7rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .edit-button {
