@@ -49,13 +49,6 @@ const Login = ({ onLogin }) => {
     }
   };
 
-  const loginAsRole = (role) => {
-    localStorage.setItem('employeeId', '999');
-    localStorage.setItem('userRole', role);
-    onLogin(true, role);
-    navigate("/LandingPage");
-  };
-
   return (
     <div className="login-page">
       <div className="login-logo">
@@ -112,15 +105,6 @@ const Login = ({ onLogin }) => {
             Iniciar Sesión
           </button>
           {error && <div className="login-error-message">{error}</div>}
-          
-          <div className="login-quick-access">
-            <h3>Accesos rápidos para desarrollo:</h3>
-            <div className="login-role-buttons">
-              <button type="button" onClick={() => loginAsRole('empleado')}>Entrar como Empleado</button>
-              <button type="button" onClick={() => loginAsRole('jefe')}>Entrar como Jefe</button>
-              <button type="button" onClick={() => loginAsRole('admin')}>Entrar como Admin</button>
-            </div>
-          </div>
         </form>
       </div>
     </div>
