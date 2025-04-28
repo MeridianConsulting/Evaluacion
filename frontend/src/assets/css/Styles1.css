@@ -1169,7 +1169,7 @@ footer {
 
 .service-item-unique:hover {
   transform: translateY(-5px);
-  background-color: var(--color-primary);
+  background-color: #33619D;
   box-shadow: 0 8px 15px rgba(var(--color-dark), 0.25);
 }
 
