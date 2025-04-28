@@ -58,8 +58,6 @@ function App() {
   };
 
   useEffect(() => {
-    console.log("Estado de autenticación:", isAuthenticated);
-    console.log("Rol del usuario:", userRole);
   }, [isAuthenticated, userRole]);
 
   return (

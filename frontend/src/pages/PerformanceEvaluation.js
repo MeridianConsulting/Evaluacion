@@ -305,8 +305,6 @@ function PerformanceEvaluation() {
       // Aseguramos que la ruta coincida exactamente con lo definido en el backend
       const response = await fetch(`${apiUrl}/empleado-funciones/${employeeId}`);
       
-      console.log("URL solicitada:", `${apiUrl}/empleado-funciones/${employeeId}`); // Para depuración
-      
       const data = await response.json();
       
       if (response.ok && data.success && data.funciones && data.funciones.length > 0) {
@@ -322,13 +320,11 @@ function PerformanceEvaluation() {
         setFuncionesCargo(funcionesFormateadas);
       } else {
         // Si no obtuvimos funciones específicas, usamos la función local como fallback
-        console.log("No se obtuvieron funciones específicas, usando fallback");
         const funciones = generarFuncionesPorCargo(employee?.cargo || '');
         setFuncionesCargo(funciones);
       }
     } catch (error) {
-      console.error("Error al obtener funciones del cargo:", error);
-      // En caso de error, generamos funciones localmente como fallback
+      console.error("Error al obtener funciones del cargo");
       const funciones = generarFuncionesPorCargo(employee?.cargo || '');
       setFuncionesCargo(funciones);
     }
