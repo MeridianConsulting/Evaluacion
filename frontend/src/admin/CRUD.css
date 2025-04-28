@@ -1,4 +1,4 @@
-/* Estilos para el CRUD de Empleados */
+/* Estilos generales para todos los componentes CRUD */
 .crud-container {
   min-height: 100vh;
   display: flex;
@@ -8,10 +8,10 @@
 
 .crud-main {
   flex: 1;
-  padding: 2rem 1rem;
-  max-width: 1400px;
+  padding: 2rem;
+  max-width: 1780px;
   margin: 0 auto;
-  width: 100%;
+  width: 98%;
 }
 
 .crud-header {
@@ -31,6 +31,7 @@
   margin: 0;
 }
 
+/* Botones generales */
 .back-button,
 .add-button {
   padding: 0.7rem 1.2rem;
@@ -50,8 +51,36 @@
   background-color: #a0a0a0;
 }
 
-.add-button {
+/* Botones de acciones con sus variantes */
+.add-button.empleados {
   background-color: #3498db;
+  color: white;
+}
+
+.add-button.empleados:hover {
+  background-color: #2980b9;
+}
+
+.add-button.cargos {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.add-button.cargos:hover {
+  background-color: #c0392b;
+}
+
+.add-button.funciones {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.add-button.funciones:hover {
+  background-color: #27ae60;
+}
+
+.add-button {
+  background-color: #3498db; /* Color predeterminado si no se especifica clase */
   color: white;
 }
 
@@ -64,37 +93,56 @@
   background-color: var(--color-secondary);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: auto;
+  overflow-x: auto;
+  margin-bottom: 2rem;
+  width: 100%;
 }
 
 .crud-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: auto;
+  min-width: 1380px;
 }
 
 .crud-table thead {
   background-color: #f8f9fa;
 }
 
-.crud-table th,
+.crud-table th {
+  font-weight: 600;
+  color: var(--color-primary);
+  white-space: nowrap;
+  padding: 1rem 1.5rem;
+}
+
 .crud-table td {
-  padding: 1rem;
+  padding: 1rem 1.5rem;
   text-align: left;
   border-bottom: 1px solid #e9ecef;
 }
 
-.crud-table th {
-  font-weight: 600;
-  color: var(--color-primary);
+/* Ajuste para columnas específicas */
+.crud-table th:first-child,
+.crud-table td:first-child {
+  width: 60px;
 }
 
 .crud-table tbody tr:hover {
   background-color: #f8f9fa;
 }
 
+.descripcion-cell {
+  max-width: 400px;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+/* Botones de acción */
 .acciones {
   display: flex;
   gap: 0.5rem;
+  white-space: nowrap;
 }
 
 .edit-button,
@@ -125,6 +173,7 @@
   background-color: #c9302c;
 }
 
+/* Badges de estado */
 .estado-badge {
   padding: 0.3rem 0.6rem;
   border-radius: 12px;
@@ -140,6 +189,29 @@
 .estado-badge.inactivo {
   background-color: #f2dede;
   color: #a94442;
+}
+
+/* Badges de rol */
+.role-badge {
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.role-badge.empleado {
+  background-color: #d9edf7;
+  color: #31708f;
+}
+
+.role-badge.jefe {
+  background-color: #fcf8e3;
+  color: #8a6d3b;
+}
+
+.role-badge.admin {
+  background-color: #dff0d8;
+  color: #3c763d;
 }
 
 /* Estilos para el formulario */
@@ -161,8 +233,10 @@
   padding: 2rem;
   border-radius: 8px;
   width: 100%;
-  max-width: 500px;
+  max-width: 600px; /* Aumentado para más espacio */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .crud-form h2 {
@@ -185,16 +259,24 @@
 }
 
 .form-group input,
-.form-group select {
+.form-group select,
+.form-group textarea {
   width: 100%;
   padding: 0.8rem;
   border: 1px solid #ced4da;
   border-radius: 4px;
   font-size: 1rem;
+  font-family: inherit;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
 }
 
 .form-group input:focus,
-.form-group select:focus {
+.form-group select:focus,
+.form-group textarea:focus {
   border-color: #80bdff;
   outline: 0;
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
@@ -234,7 +316,14 @@
   background-color: #218838;
 }
 
-/* Estilos responsive */
+
+@media (max-width: 1100px) {
+  .crud-table th:nth-child(7),
+  .crud-table td:nth-child(7) {
+    display: none;
+  }
+}
+
 @media (max-width: 992px) {
   .crud-header {
     flex-direction: column;
@@ -244,13 +333,6 @@
   
   .crud-header h1 {
     order: -1;
-  }
-  
-  .crud-table th:nth-child(4),
-  .crud-table td:nth-child(4),
-  .crud-table th:nth-child(5),
-  .crud-table td:nth-child(5) {
-    display: none;
   }
 }
 
@@ -262,12 +344,13 @@
   
   .acciones {
     flex-direction: column;
+    gap: 0.3rem;
   }
 }
 
 @media (max-width: 576px) {
   .crud-main {
-    padding: 1rem 0.5rem;
+    padding: 1rem;
   }
   
   .crud-header {
@@ -276,40 +359,7 @@
   
   .crud-table th,
   .crud-table td {
-    padding: 0.7rem 0.5rem;
+    padding: 0.7rem;
     font-size: 0.9rem;
-  }
-}
-
-/* Estilos para los badges de rol */
-.role-badge {
-  display: inline-block;
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-align: center;
-}
-
-.role-badge.empleado {
-  background-color: #e7f3fe;
-  color: #0c63e4;
-}
-
-.role-badge.jefe {
-  background-color: #fff3cd;
-  color: #997404;
-}
-
-.role-badge.admin {
-  background-color: #f8d7da;
-  color: #842029;
-}
-
-/* Ajuste para la columna de rol en la tabla */
-@media (max-width: 1100px) {
-  .crud-table th:nth-child(7),
-  .crud-table td:nth-child(7) {
-    display: none;
   }
 } 

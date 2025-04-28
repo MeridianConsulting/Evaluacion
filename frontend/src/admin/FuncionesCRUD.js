@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './FuncionesCRUD.css';
+import './CRUD.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
