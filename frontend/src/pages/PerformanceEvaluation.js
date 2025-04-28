@@ -457,6 +457,12 @@ function PerformanceEvaluation() {
           setError(data.error || 'Error al obtener los datos del empleado.');
         } else {
           setEmployee(data);
+          
+          // Si el rol del empleado ha cambiado en la base de datos, actualizamos el localStorage
+          if (data.rol && data.rol !== localStorage.getItem('userRole')) {
+            localStorage.setItem('userRole', data.rol);
+            // Si tu aplicación maneja el rol como un estado global, actualízalo aquí
+          }
         }
       } catch (err) {
         setError('Error en la conexión con el servidor.');

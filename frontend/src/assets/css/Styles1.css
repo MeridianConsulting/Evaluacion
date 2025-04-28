@@ -2005,3 +2005,240 @@ td .rating-select {
 #aspectosMejorar{
   width: 97% !important;
 }
+
+/* Estilos para indicadores de rol y accesos rápidos de desarrollo */
+.user-role-indicator {
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.role-badge.empleado {
+  background-color: #e7f3fe;
+  color: #0c63e4;
+}
+
+.role-badge.jefe {
+  background-color: #fff3cd;
+  color: #997404;
+}
+
+.role-badge.admin {
+  background-color: #f8d7da;
+  color: #842029;
+}
+
+/* Estilos para accesos rápidos en login (solo para desarrollo) */
+.login-quick-access {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px dashed #ccc;
+}
+
+.login-quick-access h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #777;
+  text-align: center;
+}
+
+.login-role-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.login-role-buttons button {
+  padding: 0.5rem 1rem;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.login-role-buttons button:hover {
+  background-color: #e0e0e0;
+}
+
+/* Estilo para el botón de admin en el menú */
+.side-menu .menu-item.admin {
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+.side-menu .menu-item.admin:hover {
+  background-color: rgba(220, 53, 69, 0.2);
+}
+
+/* Estilos para Team Evaluations */
+.team-evaluations-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-background);
+}
+
+.team-evaluations-main {
+  flex: 1;
+  padding: 2rem 1rem;
+}
+
+.team-evaluations-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: var(--color-secondary);
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.team-evaluations-container h1 {
+  color: var(--color-primary);
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.team-members-container {
+  margin-bottom: 2rem;
+  overflow-x: auto;
+}
+
+.team-members-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.team-members-table th,
+.team-members-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.team-members-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.team-members-table tr:hover {
+  background-color: #f8f9fa;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-badge.completada {
+  background-color: #dff0d8;
+  color: #3c763d;
+}
+
+.status-badge.pendiente {
+  background-color: #fcf8e3;
+  color: #8a6d3b;
+}
+
+.status-badge.en-progreso {
+  background-color: #d9edf7;
+  color: #31708f;
+}
+
+.status-badge.no-iniciada {
+  background-color: #f2dede;
+  color: #a94442;
+}
+
+.evaluate-button {
+  padding: 0.5rem 1rem;
+  background-color: #5bc0de;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.evaluate-button:hover {
+  background-color: #46b8da;
+}
+
+.team-evaluations-info {
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #5bc0de;
+}
+
+.team-evaluations-info h2 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: var(--color-primary);
+}
+
+.team-evaluations-info p,
+.team-evaluations-info ol {
+  color: var(--color-dark);
+  line-height: 1.6;
+}
+
+.team-evaluations-info ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.loading-container,
+.error-container {
+  text-align: center;
+  padding: 3rem;
+  background-color: var(--color-secondary);
+  border-radius: 8px;
+  margin: 2rem auto;
+  max-width: 600px;
+}
+
+.error-container {
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+}
+
+@media (max-width: 768px) {
+  .team-evaluations-container {
+    padding: 1.5rem;
+  }
+  
+  .team-members-table th,
+  .team-members-table td {
+    padding: 0.8rem 0.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Estilos para la sección de rol en el perfil */
+.role-detail {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.profile-detail .role-badge {
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}

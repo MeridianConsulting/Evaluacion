@@ -4,7 +4,7 @@ import './EmpleadosCRUD.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-function EmpleadosCRUD({ onLogout }) {
+function EmpleadosCRUD({ onLogout, userRole }) {
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -15,14 +15,15 @@ function EmpleadosCRUD({ onLogout }) {
     cedula: '',
     cargo: '',
     correo: '',
-    estado: 'Activo'
+    estado: 'Activo',
+    rol: 'empleado'
   });
 
   // Datos de ejemplo (simulando datos de la base de datos)
   const [empleados, setEmpleados] = useState([
-    { id_empleado: 1, nombre: 'Juan', apellido: 'Pérez', cedula: '123456789', cargo: 'Gerente', correo: 'juan@ejemplo.com', estado: 'Activo' },
-    { id_empleado: 2, nombre: 'María', apellido: 'López', cedula: '987654321', cargo: 'Analista', correo: 'maria@ejemplo.com', estado: 'Activo' },
-    { id_empleado: 3, nombre: 'Carlos', apellido: 'Gómez', cedula: '456789123', cargo: 'Desarrollador', correo: 'carlos@ejemplo.com', estado: 'Inactivo' }
+    { id_empleado: 1, nombre: 'Juan', apellido: 'Pérez', cedula: '123456789', cargo: 'Gerente', correo: 'juan@ejemplo.com', estado: 'Activo', rol: 'jefe' },
+    { id_empleado: 2, nombre: 'María', apellido: 'López', cedula: '987654321', cargo: 'Analista', correo: 'maria@ejemplo.com', estado: 'Activo', rol: 'empleado' },
+    { id_empleado: 3, nombre: 'Carlos', apellido: 'Gómez', cedula: '456789123', cargo: 'Desarrollador', correo: 'carlos@ejemplo.com', estado: 'Inactivo', rol: 'empleado' }
   ]);
 
   const handleBackClick = () => {
@@ -38,7 +39,8 @@ function EmpleadosCRUD({ onLogout }) {
       cedula: '',
       cargo: '',
       correo: '',
-      estado: 'Activo'
+      estado: 'Activo',
+      rol: 'empleado'
     });
     setShowForm(true);
   };
@@ -85,7 +87,7 @@ function EmpleadosCRUD({ onLogout }) {
 
   return (
     <div className="crud-container">
-      <Header onLogout={onLogout} />
+      <Header onLogout={onLogout} userRole={userRole} />
       
       <main className="crud-main">
         <div className="crud-header">
@@ -176,6 +178,20 @@ function EmpleadosCRUD({ onLogout }) {
                 </select>
               </div>
               
+              <div className="form-group">
+                <label htmlFor="rol">Rol:</label>
+                <select 
+                  id="rol" 
+                  name="rol" 
+                  value={currentEmpleado.rol} 
+                  onChange={handleInputChange}
+                >
+                  <option value="empleado">Empleado</option>
+                  <option value="jefe">Jefe</option>
+                  <option value="admin">Administrador</option>
+                </select>
+              </div>
+              
               <div className="form-buttons">
                 <button type="button" className="cancel-button" onClick={handleCancelForm}>
                   Cancelar
@@ -198,6 +214,7 @@ function EmpleadosCRUD({ onLogout }) {
                 <th>Cédula</th>
                 <th>Cargo</th>
                 <th>Correo</th>
+                <th>Rol</th>
                 <th>Estado</th>
                 <th>Acciones</th>
               </tr>
@@ -211,6 +228,12 @@ function EmpleadosCRUD({ onLogout }) {
                   <td>{empleado.cedula}</td>
                   <td>{empleado.cargo}</td>
                   <td>{empleado.correo}</td>
+                  <td>
+                    <span className={`role-badge ${empleado.rol}`}>
+                      {empleado.rol === 'admin' ? 'Administrador' : 
+                       empleado.rol === 'jefe' ? 'Jefe' : 'Empleado'}
+                    </span>
+                  </td>
                   <td>
                     <span className={`estado-badge ${empleado.estado.toLowerCase()}`}>
                       {empleado.estado}

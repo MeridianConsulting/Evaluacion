@@ -35,7 +35,8 @@ const Login = ({ onLogin }) => {
       const data = await response.json();
       if (data.success) {
         localStorage.setItem('employeeId', data.empleado.id_empleado);
-        onLogin(true);
+        localStorage.setItem('userRole', data.empleado.rol || 'empleado');
+        onLogin(true, data.empleado.rol || 'empleado');
         navigate("/LandingPage");
       } else {
         setError(data.message || "Credenciales inválidas.");
@@ -46,6 +47,13 @@ const Login = ({ onLogin }) => {
       setError("No se pudo conectar con el servidor.");
       onLogin(false);
     }
+  };
+
+  const loginAsRole = (role) => {
+    localStorage.setItem('employeeId', '999');
+    localStorage.setItem('userRole', role);
+    onLogin(true, role);
+    navigate("/LandingPage");
   };
 
   return (
@@ -80,19 +88,18 @@ const Login = ({ onLogin }) => {
                 type="button"
                 className="login-toggle-password"
                 onClick={() => setMostrarContrasena(!mostrarContrasena)}
-                aria-label={mostrarContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
               >
-                {mostrarContrasena ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
-                    <line x1="1" y1="1" x2="23" y2="23"/>
+                {mostrarContrasena ? 
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
                   </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                    <circle cx="12" cy="12" r="3"/>
+                  : 
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
                   </svg>
-                )}
+                }
               </button>
             </div>
           </div>
@@ -104,7 +111,16 @@ const Login = ({ onLogin }) => {
           <button type="button" className="login-button" onClick={handleLogin}>
             Iniciar Sesión
           </button>
-          {error && <p className="login-error-message">{error}</p>}
+          {error && <div className="login-error-message">{error}</div>}
+          
+          <div className="login-quick-access">
+            <h3>Accesos rápidos para desarrollo:</h3>
+            <div className="login-role-buttons">
+              <button type="button" onClick={() => loginAsRole('empleado')}>Entrar como Empleado</button>
+              <button type="button" onClick={() => loginAsRole('jefe')}>Entrar como Jefe</button>
+              <button type="button" onClick={() => loginAsRole('admin')}>Entrar como Admin</button>
+            </div>
+          </div>
         </form>
       </div>
     </div>

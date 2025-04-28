@@ -14,34 +14,58 @@ import DashboardSelector from "./admin/DashboardSelector";
 import EmpleadosCRUD from "./admin/EmpleadosCRUD";
 import FuncionesCRUD from "./admin/FuncionesCRUD";
 import CargosCRUD from "./admin/CargosCRUD";
+import TeamEvaluations from "./pages/TeamEvaluations";
 import "./App.css";
 
 function App() {
-  // Se inicializa el estado a partir del valor almacenado en localStorage
+  // Se inicializa el estado de autenticación
   const [isAuthenticated, setIsAuthenticated] = useState(
     localStorage.getItem("isAuthenticated") === "true"
   );
+  
+  // Se inicializa el rol del usuario
+  const [userRole, setUserRole] = useState(
+    localStorage.getItem("userRole") || "empleado"
+  );
 
   // Actualiza el estado y lo guarda en localStorage cuando se inicia sesión
-  const handleLoginStatus = (loggedIn) => {
+  const handleLoginStatus = (loggedIn, role = "empleado") => {
     setIsAuthenticated(loggedIn);
+    setUserRole(role);
     localStorage.setItem("isAuthenticated", loggedIn);
+    localStorage.setItem("userRole", role);
   };
 
-  // Función para cerrar sesión: se actualiza el estado y se elimina el valor del localStorage
+  // Función para cerrar sesión
   const handleLogout = () => {
     setIsAuthenticated(false);
+    setUserRole("empleado");
     localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("employeeId");
+  };
+
+  // Función para verificar si el usuario tiene acceso a una ruta basado en su rol
+  const hasAccess = (requiredRole) => {
+    if (requiredRole === "empleado") {
+      return true; // Todos los roles tienen acceso a rutas de empleado
+    } else if (requiredRole === "jefe") {
+      return userRole === "jefe" || userRole === "admin"; // Jefes y admins tienen acceso
+    } else if (requiredRole === "admin") {
+      return userRole === "admin"; // Solo admins tienen acceso a rutas de admin
+    }
+    return false;
   };
 
   useEffect(() => {
     console.log("Estado de autenticación:", isAuthenticated);
-  }, [isAuthenticated]);
+    console.log("Rol del usuario:", userRole);
+  }, [isAuthenticated, userRole]);
 
   return (
     <Router>
       <Routes>
-        {/* Si está autenticado, redirige a LandingPage; de lo contrario, muestra Login */}
+        {/* Ruta de login pública */}
         <Route
           path="/"
           element={
@@ -52,143 +76,149 @@ function App() {
             )
           }
         />
-        {/* Ruta protegida para LandingPage */}
+        
+        {/* Rutas accesibles para todos los usuarios autenticados */}
         <Route
           path="/LandingPage"
           element={
             isAuthenticated ? (
-              <LandingPage onLogout={handleLogout} />
+              <LandingPage onLogout={handleLogout} userRole={userRole} />
             ) : (
               <Navigate to="/" replace />
             )
           }
         />
-        {/* Ruta protegida para Contact */}
         <Route
           path="/contact"
           element={
             isAuthenticated ? (
-              <Contact onLogout={handleLogout} />
+              <Contact onLogout={handleLogout} userRole={userRole} />
             ) : (
               <Navigate to="/" replace />
             )
           }
         />
-        {/* Ruta protegida para About */}
         <Route
           path="/about"
           element={
             isAuthenticated ? (
-              <About onLogout={handleLogout} />
+              <About onLogout={handleLogout} userRole={userRole} />
             ) : (
               <Navigate to="/" replace />
             )
           }
         />
-        {/* Ruta protegida para Services */}
         <Route
           path="/services"
           element={
             isAuthenticated ? (
-              <Services onLogout={handleLogout} />
+              <Services onLogout={handleLogout} userRole={userRole} />
             ) : (
               <Navigate to="/" replace />
             )
           }
         />
-        {/* Ruta protegida para Privacy */}
         <Route
           path="/privacy"
           element={
             isAuthenticated ? (
-              <Privacy onLogout={handleLogout} />
+              <Privacy onLogout={handleLogout} userRole={userRole} />
             ) : (
               <Navigate to="/" replace />
             )
           }
         />
-        {/* Ruta protegida para Terms */}
         <Route
           path="/terms"
           element={
             isAuthenticated ? (
-              <Terms onLogout={handleLogout} />
+              <Terms onLogout={handleLogout} userRole={userRole} />
             ) : (
               <Navigate to="/" replace />
             )
           }
         />
-        {/* Ruta protegida para Profile */}
         <Route
           path="/profile"
           element={
             isAuthenticated ? (
-              <Profile onLogout={handleLogout} />
+              <Profile onLogout={handleLogout} userRole={userRole} />
             ) : (
               <Navigate to="/" replace />
             )
           }
         />
-        {/* Ruta protegida para Results */}
         <Route
           path="/results"
           element={
             isAuthenticated ? (
-              <Results onLogout={handleLogout} />
+              <Results onLogout={handleLogout} userRole={userRole} />
             ) : (
               <Navigate to="/" replace />
             )
           }
         />
-        {/* Ruta protegida para PerformanceEvaluation */}
         <Route  
           path="/performance"
           element={
             isAuthenticated ? (
-              <PerformanceEvaluation onLogout={handleLogout} />
+              <PerformanceEvaluation onLogout={handleLogout} userRole={userRole} />
             ) : (
               <Navigate to="/" replace />
             )
           }  
         />
-        {/* Rutas del panel de administrador */}
+        
+        {/* Rutas accesibles solo para administradores */}
         <Route
           path="/admin"
           element={
-            isAuthenticated ? (
-              <DashboardSelector onLogout={handleLogout} />
+            isAuthenticated && hasAccess("admin") ? (
+              <DashboardSelector onLogout={handleLogout} userRole={userRole} />
             ) : (
-              <Navigate to="/" replace />
+              <Navigate to={isAuthenticated ? "/LandingPage" : "/"} replace />
             )
           }
         />
         <Route
           path="/admin/empleados"
           element={
-            isAuthenticated ? (
-              <EmpleadosCRUD onLogout={handleLogout} />
+            isAuthenticated && hasAccess("admin") ? (
+              <EmpleadosCRUD onLogout={handleLogout} userRole={userRole} />
             ) : (
-              <Navigate to="/" replace />
+              <Navigate to={isAuthenticated ? "/LandingPage" : "/"} replace />
             )
           }
         />
         <Route
           path="/admin/funciones"
           element={
-            isAuthenticated ? (
-              <FuncionesCRUD onLogout={handleLogout} />
+            isAuthenticated && hasAccess("admin") ? (
+              <FuncionesCRUD onLogout={handleLogout} userRole={userRole} />
             ) : (
-              <Navigate to="/" replace />
+              <Navigate to={isAuthenticated ? "/LandingPage" : "/"} replace />
             )
           }
         />
         <Route
           path="/admin/cargos"
           element={
-            isAuthenticated ? (
-              <CargosCRUD onLogout={handleLogout} />
+            isAuthenticated && hasAccess("admin") ? (
+              <CargosCRUD onLogout={handleLogout} userRole={userRole} />
             ) : (
-              <Navigate to="/" replace />
+              <Navigate to={isAuthenticated ? "/LandingPage" : "/"} replace />
+            )
+          }
+        />
+        
+        {/* Ruta para jefes y administradores */}
+        <Route
+          path="/team-evaluations"
+          element={
+            isAuthenticated && hasAccess("jefe") ? (
+              <TeamEvaluations onLogout={handleLogout} userRole={userRole} />
+            ) : (
+              <Navigate to={isAuthenticated ? "/LandingPage" : "/"} replace />
             )
           }
         />

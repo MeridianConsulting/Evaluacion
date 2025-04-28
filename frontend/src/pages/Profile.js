@@ -3,7 +3,7 @@ import '../assets/css/Styles1.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-const Profile = ({ onLogout }) => {
+const Profile = ({ onLogout, userRole }) => {
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -26,6 +26,13 @@ const Profile = ({ onLogout }) => {
           setError(data.error || 'Error al obtener los datos del empleado.');
         } else {
           setEmployee(data);
+          
+          // Si el rol del empleado ha cambiado en la base de datos, actualizamos el localStorage
+          if (data.rol && data.rol !== localStorage.getItem('userRole')) {
+            localStorage.setItem('userRole', data.rol);
+            // Si estás usando un estado global para el rol, deberías actualizarlo también
+            // Por ejemplo: updateUserRole(data.rol); o dispatch({ type: 'SET_ROLE', payload: data.rol });
+          }
         }
       } catch (err) {
         setError('Error en la conexión con el servidor.');
@@ -38,7 +45,7 @@ const Profile = ({ onLogout }) => {
 
   return (
     <div className="profile-page-unique">
-      <Header onLogout={onLogout} />
+      <Header onLogout={onLogout} userRole={userRole} />
 
       <div className="profile-container">
         {loading ? (
@@ -66,6 +73,14 @@ const Profile = ({ onLogout }) => {
                 </div>
                 <div className="profile-detail">
                   <strong>Email:</strong> {employee.email}
+                </div>
+                {/* Mostrar el rol del usuario */}
+                <div className="profile-detail role-detail">
+                  <strong>Rol:</strong> 
+                  <span className={`role-badge ${employee.rol || 'empleado'}`}>
+                    {employee.rol === 'admin' ? 'Administrador' : 
+                     employee.rol === 'jefe' ? 'Jefe' : 'Empleado'}
+                  </span>
                 </div>
               </div>
             </div>

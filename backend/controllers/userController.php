@@ -117,7 +117,8 @@ class UserController {
 
     public function obtenerEmpleadoPorId($id) {
         global $db;
-        $sql = 'SELECT * FROM empleados WHERE id_empleado = ?';
+        $sql = 'SELECT id_empleado, cedula, nombre, cargo, numero_telefonico, email, compania, 
+                telefono_empresa, telefono_internacional, rol FROM empleados WHERE id_empleado = ?';
         $stmt = $db->prepare($sql);
         if (!$stmt) {
             http_response_code(500);
