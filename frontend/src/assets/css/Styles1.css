@@ -1124,7 +1124,6 @@ footer {
   background-color: rgba(var(--color-primary), 0.85);
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(var(--color-dark), 0.2);
-  border: 1px solid var(--color-tertiary);
 }
 
 /* Título principal de la sección de servicios */
