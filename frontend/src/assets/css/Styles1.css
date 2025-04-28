@@ -2544,7 +2544,7 @@ td .rating-select {
 }
 
 .estrella.completa {
-  color: var(--color-accent);
+  color: var(--color-hero-accent-dark);
 }
 
 .estrella.media {
