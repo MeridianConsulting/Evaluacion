@@ -2684,3 +2684,205 @@ td .rating-select {
     font-size: 1rem;
   }
 }
+
+/* Estilos para PerformanceEvaluation.js */
+.evaluation-hr {
+  margin: 2rem 0;
+}
+
+.evaluation-h2 {
+  margin-bottom: 1rem;
+}
+
+.evaluation-h2-center {
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+.evaluation-ol {
+  padding-left: 20px;
+  line-height: 1.6;
+}
+
+.evaluation-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+}
+
+.evaluation-th-header {
+  background-color: #2a5885;
+  color: #fff;
+  padding: 1rem;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.evaluation-th {
+  background-color: #2a5885;
+  color: #fff;
+}
+
+.evaluation-th-width-60 {
+  width: 60%;
+  background-color: #2a5885;
+  color: #fff;
+}
+
+.evaluation-th-width-15 {
+  width: 15%;
+  background-color: #2a5885;
+  color: #fff;
+}
+
+.evaluation-th-width-10 {
+  width: 10%;
+  background-color: #2a5885;
+  color: #fff;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.competencia-cell {
+  background-color: #f5f5f5;
+  vertical-align: middle;
+  text-align: center;
+  font-weight: bold;
+  padding: 1rem;
+  width: 12%;
+}
+
+.definicion-cell {
+  background-color: #fff;
+  vertical-align: middle;
+  padding: 1rem;
+  width: 25%;
+}
+
+.aspecto-cell {
+  background-color: #fff;
+  padding: 0.5rem 0.4rem;
+}
+
+.justificacion-cell {
+  background-color: #fff;
+  padding: 0.8rem;
+}
+
+.tabla-separador {
+  border-bottom: 1px solid #ccc;
+  margin: 0;
+  padding: 0;
+}
+
+.cargando-funciones {
+  text-align: center;
+  padding: 1rem;
+}
+
+.promedio-label {
+  font-weight: bold;
+  background-color: #f5f5f5;
+  padding: 0.8rem;
+}
+
+.promedio-valor-cell {
+  background-color: #f5f5f5;
+  text-align: center;
+  font-weight: bold;
+  padding: 0.8rem;
+}
+
+.celda-vacia {
+  background-color: #f5f5f5;
+}
+
+.campo-container {
+  margin-bottom: 1.5rem;
+}
+
+.signatures-section {
+  text-align: center;
+}
+
+.signatures-container {
+  margin-top: 2rem;
+}
+
+.signatures-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: nowrap;
+}
+
+.signature-wrapper {
+  position: relative;
+}
+
+.firma-error {
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.finalizar-btn-custom {
+  background-color: #000;
+  color: #fff;
+  border-color: #000;
+  transition: background-color 0.3s, color 0.3s;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Estilos que ya estaban en el archivo como JSX */
+.error-message {
+  color: #ff3860;
+  font-size: 0.8rem;
+  display: block;
+  margin-top: 0.25rem;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.rating-select, 
+.justificacion-textarea, 
+.hseq-textarea,
+.campo-textarea,
+.plan-accion-input,
+input[type="text"],
+input[type="date"] {
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+.rating-select:focus, 
+.justificacion-textarea:focus, 
+.hseq-textarea:focus,
+.campo-textarea:focus,
+.plan-accion-input:focus,
+input[type="text"]:focus,
+input[type="date"]:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}

@@ -941,18 +941,18 @@ function PerformanceEvaluation() {
             </div>
         </section>
 
-        <hr style={{ margin: "2rem 0" }}/>
+        <hr className="evaluation-hr"/>
         <section className="evaluation-section">
-          <h2 style={{ marginBottom: "1rem" }}>OBJETIVO DEL CARGO A EVALUAR</h2>
+          <h2 className="evaluation-h2">OBJETIVO DEL CARGO A EVALUAR</h2>
           <p>
             Describe las funciones principales y la razón de ser del cargo. 
             Incluye responsabilidades generales, alcance y actividades clave.
           </p>
         </section>
-        <hr style={{ margin: "2rem 0" }}/>
+        <hr className="evaluation-hr"/>
         <section className="evaluation-section instrucciones">
-          <h2 style={{ marginBottom: "1rem", textAlign: "center", fontWeight: "bold" }}>INSTRUCCIONES</h2>
-          <ol style={{ paddingLeft: "20px", lineHeight: "1.6" }}>
+          <h2 className="evaluation-h2-center">INSTRUCCIONES</h2>
+          <ol className="evaluation-ol">
             <li>
               <strong>Lea detenidamente la definición de los aspectos a evaluar.</strong><br />
               Asegúrese de comprender cada criterio antes de asignar una calificación.
@@ -981,11 +981,9 @@ function PerformanceEvaluation() {
           </ol>
         </section>
 
-        <hr style={{ margin: "2rem 0" }}/>
+        <hr className="evaluation-hr"/>
         <section className="evaluation-section">
-          <table
-            style={{ width: "100%", borderCollapse: "collapse", fontFamily: "Arial, sans-serif" }}
-          >
+          <table className="evaluation-table">
             <thead>
               <tr>
                 <th
@@ -2003,7 +2001,7 @@ function PerformanceEvaluation() {
           </table>
         </section>
         {/* Nueva tabla para FUNCIONES CARGO O SERVICIO PRESTADO */}
-        <hr style={{ margin: "2rem 0" }}/>
+        <hr className="evaluation-hr"/>
         <section className="evaluation-section">
           <table
             style={{ width: "100%", borderCollapse: "collapse", fontFamily: "Arial, sans-serif" }}
@@ -2094,7 +2092,7 @@ function PerformanceEvaluation() {
           </table>
         </section>
         {/* Después de la sección de competencias, antes de la sección de mejoramiento */}
-        <hr style={{ margin: "2rem 0" }}/>
+        <hr className="evaluation-hr"/>
         <section className="evaluation-section">
           <table className="hseq-table">
             <thead>
@@ -2164,7 +2162,7 @@ function PerformanceEvaluation() {
           </table>
         </section>
 
-        <hr style={{ margin: "2rem 0" }}/>
+        <hr className="evaluation-hr"/>
         <section className="evaluation-section">
           <h2 className="seccion-titulo">MEJORAMIENTO Y DESARROLLO</h2>
           <div style={{ marginBottom: "1.5rem" }}>
@@ -2271,14 +2269,8 @@ function PerformanceEvaluation() {
         </section>
 
         <section className="evaluation-section" style={{ textAlign: "center" }}>
-          <div className="signatures-container" style={{ marginTop: "2rem" }}>
-            <div className="signatures-row" style={{ 
-              display: "flex", 
-              justifyContent: "center", 
-              gap: "0.5rem",
-              marginBottom: "2rem",
-              flexWrap: "nowrap" 
-            }}>
+          <div className="signatures-container">
+            <div className="signatures-row">
               <div style={{ position: 'relative' }}>
                 <SignatureUploader 
                   label="Firma (Evaluado)" 
@@ -2305,64 +2297,12 @@ function PerformanceEvaluation() {
               </div>
             </div>
           </div>
-          <button className="finalizar-btn" style={{ 
-            backgroundColor: "#000", 
-            color: "#fff", 
-            borderColor: "#000",
-            transition: "background-color 0.3s, color 0.3s",
-            padding: "10px 20px",
-            fontSize: "16px",
-            cursor: "pointer"
-          }} onClick={handleSubmitEvaluation} disabled={isSubmitting}>
+          <button className="finalizar-btn" onClick={handleSubmitEvaluation} disabled={isSubmitting}>
             {isSubmitting ? 'Guardando...' : 'Finalizar Evaluación'}
           </button>
         </section>
       </main>
       <Footer />
-
-      {/* Estilos CSS en línea - añadir animación de fadeout */}
-      <style jsx>{`
-        .error-message {
-          color: #ff3860;
-          font-size: 0.8rem;
-          display: block;
-          margin-top: 0.25rem;
-          animation: fadeIn 0.3s ease-in;
-        }
-        
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        
-        @keyframes fadeOut {
-          from { opacity: 1; }
-          to { opacity: 0; }
-        }
-        
-        .rating-select, 
-        .justificacion-textarea, 
-        .hseq-textarea,
-        .campo-textarea,
-        .plan-accion-input,
-        input[type="text"],
-        input[type="date"] {
-          transition: border 0.3s, box-shadow 0.3s;
-        }
-        
-        .rating-select:focus, 
-        .justificacion-textarea:focus, 
-        .hseq-textarea:focus,
-        .campo-textarea:focus,
-        .plan-accion-input:focus,
-        input[type="text"]:focus,
-        input[type="date"]:focus {
-          outline: none;
-          border-color: #4CAF50;
-          box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
-        }
-        
-      `}</style>
     </div>
   );
 };
