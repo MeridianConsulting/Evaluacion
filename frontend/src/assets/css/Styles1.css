@@ -420,6 +420,7 @@ tr{
 .hero button:hover {
   background-color: var(--color-accent-dark);
   box-shadow: 0 4px 8px rgba(4, 8, 15, 0.4);
+  transform: scale(1.05);
 }
 
 /* ================================
