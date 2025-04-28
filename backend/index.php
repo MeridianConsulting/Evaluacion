@@ -9,6 +9,7 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/controllers/adminController.php';
 require_once __DIR__ . '/controllers/userController.php';
 require_once __DIR__ . '/controllers/cargoController.php';
+require_once __DIR__ . '/controllers/employeeController.php';
 
 // Configurar el manejo de errores
 error_reporting(E_ALL);
@@ -31,6 +32,45 @@ function handleRequest($method, $path) {
     // Rutas para empleados
     $controller = null;
 
+    // Rutas para el nuevo controlador de empleados
+    if ($path === "api/employees" && $method === "GET") {
+        $controller = new EmployeeController();
+        $controller->getAllEmployees();
+        return;
+    } elseif ($path === "api/employees" && $method === "POST") {
+        $data = json_decode(file_get_contents("php://input"), true);
+        if (!$data) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "Datos inválidos"]);
+            return;
+        }
+        $controller = new EmployeeController();
+        $controller->createEmployee($data);
+        return;
+    } elseif (preg_match("#^api/employees/(\d+)$#", $path, $matches) && $method === "GET") {
+        $id = $matches[1];
+        $controller = new EmployeeController();
+        $controller->getEmployeeById($id);
+        return;
+    } elseif (preg_match("#^api/employees/(\d+)$#", $path, $matches) && $method === "PUT") {
+        $id = $matches[1];
+        $data = json_decode(file_get_contents("php://input"), true);
+        if (!$data) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "Datos inválidos"]);
+            return;
+        }
+        $controller = new EmployeeController();
+        $controller->updateEmployee($id, $data);
+        return;
+    } elseif (preg_match("#^api/employees/(\d+)$#", $path, $matches) && $method === "DELETE") {
+        $id = $matches[1];
+        $controller = new EmployeeController();
+        $controller->deleteEmployee($id);
+        return;
+    }
+
+    // Rutas existentes
     if ($path === "employees" && $method === "POST") {
         $data = json_decode(file_get_contents("php://input"), true);
         if (!$data) {
@@ -111,7 +151,7 @@ function handleRequest($method, $path) {
 
     } else {
         http_response_code(404);
-        echo json_encode(["message" => "Ruta no encontrada"]);
+        echo json_encode(["success" => false, "message" => "Ruta no encontrada"]);
     }
 }
 

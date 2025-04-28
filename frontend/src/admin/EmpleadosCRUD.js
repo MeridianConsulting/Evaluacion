@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './EmpleadosCRUD.css';
 import Header from '../components/Header';
@@ -8,23 +8,52 @@ function EmpleadosCRUD({ onLogout, userRole }) {
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [empleados, setEmpleados] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [currentEmpleado, setCurrentEmpleado] = useState({
     id_empleado: '',
-    nombre: '',
-    apellido: '',
     cedula: '',
+    nombre: '',
     cargo: '',
-    correo: '',
-    estado: 'Activo',
+    area: '',
+    numero_telefonico: '',
+    email: '',
     rol: 'empleado'
   });
 
-  // Datos de ejemplo (simulando datos de la base de datos)
-  const [empleados, setEmpleados] = useState([
-    { id_empleado: 1, nombre: 'Juan', apellido: 'Pérez', cedula: '123456789', cargo: 'Gerente', correo: 'juan@ejemplo.com', estado: 'Activo', rol: 'jefe' },
-    { id_empleado: 2, nombre: 'María', apellido: 'López', cedula: '987654321', cargo: 'Analista', correo: 'maria@ejemplo.com', estado: 'Activo', rol: 'empleado' },
-    { id_empleado: 3, nombre: 'Carlos', apellido: 'Gómez', cedula: '456789123', cargo: 'Desarrollador', correo: 'carlos@ejemplo.com', estado: 'Inactivo', rol: 'empleado' }
-  ]);
+  // URL base de la API
+  const apiUrl = process.env.REACT_APP_API_BASE_URL || '';
+
+  // Cargar datos al montar el componente
+  useEffect(() => {
+    fetchEmpleados();
+  }, []);
+
+  // Función para obtener todos los empleados
+  const fetchEmpleados = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${apiUrl}/api/employees`);
+      
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setEmpleados(result.data);
+      } else {
+        throw new Error(result.message || 'Error al cargar empleados');
+      }
+    } catch (error) {
+      console.error('Error al cargar empleados:', error);
+      setError(error.message || 'Error al cargar empleados');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleBackClick = () => {
     navigate('/admin');
@@ -34,12 +63,12 @@ function EmpleadosCRUD({ onLogout, userRole }) {
     setIsEditing(false);
     setCurrentEmpleado({
       id_empleado: '',
-      nombre: '',
-      apellido: '',
       cedula: '',
+      nombre: '',
       cargo: '',
-      correo: '',
-      estado: 'Activo',
+      area: 'Administracion',
+      numero_telefonico: '',
+      email: '',
       rol: 'empleado'
     });
     setShowForm(true);
@@ -51,11 +80,33 @@ function EmpleadosCRUD({ onLogout, userRole }) {
     setShowForm(true);
   };
 
-  const handleDeleteClick = (id) => {
+  const handleDeleteClick = async (id) => {
     if (window.confirm('¿Está seguro que desea eliminar este empleado?')) {
-      // Aquí iría la lógica para eliminar de la base de datos
-      // Por ahora, solo lo eliminamos del estado local
-      setEmpleados(empleados.filter(emp => emp.id_empleado !== id));
+      try {
+        const response = await fetch(`${apiUrl}/api/employees/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // Actualizar el estado eliminando el empleado
+          setEmpleados(empleados.filter(emp => emp.id_empleado !== id));
+          alert('Empleado eliminado con éxito');
+        } else {
+          throw new Error(result.message || 'Error al eliminar empleado');
+        }
+      } catch (error) {
+        console.error('Error al eliminar empleado:', error);
+        alert(`Error al eliminar empleado: ${error.message}`);
+      }
     }
   };
 
@@ -64,26 +115,90 @@ function EmpleadosCRUD({ onLogout, userRole }) {
     setCurrentEmpleado({...currentEmpleado, [name]: value});
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (isEditing) {
-      // Actualizar empleado existente
-      setEmpleados(empleados.map(emp => 
-        emp.id_empleado === currentEmpleado.id_empleado ? currentEmpleado : emp
-      ));
-    } else {
-      // Agregar nuevo empleado
-      const newId = Math.max(...empleados.map(emp => emp.id_empleado), 0) + 1;
-      setEmpleados([...empleados, {...currentEmpleado, id_empleado: newId}]);
+    try {
+      const isCreateOperation = !isEditing;
+      const url = isCreateOperation 
+        ? `${apiUrl}/api/employees` 
+        : `${apiUrl}/api/employees/${currentEmpleado.id_empleado}`;
+      
+      const method = isCreateOperation ? 'POST' : 'PUT';
+      
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(currentEmpleado)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        if (isCreateOperation) {
+          // Obtener el empleado recién creado para añadirlo al estado
+          const getResponse = await fetch(`${apiUrl}/api/employees/${result.id}`);
+          if (getResponse.ok) {
+            const getData = await getResponse.json();
+            if (getData.success) {
+              setEmpleados([getData.data, ...empleados]);
+            }
+          } else {
+            // Si no podemos obtener el empleado nuevo, recargamos todos
+            fetchEmpleados();
+          }
+        } else {
+          // Actualizar el empleado en el estado
+          setEmpleados(empleados.map(emp => 
+            emp.id_empleado === currentEmpleado.id_empleado ? currentEmpleado : emp
+          ));
+        }
+        
+        setShowForm(false);
+        alert(isCreateOperation ? 'Empleado creado con éxito' : 'Empleado actualizado con éxito');
+      } else {
+        throw new Error(result.message || `Error al ${isCreateOperation ? 'crear' : 'actualizar'} empleado`);
+      }
+    } catch (error) {
+      console.error(`Error al ${isEditing ? 'actualizar' : 'crear'} empleado:`, error);
+      alert(`Error: ${error.message}`);
     }
-    
-    setShowForm(false);
   };
 
   const handleCancelForm = () => {
     setShowForm(false);
   };
+
+  if (loading) {
+    return (
+      <div className="crud-container">
+        <Header onLogout={onLogout} userRole={userRole} />
+        <main className="crud-main">
+          <div className="loading">Cargando empleados...</div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="crud-container">
+        <Header onLogout={onLogout} userRole={userRole} />
+        <main className="crud-main">
+          <div className="error">Error: {error}</div>
+          <button onClick={fetchEmpleados}>Reintentar</button>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="crud-container">
@@ -106,36 +221,24 @@ function EmpleadosCRUD({ onLogout, userRole }) {
               <h2>{isEditing ? 'Editar Empleado' : 'Nuevo Empleado'}</h2>
               
               <div className="form-group">
-                <label htmlFor="nombre">Nombre:</label>
-                <input 
-                  type="text" 
-                  id="nombre" 
-                  name="nombre" 
-                  value={currentEmpleado.nombre} 
-                  onChange={handleInputChange} 
-                  required 
-                />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="apellido">Apellido:</label>
-                <input 
-                  type="text" 
-                  id="apellido" 
-                  name="apellido" 
-                  value={currentEmpleado.apellido} 
-                  onChange={handleInputChange} 
-                  required 
-                />
-              </div>
-              
-              <div className="form-group">
                 <label htmlFor="cedula">Cédula:</label>
                 <input 
                   type="text" 
                   id="cedula" 
                   name="cedula" 
                   value={currentEmpleado.cedula} 
+                  onChange={handleInputChange} 
+                  required 
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="nombre">Nombre completo:</label>
+                <input 
+                  type="text" 
+                  id="nombre" 
+                  name="nombre" 
+                  value={currentEmpleado.nombre} 
                   onChange={handleInputChange} 
                   required 
                 />
@@ -154,28 +257,42 @@ function EmpleadosCRUD({ onLogout, userRole }) {
               </div>
               
               <div className="form-group">
-                <label htmlFor="correo">Correo:</label>
+                <label htmlFor="area">Área:</label>
+                <select 
+                  id="area" 
+                  name="area" 
+                  value={currentEmpleado.area} 
+                  onChange={handleInputChange}
+                >
+                  <option value="Administracion">Administración</option>
+                  <option value="Gestión de Proyectos">Gestión de Proyectos</option>
+                  <option value="COMPANY MAN">COMPANY MAN</option>
+                  <option value="PROYECTO PETROSERVICIOS">PROYECTO PETROSERVICIOS</option>
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="numero_telefonico">Teléfono:</label>
                 <input 
-                  type="email" 
-                  id="correo" 
-                  name="correo" 
-                  value={currentEmpleado.correo} 
+                  type="text" 
+                  id="numero_telefonico" 
+                  name="numero_telefonico" 
+                  value={currentEmpleado.numero_telefonico} 
                   onChange={handleInputChange} 
                   required 
                 />
               </div>
               
               <div className="form-group">
-                <label htmlFor="estado">Estado:</label>
-                <select 
-                  id="estado" 
-                  name="estado" 
-                  value={currentEmpleado.estado} 
-                  onChange={handleInputChange}
-                >
-                  <option value="Activo">Activo</option>
-                  <option value="Inactivo">Inactivo</option>
-                </select>
+                <label htmlFor="email">Correo electrónico:</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  value={currentEmpleado.email} 
+                  onChange={handleInputChange} 
+                  required 
+                />
               </div>
               
               <div className="form-group">
@@ -205,58 +322,58 @@ function EmpleadosCRUD({ onLogout, userRole }) {
         )}
 
         <div className="crud-table-container">
-          <table className="crud-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Cédula</th>
-                <th>Cargo</th>
-                <th>Correo</th>
-                <th>Rol</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {empleados.map(empleado => (
-                <tr key={empleado.id_empleado}>
-                  <td>{empleado.id_empleado}</td>
-                  <td>{empleado.nombre}</td>
-                  <td>{empleado.apellido}</td>
-                  <td>{empleado.cedula}</td>
-                  <td>{empleado.cargo}</td>
-                  <td>{empleado.correo}</td>
-                  <td>
-                    <span className={`role-badge ${empleado.rol}`}>
-                      {empleado.rol === 'admin' ? 'Administrador' : 
-                       empleado.rol === 'jefe' ? 'Jefe' : 'Empleado'}
-                    </span>
-                  </td>
-                  <td>
-                    <span className={`estado-badge ${empleado.estado.toLowerCase()}`}>
-                      {empleado.estado}
-                    </span>
-                  </td>
-                  <td className="acciones">
-                    <button 
-                      className="edit-button" 
-                      onClick={() => handleEditClick(empleado)}
-                    >
-                      Editar
-                    </button>
-                    <button 
-                      className="delete-button" 
-                      onClick={() => handleDeleteClick(empleado.id_empleado)}
-                    >
-                      Eliminar
-                    </button>
-                  </td>
+          {empleados.length === 0 ? (
+            <p className="no-data">No hay empleados registrados</p>
+          ) : (
+            <table className="crud-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Cédula</th>
+                  <th>Nombre</th>
+                  <th>Cargo</th>
+                  <th>Área</th>
+                  <th>Teléfono</th>
+                  <th>Correo</th>
+                  <th>Rol</th>
+                  <th>Acciones</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {empleados.map(empleado => (
+                  <tr key={empleado.id_empleado}>
+                    <td>{empleado.id_empleado}</td>
+                    <td>{empleado.cedula}</td>
+                    <td>{empleado.nombre}</td>
+                    <td>{empleado.cargo}</td>
+                    <td>{empleado.area}</td>
+                    <td>{empleado.numero_telefonico}</td>
+                    <td>{empleado.email}</td>
+                    <td>
+                      <span className={`role-badge ${empleado.rol}`}>
+                        {empleado.rol === 'admin' ? 'Administrador' : 
+                         empleado.rol === 'jefe' ? 'Jefe' : 'Empleado'}
+                      </span>
+                    </td>
+                    <td className="acciones">
+                      <button 
+                        className="edit-button" 
+                        onClick={() => handleEditClick(empleado)}
+                      >
+                        Editar
+                      </button>
+                      <button 
+                        className="delete-button" 
+                        onClick={() => handleDeleteClick(empleado.id_empleado)}
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </main>
 
