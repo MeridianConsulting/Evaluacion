@@ -10,6 +10,7 @@ import Terms from "./pages/Terms";
 import Profile from "./pages/Profile";
 import Results from "./pages/Results";
 import PerformanceEvaluation from "./pages/PerformanceEvaluation"; // Se corrigió la importación duplicada
+import DashboardSelector from "./admin/DashboardSelector"; // Importamos el componente DashboardSelector
 import "./App.css";
 
 function App() {
@@ -146,6 +147,17 @@ function App() {
               <Navigate to="/" replace />
             )
           }  
+        />
+        {/* Ruta protegida para el Dashboard de Administrador */}
+        <Route
+          path="/admin"
+          element={
+            isAuthenticated ? (
+              <DashboardSelector onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
         />
       </Routes>
     </Router>
