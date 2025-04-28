@@ -991,7 +991,7 @@ function PerformanceEvaluation() {
                 <th
                   colSpan={7}
                   style={{
-                    backgroundColor: "#000",
+                    background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))",
                     color: "#fff",
                     padding: "1rem",
                     textAlign: "center",
@@ -1002,12 +1002,12 @@ function PerformanceEvaluation() {
                 </th>
               </tr>
               <tr style={{ backgroundColor: "#f0f0f0", textAlign: "left" }}>
-                <th>COMPETENCIA</th>
-                <th>DEFINICIÓN DE LA COMPETENCIA</th>
-                <th>ASPECTO A EVALUAR</th>
-                <th>TRABAJADOR</th>
-                <th>JEFE INMEDIATO</th>
-                <th>JUSTIFICACIÓN</th>
+                <th style={{ background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>COMPETENCIA</th>
+                <th style={{ background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>DEFINICIÓN DE LA COMPETENCIA</th>
+                <th style={{ background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>ASPECTO A EVALUAR</th>
+                <th style={{ background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>TRABAJADOR</th>
+                <th style={{ background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>JEFE INMEDIATO</th>
+                <th style={{ background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>JUSTIFICACIÓN</th>
               </tr>
             </thead>
             <tbody>
@@ -2013,7 +2013,7 @@ function PerformanceEvaluation() {
                 <th
                   colSpan={4}
                   style={{
-                    backgroundColor: "#000",
+                    background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))",
                     color: "#fff",
                     padding: "1rem",
                     textAlign: "center",
@@ -2024,10 +2024,10 @@ function PerformanceEvaluation() {
                 </th>
               </tr>
               <tr style={{ backgroundColor: "#f0f0f0", textAlign: "left" }}>
-                <th style={{ width: "60%" }}>FUNCIÓN ESPECÍFICA</th>
-                <th style={{ width: "15%" }}>TRABAJADOR</th>
-                <th style={{ width: "15%" }}>JEFE INMEDIATO</th>
-                <th style={{ width: "10%" }}>JUSTIFICACIÓN</th>
+                <th style={{ width: "60%", background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>FUNCIÓN ESPECÍFICA</th>
+                <th style={{ width: "15%", background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>TRABAJADOR</th>
+                <th style={{ width: "15%", background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>JEFE INMEDIATO</th>
+                <th style={{ width: "10%", background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>JUSTIFICACIÓN</th>
               </tr>
             </thead>
             <tbody>
@@ -2099,15 +2099,15 @@ function PerformanceEvaluation() {
           <table className="hseq-table">
             <thead>
               <tr>
-                <th colSpan={4} className="hseq-header" style={{ backgroundColor: "#000", color: "#fff", textAlign: "center" }}>
+                <th colSpan={4} className="hseq-header" style={{ background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff", textAlign: "center" }}>
                   CALIFICACIÓN GENERAL POR RESPONSABILIDADES HSEQ
                 </th>
               </tr>
               <tr>
-                <th className="hseq-subheader" style={{ width: "60%", backgroundColor: "#f0f0f0", textAlign: "center" }}>RESPONSABILIDAD</th>
-                <th className="hseq-subheader" style={{ width: "15%", backgroundColor: "#f0f0f0" }}>TRABAJADOR</th>
-                <th className="hseq-subheader" style={{ width: "15%", backgroundColor: "#f0f0f0" }}>JEFE INMEDIATO</th>
-                <th className="hseq-subheader" style={{ width: "10%", backgroundColor: "#f0f0f0" }}>JUSTIFICACIÓN</th>
+                <th className="hseq-subheader" style={{ width: "60%", background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff", textAlign: "center" }}>RESPONSABILIDAD</th>
+                <th className="hseq-subheader" style={{ width: "15%", background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>TRABAJADOR</th>
+                <th className="hseq-subheader" style={{ width: "15%", background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>JEFE INMEDIATO</th>
+                <th className="hseq-subheader" style={{ width: "10%", background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>JUSTIFICACIÓN</th>
               </tr>
             </thead>
             <tbody>
@@ -2202,10 +2202,10 @@ function PerformanceEvaluation() {
           <table className="plan-accion-table">
             <thead>
               <tr>
-                <th className="plan-accion-th" style={{ backgroundColor: "#f0f0f0" }}>Actividades</th>
-                <th className="plan-accion-th" style={{ backgroundColor: "#f0f0f0" }}>Responsable</th>
-                <th className="plan-accion-th" style={{ backgroundColor: "#f0f0f0" }}>Seguimiento</th>
-                <th className="plan-accion-th" style={{ backgroundColor: "#f0f0f0" }}>Fecha</th>
+                <th className="plan-accion-th" style={{ background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>Actividades</th>
+                <th className="plan-accion-th" style={{ background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>Responsable</th>
+                <th className="plan-accion-th" style={{ background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>Seguimiento</th>
+                <th className="plan-accion-th" style={{ background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>Fecha</th>
               </tr>
             </thead>
             <tbody>
@@ -2362,14 +2362,6 @@ function PerformanceEvaluation() {
           box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
         }
         
-        .finalizar-btn:hover {
-          background-color: #333 !important;
-        }
-        
-        .finalizar-btn:disabled {
-          background-color: #ccc !important;
-          cursor: not-allowed;
-        }
       `}</style>
     </div>
   );
