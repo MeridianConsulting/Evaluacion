@@ -918,8 +918,8 @@ footer {
 
 /* Estilos para el botón deshabilitado */
 .modal button:disabled {
-  background-color: var(--color-tertiary-light);
-  color: var(--color-tertiary-dark);
+  background-color: var(--color-accent-light);
+  color: var( --color-dark);
   cursor: not-allowed;
   transform: none;
 }
