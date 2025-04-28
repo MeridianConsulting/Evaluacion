@@ -1021,7 +1021,7 @@ footer {
 /* Sección izquierda: Mapa de Google */
 .contact-map-section-unique {
   flex: 1;
-  background-color: rgba(51, 97, 157, 0.9);
+  background-image: linear-gradient(to right, #1c3555, #062247);;
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -1059,7 +1059,7 @@ footer {
 /* Sección derecha: Información de contacto */
 .contact-info-section-unique {
   flex: 1;
-  background-color: rgba(51, 97, 157, 0.9);
+  background-image: linear-gradient(to right, #062247, #1c3555);
   border-radius: 8px;
   padding: 1.5rem;
   color: var(--color-secondary);
@@ -1209,8 +1209,7 @@ footer {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(to bottom, rgba(4, 8, 15, 0.6), rgba(51, 97, 157, 0.4)),
-    url('../img/fondo.jpeg') no-repeat center center;
+  background: var(--color-background);
 }
 
 /* Área principal de la página */
@@ -1223,7 +1222,7 @@ footer {
 .about-container-unique {
   max-width: 1000px;
   margin: 0 auto;
-  background-color: rgba(51, 97, 157, 0.85);
+  background-image: linear-gradient(to right, #2d4564, #062247);
   border-radius: 8px;
   padding: 2rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -1422,8 +1421,7 @@ footer {
   min-height: 100vh;        /* ocupar toda la pantalla */
   display: flex;
   flex-direction: column;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-  url('../img/fondo.jpeg') no-repeat center center;
+  background: var(--color-background);
 }
 
 /* Contenedor para centrar y limitar el ancho del contenido */
@@ -1448,7 +1446,7 @@ footer {
 
 /* Tarjeta que contiene la información del empleado */
 .profile-card {
-  background-image: linear-gradient(to right, #294366, #0c2a50);
+  background-image: linear-gradient(to right, #2d4564, #062247);
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 20px;
