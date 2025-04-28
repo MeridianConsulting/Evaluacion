@@ -1448,7 +1448,7 @@ footer {
 
 /* Tarjeta que contiene la información del empleado */
 .profile-card {
-  background-color: rgba(51, 97, 157, 0.85);
+  background-image: linear-gradient(to right, #294366, #0c2a50);
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 20px;

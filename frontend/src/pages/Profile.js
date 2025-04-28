@@ -56,7 +56,7 @@ const Profile = ({ onLogout, userRole }) => {
           employee && (
             <div className="profile-card">
               <div className="profile-header">
-                <h1>Bienvenido, {employee.nombre}</h1>
+                <h1>Bienvenid@ ,  {employee.nombre}</h1>
               </div>
               <div className="profile-details">
                 <div className="profile-detail">
