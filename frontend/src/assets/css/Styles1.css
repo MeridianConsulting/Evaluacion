@@ -3157,3 +3157,96 @@ input[type="date"]:focus {
   text-align: center;
   font-size: 1.2rem;
 }
+
+/* Estilos responsivos mejorados para móviles en la página de evaluación de desempeño */
+@media screen and (max-width: 480px) {
+  /* Estilos para el contenedor principal */
+  .evaluation-container-unique {
+    width: 95%;
+    padding: 1rem;
+  }
+  
+  /* Título principal más compacto */
+  .evaluacion-desempeno {
+    font-size: 1.4rem;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Mejorar visualización de las tablas en móviles */
+  .evaluation-table-wrapper {
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Campos de formulario a ancho completo y mejor espaciados */
+  .evaluation-field {
+    margin-bottom: 0.75rem;
+  }
+  
+  .evaluation-field label {
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+  }
+  
+  .evaluation-field input,
+  .evaluation-field select,
+  .evaluation-field textarea {
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 0.6rem;
+  }
+  
+  /* Mejoras específicas para campos de textarea */
+  .justificacion-textarea {
+    min-height: 80px;
+    font-size: 0.9rem;
+  }
+  
+  /* Optimizar las firmas para móviles */
+  .firmas-container {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .firma-item {
+    width: 100%;
+  }
+  
+  .firma-box {
+    height: 120px;
+  }
+  
+  /* Botón de finalizar a pantalla completa */
+  .finalizar-btn,
+  .finalizar-btn-custom {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.8rem;
+    font-size: 1rem;
+  }
+  
+  /* Mensajes de error e información */
+  .error-message {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Mejoras para ayudar al scroll horizontal en tablas */
+  .evaluation-section table {
+    padding-bottom: 5px; /* Espacio extra para scrollbar */
+  }
+  
+  /* Indicador visual de scroll horizontal */
+  .evaluation-section::after {
+    content: "← Desliza →";
+    display: block;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.8rem;
+    margin: 0.5rem 0;
+    opacity: 0.8;
+  }
+}
