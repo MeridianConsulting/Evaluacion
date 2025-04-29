@@ -1519,8 +1519,7 @@ footer {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(to bottom, rgba(4, 8, 15, 0.6), rgba(51, 97, 157, 0.4)),
-    url('../img/fondo.jpeg') no-repeat center center;
+  background-color: var(--color-background);
 }
 
 /* Área principal de la página */
@@ -1533,7 +1532,7 @@ footer {
 .terms-container-unique {
   max-width: 1000px;
   margin: 0 auto;
-  background-color: rgba(51, 97, 157, 0.85);
+  background-color: #ffffff;
   border-radius: 8px;
   padding: 2rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -1543,7 +1542,7 @@ footer {
 /* Título principal */
 .terms-title-unique {
   font-size: 2.8rem;
-  color: var(--color-secondary);
+  color: var(--color-primary-dark);
   margin-bottom: 1rem;
   text-transform: uppercase;
   border-bottom: 2px solid var(--color-accent);
@@ -1553,14 +1552,14 @@ footer {
 /* Subtítulos de sección */
 .terms-subtitle-unique {
   font-size: 2rem;
-  color: var(--color-secondary);
+  color: var(--color-primary-dark);
   margin: 2rem 0 0.5rem;
 }
 
 /* Texto descriptivo */
 .terms-text-unique {
   font-size: 1.2rem;
-  color: var(--color-secondary);
+  color: var(--color-dark-alt);
   line-height: 1.6;
   margin-bottom: 1.5rem;
 }
