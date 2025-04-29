@@ -33,7 +33,45 @@ function handleRequest($method, $path) {
     // Rutas para empleados
     $controller = null;
 
-    // Rutas para el nuevo controlador de funciones
+    // Rutas para el controlador de cargos
+    if ($path === "api/cargos" && $method === "GET") {
+        $controller = new CargoController();
+        $controller->getAllCargos();
+        return;
+    } elseif ($path === "api/cargos" && $method === "POST") {
+        $data = json_decode(file_get_contents("php://input"), true);
+        if (!$data) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "Datos inválidos"]);
+            return;
+        }
+        $controller = new CargoController();
+        $controller->createCargo($data);
+        return;
+    } elseif (preg_match("#^api/cargos/(\d+)$#", $path, $matches) && $method === "GET") {
+        $id = $matches[1];
+        $controller = new CargoController();
+        $controller->getCargoById($id);
+        return;
+    } elseif (preg_match("#^api/cargos/(\d+)$#", $path, $matches) && $method === "PUT") {
+        $id = $matches[1];
+        $data = json_decode(file_get_contents("php://input"), true);
+        if (!$data) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "Datos inválidos"]);
+            return;
+        }
+        $controller = new CargoController();
+        $controller->updateCargo($id, $data);
+        return;
+    } elseif (preg_match("#^api/cargos/(\d+)$#", $path, $matches) && $method === "DELETE") {
+        $id = $matches[1];
+        $controller = new CargoController();
+        $controller->deleteCargo($id);
+        return;
+    }
+
+    // Rutas para el controlador de funciones
     if ($path === "api/funciones" && $method === "GET") {
         $controller = new FuncionesController();
         $controller->getAllFunciones();
@@ -76,7 +114,7 @@ function handleRequest($method, $path) {
         return;
     }
 
-    // Rutas para el nuevo controlador de empleados
+    // Rutas para el controlador de empleados
     if ($path === "api/employees" && $method === "GET") {
         $controller = new EmployeeController();
         $controller->getAllEmployees();

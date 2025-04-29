@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CRUD.css';
 import Header from '../components/Header';
@@ -11,17 +11,48 @@ function CargosCRUD({ onLogout }) {
   const [currentCargo, setCurrentCargo] = useState({
     id_cargo: '',
     nombre_cargo: '',
-    departamento: '',
-    descripcion: '',
-    estado: 'Activo'
+    descripcion_cargo: '',
+    objetivo_cargo: '',
+    proceso_gestion: ''
   });
 
-  // Datos de ejemplo (simulando datos de la base de datos)
-  const [cargos, setCargos] = useState([
-    { id_cargo: 1, nombre_cargo: 'Desarrollador', departamento: 'TI', descripcion: 'Desarrolla aplicaciones para la empresa', estado: 'Activo' },
-    { id_cargo: 2, nombre_cargo: 'DBA', departamento: 'TI', descripcion: 'Administra las bases de datos', estado: 'Activo' },
-    { id_cargo: 3, nombre_cargo: 'Gerente de Proyectos', departamento: 'Proyectos', descripcion: 'Gestiona los proyectos de desarrollo', estado: 'Inactivo' }
-  ]);
+  // Estado para los cargos cargados desde el backend
+  const [cargos, setCargos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // URL base de la API
+  const apiUrl = process.env.REACT_APP_API_BASE_URL || '';
+
+  // Cargar datos al montar el componente
+  useEffect(() => {
+    fetchCargos();
+  }, []);
+
+  // Función para obtener todos los cargos
+  const fetchCargos = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${apiUrl}/api/cargos`);
+      
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setCargos(result.data);
+      } else {
+        throw new Error(result.message || 'Error al cargar cargos');
+      }
+    } catch (error) {
+      console.error('Error al cargar cargos:', error);
+      setError(error.message || 'Error al cargar cargos');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleBackClick = () => {
     navigate('/admin');
@@ -32,9 +63,9 @@ function CargosCRUD({ onLogout }) {
     setCurrentCargo({
       id_cargo: '',
       nombre_cargo: '',
-      departamento: '',
-      descripcion: '',
-      estado: 'Activo'
+      descripcion_cargo: '',
+      objetivo_cargo: '',
+      proceso_gestion: ''
     });
     setShowForm(true);
   };
@@ -45,11 +76,34 @@ function CargosCRUD({ onLogout }) {
     setShowForm(true);
   };
 
-  const handleDeleteClick = (id) => {
+  const handleDeleteClick = async (id) => {
     if (window.confirm('¿Está seguro que desea eliminar este cargo?')) {
-      // Aquí iría la lógica para eliminar de la base de datos
-      // Por ahora, solo lo eliminamos del estado local
-      setCargos(cargos.filter(cargo => cargo.id_cargo !== id));
+      try {
+        const response = await fetch(`${apiUrl}/api/cargos/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          const result = await response.json();
+          throw new Error(result.message || `Error: ${response.status} ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // Actualizar el estado eliminando el cargo
+          setCargos(cargos.filter(cargo => cargo.id_cargo !== id));
+          alert('Cargo eliminado con éxito');
+        } else {
+          throw new Error(result.message || 'Error al eliminar cargo');
+        }
+      } catch (error) {
+        console.error('Error al eliminar cargo:', error);
+        alert(`Error al eliminar cargo: ${error.message}`);
+      }
     }
   };
 
@@ -58,26 +112,91 @@ function CargosCRUD({ onLogout }) {
     setCurrentCargo({...currentCargo, [name]: value});
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (isEditing) {
-      // Actualizar cargo existente
-      setCargos(cargos.map(cargo => 
-        cargo.id_cargo === currentCargo.id_cargo ? currentCargo : cargo
-      ));
-    } else {
-      // Agregar nuevo cargo
-      const newId = Math.max(...cargos.map(cargo => cargo.id_cargo), 0) + 1;
-      setCargos([...cargos, {...currentCargo, id_cargo: newId}]);
+    try {
+      const isCreateOperation = !isEditing;
+      const url = isCreateOperation 
+        ? `${apiUrl}/api/cargos` 
+        : `${apiUrl}/api/cargos/${currentCargo.id_cargo}`;
+      
+      const method = isCreateOperation ? 'POST' : 'PUT';
+      
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(currentCargo)
+      });
+      
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.message || `Error: ${response.status} ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        if (isCreateOperation) {
+          // Obtener el cargo recién creado para añadirlo al estado
+          const getResponse = await fetch(`${apiUrl}/api/cargos/${result.id}`);
+          if (getResponse.ok) {
+            const getData = await getResponse.json();
+            if (getData.success) {
+              setCargos([getData.data, ...cargos]);
+            }
+          } else {
+            // Si no podemos obtener el cargo nuevo, recargamos todos
+            fetchCargos();
+          }
+        } else {
+          // Actualizar el cargo en el estado
+          setCargos(cargos.map(cargo => 
+            cargo.id_cargo === currentCargo.id_cargo ? currentCargo : cargo
+          ));
+        }
+        
+        setShowForm(false);
+        alert(isCreateOperation ? 'Cargo creado con éxito' : 'Cargo actualizado con éxito');
+      } else {
+        throw new Error(result.message || `Error al ${isCreateOperation ? 'crear' : 'actualizar'} cargo`);
+      }
+    } catch (error) {
+      console.error(`Error al ${isEditing ? 'actualizar' : 'crear'} cargo:`, error);
+      alert(`Error: ${error.message}`);
     }
-    
-    setShowForm(false);
   };
 
   const handleCancelForm = () => {
     setShowForm(false);
   };
+
+  if (loading) {
+    return (
+      <div className="crud-container">
+        <Header onLogout={onLogout} />
+        <main className="crud-main">
+          <div className="loading">Cargando cargos...</div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="crud-container">
+        <Header onLogout={onLogout} />
+        <main className="crud-main">
+          <div className="error">Error: {error}</div>
+          <button onClick={fetchCargos}>Reintentar</button>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="crud-container">
@@ -112,40 +231,36 @@ function CargosCRUD({ onLogout }) {
               </div>
               
               <div className="form-group">
-                <label htmlFor="departamento">Departamento:</label>
-                <input 
-                  type="text" 
-                  id="departamento" 
-                  name="departamento" 
-                  value={currentCargo.departamento} 
+                <label htmlFor="descripcion_cargo">Descripción:</label>
+                <textarea 
+                  id="descripcion_cargo" 
+                  name="descripcion_cargo" 
+                  value={currentCargo.descripcion_cargo || ''} 
                   onChange={handleInputChange} 
-                  required 
-                />
+                  rows="3"
+                ></textarea>
               </div>
               
               <div className="form-group">
-                <label htmlFor="descripcion">Descripción:</label>
+                <label htmlFor="objetivo_cargo">Objetivo del Cargo:</label>
                 <textarea 
-                  id="descripcion" 
-                  name="descripcion" 
-                  value={currentCargo.descripcion} 
+                  id="objetivo_cargo" 
+                  name="objetivo_cargo" 
+                  value={currentCargo.objetivo_cargo || ''} 
                   onChange={handleInputChange} 
-                  required 
                   rows="4"
                 ></textarea>
               </div>
               
               <div className="form-group">
-                <label htmlFor="estado">Estado:</label>
-                <select 
-                  id="estado" 
-                  name="estado" 
-                  value={currentCargo.estado} 
-                  onChange={handleInputChange}
-                >
-                  <option value="Activo">Activo</option>
-                  <option value="Inactivo">Inactivo</option>
-                </select>
+                <label htmlFor="proceso_gestion">Proceso de Gestión:</label>
+                <input 
+                  type="text" 
+                  id="proceso_gestion" 
+                  name="proceso_gestion" 
+                  value={currentCargo.proceso_gestion || ''} 
+                  onChange={handleInputChange} 
+                />
               </div>
               
               <div className="form-buttons">
@@ -166,9 +281,8 @@ function CargosCRUD({ onLogout }) {
               <tr>
                 <th>ID</th>
                 <th>Nombre del Cargo</th>
-                <th>Departamento</th>
                 <th>Descripción</th>
-                <th>Estado</th>
+                <th>Proceso de Gestión</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -177,13 +291,8 @@ function CargosCRUD({ onLogout }) {
                 <tr key={cargo.id_cargo}>
                   <td>{cargo.id_cargo}</td>
                   <td>{cargo.nombre_cargo}</td>
-                  <td>{cargo.departamento}</td>
-                  <td className="descripcion-cell">{cargo.descripcion}</td>
-                  <td>
-                    <span className={`estado-badge ${cargo.estado.toLowerCase()}`}>
-                      {cargo.estado}
-                    </span>
-                  </td>
+                  <td className="descripcion-cell">{cargo.descripcion_cargo}</td>
+                  <td>{cargo.proceso_gestion}</td>
                   <td className="acciones">
                     <button 
                       className="edit-button" 
