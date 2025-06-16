@@ -328,5 +328,40 @@ class EmployeeController {
         
         $stmt->close();
     }
+    
+    // Obtener todos los cargos disponibles para el dropdown
+    public function getAllCargos() {
+        $sql = 'SELECT id_cargo, nombre_cargo FROM cargo 
+                WHERE nombre_cargo IS NOT NULL 
+                AND nombre_cargo != ""
+                AND nombre_cargo NOT REGEXP "^[0-9]+E?$"
+                AND nombre_cargo NOT LIKE "Funciones_%"
+                AND LENGTH(nombre_cargo) > 3
+                AND nombre_cargo NOT REGEXP "^[A-Z_]+$"
+                ORDER BY nombre_cargo ASC';
+        
+        $stmt = $this->db->prepare($sql);
+        if (!$stmt) {
+            http_response_code(500);
+            echo json_encode([
+                "success" => false, 
+                "message" => "Error al preparar la consulta", 
+                "error" => $this->db->error
+            ]);
+            return;
+        }
+        
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows > 0) {
+            $cargos = $result->fetch_all(MYSQLI_ASSOC);
+            echo json_encode(["success" => true, "data" => $cargos]);
+        } else {
+            echo json_encode(["success" => true, "data" => []]);
+        }
+        
+        $stmt->close();
+    }
 }
 ?> 

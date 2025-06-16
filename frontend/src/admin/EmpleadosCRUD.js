@@ -9,6 +9,7 @@ function EmpleadosCRUD({ onLogout, userRole }) {
   const [showForm, setShowForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [empleados, setEmpleados] = useState([]);
+  const [cargos, setCargos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentEmpleado, setCurrentEmpleado] = useState({
@@ -28,6 +29,7 @@ function EmpleadosCRUD({ onLogout, userRole }) {
   // Cargar datos al montar el componente
   useEffect(() => {
     fetchEmpleados();
+    fetchCargos();
   }, []);
 
   // Función para obtener todos los empleados
@@ -52,6 +54,30 @@ function EmpleadosCRUD({ onLogout, userRole }) {
       setError(error.message || 'Error al cargar empleados');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Función para obtener todos los cargos
+  const fetchCargos = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/api/employees/cargos`);
+      
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      console.log('Respuesta de cargos:', result); // Debug
+      
+      if (result.success) {
+        console.log('Cargos recibidos:', result.data); // Debug
+        setCargos(result.data);
+      } else {
+        throw new Error(result.message || 'Error al cargar cargos');
+      }
+    } catch (error) {
+      console.error('Error al cargar cargos:', error);
+      // No mostramos error aquí para no interferir con la carga de empleados
     }
   };
 
@@ -246,14 +272,24 @@ function EmpleadosCRUD({ onLogout, userRole }) {
               
               <div className="form-group">
                 <label htmlFor="cargo">Cargo:</label>
-                <input 
-                  type="text" 
+                <select 
                   id="cargo" 
                   name="cargo" 
                   value={currentEmpleado.cargo} 
-                  onChange={handleInputChange} 
-                  required 
-                />
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Seleccionar cargo...</option>
+                  {cargos.length > 0 ? (
+                    cargos.map(cargo => (
+                      <option key={cargo.id_cargo} value={cargo.nombre_cargo}>
+                        {cargo.nombre_cargo}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>Cargando cargos...</option>
+                  )}
+                </select>
               </div>
               
               <div className="form-group">

@@ -150,6 +150,10 @@ function handleRequest($method, $path) {
         $controller = new EmployeeController();
         $controller->deleteEmployee($id);
         return;
+    } elseif ($path === "api/employees/cargos" && $method === "GET") {
+        $controller = new EmployeeController();
+        $controller->getAllCargos();
+        return;
     }
 
     // Rutas existentes

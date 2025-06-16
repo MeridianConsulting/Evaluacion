@@ -26,8 +26,6 @@ function LandingPage({ onLogout }) {
     }
   };
 
-
-
   return (
     <div className="landing-page">
       <Header onLogout={onLogout} />
