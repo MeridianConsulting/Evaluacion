@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import SignatureUploader from '../components/SignatureUploader';
 
+
 function PerformanceEvaluation() {
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -741,6 +742,7 @@ function PerformanceEvaluation() {
       boxShadow: '0 0 0 1px #ff3860'
     } : {};
   };
+
 
   // Gestionar la ocultación temporal de mensajes de error
   useEffect(() => {
