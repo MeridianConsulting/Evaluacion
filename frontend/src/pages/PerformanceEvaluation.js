@@ -171,6 +171,34 @@ function PerformanceEvaluation() {
       boss: "",
       average: "",
     },
+    {
+      id: 20,
+      aspecto: "Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.",
+      worker: "",
+      boss: "",
+      average: "",
+    },
+    {
+      id: 21,
+      aspecto: "Demuestra dominio técnico y procedimental en las tareas críticas del rol.",
+      worker: "",
+      boss: "",
+      average: "",
+    },
+    {
+      id: 22,
+      aspecto: "Entrega resultados alineados con los estándares y tiempos definidos para su cargo.",
+      worker: "",
+      boss: "",
+      average: "",
+    },
+    {
+      id: 23,
+      aspecto: "Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.",
+      worker: "",
+      boss: "",
+      average: "",
+    },
   ]);
 
   // Agregamos el estado para las responsabilidades HSEQ
@@ -840,6 +868,7 @@ function PerformanceEvaluation() {
                   COMPETENCIAS
                 </th>
               </tr>
+              
               <tr style={{ backgroundColor: "#f0f0f0", textAlign: "left" }}>
                 <th style={{ background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>COMPETENCIA</th>
                 <th style={{ background: "linear-gradient(to right, var(--color-primary-dark), var(--color-primary))", color: "#fff" }}>DEFINICIÓN DE LA COMPETENCIA</th>
@@ -1830,6 +1859,160 @@ function PerformanceEvaluation() {
                   />
                 </td>
               </tr>
+              <tr>
+              <td colSpan={3} style={{ fontWeight: "bold", backgroundColor: "#f5f5f5", padding: "0.8rem", textAlign: "right" }}>
+                PROMEDIO CALIFICACIÓN COMPETENCIAS:
+              </td>
+              <td colSpan={2} style={{ backgroundColor: "#f5f5f5", padding: "0.8rem", textAlign: "center", fontWeight: "bold" }}>
+                {calcularPromedioCompetencias()}
+              </td>
+              <td style={{ backgroundColor: "#f5f5f5" }}></td>
+            </tr>
+              {/* Competencia: Cumplimiento de funciones del cargo */}
+              <tr>
+                <td
+                  rowSpan={4}
+                  style={{
+                    backgroundColor: "#f5f5f5",
+                    verticalAlign: "middle",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                    padding: "1rem",
+                    width: "12%",
+                  }}
+                >
+                  Cumplimiento de <br /> funciones del cargo
+                </td>
+                <td
+                  rowSpan={4}
+                  style={{
+                    backgroundColor: "#fff",
+                    verticalAlign: "middle",
+                    padding: "1rem",
+                    width: "25%",
+                  }}
+                >
+                  Asegurar la ejecución oportuna y con calidad de las funciones específicas del cargo, demostrando dominio técnico y alineación con los estándares establecidos.
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                  {rows[19].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                  <select
+                    className="rating-select"
+                    value={rows[19].worker === 0 ? "" : rows[19].worker}
+                    onChange={(e) => handleSelectChange(rows[19].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                  <select
+                    className="rating-select"
+                    value={rows[19].boss === 0 ? "" : rows[19].boss}
+                    onChange={(e) => handleSelectChange(rows[19].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                  {rows[20].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                  <select
+                    className="rating-select"
+                    value={rows[20].worker === 0 ? "" : rows[20].worker}
+                    onChange={(e) => handleSelectChange(rows[20].id, "worker", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                  <select
+                    className="rating-select"
+                    value={rows[20].boss === 0 ? "" : rows[20].boss}
+                    onChange={(e) => handleSelectChange(rows[20].id, "boss", e.target.value)}
+                  >
+                    <option value="">1 - 5</option>
+                    <option value="1">1 - No Cumple</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="3">3 - Parcial</option>
+                    <option value="4">4 - Satisfactorio</option>
+                    <option value="5">5 - Excelente</option>
+                  </select>
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                  {rows[21].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                    <select
+                      className="rating-select"
+                    value={rows[21].worker === 0 ? "" : rows[21].worker}
+                    onChange={(e) => handleSelectChange(rows[21].id, "worker", e.target.value)}
+                    >
+                      <option value="">1 - 5</option>
+                      <option value="1">1 - No Cumple</option>
+                      <option value="2">2 - Regular</option>
+                      <option value="3">3 - Parcial</option>
+                      <option value="4">4 - Satisfactorio</option>
+                      <option value="5">5 - Excelente</option>
+                    </select>
+                  </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                    <select
+                      className="rating-select"
+                    value={rows[21].boss === 0 ? "" : rows[21].boss}
+                    onChange={(e) => handleSelectChange(rows[21].id, "boss", e.target.value)}
+                    >
+                      <option value="">1 - 5</option>
+                      <option value="1">1 - No Cumple</option>
+                      <option value="2">2 - Regular</option>
+                      <option value="3">3 - Parcial</option>
+                      <option value="4">4 - Satisfactorio</option>
+                      <option value="5">5 - Excelente</option>
+                    </select>
+                  </td>
+                  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                    <textarea
+                      className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    />
+                  </td>
+                </tr>
               <tr>
               <td colSpan={3} style={{ fontWeight: "bold", backgroundColor: "#f5f5f5", padding: "0.8rem", textAlign: "right" }}>
                 PROMEDIO CALIFICACIÓN COMPETENCIAS:
