@@ -1975,7 +1975,7 @@ function PerformanceEvaluation() {
               </tr>
               <tr>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
-                  {rows[21].aspecto}u
+                  {rows[21].aspecto}
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                     <select
