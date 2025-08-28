@@ -334,9 +334,9 @@ function PerformanceEvaluation() {
         const data = await response.json();
         
         if (!response.ok) {
-          setError(data.error || 'Error al obtener los datos del empleado.');
+          setError((data && (data.error || data.message)) || 'Error al obtener los datos del empleado.');
         } else {
-          setEmployee(data);
+          setEmployee(data && (data.data || data));
           
           // Si el rol del empleado ha cambiado en la base de datos, actualizamos el localStorage
           if (data.rol && data.rol !== localStorage.getItem('userRole')) {
@@ -431,6 +431,44 @@ function PerformanceEvaluation() {
     
     if (contadorValidos === 0) return 0;
     return (sumaTotal / contadorValidos).toFixed(2);
+  };
+
+  // Helpers para promedios por apartado de competencias
+  const calcularPromediosPorApartado = () => {
+    // Mapeo de apartados -> índices de rows
+    const grupos = {
+      'Comunicacion efectiva': [0,1,2,3],
+      'Instrumentalidad de decisiones': [4,5],
+      'Aporte profesional': [6,7,8,9],
+      'Colaboracion': [10,11,12],
+      'Relaciones interpersonales': [13,14,15],
+      'Gestion de procedimientos': [16,17,18],
+      'Cumplimiento de funciones del cargo': [19,20,21,22],
+    };
+
+    const promedios = {};
+
+    Object.entries(grupos).forEach(([nombre, indices]) => {
+      let suma = 0;
+      let cuenta = 0;
+      indices.forEach(i => {
+        const workerVal = Number(rows[i]?.worker) || 0;
+        const bossVal = Number(rows[i]?.boss) || 0;
+        if (workerVal > 0 && bossVal > 0) {
+          suma += (workerVal + bossVal) / 2;
+          cuenta += 1;
+        } else if (workerVal > 0) {
+          suma += workerVal;
+          cuenta += 1;
+        } else if (bossVal > 0) {
+          suma += bossVal;
+          cuenta += 1;
+        }
+      });
+      promedios[nombre] = cuenta === 0 ? 0 : Number((suma / cuenta).toFixed(2));
+    });
+
+    return promedios;
   };
 
   // Función de validación de formulario
@@ -533,46 +571,76 @@ function PerformanceEvaluation() {
     setFormTouched(true);
   };
 
-  // Modificar el manejador de envío del formulario
+  // Modificar el manejador de envío del formulario (envío con promedios y datos completos)
   const handleSubmitEvaluation = async () => {
-    // Validar el formulario antes de enviar
-    if (!validarFormulario()) {
-      window.scrollTo(0, 0); // Desplazarse al inicio para ver la alerta
-      alert('Error: Todos los campos son obligatorios. Por favor, complete todos los campos antes de enviar la evaluación.');
-      // Los errores se mostrarán automáticamente y desaparecerán en 6 segundos
+    // Validación básica: promedio de competencias y firmas
+    const promedioCompetencias = calcularPromedioCompetencias();
+    const promedioNumber = Number(promedioCompetencias);
+
+    const erroresBasicos = {};
+    if (!employeeSignature) {
+      erroresBasicos.employeeSignature = true;
+    }
+    if (!bossSignature) {
+      erroresBasicos.bossSignature = true;
+    }
+
+    if (!promedioNumber || promedioNumber <= 0) {
+      setValidationErrors(erroresBasicos);
+      window.scrollTo(0, 0);
+      alert('Seleccione al menos una calificación en competencias para calcular el promedio.');
       return;
     }
 
-    // Crear un objeto FormData para enviar la evaluación completa incluyendo las imágenes
+    if (Object.keys(erroresBasicos).length > 0) {
+      setValidationErrors(erroresBasicos);
+      window.scrollTo(0, 0);
+      alert('Las firmas del Evaluado y del Jefe Directo son obligatorias.');
+      return;
+    }
+
+    // Calcular promedios por apartado, HSEQ y resultado general
+    const promediosPorApartado = calcularPromediosPorApartado();
+    const promedioHseq = Number(calcularPromedioHseq());
+    const promediosComponentes = [];
+    if (promedioNumber > 0) promediosComponentes.push(promedioNumber);
+    if (promedioHseq > 0) promediosComponentes.push(promedioHseq);
+    const promedioGeneral = promediosComponentes.length > 0 
+      ? Number((promediosComponentes.reduce((a, b) => a + b, 0) / promediosComponentes.length).toFixed(2)) 
+      : 0;
+
+    // Crear un objeto FormData para enviar sólo lo requerido
     const formData = new FormData();
-    
-    // Agregar datos de la evaluación
     formData.append('employeeId', employee.id_empleado);
+    formData.append('promedioCompetencias', String(promedioCompetencias));
+    formData.append('hseqAverage', String(promedioHseq));
+    formData.append('generalAverage', String(promedioGeneral));
+    formData.append('groupAverages', JSON.stringify(promediosPorApartado));
+
+    // Enviar datos completos para persistencia detallada
     formData.append('competenciasData', JSON.stringify(rows));
     formData.append('hseqData', JSON.stringify(hseqItems));
-    
-    // Agregar las firmas si existen
+    formData.append('mejoramiento', JSON.stringify(mejoramiento));
+    formData.append('planAccion', JSON.stringify(planAccion));
+
     if (employeeSignature) {
       formData.append('employeeSignature', employeeSignature);
     }
-    
     if (bossSignature) {
       formData.append('bossSignature', bossSignature);
     }
-    
+
     try {
       setIsSubmitting(true);
       const apiUrl = process.env.REACT_APP_API_BASE_URL;
-      const response = await fetch(`${apiUrl}/evaluations/save`, {
+      const response = await fetch(`${apiUrl}/api/evaluations/save`, {
         method: 'POST',
-        body: formData, // No establecer Content-Type, FormData lo hace automáticamente
+        body: formData,
       });
-      
       const data = await response.json();
-      
+
       if (response.ok) {
         alert('Evaluación guardada exitosamente');
-        // Redirigir o mostrar mensaje de éxito
       } else {
         alert(`Error al guardar: ${data.message || 'Error desconocido'}`);
       }
@@ -1073,7 +1141,6 @@ function PerformanceEvaluation() {
                   />
                 </td>
               </tr>
-            </tbody>
             <tr>
               <td colSpan={7} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
             </tr>
@@ -1859,15 +1926,6 @@ function PerformanceEvaluation() {
                   />
                 </td>
               </tr>
-              <tr>
-              <td colSpan={3} style={{ fontWeight: "bold", backgroundColor: "#f5f5f5", padding: "0.8rem", textAlign: "right" }}>
-                PROMEDIO CALIFICACIÓN COMPETENCIAS:
-              </td>
-              <td colSpan={2} style={{ backgroundColor: "#f5f5f5", padding: "0.8rem", textAlign: "center", fontWeight: "bold" }}>
-                {calcularPromedioCompetencias()}
-              </td>
-              <td style={{ backgroundColor: "#f5f5f5" }}></td>
-            </tr>
               {/* Competencia: Cumplimiento de funciones del cargo */}
               <tr>
                 <td
@@ -2022,6 +2080,7 @@ function PerformanceEvaluation() {
               </td>
               <td style={{ backgroundColor: "#f5f5f5" }}></td>
             </tr>
+            </tbody>
           </table>
         </section>
         

@@ -593,7 +593,7 @@ CREATE TABLE `evaluacion` (
   `id_evaluacion` int(11) NOT NULL,
   `id_empleado` int(11) NOT NULL,
   `fecha_evaluacion` datetime NOT NULL,
-  `observaciones_generales` varchar(255) DEFAULT NULL
+  `observaciones_generales` longtext DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------

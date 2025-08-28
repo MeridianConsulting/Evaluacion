@@ -1,6 +1,12 @@
 <?php
+require_once __DIR__ . '/../config/db.php';
 
 class EvaluationController {
+  private $db;
+
+  public function __construct() {
+    $this->db = (new Database())->getConnection();
+  }
   public function saveEvaluation() {
     // Verificar si la solicitud contiene datos
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -12,8 +18,13 @@ class EvaluationController {
     // Obtener los datos de la evaluación
     $employeeId = $_POST['employeeId'] ?? null;
     $competenciasData = json_decode($_POST['competenciasData'] ?? '[]', true);
-    $funcionesData = json_decode($_POST['funcionesData'] ?? '[]', true);
     $hseqData = json_decode($_POST['hseqData'] ?? '[]', true);
+    $mejoramiento = json_decode($_POST['mejoramiento'] ?? 'null', true);
+    $planAccion = json_decode($_POST['planAccion'] ?? 'null', true);
+    $promedioCompetencias = isset($_POST['promedioCompetencias']) ? (float)$_POST['promedioCompetencias'] : null;
+    $hseqAverage = isset($_POST['hseqAverage']) ? (float)$_POST['hseqAverage'] : null;
+    $generalAverage = isset($_POST['generalAverage']) ? (float)$_POST['generalAverage'] : null;
+    $groupAverages = json_decode($_POST['groupAverages'] ?? 'null', true);
     
     if (!$employeeId) {
       http_response_code(400);
@@ -53,12 +64,61 @@ class EvaluationController {
       }
     }
     
-    // Aquí guardarías la evaluación en la base de datos, incluyendo las rutas de las firmas
+    // Guardar evaluación y detalle en la base de datos
+    $this->db->begin_transaction();
+    try {
+      // Observaciones generales como JSON con metadatos adicionales
+      $observaciones = [
+        'mejoramiento' => $mejoramiento,
+        'planAccion' => $planAccion,
+        'hseqData' => $hseqData,
+        'competenciasData' => $competenciasData,
+        'promedios' => [
+          'competencias' => $promedioCompetencias,
+          'hseq' => $hseqAverage,
+          'general' => $generalAverage,
+          'porApartado' => $groupAverages,
+        ],
+        'employeeSignature' => $employeeSignaturePath,
+        'bossSignature' => $bossSignaturePath,
+      ];
+
+      $observacionesJson = json_encode($observaciones, JSON_UNESCAPED_UNICODE);
+
+      // Insert principal en evaluacion
+      $insertEvalSql = 'INSERT INTO evaluacion (id_empleado, fecha_evaluacion, observaciones_generales) VALUES (?, NOW(), ?)';
+      $stmtEval = $this->db->prepare($insertEvalSql);
+      if (!$stmtEval) {
+        throw new Exception('Error al preparar INSERT evaluacion: ' . $this->db->error);
+      }
+      $stmtEval->bind_param('is', $employeeId, $observacionesJson);
+      if (!$stmtEval->execute()) {
+        throw new Exception('Error al ejecutar INSERT evaluacion: ' . $stmtEval->error);
+      }
+      $evaluationId = $stmtEval->insert_id;
+      $stmtEval->close();
+
+      // Nota: Se omite el guardado en detalle_evaluacion para evitar fallas con FK.
+
+      $this->db->commit();
+
+      echo json_encode([
+        'success' => true,
+        'message' => 'Evaluación guardada exitosamente',
+        'id_evaluacion' => $evaluationId,
+      ], JSON_UNESCAPED_UNICODE);
+      return;
+    } catch (Exception $e) {
+      $this->db->rollback();
+      http_response_code(500);
+      echo json_encode([
+        'success' => false,
+        'message' => 'Error al guardar la evaluación',
+        'error' => $e->getMessage(),
+      ], JSON_UNESCAPED_UNICODE);
+      return;
+    }
     
-    // Devolver respuesta
-    echo json_encode([
-      "success" => true,
-      "message" => "Evaluación guardada exitosamente"
-    ]);
+    // Nota: la respuesta ya fue enviada tras el commit o rollback
   }
 }

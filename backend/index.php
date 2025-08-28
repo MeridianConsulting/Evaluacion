@@ -11,6 +11,7 @@ require_once __DIR__ . '/controllers/userController.php';
 require_once __DIR__ . '/controllers/cargoController.php';
 require_once __DIR__ . '/controllers/employeeController.php';
 require_once __DIR__ . '/controllers/funcionesController.php';
+require_once __DIR__ . '/controllers/evaluationController.php';
 
 // Configurar el manejo de errores
 error_reporting(E_ALL);
@@ -68,6 +69,13 @@ function handleRequest($method, $path) {
         $id = $matches[1];
         $controller = new CargoController();
         $controller->deleteCargo($id);
+        return;
+    }
+
+    // Rutas para evaluaciones
+    if ($path === "api/evaluations/save" && $method === "POST") {
+        $controller = new EvaluationController();
+        $controller->saveEvaluation();
         return;
     }
 
