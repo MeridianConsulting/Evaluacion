@@ -571,7 +571,7 @@ function PerformanceEvaluation() {
     setFormTouched(true);
   };
 
-  // Modificar el manejador de envío del formulario (envío con promedios y datos completos)
+  // Modificar el manejador de envío del formulario para la nueva estructura nativa
   const handleSubmitEvaluation = async () => {
     // Validación básica: promedio de competencias y firmas
     const promedioCompetencias = calcularPromedioCompetencias();
@@ -609,15 +609,21 @@ function PerformanceEvaluation() {
       ? Number((promediosComponentes.reduce((a, b) => a + b, 0) / promediosComponentes.length).toFixed(2)) 
       : 0;
 
-    // Crear un objeto FormData para enviar sólo lo requerido
+    // Crear un objeto FormData para enviar datos a la nueva estructura nativa
     const formData = new FormData();
     formData.append('employeeId', employee.id_empleado);
     formData.append('promedioCompetencias', String(promedioCompetencias));
     formData.append('hseqAverage', String(promedioHseq));
     formData.append('generalAverage', String(promedioGeneral));
     formData.append('groupAverages', JSON.stringify(promediosPorApartado));
+    
+    // Agregar período de evaluación (puedes modificar esto según tus necesidades)
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    formData.append('periodoEvaluacion', `${year}-${month}`);
 
-    // Enviar datos completos para persistencia detallada
+    // Enviar datos completos para persistencia detallada en las nuevas tablas
     formData.append('competenciasData', JSON.stringify(rows));
     formData.append('hseqData', JSON.stringify(hseqItems));
     formData.append('mejoramiento', JSON.stringify(mejoramiento));
@@ -633,16 +639,28 @@ function PerformanceEvaluation() {
     try {
       setIsSubmitting(true);
       const apiUrl = process.env.REACT_APP_API_BASE_URL;
-      const response = await fetch(`${apiUrl}/api/evaluations/save`, {
+      // Cambiar la URL para usar el nuevo controlador nativo
+      const response = await fetch(`${apiUrl}/api/evaluations/save-native`, {
         method: 'POST',
         body: formData,
       });
       const data = await response.json();
 
       if (response.ok) {
-        alert('Evaluación guardada exitosamente');
+        alert('Evaluación guardada exitosamente en la nueva estructura');
+        // Opcional: limpiar el formulario después del éxito
+        // setRows(initialRows);
+        // setHseqItems(initialHseqItems);
+        // setMejoramiento({ fortalezas: '', aspectosMejorar: '' });
+        // setPlanAccion({ actividad: '', responsable: '', seguimiento: '', fecha: '' });
+        // setEmployeeSignature(null);
+        // setBossSignature(null);
       } else {
-        alert(`Error al guardar: ${data.message || 'Error desconocido'}`);
+        console.error('Error del servidor:', data);
+        const errorMessage = data.error ? 
+          `Error: ${data.error}` : 
+          `Error al guardar: ${data.message || 'Error desconocido'}`;
+        alert(errorMessage);
       }
     } catch (error) {
       console.error('Error al enviar la evaluación:', error);

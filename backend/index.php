@@ -12,6 +12,7 @@ require_once __DIR__ . '/controllers/cargoController.php';
 require_once __DIR__ . '/controllers/employeeController.php';
 require_once __DIR__ . '/controllers/funcionesController.php';
 require_once __DIR__ . '/controllers/evaluationController.php';
+require_once __DIR__ . '/controllers/evaluationControllerNativo.php';
 
 // Configurar el manejo de errores
 error_reporting(E_ALL);
@@ -75,6 +76,13 @@ function handleRequest($method, $path) {
     // Rutas para evaluaciones
     if ($path === "api/evaluations/save" && $method === "POST") {
         $controller = new EvaluationController();
+        $controller->saveEvaluation();
+        return;
+    }
+
+    // Rutas para evaluaciones con estructura nativa
+    if ($path === "api/evaluations/save-native" && $method === "POST") {
+        $controller = new EvaluationControllerNativo();
         $controller->saveEvaluation();
         return;
     }

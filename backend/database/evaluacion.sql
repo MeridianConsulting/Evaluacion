@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-04-2025 a las 20:31:52
+-- Tiempo de generación: 01-09-2025 a las 23:07:28
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -593,7 +593,124 @@ CREATE TABLE `evaluacion` (
   `id_evaluacion` int(11) NOT NULL,
   `id_empleado` int(11) NOT NULL,
   `fecha_evaluacion` datetime NOT NULL,
-  `observaciones_generales` longtext DEFAULT NULL
+  `periodo_evaluacion` varchar(50) DEFAULT NULL,
+  `observaciones_generales` longtext DEFAULT NULL,
+  `estado_evaluacion` enum('BORRADOR','COMPLETADA','APROBADA') DEFAULT 'BORRADOR',
+  `fecha_creacion` datetime DEFAULT current_timestamp(),
+  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `evaluacion`
+--
+
+INSERT INTO `evaluacion` (`id_evaluacion`, `id_empleado`, `fecha_evaluacion`, `periodo_evaluacion`, `observaciones_generales`, `estado_evaluacion`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 794, '2025-09-01 15:34:54', NULL, '{\"mejoramiento\":{\"fortalezas\":\"tes\",\"aspectosMejorar\":\"tes\"},\"planAccion\":{\"actividad\":\"tes\",\"responsable\":\"test\",\"seguimiento\":\"tes\",\"fecha\":\"232323-03-31\"},\"hseqData\":[{\"id\":1,\"responsabilidad\":\"Procurar el cuidado integral de su salud.\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":2,\"responsabilidad\":\"Suministrar información clara, veraz y completa sobre su estado de salud.\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"2\"},{\"id\":3,\"responsabilidad\":\"Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":4,\"responsabilidad\":\"Informar oportunamente al empleador o contratante acerca de los riesgos y\\/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":5,\"responsabilidad\":\"Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":6,\"responsabilidad\":\"Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":7,\"responsabilidad\":\"Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":8,\"responsabilidad\":\"Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":9,\"responsabilidad\":\"Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":10,\"responsabilidad\":\"Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":11,\"responsabilidad\":\"Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":12,\"responsabilidad\":\"Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.\",\"calificacion\":\"\",\"autoevaluacion\":\"2\",\"evaluacionJefe\":\"1\"},{\"id\":13,\"responsabilidad\":\"Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\"},{\"id\":14,\"responsabilidad\":\"Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.\",\"calificacion\":\"\",\"autoevaluacion\":\"2\",\"evaluacionJefe\":\"3\"},{\"id\":15,\"responsabilidad\":\"Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.\",\"calificacion\":\"\",\"autoevaluacion\":\"2\",\"evaluacionJefe\":\"1\"},{\"id\":16,\"responsabilidad\":\"Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.\",\"calificacion\":\"\",\"autoevaluacion\":\"2\",\"evaluacionJefe\":\"1\"},{\"id\":17,\"responsabilidad\":\"Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"3\"},{\"id\":18,\"responsabilidad\":\"Participar en simulacros, elección de COPASST y elección de comité de convivencia.\",\"calificacion\":\"\",\"autoevaluacion\":\"2\",\"evaluacionJefe\":\"2\"},{\"id\":19,\"responsabilidad\":\"Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y\\/o comité de emergencias.\",\"calificacion\":\"\",\"autoevaluacion\":\"2\",\"evaluacionJefe\":\"2\"},{\"id\":20,\"responsabilidad\":\"Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.\",\"calificacion\":\"\",\"autoevaluacion\":\"3\",\"evaluacionJefe\":\"1\"}],\"competenciasData\":[{\"id\":1,\"aspecto\":\"Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor\",\"worker\":3,\"boss\":3,\"average\":\"3.0\"},{\"id\":2,\"aspecto\":\"Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión\",\"worker\":2,\"boss\":3,\"average\":\"2.5\"},{\"id\":3,\"aspecto\":\"Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.\",\"worker\":2,\"boss\":2,\"average\":\"2.0\"},{\"id\":4,\"aspecto\":\"Da respuesta a cada comunicación recibida de modo inmediato\",\"worker\":1,\"boss\":1,\"average\":\"1.0\"},{\"id\":5,\"aspecto\":\"Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia\",\"worker\":2,\"boss\":3,\"average\":\"2.5\"},{\"id\":6,\"aspecto\":\"Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.\",\"worker\":2,\"boss\":3,\"average\":\"2.5\"},{\"id\":7,\"aspecto\":\"Aporta soluciones alternativas en lo que refiere a sus saberes específicos.\",\"worker\":2,\"boss\":2,\"average\":\"2.0\"},{\"id\":8,\"aspecto\":\"Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.\",\"worker\":2,\"boss\":2,\"average\":\"2.0\"},{\"id\":9,\"aspecto\":\"Anticipa problemas y posibles que advierten su carácter de especialista.\",\"worker\":2,\"boss\":2,\"average\":\"2.0\"},{\"id\":10,\"aspecto\":\"Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.\",\"worker\":2,\"boss\":2,\"average\":\"2.0\"},{\"id\":11,\"aspecto\":\"Articula sus actuaciones con las de los demás\",\"worker\":1,\"boss\":2,\"average\":\"1.5\"},{\"id\":12,\"aspecto\":\"Cumple los compromisos adquiridos\",\"worker\":2,\"boss\":2,\"average\":\"2.0\"},{\"id\":13,\"aspecto\":\"Facilita la labor de sus supervisores y compañeros de trabajo\",\"worker\":2,\"boss\":2,\"average\":\"2.0\"},{\"id\":14,\"aspecto\":\"Escucha con interés y capta las necesidades de los demás.\",\"worker\":2,\"boss\":3,\"average\":\"2.5\"},{\"id\":15,\"aspecto\":\"Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.\",\"worker\":4,\"boss\":3,\"average\":\"3.5\"},{\"id\":16,\"aspecto\":\"Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.\",\"worker\":1,\"boss\":2,\"average\":\"1.5\"},{\"id\":17,\"aspecto\":\"Ejecuta sus tareas con los criterios de calidad establecidos.\",\"worker\":2,\"boss\":1,\"average\":\"1.5\"},{\"id\":18,\"aspecto\":\"Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.\",\"worker\":1,\"boss\":1,\"average\":\"1.0\"},{\"id\":19,\"aspecto\":\"Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.\",\"worker\":1,\"boss\":\"\",\"average\":\"0.5\"},{\"id\":20,\"aspecto\":\"Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.\",\"worker\":1,\"boss\":1,\"average\":\"1.0\"},{\"id\":21,\"aspecto\":\"Demuestra dominio técnico y procedimental en las tareas críticas del rol.\",\"worker\":2,\"boss\":1,\"average\":\"1.5\"},{\"id\":22,\"aspecto\":\"Entrega resultados alineados con los estándares y tiempos definidos para su cargo.\",\"worker\":1,\"boss\":\"\",\"average\":\"0.5\"},{\"id\":23,\"aspecto\":\"Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.\",\"worker\":\"\",\"boss\":\"\",\"average\":\"\"}],\"promedios\":{\"competencias\":1.89,\"hseq\":1.38,\"general\":1.63,\"porApartado\":{\"Comunicacion efectiva\":2.13,\"Instrumentalidad de decisiones\":2.5,\"Aporte profesional\":2,\"Colaboracion\":1.83,\"Relaciones interpersonales\":2.5,\"Gestion de procedimientos\":1.17,\"Cumplimiento de funciones del cargo\":1.17}},\"employeeSignature\":\"uploads\\/signatures\\/employee_794_1756758894.png\",\"bossSignature\":\"uploads\\/signatures\\/boss_794_1756758894.png\"}', 'BORRADOR', '2025-09-01 16:00:06', '2025-09-01 16:00:06');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `evaluacion_competencias`
+--
+
+CREATE TABLE `evaluacion_competencias` (
+  `id_competencia` int(11) NOT NULL,
+  `id_evaluacion` int(11) NOT NULL,
+  `id_aspecto` int(11) NOT NULL,
+  `aspecto` text NOT NULL,
+  `calificacion_empleado` varchar(10) DEFAULT NULL,
+  `calificacion_jefe` varchar(10) DEFAULT NULL,
+  `promedio` decimal(3,2) DEFAULT NULL,
+  `fecha_creacion` datetime DEFAULT current_timestamp(),
+  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `evaluacion_firmas`
+--
+
+CREATE TABLE `evaluacion_firmas` (
+  `id_firma` int(11) NOT NULL,
+  `id_evaluacion` int(11) NOT NULL,
+  `firma_empleado` varchar(500) DEFAULT NULL,
+  `firma_jefe` varchar(500) DEFAULT NULL,
+  `fecha_creacion` datetime DEFAULT current_timestamp(),
+  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `evaluacion_hseq`
+--
+
+CREATE TABLE `evaluacion_hseq` (
+  `id_hseq` int(11) NOT NULL,
+  `id_evaluacion` int(11) NOT NULL,
+  `id_responsabilidad` int(11) NOT NULL,
+  `responsabilidad` text NOT NULL,
+  `calificacion` varchar(10) DEFAULT NULL,
+  `autoevaluacion` varchar(10) DEFAULT NULL,
+  `evaluacion_jefe` varchar(10) DEFAULT NULL,
+  `fecha_creacion` datetime DEFAULT current_timestamp(),
+  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `evaluacion_mejoramiento`
+--
+
+CREATE TABLE `evaluacion_mejoramiento` (
+  `id_mejoramiento` int(11) NOT NULL,
+  `id_evaluacion` int(11) NOT NULL,
+  `fortalezas` text DEFAULT NULL,
+  `aspectos_mejorar` text DEFAULT NULL,
+  `fecha_creacion` datetime DEFAULT current_timestamp(),
+  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `evaluacion_plan_accion`
+--
+
+CREATE TABLE `evaluacion_plan_accion` (
+  `id_plan_accion` int(11) NOT NULL,
+  `id_evaluacion` int(11) NOT NULL,
+  `actividad` text NOT NULL,
+  `responsable` varchar(255) NOT NULL,
+  `seguimiento` text DEFAULT NULL,
+  `fecha` date DEFAULT NULL,
+  `fecha_creacion` datetime DEFAULT current_timestamp(),
+  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `evaluacion_promedios`
+--
+
+CREATE TABLE `evaluacion_promedios` (
+  `id_promedio` int(11) NOT NULL,
+  `id_evaluacion` int(11) NOT NULL,
+  `promedio_competencias` decimal(3,2) DEFAULT NULL,
+  `promedio_hseq` decimal(3,2) DEFAULT NULL,
+  `promedio_general` decimal(3,2) DEFAULT NULL,
+  `promedio_comunicacion_efectiva` decimal(3,2) DEFAULT NULL,
+  `promedio_instrumentalidad_decisiones` decimal(3,2) DEFAULT NULL,
+  `promedio_aporte_profesional` decimal(3,2) DEFAULT NULL,
+  `promedio_colaboracion` decimal(3,2) DEFAULT NULL,
+  `promedio_relaciones_interpersonales` decimal(3,2) DEFAULT NULL,
+  `promedio_gestion_procedimientos` decimal(3,2) DEFAULT NULL,
+  `promedio_cumplimiento_funciones` decimal(3,2) DEFAULT NULL,
+  `fecha_creacion` datetime DEFAULT current_timestamp(),
+  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -4941,7 +5058,51 @@ ALTER TABLE `empleados`
 --
 ALTER TABLE `evaluacion`
   ADD PRIMARY KEY (`id_evaluacion`),
-  ADD KEY `fk_evaluacion_empleado` (`id_empleado`);
+  ADD KEY `fk_evaluacion_empleado` (`id_empleado`),
+  ADD KEY `idx_evaluacion_empleado_fecha` (`id_empleado`,`fecha_evaluacion`),
+  ADD KEY `idx_evaluacion_estado` (`estado_evaluacion`);
+
+--
+-- Indices de la tabla `evaluacion_competencias`
+--
+ALTER TABLE `evaluacion_competencias`
+  ADD PRIMARY KEY (`id_competencia`),
+  ADD KEY `fk_competencias_evaluacion` (`id_evaluacion`);
+
+--
+-- Indices de la tabla `evaluacion_firmas`
+--
+ALTER TABLE `evaluacion_firmas`
+  ADD PRIMARY KEY (`id_firma`),
+  ADD KEY `fk_firmas_evaluacion` (`id_evaluacion`);
+
+--
+-- Indices de la tabla `evaluacion_hseq`
+--
+ALTER TABLE `evaluacion_hseq`
+  ADD PRIMARY KEY (`id_hseq`),
+  ADD KEY `fk_hseq_evaluacion` (`id_evaluacion`);
+
+--
+-- Indices de la tabla `evaluacion_mejoramiento`
+--
+ALTER TABLE `evaluacion_mejoramiento`
+  ADD PRIMARY KEY (`id_mejoramiento`),
+  ADD KEY `fk_mejoramiento_evaluacion` (`id_evaluacion`);
+
+--
+-- Indices de la tabla `evaluacion_plan_accion`
+--
+ALTER TABLE `evaluacion_plan_accion`
+  ADD PRIMARY KEY (`id_plan_accion`),
+  ADD KEY `fk_plan_accion_evaluacion` (`id_evaluacion`);
+
+--
+-- Indices de la tabla `evaluacion_promedios`
+--
+ALTER TABLE `evaluacion_promedios`
+  ADD PRIMARY KEY (`id_promedio`),
+  ADD KEY `fk_promedios_evaluacion` (`id_evaluacion`);
 
 --
 -- Indices de la tabla `funciones`
@@ -4976,7 +5137,43 @@ ALTER TABLE `empleados`
 -- AUTO_INCREMENT de la tabla `evaluacion`
 --
 ALTER TABLE `evaluacion`
-  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `evaluacion_competencias`
+--
+ALTER TABLE `evaluacion_competencias`
+  MODIFY `id_competencia` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `evaluacion_firmas`
+--
+ALTER TABLE `evaluacion_firmas`
+  MODIFY `id_firma` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `evaluacion_hseq`
+--
+ALTER TABLE `evaluacion_hseq`
+  MODIFY `id_hseq` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `evaluacion_mejoramiento`
+--
+ALTER TABLE `evaluacion_mejoramiento`
+  MODIFY `id_mejoramiento` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `evaluacion_plan_accion`
+--
+ALTER TABLE `evaluacion_plan_accion`
+  MODIFY `id_plan_accion` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `evaluacion_promedios`
+--
+ALTER TABLE `evaluacion_promedios`
+  MODIFY `id_promedio` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Restricciones para tablas volcadas
@@ -5000,6 +5197,42 @@ ALTER TABLE `empleados`
 --
 ALTER TABLE `evaluacion`
   ADD CONSTRAINT `fk_evaluacion_empleado` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `evaluacion_competencias`
+--
+ALTER TABLE `evaluacion_competencias`
+  ADD CONSTRAINT `fk_competencias_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `evaluacion_firmas`
+--
+ALTER TABLE `evaluacion_firmas`
+  ADD CONSTRAINT `fk_firmas_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `evaluacion_hseq`
+--
+ALTER TABLE `evaluacion_hseq`
+  ADD CONSTRAINT `fk_hseq_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `evaluacion_mejoramiento`
+--
+ALTER TABLE `evaluacion_mejoramiento`
+  ADD CONSTRAINT `fk_mejoramiento_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `evaluacion_plan_accion`
+--
+ALTER TABLE `evaluacion_plan_accion`
+  ADD CONSTRAINT `fk_plan_accion_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `evaluacion_promedios`
+--
+ALTER TABLE `evaluacion_promedios`
+  ADD CONSTRAINT `fk_promedios_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `funciones`
