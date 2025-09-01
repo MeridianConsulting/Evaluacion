@@ -647,14 +647,294 @@ function PerformanceEvaluation() {
       const data = await response.json();
 
       if (response.ok) {
-        alert('Evaluación guardada exitosamente en la nueva estructura');
-        // Opcional: limpiar el formulario después del éxito
-        // setRows(initialRows);
-        // setHseqItems(initialHseqItems);
-        // setMejoramiento({ fortalezas: '', aspectosMejorar: '' });
-        // setPlanAccion({ actividad: '', responsable: '', seguimiento: '', fecha: '' });
-        // setEmployeeSignature(null);
-        // setBossSignature(null);
+        // Mostrar mensaje de éxito
+        alert('¡Evaluación diligenciada con éxito!');
+        
+        // Limpiar el formulario después del éxito
+        setRows([
+          {
+            id: 1,
+            aspecto: "Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 2,
+            aspecto: "Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 3,
+            aspecto: "Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 4,
+            aspecto: "Da respuesta a cada comunicación recibida de modo inmediato",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 5,
+            aspecto: "Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 6,
+            aspecto: "Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 7,
+            aspecto: "Aporta soluciones alternativas en lo que refiere a sus saberes específicos.",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 8,
+            aspecto: "Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 9,
+            aspecto: "Anticipa problemas y posibles que advierten su carácter de especialista.",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 10,
+            aspecto: "Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 11,
+            aspecto: "Articula sus actuaciones con las de los demás",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 12,
+            aspecto: "Cumple los compromisos adquiridos",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 13,
+            aspecto: "Facilita la labor de sus supervisores y compañeros de trabajo",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 14,
+            aspecto: "Escucha con interés y capta las necesidades de los demás.",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 15,
+            aspecto: "Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 16,
+            aspecto: "Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 17,
+            aspecto: "Ejecuta sus tareas con los criterios de calidad establecidos.",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 18,
+            aspecto: "Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 19,
+            aspecto: "Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 20,
+            aspecto: "Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 21,
+            aspecto: "Demuestra dominio técnico y procedimental en las tareas críticas del rol.",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 22,
+            aspecto: "Entrega resultados alineados con los estándares y tiempos definidos para su cargo.",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+          {
+            id: 23,
+            aspecto: "Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.",
+            worker: "",
+            boss: "",
+            average: "",
+          },
+        ]);
+        
+        setHseqItems([
+          {
+            id: 1,
+            responsabilidad: "Procurar el cuidado integral de su salud.",
+            autoevaluacion: "",
+            evaluacionJefe: "",
+          },
+          {
+            id: 2,
+            responsabilidad: "Suministrar información clara, veraz y completa sobre su estado de salud.",
+            autoevaluacion: "",
+            evaluacionJefe: "",
+          },
+          {
+            id: 3,
+            responsabilidad: "Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.",
+            calificacion: "",
+          },
+          {
+            id: 4,
+            responsabilidad: "Informar oportunamente al empleador o contratante acerca de los riesgos y/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.",
+            calificacion: "",
+          },
+          {
+            id: 5,
+            responsabilidad: "Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.",
+            calificacion: "",
+          },
+          {
+            id: 6,
+            responsabilidad: "Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.",
+            calificacion: "",
+          },
+          {
+            id: 7,
+            responsabilidad: "Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.",
+            calificacion: "",
+          },
+          {
+            id: 8,
+            responsabilidad: "Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.",
+            calificacion: "",
+          },
+          {
+            id: 9,
+            responsabilidad: "Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.",
+            calificacion: "",
+          },
+          {
+            id: 10,
+            responsabilidad: "Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.",
+            calificacion: "",
+          },
+          {
+            id: 11,
+            responsabilidad: "Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.",
+            calificacion: "",
+          },
+          {
+            id: 12,
+            responsabilidad: "Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.",
+            calificacion: "",
+          },
+          {
+            id: 13,
+            responsabilidad: "Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.",
+            calificacion: "",
+          },
+          {
+            id: 14,
+            responsabilidad: "Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.",
+            calificacion: "",
+          },
+          {
+            id: 15,
+            responsabilidad: "Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.",
+            calificacion: "",
+          },
+          {
+            id: 16,
+            responsabilidad: "Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.",
+            calificacion: "",
+          },
+          {
+            id: 17,
+            responsabilidad: "Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.",
+            calificacion: "",
+          },
+          {
+            id: 18,
+            responsabilidad: "Participar en simulacros, elección de COPASST y elección de comité de convivencia.",
+            calificacion: "",
+          },
+          {
+            id: 19,
+            responsabilidad: "Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y/o comité de emergencias.",
+            calificacion: "",
+          },
+          {
+            id: 20,
+            responsabilidad: "Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.",
+            calificacion: "",
+          }
+        ]);
+        
+        setMejoramiento({ fortalezas: '', aspectosMejorar: '' });
+        setPlanAccion({ actividad: '', responsable: '', seguimiento: '', fecha: '' });
+        setEmployeeSignature(null);
+        setBossSignature(null);
+        setDatosGenerales({
+          fechaIngreso: '',
+          fechaEvaluacion: '',
+          procesoGestion: '',
+          nombreEvaluador: '',
+          cargoEvaluador: '',
+          procesoGestionEvaluador: '',
+        });
+        
+        // Redirigir al inicio de la página web
+        window.location.href = '/';
       } else {
         console.error('Error del servidor:', data);
         const errorMessage = data.error ? 
