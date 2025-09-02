@@ -87,6 +87,23 @@ function handleRequest($method, $path) {
         return;
     }
 
+    // Ruta para obtener evaluaciones del empleado con detalles
+    if (preg_match("#^api/evaluations/employee/(\d+)$#", $path, $matches) && $method === "GET") {
+        $employeeId = $matches[1];
+        $controller = new EvaluationControllerNativo();
+        $controller->getEmployeeEvaluationsWithDetails($employeeId);
+        return;
+    }
+
+    // Ruta para descargar PDF de evaluación
+    if (preg_match("#^api/evaluations/(\d+)/pdf/(\d+)$#", $path, $matches) && $method === "GET") {
+        $evaluationId = $matches[1];
+        $employeeId = $matches[2];
+        $controller = new EvaluationControllerNativo();
+        $controller->downloadEvaluationPDF($evaluationId, $employeeId);
+        return;
+    }
+
     // Rutas para el controlador de funciones
     if ($path === "api/funciones" && $method === "GET") {
         $controller = new FuncionesController();

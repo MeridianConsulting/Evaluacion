@@ -19,6 +19,11 @@ register_shutdown_function(function() {
 
 require_once __DIR__ . '/../config/db.php';
 
+// Incluir TCPDF si está disponible
+if (file_exists(__DIR__ . '/../vendor/tcpdf/tcpdf.php')) {
+    require_once __DIR__ . '/../vendor/tcpdf/tcpdf.php';
+}
+
 class EvaluationControllerNativo {
     private $db;
 
@@ -493,6 +498,304 @@ class EvaluationControllerNativo {
                 'message' => 'Error al obtener las evaluaciones',
                 'error' => $e->getMessage(),
             ], JSON_UNESCAPED_UNICODE);
+        }
+    }
+
+    /**
+     * Obtiene evaluaciones con datos completos para mostrar en resultados
+     */
+    public function getEmployeeEvaluationsWithDetails($employeeId) {
+        try {
+            // Verificar que el empleado existe
+            $stmt = $this->db->prepare("SELECT * FROM empleados WHERE id_empleado = ?");
+            $stmt->bind_param('i', $employeeId);
+            $stmt->execute();
+            $employee = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            if (!$employee) {
+                http_response_code(404);
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Empleado no encontrado'
+                ]);
+                return;
+            }
+
+            // Obtener evaluaciones básicas
+            $stmt = $this->db->prepare("
+                SELECT e.*, emp.nombre, emp.cargo, emp.area 
+                FROM evaluacion e 
+                JOIN empleados emp ON e.id_empleado = emp.id_empleado 
+                WHERE e.id_empleado = ? 
+                ORDER BY e.fecha_evaluacion DESC
+            ");
+            $stmt->bind_param('i', $employeeId);
+            $stmt->execute();
+            $evaluaciones = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+
+            // Para cada evaluación, obtener los datos completos
+            $evaluacionesCompletas = [];
+            foreach ($evaluaciones as $evaluacion) {
+                $evaluacionId = $evaluacion['id_evaluacion'];
+                
+                // Obtener promedios
+                $promedios = $this->getPromedios($evaluacionId);
+                
+                // Crear objeto de evaluación con datos resumidos
+                $evaluacionCompleta = [
+                    'id_evaluacion' => $evaluacionId,
+                    'fecha_evaluacion' => $evaluacion['fecha_evaluacion'],
+                    'periodo_evaluacion' => $evaluacion['periodo_evaluacion'],
+                    'estado_evaluacion' => $evaluacion['estado_evaluacion'],
+                    'empleado' => [
+                        'nombre' => $evaluacion['nombre'],
+                        'cargo' => $evaluacion['cargo'],
+                        'area' => $evaluacion['area']
+                    ],
+                    'promedios' => $promedios
+                ];
+                
+                $evaluacionesCompletas[] = $evaluacionCompleta;
+            }
+
+            echo json_encode([
+                'success' => true,
+                'evaluaciones' => $evaluacionesCompletas,
+                'total' => count($evaluacionesCompletas)
+            ], JSON_UNESCAPED_UNICODE);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error al obtener las evaluaciones',
+                'error' => $e->getMessage(),
+            ], JSON_UNESCAPED_UNICODE);
+        }
+    }
+
+    /**
+     * Genera y descarga un PDF de la evaluación
+     */
+    public function downloadEvaluationPDF($evaluationId, $employeeId) {
+        try {
+            // Verificar que la evaluación pertenece al empleado
+            $stmt = $this->db->prepare("
+                SELECT e.*, emp.nombre, emp.cargo, emp.area 
+                FROM evaluacion e 
+                JOIN empleados emp ON e.id_empleado = emp.id_empleado 
+                WHERE e.id_evaluacion = ? AND e.id_empleado = ?
+            ");
+            $stmt->bind_param('ii', $evaluationId, $employeeId);
+            $stmt->execute();
+            $evaluacion = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            if (!$evaluacion) {
+                http_response_code(404);
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Evaluación no encontrada o no autorizada'
+                ]);
+                return;
+            }
+
+            // Obtener todos los datos de la evaluación
+            $evaluacionCompleta = [
+                'evaluacion' => $evaluacion,
+                'mejoramiento' => $this->getMejoramiento($evaluationId),
+                'plan_accion' => $this->getPlanAccion($evaluationId),
+                'hseq_data' => $this->getHseqData($evaluationId),
+                'competencias' => $this->getCompetencias($evaluationId),
+                'promedios' => $this->getPromedios($evaluationId),
+                'firmas' => $this->getFirmas($evaluationId)
+            ];
+
+            // Generar HTML para el PDF
+            $html = $this->generateEvaluationHTML($evaluacionCompleta);
+
+            // Configurar headers para descarga
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: attachment; filename="evaluacion_' . $evaluationId . '_' . date('Y-m-d') . '.pdf"');
+            header('Cache-Control: private, max-age=0, must-revalidate');
+            header('Pragma: public');
+
+            // Generar PDF usando TCPDF (necesitarás instalar la librería)
+            $this->generatePDF($html);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error al generar el PDF',
+                'error' => $e->getMessage(),
+            ], JSON_UNESCAPED_UNICODE);
+        }
+    }
+
+    /**
+     * Genera HTML para la evaluación
+     */
+    private function generateEvaluationHTML($data) {
+        $evaluacion = $data['evaluacion'];
+        $promedios = $data['promedios'];
+        $competencias = $data['competencias'];
+        $hseqData = $data['hseq_data'];
+        $mejoramiento = $data['mejoramiento'];
+        $planAccion = $data['plan_accion'];
+
+        $html = '
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Evaluación de Desempeño</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                .header { text-align: center; margin-bottom: 30px; }
+                .section { margin-bottom: 25px; }
+                .section h3 { background-color: #f0f0f0; padding: 10px; margin: 0; }
+                .section-content { padding: 15px; border: 1px solid #ddd; }
+                table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
+                .promedio { font-weight: bold; color: #2c5aa0; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>EVALUACIÓN DE DESEMPEÑO</h1>
+                <h2>MERIDIAN CONSULTING LTDA</h2>
+            </div>
+
+            <div class="section">
+                <h3>DATOS DEL EMPLEADO</h3>
+                <div class="section-content">
+                    <p><strong>Nombre:</strong> ' . htmlspecialchars($evaluacion['nombre']) . '</p>
+                    <p><strong>Cargo:</strong> ' . htmlspecialchars($evaluacion['cargo']) . '</p>
+                    <p><strong>Área:</strong> ' . htmlspecialchars($evaluacion['area']) . '</p>
+                    <p><strong>Fecha de Evaluación:</strong> ' . date('d/m/Y', strtotime($evaluacion['fecha_evaluacion'])) . '</p>
+                    <p><strong>Período:</strong> ' . htmlspecialchars($evaluacion['periodo_evaluacion']) . '</p>
+                </div>
+            </div>';
+
+        if ($promedios) {
+            $html .= '
+            <div class="section">
+                <h3>RESUMEN DE CALIFICACIONES</h3>
+                <div class="section-content">
+                    <table>
+                        <tr><th>Concepto</th><th>Calificación</th></tr>
+                        <tr><td>Promedio Competencias</td><td class="promedio">' . $promedios['promedio_competencias'] . '</td></tr>
+                        <tr><td>Promedio HSEQ</td><td class="promedio">' . $promedios['promedio_hseq'] . '</td></tr>
+                        <tr><td>Promedio General</td><td class="promedio">' . $promedios['promedio_general'] . '</td></tr>
+                    </table>
+                </div>
+            </div>';
+        }
+
+        if ($competencias && count($competencias) > 0) {
+            $html .= '
+            <div class="section">
+                <h3>COMPETENCIAS</h3>
+                <div class="section-content">
+                    <table>
+                        <tr><th>Aspecto</th><th>Calificación Empleado</th><th>Calificación Jefe</th><th>Promedio</th></tr>';
+            
+            foreach ($competencias as $competencia) {
+                $html .= '<tr>
+                    <td>' . htmlspecialchars($competencia['aspecto']) . '</td>
+                    <td>' . $competencia['calificacion_empleado'] . '</td>
+                    <td>' . $competencia['calificacion_jefe'] . '</td>
+                    <td>' . $competencia['promedio'] . '</td>
+                </tr>';
+            }
+            
+            $html .= '</table></div></div>';
+        }
+
+        if ($mejoramiento) {
+            $html .= '
+            <div class="section">
+                <h3>MEJORAMIENTO Y DESARROLLO</h3>
+                <div class="section-content">
+                    <p><strong>Fortalezas:</strong><br>' . htmlspecialchars($mejoramiento['fortalezas']) . '</p>
+                    <p><strong>Aspectos a Mejorar:</strong><br>' . htmlspecialchars($mejoramiento['aspectos_mejorar']) . '</p>
+                </div>
+            </div>';
+        }
+
+        if ($planAccion) {
+            $html .= '
+            <div class="section">
+                <h3>PLAN DE ACCIÓN</h3>
+                <div class="section-content">
+                    <p><strong>Actividad:</strong> ' . htmlspecialchars($planAccion['actividad']) . '</p>
+                    <p><strong>Responsable:</strong> ' . htmlspecialchars($planAccion['responsable']) . '</p>
+                    <p><strong>Seguimiento:</strong> ' . htmlspecialchars($planAccion['seguimiento']) . '</p>
+                    <p><strong>Fecha:</strong> ' . htmlspecialchars($planAccion['fecha']) . '</p>
+                </div>
+            </div>';
+        }
+
+        $html .= '
+            <div class="section">
+                <h3>FIRMAS</h3>
+                <div class="section-content">
+                    <p>Evaluado: _________________________</p>
+                    <p>Jefe Directo: _________________________</p>
+                    <p>Fecha: _________________________</p>
+                </div>
+            </div>
+        </body>
+        </html>';
+
+        return $html;
+    }
+
+    /**
+     * Genera PDF usando TCPDF
+     */
+    private function generatePDF($html) {
+        try {
+            // Verificar si TCPDF está disponible
+            if (class_exists('TCPDF')) {
+                // Crear instancia de TCPDF
+                $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+                
+                // Configurar documento
+                $pdf->SetCreator('Sistema de Evaluación Meridian');
+                $pdf->SetAuthor('Meridian Consulting LTDA');
+                $pdf->SetTitle('Evaluación de Desempeño');
+                $pdf->SetSubject('Reporte de Evaluación');
+                
+                // Configurar márgenes
+                $pdf->SetMargins(15, 15, 15);
+                $pdf->SetHeaderMargin(5);
+                $pdf->SetFooterMargin(10);
+                
+                // Configurar auto page breaks
+                $pdf->SetAutoPageBreak(TRUE, 25);
+                
+                // Agregar página
+                $pdf->AddPage();
+                
+                // Escribir HTML
+                $pdf->writeHTML($html, true, false, true, false, '');
+                
+                // Salida del PDF
+                $pdf->Output('evaluacion_' . date('Y-m-d') . '.pdf', 'D');
+            } else {
+                // Si TCPDF no está disponible, devolver HTML
+                header('Content-Type: text/html; charset=UTF-8');
+                echo $html;
+            }
+        } catch (Exception $e) {
+            // En caso de error, devolver HTML
+            header('Content-Type: text/html; charset=UTF-8');
+            echo $html;
         }
     }
 }

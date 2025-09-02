@@ -19,9 +19,9 @@ function Results({ onLogout, userRole }) {
           return;
         }
 
-        // Llamada a la API para obtener los resultados históricos
+        // Llamada a la API para obtener las evaluaciones del empleado
         const apiUrl = process.env.REACT_APP_API_BASE_URL;
-        const response = await fetch(`${apiUrl}/evaluaciones-historico/${employeeId}`);
+        const response = await fetch(`${apiUrl}/api/evaluations/employee/${employeeId}`);
         
         if (!response.ok) {
           throw new Error('Error al obtener el historial de evaluaciones');
@@ -30,7 +30,7 @@ function Results({ onLogout, userRole }) {
         const data = await response.json();
         
         // Si hay datos, actualizar el estado
-        if (data && Array.isArray(data.evaluaciones)) {
+        if (data.success && Array.isArray(data.evaluaciones)) {
           setEvaluacionesHistoricas(data.evaluaciones);
         } else {
           // Si no hay datos, establecer un array vacío
@@ -44,24 +44,7 @@ function Results({ onLogout, userRole }) {
       }
     };
 
-    // Para desarrollo, añadimos datos de muestra
-    const cargarDatosDeMuestra = () => {
-      // Simulamos la carga
-      setTimeout(() => {
-        // Datos de muestra (en producción esto vendría de la API)
-        const datosEjemplo = [
-          { id: 1, año: '2022', periodo: 'Anual', calificacion: 4.5, observaciones: 'Excelente desempeño en proyectos críticos' },
-          { id: 2, año: '2021', periodo: 'Anual', calificacion: 4.2, observaciones: 'Buen rendimiento. Áreas de mejora: comunicación' },
-          { id: 3, año: '2020', periodo: 'Anual', calificacion: 3.8, observaciones: 'Desempeño satisfactorio' }
-        ];
-        setEvaluacionesHistoricas(datosEjemplo);
-        setLoading(false);
-      }, 1000);
-    };
-
-    // En un entorno real llamaríamos a fetchResultados()
-    // Para desarrollo usamos datos de muestra
-    cargarDatosDeMuestra();
+    fetchResultados();
   }, []);
 
   // Función para mostrar estrellas según la calificación
@@ -98,8 +81,68 @@ function Results({ onLogout, userRole }) {
     return 'calificacion-baja';
   };
 
+  // Función para descargar PDF de evaluación
+  const downloadPDF = async (evaluationId) => {
+    try {
+      const employeeId = localStorage.getItem('employeeId');
+      const apiUrl = process.env.REACT_APP_API_BASE_URL;
+      
+      // Abrir en nueva ventana para descarga
+      const downloadUrl = `${apiUrl}/api/evaluations/${evaluationId}/pdf/${employeeId}`;
+      window.open(downloadUrl, '_blank');
+      
+    } catch (error) {
+      console.error('Error al descargar PDF:', error);
+      alert('Error al descargar el reporte. Intente nuevamente.');
+    }
+  };
+
+  // Función para formatear fecha
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES');
+  };
+
   return (
     <div className="results-page">
+      <style jsx>{`
+        .estado-badge {
+          padding: 4px 8px;
+          border-radius: 12px;
+          font-size: 12px;
+          font-weight: bold;
+          text-transform: uppercase;
+        }
+        .estado-completada {
+          background-color: #d4edda;
+          color: #155724;
+        }
+        .estado-borrador {
+          background-color: #fff3cd;
+          color: #856404;
+        }
+        .estado-aprobada {
+          background-color: #cce5ff;
+          color: #004085;
+        }
+        .download-btn {
+          background-color: #007bff;
+          color: white;
+          border: none;
+          padding: 6px 12px;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 12px;
+          transition: background-color 0.3s;
+        }
+        .download-btn:hover {
+          background-color: #0056b3;
+        }
+        .download-btn:active {
+          transform: translateY(1px);
+        }
+      `}</style>
       <Header onLogout={onLogout} userRole={userRole} />
       
       <main className="results-main">
@@ -130,16 +173,23 @@ function Results({ onLogout, userRole }) {
                 <div className="results-summary-item">
                   <span className="summary-label">Última calificación:</span>
                   <span className="summary-value">
-                    {renderEstrellas(evaluacionesHistoricas[0].calificacion)}
+                    {evaluacionesHistoricas[0]?.promedios?.promedio_general ? 
+                      renderEstrellas(parseFloat(evaluacionesHistoricas[0].promedios.promedio_general)) : 
+                      'N/A'
+                    }
                   </span>
                 </div>
                 <div className="results-summary-item">
                   <span className="summary-label">Promedio histórico:</span>
                   <span className="summary-value">
-                    {renderEstrellas(
-                      evaluacionesHistoricas.reduce((acc, ev) => acc + ev.calificacion, 0) / 
-                      evaluacionesHistoricas.length
-                    )}
+                    {evaluacionesHistoricas.length > 0 ? 
+                      renderEstrellas(
+                        evaluacionesHistoricas.reduce((acc, ev) => 
+                          acc + (ev.promedios?.promedio_general ? parseFloat(ev.promedios.promedio_general) : 0), 0
+                        ) / evaluacionesHistoricas.length
+                      ) : 
+                      'N/A'
+                    }
                   </span>
                 </div>
               </div>
@@ -148,23 +198,51 @@ function Results({ onLogout, userRole }) {
                 <table className="results-table">
                   <thead>
                     <tr>
-                      <th>Año</th>
-                      <th>Periodo</th>
-                      <th>Calificación</th>
-                      <th>Observaciones</th>
+                      <th>Fecha</th>
+                      <th>Período</th>
+                      <th>Estado</th>
+                      <th>Promedio General</th>
+                      <th>Promedio Competencias</th>
+                      <th>Promedio HSEQ</th>
+                      <th>Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {evaluacionesHistoricas.map(evaluacion => (
-                      <tr key={evaluacion.id}>
-                        <td>{evaluacion.año}</td>
-                        <td>{evaluacion.periodo}</td>
-                        <td className={getColorClase(evaluacion.calificacion)}>
-                          {renderEstrellas(evaluacion.calificacion)}
-                        </td>
-                        <td>{evaluacion.observaciones}</td>
-                      </tr>
-                    ))}
+                    {evaluacionesHistoricas.map(evaluacion => {
+                      const promedioGeneral = evaluacion.promedios?.promedio_general ? parseFloat(evaluacion.promedios.promedio_general) : 0;
+                      const promedioCompetencias = evaluacion.promedios?.promedio_competencias ? parseFloat(evaluacion.promedios.promedio_competencias) : 0;
+                      const promedioHseq = evaluacion.promedios?.promedio_hseq ? parseFloat(evaluacion.promedios.promedio_hseq) : 0;
+                      
+                      return (
+                        <tr key={evaluacion.id_evaluacion}>
+                          <td>{formatDate(evaluacion.fecha_evaluacion)}</td>
+                          <td>{evaluacion.periodo_evaluacion || 'N/A'}</td>
+                          <td>
+                            <span className={`estado-badge estado-${evaluacion.estado_evaluacion?.toLowerCase()}`}>
+                              {evaluacion.estado_evaluacion}
+                            </span>
+                          </td>
+                          <td className={getColorClase(promedioGeneral)}>
+                            {promedioGeneral > 0 ? renderEstrellas(promedioGeneral) : 'N/A'}
+                          </td>
+                          <td className={getColorClase(promedioCompetencias)}>
+                            {promedioCompetencias > 0 ? promedioCompetencias.toFixed(2) : 'N/A'}
+                          </td>
+                          <td className={getColorClase(promedioHseq)}>
+                            {promedioHseq > 0 ? promedioHseq.toFixed(2) : 'N/A'}
+                          </td>
+                          <td>
+                            <button 
+                              className="download-btn"
+                              onClick={() => downloadPDF(evaluacion.id_evaluacion)}
+                              title="Descargar reporte en PDF"
+                            >
+                              📄 Descargar PDF
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
