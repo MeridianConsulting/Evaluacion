@@ -95,6 +95,15 @@ function handleRequest($method, $path) {
         return;
     }
 
+    // Ruta para obtener evaluación completa con firmas
+    if (preg_match("#^api/evaluations/(\d+)/complete/(\d+)$#", $path, $matches) && $method === "GET") {
+        $evaluationId = $matches[1];
+        $employeeId = $matches[2];
+        $controller = new EvaluationControllerNativo();
+        $controller->getEvaluationComplete($evaluationId, $employeeId);
+        return;
+    }
+
     // Ruta para descargar PDF de evaluación
     if (preg_match("#^api/evaluations/(\d+)/pdf/(\d+)$#", $path, $matches) && $method === "GET") {
         $evaluationId = $matches[1];
@@ -102,6 +111,34 @@ function handleRequest($method, $path) {
         $controller = new EvaluationControllerNativo();
         $controller->downloadEvaluationPDF($evaluationId, $employeeId);
         return;
+    }
+
+    // Ruta para servir imágenes de firmas con CORS habilitado
+    if (preg_match("#^api/signatures/(.+)$#", $path, $matches) && $method === "GET") {
+        $imagePath = $matches[1];
+        $fullPath = __DIR__ . '/uploads/signatures/' . $imagePath;
+        
+        if (file_exists($fullPath)) {
+            // Habilitar CORS para imágenes
+            header('Access-Control-Allow-Origin: *');
+            header('Access-Control-Allow-Methods: GET');
+            header('Access-Control-Allow-Headers: Content-Type');
+            
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $fullPath);
+            finfo_close($finfo);
+            
+            header('Content-Type: ' . $mimeType);
+            header('Content-Length: ' . filesize($fullPath));
+            header('Cache-Control: public, max-age=86400');
+            
+            readfile($fullPath);
+            return;
+        } else {
+            http_response_code(404);
+            echo json_encode(["success" => false, "message" => "Imagen no encontrada"]);
+            return;
+        }
     }
 
     // Rutas para el controlador de funciones

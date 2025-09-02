@@ -502,6 +502,90 @@ class EvaluationControllerNativo {
     }
 
     /**
+     * Obtiene una evaluación completa con todos sus datos incluyendo firmas
+     */
+    public function getEvaluationComplete($evaluationId, $employeeId) {
+        try {
+            // Verificar que la evaluación pertenece al empleado
+            $stmt = $this->db->prepare("
+                SELECT e.*, emp.nombre, emp.cargo, emp.area 
+                FROM evaluacion e 
+                JOIN empleados emp ON e.id_empleado = emp.id_empleado 
+                WHERE e.id_evaluacion = ? AND e.id_empleado = ?
+            ");
+            $stmt->bind_param('ii', $evaluationId, $employeeId);
+            $stmt->execute();
+            $evaluacion = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            if (!$evaluacion) {
+                http_response_code(404);
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Evaluación no encontrada o no autorizada'
+                ]);
+                return;
+            }
+
+            // Obtener firmas y convertirlas a base64
+            $firmas = $this->getFirmas($evaluationId);
+            $firmasBase64 = [];
+            
+            if ($firmas) {
+                // Convertir firma del empleado a base64
+                if (!empty($firmas['firma_empleado'])) {
+                    $firmaPath = __DIR__ . '/../' . $firmas['firma_empleado'];
+                    if (file_exists($firmaPath)) {
+                        $firmasBase64['firma_empleado'] = 'data:image/png;base64,' . base64_encode(file_get_contents($firmaPath));
+                    }
+                }
+                
+                // Convertir firma del jefe a base64
+                if (!empty($firmas['firma_jefe'])) {
+                    $firmaPath = __DIR__ . '/../' . $firmas['firma_jefe'];
+                    if (file_exists($firmaPath)) {
+                        $firmasBase64['firma_jefe'] = 'data:image/png;base64,' . base64_encode(file_get_contents($firmaPath));
+                    }
+                }
+            }
+
+            // Obtener todos los datos relacionados
+            $evaluacionCompleta = [
+                'empleado' => [
+                    'nombre' => $evaluacion['nombre'],
+                    'cargo' => $evaluacion['cargo'],
+                    'area' => $evaluacion['area']
+                ],
+                'evaluacion' => [
+                    'id_evaluacion' => $evaluacion['id_evaluacion'],
+                    'fecha_evaluacion' => $evaluacion['fecha_evaluacion'],
+                    'periodo_evaluacion' => $evaluacion['periodo_evaluacion'],
+                    'estado_evaluacion' => $evaluacion['estado_evaluacion']
+                ],
+                'mejoramiento' => $this->getMejoramiento($evaluationId),
+                'plan_accion' => $this->getPlanAccion($evaluationId),
+                'hseq_data' => $this->getHseqData($evaluationId),
+                'competencias' => $this->getCompetencias($evaluationId),
+                'promedios' => $this->getPromedios($evaluationId),
+                'firmas' => $firmasBase64
+            ];
+
+            echo json_encode([
+                'success' => true,
+                'data' => $evaluacionCompleta
+            ], JSON_UNESCAPED_UNICODE);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error al obtener la evaluación completa',
+                'error' => $e->getMessage(),
+            ], JSON_UNESCAPED_UNICODE);
+        }
+    }
+
+    /**
      * Obtiene evaluaciones con datos completos para mostrar en resultados
      */
     public function getEmployeeEvaluationsWithDetails($employeeId) {
@@ -734,13 +818,40 @@ class EvaluationControllerNativo {
             </div>';
         }
 
+        // Sección de firmas con imágenes reales
         $html .= '
             <div class="section">
                 <h3>FIRMAS</h3>
-                <div class="section-content">
-                    <p>Evaluado: _________________________</p>
-                    <p>Jefe Directo: _________________________</p>
-                    <p>Fecha: _________________________</p>
+                <div class="section-content">';
+        
+        // Firma del empleado
+        if (isset($data['firmas']['firma_empleado']) && !empty($data['firmas']['firma_empleado'])) {
+            $firmaEmpleadoPath = __DIR__ . '/../' . $data['firmas']['firma_empleado'];
+            if (file_exists($firmaEmpleadoPath)) {
+                $html .= '<p><strong>Evaluado:</strong></p>';
+                $html .= '<img src="' . $firmaEmpleadoPath . '" style="max-width: 200px; height: auto; border: 1px solid #ccc;" />';
+            } else {
+                $html .= '<p><strong>Evaluado:</strong> _________________________</p>';
+            }
+        } else {
+            $html .= '<p><strong>Evaluado:</strong> _________________________</p>';
+        }
+        
+        // Firma del jefe
+        if (isset($data['firmas']['firma_jefe']) && !empty($data['firmas']['firma_jefe'])) {
+            $firmaJefePath = __DIR__ . '/../' . $data['firmas']['firma_jefe'];
+            if (file_exists($firmaJefePath)) {
+                $html .= '<p><strong>Jefe Directo:</strong></p>';
+                $html .= '<img src="' . $firmaJefePath . '" style="max-width: 200px; height: auto; border: 1px solid #ccc;" />';
+            } else {
+                $html .= '<p><strong>Jefe Directo:</strong> _________________________</p>';
+            }
+        } else {
+            $html .= '<p><strong>Jefe Directo:</strong> _________________________</p>';
+        }
+        
+        $html .= '
+                    <p><strong>Fecha:</strong> ' . date('d/m/Y') . '</p>
                 </div>
             </div>
         </body>

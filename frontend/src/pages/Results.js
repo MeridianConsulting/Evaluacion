@@ -2,11 +2,323 @@ import React, { useState, useEffect } from 'react';
 import '../assets/css/Styles1.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { Document, Page, Text, View, StyleSheet, pdf, Image } from '@react-pdf/renderer';
+
+// Estilos para el PDF
+const pdfStyles = StyleSheet.create({
+  page: {
+    flexDirection: 'column',
+    backgroundColor: '#ffffff',
+    padding: 30,
+    fontSize: 12,
+  },
+  header: {
+    textAlign: 'center',
+    marginBottom: 30,
+    borderBottom: '2px solid #2c5aa0',
+    paddingBottom: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2c5aa0',
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 18,
+    color: '#666',
+    marginBottom: 5,
+  },
+  section: {
+    marginBottom: 20,
+    border: '1px solid #ddd',
+    borderRadius: 5,
+  },
+  sectionHeader: {
+    backgroundColor: '#f0f0f0',
+    padding: 10,
+    fontSize: 14,
+    fontWeight: 'bold',
+    borderBottom: '1px solid #ddd',
+  },
+  sectionContent: {
+    padding: 15,
+  },
+  row: {
+    flexDirection: 'row',
+    marginBottom: 8,
+    borderBottom: '1px solid #eee',
+    paddingBottom: 8,
+  },
+  label: {
+    fontWeight: 'bold',
+    width: '40%',
+    color: '#333',
+  },
+  value: {
+    width: '60%',
+    color: '#666',
+  },
+  table: {
+    marginTop: 10,
+  },
+  tableRow: {
+    flexDirection: 'row',
+    borderBottom: '1px solid #ddd',
+    paddingVertical: 8,
+  },
+  tableHeader: {
+    backgroundColor: '#f8f9fa',
+    fontWeight: 'bold',
+  },
+  tableCell: {
+    flex: 1,
+    paddingHorizontal: 5,
+    textAlign: 'center',
+  },
+  signatureSection: {
+    marginTop: 30,
+    border: '1px solid #ddd',
+    borderRadius: 5,
+  },
+  signatureRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 15,
+  },
+  signatureBox: {
+    alignItems: 'center',
+    width: '45%',
+  },
+  signatureLabel: {
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#333',
+  },
+  signatureImage: {
+    width: 150,
+    height: 80,
+    border: '1px solid #ccc',
+  },
+  promedio: {
+    fontWeight: 'bold',
+    color: '#2c5aa0',
+  },
+});
+
+// Componente del documento PDF
+const MyDocument = ({ evaluationData, apiUrl }) => (
+  <Document>
+    <Page size="A4" style={pdfStyles.page}>
+      {/* Header */}
+      <View style={pdfStyles.header}>
+        <Text style={pdfStyles.title}>EVALUACIÓN DE DESEMPEÑO</Text>
+        <Text style={pdfStyles.subtitle}>MERIDIAN CONSULTING LTDA</Text>
+      </View>
+
+      {/* Datos del empleado */}
+      <View style={pdfStyles.section}>
+        <View style={pdfStyles.sectionHeader}>
+          <Text>DATOS DEL EMPLEADO</Text>
+        </View>
+        <View style={pdfStyles.sectionContent}>
+          <View style={pdfStyles.row}>
+            <Text style={pdfStyles.label}>Nombre:</Text>
+            <Text style={pdfStyles.value}>{evaluationData.empleado?.nombre || 'N/A'}</Text>
+          </View>
+          <View style={pdfStyles.row}>
+            <Text style={pdfStyles.label}>Cargo:</Text>
+            <Text style={pdfStyles.value}>{evaluationData.empleado?.cargo || 'N/A'}</Text>
+          </View>
+          <View style={pdfStyles.row}>
+            <Text style={pdfStyles.label}>Área:</Text>
+            <Text style={pdfStyles.value}>{evaluationData.empleado?.area || 'N/A'}</Text>
+          </View>
+          <View style={pdfStyles.row}>
+            <Text style={pdfStyles.label}>Fecha de Evaluación:</Text>
+            <Text style={pdfStyles.value}>
+              {evaluationData.evaluacion?.fecha_evaluacion ? 
+                new Date(evaluationData.evaluacion.fecha_evaluacion).toLocaleDateString('es-ES') : 'N/A'}
+            </Text>
+          </View>
+          <View style={pdfStyles.row}>
+            <Text style={pdfStyles.label}>Período:</Text>
+            <Text style={pdfStyles.value}>{evaluationData.evaluacion?.periodo_evaluacion || 'N/A'}</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Resumen de calificaciones */}
+      {evaluationData.promedios && (
+        <View style={pdfStyles.section}>
+          <View style={pdfStyles.sectionHeader}>
+            <Text>RESUMEN DE CALIFICACIONES</Text>
+          </View>
+          <View style={pdfStyles.sectionContent}>
+            <View style={pdfStyles.row}>
+              <Text style={pdfStyles.label}>Promedio Competencias:</Text>
+              <Text style={pdfStyles.value}>{evaluationData.promedios.promedio_competencias || 'N/A'}</Text>
+            </View>
+            <View style={pdfStyles.row}>
+              <Text style={pdfStyles.label}>Promedio HSEQ:</Text>
+              <Text style={pdfStyles.value}>{evaluationData.promedios.promedio_hseq || 'N/A'}</Text>
+            </View>
+            <View style={pdfStyles.row}>
+              <Text style={pdfStyles.label}>Promedio General:</Text>
+              <Text style={pdfStyles.value}>{evaluationData.promedios.promedio_general || 'N/A'}</Text>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* Competencias detalladas */}
+      {evaluationData.competencias && evaluationData.competencias.length > 0 && (
+        <View style={pdfStyles.section}>
+          <View style={pdfStyles.sectionHeader}>
+            <Text>COMPETENCIAS EVALUADAS</Text>
+          </View>
+          <View style={pdfStyles.sectionContent}>
+            <View style={pdfStyles.table}>
+              <View style={[pdfStyles.tableRow, pdfStyles.tableHeader]}>
+                <Text style={pdfStyles.tableCell}>Aspecto</Text>
+                <Text style={pdfStyles.tableCell}>Calificación Empleado</Text>
+                <Text style={pdfStyles.tableCell}>Calificación Jefe</Text>
+                <Text style={pdfStyles.tableCell}>Promedio</Text>
+              </View>
+              {evaluationData.competencias.map((competencia, index) => (
+                <View key={index} style={pdfStyles.tableRow}>
+                  <Text style={pdfStyles.tableCell}>{competencia.aspecto || 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCell}>{competencia.calificacion_empleado || 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCell}>{competencia.calificacion_jefe || 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCell}>{competencia.promedio || 'N/A'}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* Datos HSEQ detallados */}
+      {evaluationData.hseq_data && evaluationData.hseq_data.length > 0 && (
+        <View style={pdfStyles.section}>
+          <View style={pdfStyles.sectionHeader}>
+            <Text>RESPONSABILIDADES HSEQ</Text>
+          </View>
+          <View style={pdfStyles.sectionContent}>
+            <View style={pdfStyles.table}>
+              <View style={[pdfStyles.tableRow, pdfStyles.tableHeader]}>
+                <Text style={pdfStyles.tableCell}>Responsabilidad</Text>
+                <Text style={pdfStyles.tableCell}>Calificación</Text>
+                <Text style={pdfStyles.tableCell}>Autoevaluación</Text>
+                <Text style={pdfStyles.tableCell}>Evaluación Jefe</Text>
+              </View>
+              {evaluationData.hseq_data.map((hseq, index) => (
+                <View key={index} style={pdfStyles.tableRow}>
+                  <Text style={pdfStyles.tableCell}>{hseq.responsabilidad || 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCell}>{hseq.calificacion || 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCell}>{hseq.autoevaluacion || 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCell}>{hseq.evaluacion_jefe || 'N/A'}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* Mejoramiento y desarrollo */}
+      {evaluationData.mejoramiento && (
+        <View style={pdfStyles.section}>
+          <View style={pdfStyles.sectionHeader}>
+            <Text>MEJORAMIENTO Y DESARROLLO</Text>
+          </View>
+          <View style={pdfStyles.sectionContent}>
+            <View style={pdfStyles.row}>
+              <Text style={pdfStyles.label}>Fortalezas:</Text>
+              <Text style={pdfStyles.value}>{evaluationData.mejoramiento.fortalezas || 'N/A'}</Text>
+            </View>
+            <View style={pdfStyles.row}>
+              <Text style={pdfStyles.label}>Aspectos a Mejorar:</Text>
+              <Text style={pdfStyles.value}>{evaluationData.mejoramiento.aspectos_mejorar || 'N/A'}</Text>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* Plan de acción */}
+      {evaluationData.plan_accion && (
+        <View style={pdfStyles.section}>
+          <View style={pdfStyles.sectionHeader}>
+            <Text>PLAN DE ACCIÓN</Text>
+          </View>
+          <View style={pdfStyles.sectionContent}>
+            <View style={pdfStyles.row}>
+              <Text style={pdfStyles.label}>Actividad:</Text>
+              <Text style={pdfStyles.value}>{evaluationData.plan_accion.actividad || 'N/A'}</Text>
+            </View>
+            <View style={pdfStyles.row}>
+              <Text style={pdfStyles.label}>Responsable:</Text>
+              <Text style={pdfStyles.value}>{evaluationData.plan_accion.responsable || 'N/A'}</Text>
+            </View>
+            <View style={pdfStyles.row}>
+              <Text style={pdfStyles.label}>Seguimiento:</Text>
+              <Text style={pdfStyles.value}>{evaluationData.plan_accion.seguimiento || 'N/A'}</Text>
+            </View>
+            <View style={pdfStyles.row}>
+              <Text style={pdfStyles.label}>Fecha:</Text>
+              <Text style={pdfStyles.value}>{evaluationData.plan_accion.fecha || 'N/A'}</Text>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* Firmas */}
+      <View style={pdfStyles.signatureSection}>
+        <View style={pdfStyles.sectionHeader}>
+          <Text>FIRMAS</Text>
+        </View>
+        <View style={pdfStyles.signatureRow}>
+          {/* Firma del empleado */}
+          <View style={pdfStyles.signatureBox}>
+            <Text style={pdfStyles.signatureLabel}>Evaluado</Text>
+            {evaluationData.firmas?.firma_empleado ? (
+              <Image 
+                src={evaluationData.firmas.firma_empleado}
+                style={pdfStyles.signatureImage}
+              />
+            ) : (
+              <Text style={pdfStyles.signatureLabel}>_________________________</Text>
+            )}
+          </View>
+
+          {/* Firma del jefe */}
+          <View style={pdfStyles.signatureBox}>
+            <Text style={pdfStyles.signatureLabel}>Jefe Directo</Text>
+            {evaluationData.firmas?.firma_jefe ? (
+              <Image 
+                src={evaluationData.firmas.firma_jefe}
+                style={pdfStyles.signatureImage}
+              />
+            ) : (
+              <Text style={pdfStyles.signatureLabel}>_________________________</Text>
+            )}
+          </View>
+        </View>
+        <View style={pdfStyles.sectionContent}>
+          <View style={pdfStyles.row}>
+            <Text style={pdfStyles.label}>Fecha:</Text>
+            <Text style={pdfStyles.value}>{new Date().toLocaleDateString('es-ES')}</Text>
+          </View>
+        </View>
+      </View>
+    </Page>
+  </Document>
+);
 
 function Results({ onLogout, userRole }) {
   const [evaluacionesHistoricas, setEvaluacionesHistoricas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [generatingPDF, setGeneratingPDF] = useState(false);
 
   useEffect(() => {
     const fetchResultados = async () => {
@@ -81,7 +393,58 @@ function Results({ onLogout, userRole }) {
     return 'calificacion-baja';
   };
 
-  // Función para descargar PDF de evaluación
+  // Función para generar PDF con React PDF
+  const generatePDF = async (evaluacion) => {
+    try {
+      setGeneratingPDF(true);
+      
+      // Obtener datos completos de la evaluación
+      const employeeId = localStorage.getItem('employeeId');
+      const apiUrl = process.env.REACT_APP_API_BASE_URL;
+      const response = await fetch(`${apiUrl}/api/evaluations/${evaluacion.id_evaluacion}/complete/${employeeId}`);
+      
+      if (!response.ok) {
+        throw new Error('Error al obtener datos completos de la evaluación');
+      }
+      
+      const responseData = await response.json();
+      const evaluationData = responseData.data;
+      
+      // Debug: verificar datos de firmas
+      console.log('Datos de firmas:', evaluationData.firmas);
+      if (evaluationData.firmas?.firma_empleado) {
+        console.log('Firma empleado base64 length:', evaluationData.firmas.firma_empleado.length);
+        console.log('Firma empleado base64 starts with:', evaluationData.firmas.firma_empleado.substring(0, 50));
+      }
+      if (evaluationData.firmas?.firma_jefe) {
+        console.log('Firma jefe base64 length:', evaluationData.firmas.firma_jefe.length);
+        console.log('Firma jefe base64 starts with:', evaluationData.firmas.firma_jefe.substring(0, 50));
+      }
+      
+      // Generar el PDF
+      const blob = await pdf(<MyDocument evaluationData={evaluationData} apiUrl={apiUrl} />).toBlob();
+      
+      // Descargar el archivo usando la API nativa
+      const fileName = `evaluacion_${evaluacion.id_evaluacion}_${new Date().toISOString().split('T')[0]}.pdf`;
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      setGeneratingPDF(false);
+      
+    } catch (error) {
+      console.error('Error al generar PDF:', error);
+      alert('Error al generar el PDF. Intente nuevamente.');
+      setGeneratingPDF(false);
+    }
+  };
+
+  // Función para descargar PDF de evaluación (mantener compatibilidad)
   const downloadPDF = async (evaluationId) => {
     try {
       const employeeId = localStorage.getItem('employeeId');
@@ -234,10 +597,11 @@ function Results({ onLogout, userRole }) {
                           <td>
                             <button 
                               className="download-btn"
-                              onClick={() => downloadPDF(evaluacion.id_evaluacion)}
-                              title="Descargar reporte en PDF"
+                              onClick={() => generatePDF(evaluacion)}
+                              disabled={generatingPDF}
+                              title="Generar reporte en PDF con firmas"
                             >
-                              📄 Descargar PDF
+                              {generatingPDF ? '⏳ Generando...' : '📄 Generar PDF'}
                             </button>
                           </td>
                         </tr>
