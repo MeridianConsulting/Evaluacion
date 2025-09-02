@@ -616,12 +616,6 @@ class EvaluationControllerNativo {
             // Generar HTML para el PDF
             $html = $this->generateEvaluationHTML($evaluacionCompleta);
 
-            // Configurar headers para descarga
-            header('Content-Type: application/pdf');
-            header('Content-Disposition: attachment; filename="evaluacion_' . $evaluationId . '_' . date('Y-m-d') . '.pdf"');
-            header('Cache-Control: private, max-age=0, must-revalidate');
-            header('Pragma: public');
-
             // Generar PDF usando TCPDF (necesitarás instalar la librería)
             $this->generatePDF($html);
 
@@ -762,6 +756,13 @@ class EvaluationControllerNativo {
         try {
             // Verificar si TCPDF está disponible
             if (class_exists('TCPDF')) {
+                // Asegurar que no haya salida previa y desactivar compresión que pueda interferir
+                if (ini_get('zlib.output_compression')) {
+                    @ini_set('zlib.output_compression', 'Off');
+                }
+                while (ob_get_level() > 0) {
+                    @ob_end_clean();
+                }
                 // Crear instancia de TCPDF
                 $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
                 
@@ -785,7 +786,7 @@ class EvaluationControllerNativo {
                 // Escribir HTML
                 $pdf->writeHTML($html, true, false, true, false, '');
                 
-                // Salida del PDF
+                // Salida del PDF (descarga)
                 $pdf->Output('evaluacion_' . date('Y-m-d') . '.pdf', 'D');
             } else {
                 // Si TCPDF no está disponible, devolver HTML
@@ -799,4 +800,4 @@ class EvaluationControllerNativo {
         }
     }
 }
-?>
+// Fin del archivo sin etiqueta de cierre PHP para evitar salida accidental
