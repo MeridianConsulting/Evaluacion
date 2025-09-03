@@ -3,6 +3,8 @@ import '../assets/css/Styles1.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { Document, Page, Text, View, StyleSheet, pdf, Image } from '@react-pdf/renderer';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 // Estilos para el PDF
 const pdfStyles = StyleSheet.create({
@@ -319,6 +321,7 @@ function Results({ onLogout, userRole }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [generatingPDF, setGeneratingPDF] = useState(false);
+  const [generatingExcel, setGeneratingExcel] = useState(false);
 
   useEffect(() => {
     const fetchResultados = async () => {
@@ -435,12 +438,207 @@ function Results({ onLogout, userRole }) {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
       
+      // Mostrar mensaje de éxito
+      alert(`✅ Archivo PDF generado exitosamente: ${fileName}\n\nEl archivo contiene:\n• Información completa de la evaluación\n• Firmas digitales integradas\n• Formato profesional para impresión`);
+      
       setGeneratingPDF(false);
       
     } catch (error) {
       console.error('Error al generar PDF:', error);
       alert('Error al generar el PDF. Intente nuevamente.');
       setGeneratingPDF(false);
+    }
+  };
+
+  // Función para generar Excel profesional en una sola hoja
+  const generateExcel = async (evaluacion) => {
+    try {
+      setGeneratingExcel(true);
+      
+      // Obtener datos completos de la evaluación
+      const employeeId = localStorage.getItem('employeeId');
+      const apiUrl = process.env.REACT_APP_API_BASE_URL;
+      const response = await fetch(`${apiUrl}/api/evaluations/${evaluacion.id_evaluacion}/complete/${employeeId}`);
+      
+      if (!response.ok) {
+        throw new Error('Error al obtener datos completos de la evaluación');
+      }
+      
+      const responseData = await response.json();
+      const evaluationData = responseData.data;
+      
+      // Crear el workbook de Excel
+      const workbook = XLSX.utils.book_new();
+      
+      // Crear una sola hoja con todo el reporte organizado
+      const reportData = [];
+      
+      // Header principal
+      reportData.push(['EVALUACIÓN DE DESEMPEÑO - MERIDIAN CONSULTING LTDA']);
+      reportData.push(['']);
+      reportData.push(['CUADRO DE MANDO - EVALUACIÓN DE DESEMPEÑO']);
+      reportData.push(['']);
+      
+      // Información del período
+      reportData.push(['Período de Evaluación:', evaluationData.evaluacion?.periodo_evaluacion || 'N/A']);
+      reportData.push(['Fecha de Evaluación:', evaluationData.evaluacion?.fecha_evaluacion ? 
+        new Date(evaluationData.evaluacion.fecha_evaluacion).toLocaleDateString('es-ES') : 'N/A']);
+      reportData.push(['Estado:', evaluationData.evaluacion?.estado_evaluacion || 'N/A']);
+      reportData.push(['']);
+      
+      // Sección 1: Datos del Empleado (izquierda) y Resumen (derecha)
+      reportData.push(['DATOS DEL EMPLEADO', '', '', 'RESUMEN DE CALIFICACIONES']);
+      reportData.push(['Nombre:', evaluationData.empleado?.nombre || 'N/A', '', 'Promedio Competencias:', evaluationData.promedios?.promedio_competencias || 'N/A']);
+      reportData.push(['Cargo:', evaluationData.empleado?.cargo || 'N/A', '', 'Promedio HSEQ:', evaluationData.promedios?.promedio_hseq || 'N/A']);
+      reportData.push(['Área:', evaluationData.empleado?.area || 'N/A', '', 'Promedio General:', evaluationData.promedios?.promedio_general || 'N/A']);
+      reportData.push(['ID Empleado:', evaluationData.empleado?.id_empleado || 'N/A', '', 'Calificación Final:', getCalificacionFinal(evaluationData.promedios?.promedio_general)]);
+      reportData.push(['']);
+      
+      // Sección 2: Competencias Evaluadas
+      if (evaluationData.competencias && evaluationData.competencias.length > 0) {
+        reportData.push(['COMPETENCIAS EVALUADAS']);
+        reportData.push(['Aspecto', 'Calificación Empleado', 'Calificación Jefe', 'Promedio', 'Estado']);
+        
+        evaluationData.competencias.forEach(competencia => {
+          const promedio = parseFloat(competencia.promedio) || 0;
+          const estado = getEstadoCompetencia(promedio);
+          reportData.push([
+            competencia.aspecto || 'N/A',
+            competencia.calificacion_empleado || 'N/A',
+            competencia.calificacion_jefe || 'N/A',
+            competencia.promedio || 'N/A',
+            estado
+          ]);
+        });
+        reportData.push(['']);
+      }
+      
+      // Sección 3: Responsabilidades HSEQ
+      if (evaluationData.hseq_data && evaluationData.hseq_data.length > 0) {
+        reportData.push(['RESPONSABILIDADES HSEQ']);
+        reportData.push(['Responsabilidad', 'Calificación', 'Autoevaluación', 'Evaluación Jefe', 'Estado']);
+        
+        evaluationData.hseq_data.forEach(hseq => {
+          const calificacion = parseFloat(hseq.calificacion) || 0;
+          const estado = getEstadoCompetencia(calificacion);
+          reportData.push([
+            hseq.responsabilidad || 'N/A',
+            hseq.calificacion || 'N/A',
+            hseq.autoevaluacion || 'N/A',
+            hseq.evaluacion_jefe || 'N/A',
+            estado
+          ]);
+        });
+        reportData.push(['']);
+      }
+      
+      // Sección 4: Plan de Mejoramiento
+      if (evaluationData.mejoramiento || evaluationData.plan_accion) {
+        reportData.push(['PLAN DE MEJORAMIENTO Y DESARROLLO']);
+        reportData.push(['Fortalezas:', evaluationData.mejoramiento?.fortalezas || 'N/A']);
+        reportData.push(['Aspectos a Mejorar:', evaluationData.mejoramiento?.aspectos_mejorar || 'N/A']);
+        reportData.push(['']);
+        reportData.push(['PLAN DE ACCIÓN']);
+        reportData.push(['Actividad:', evaluationData.plan_accion?.actividad || 'N/A']);
+        reportData.push(['Responsable:', evaluationData.plan_accion?.responsable || 'N/A']);
+        reportData.push(['Seguimiento:', evaluationData.plan_accion?.seguimiento || 'N/A']);
+        reportData.push(['Fecha:', evaluationData.plan_accion?.fecha || 'N/A']);
+        reportData.push(['']);
+      }
+      
+      // Sección 5: Firmas y Validación
+      reportData.push(['FIRMAS Y VALIDACIÓN']);
+      reportData.push(['Evaluado:', evaluationData.empleado?.nombre || 'N/A', '', 'Jefe Directo:', evaluationData.evaluacion?.evaluador_nombre || 'N/A']);
+      reportData.push(['Cargo:', evaluationData.empleado?.cargo || 'N/A', '', 'Cargo:', evaluationData.evaluacion?.evaluador_cargo || 'N/A']);
+      reportData.push(['']);
+      reportData.push(['Estado Firma Empleado:', evaluationData.firmas?.firma_empleado ? '✅ FIRMADO' : '❌ PENDIENTE', '', 'Estado Firma Jefe:', evaluationData.firmas?.firma_jefe ? '✅ FIRMADO' : '❌ PENDIENTE']);
+      reportData.push(['']);
+      
+      // Agregar las firmas como imágenes si están disponibles
+      if (evaluationData.firmas?.firma_empleado || evaluationData.firmas?.firma_jefe) {
+        reportData.push(['FIRMAS DIGITALES:']);
+        
+        if (evaluationData.firmas?.firma_empleado) {
+          reportData.push(['Firma Empleado (Base64):', evaluationData.firmas.firma_empleado.substring(0, 100) + '...']);
+        }
+        if (evaluationData.firmas?.firma_jefe) {
+          reportData.push(['Firma Jefe (Base64):', evaluationData.firmas.firma_jefe.substring(0, 100) + '...']);
+        }
+        
+        reportData.push(['']);
+        reportData.push(['NOTA: Las firmas están incluidas como datos base64. Para visualizarlas:']);
+        reportData.push(['1. Copie el código base64 completo']);
+        reportData.push(['2. Use un decodificador online o herramienta de desarrollo']);
+        reportData.push(['3. O consulte el reporte PDF para ver las firmas visualmente']);
+        reportData.push(['']);
+      }
+      
+      // Sección 6: Información Técnica
+      reportData.push(['INFORMACIÓN TÉCNICA DEL REPORTE']);
+      reportData.push(['ID Evaluación:', evaluationData.evaluacion?.id_evaluacion || 'N/A', '', 'Versión Sistema:', '1.0']);
+      reportData.push(['ID Empleado:', evaluationData.empleado?.id_empleado || 'N/A', '', 'Formato:', 'Excel (.xlsx)']);
+      reportData.push(['Fecha Generación:', new Date().toLocaleDateString('es-ES'), '', 'Hora:', new Date().toLocaleTimeString('es-ES')]);
+      reportData.push(['']);
+      reportData.push(['ESTADÍSTICAS:']);
+      reportData.push(['Total Competencias:', evaluationData.competencias?.length || 0, '', 'Total HSEQ:', evaluationData.hseq_data?.length || 0]);
+      reportData.push(['Promedio General:', evaluationData.promedios?.promedio_general || 'N/A', '', 'Estado General:', getEstadoGeneral(evaluationData.promedios?.promedio_general)]);
+      
+      // Crear la hoja
+      const worksheet = XLSX.utils.aoa_to_sheet(reportData);
+      
+      // Configurar ancho de columnas
+      worksheet['!cols'] = [
+        { width: 30 }, // Columna A
+        { width: 25 }, // Columna B
+        { width: 15 }, // Columna C
+        { width: 25 }, // Columna D
+        { width: 20 }  // Columna E
+      ];
+      
+      // Aplicar estilos a las celdas
+      // Título principal
+      worksheet['A1'].s = { 
+        font: { bold: true, size: 18, color: { rgb: "2C5AA0" } }, 
+        alignment: { horizontal: "center" },
+        fill: { fgColor: { rgb: "E3F2FD" } }
+      };
+      
+      // Subtítulo
+      worksheet['A3'].s = { 
+        font: { bold: true, size: 16, color: { rgb: "1976D2" } }, 
+        alignment: { horizontal: "center" },
+        fill: { fgColor: { rgb: "F3E5F5" } }
+      };
+      
+      // Encabezados de sección
+      ['A9', 'A15', 'A22', 'A30', 'A37', 'A42'].forEach(cell => {
+        if (worksheet[cell]) {
+          worksheet[cell].s = { 
+            font: { bold: true, size: 14, color: { rgb: "333333" } },
+            fill: { fgColor: { rgb: "F5F5F5" } }
+          };
+        }
+      });
+      
+      // Agregar la hoja al workbook
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Evaluación de Desempeño');
+      
+      // Generar y descargar el archivo Excel
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      
+      const fileName = `evaluacion_${evaluacion.id_evaluacion}_${new Date().toISOString().split('T')[0]}.xlsx`;
+      saveAs(blob, fileName);
+      
+      // Mostrar mensaje de éxito
+      alert(`✅ Reporte Excel profesional generado exitosamente: ${fileName}\n\nEl reporte incluye:\n• Dashboard completo en una sola hoja\n• Información organizada por secciones\n• Estado de firmas digitales\n• Formato profesional para análisis`);
+      
+      setGeneratingExcel(false);
+      
+    } catch (error) {
+      console.error('Error al generar Excel:', error);
+      alert('Error al generar el archivo Excel. Intente nuevamente.');
+      setGeneratingExcel(false);
     }
   };
 
@@ -465,6 +663,39 @@ function Results({ onLogout, userRole }) {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
     return date.toLocaleDateString('es-ES');
+  };
+
+  // Función para obtener calificación final
+  const getCalificacionFinal = (promedio) => {
+    if (!promedio) return 'N/A';
+    const num = parseFloat(promedio);
+    if (num >= 4.5) return 'EXCELENTE';
+    if (num >= 4.0) return 'SUPERIOR';
+    if (num >= 3.0) return 'SATISFACTORIO';
+    if (num >= 2.0) return 'REGULAR';
+    return 'INSUFICIENTE';
+  };
+
+  // Función para obtener estado de competencia
+  const getEstadoCompetencia = (calificacion) => {
+    if (!calificacion) return 'N/A';
+    const num = parseFloat(calificacion);
+    if (num >= 4.5) return '✅ EXCELENTE';
+    if (num >= 4.0) return '🟢 SUPERIOR';
+    if (num >= 3.0) return '🟡 SATISFACTORIO';
+    if (num >= 2.0) return '🟠 REGULAR';
+    return '🔴 INSUFICIENTE';
+  };
+
+  // Función para obtener estado general
+  const getEstadoGeneral = (promedio) => {
+    if (!promedio) return 'N/A';
+    const num = parseFloat(promedio);
+    if (num >= 4.5) return '🟢 EXCELENTE';
+    if (num >= 4.0) return '🟢 SUPERIOR';
+    if (num >= 3.0) return '🟡 SATISFACTORIO';
+    if (num >= 2.0) return '🟠 REGULAR';
+    return '🔴 INSUFICIENTE';
   };
 
   return (
@@ -505,12 +736,73 @@ function Results({ onLogout, userRole }) {
         .download-btn:active {
           transform: translateY(1px);
         }
+        .action-buttons {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+        .pdf-btn {
+          background-color: #dc3545;
+        }
+        .pdf-btn:hover {
+          background-color: #c82333;
+        }
+        .excel-btn {
+          background-color: #28a745;
+        }
+        .excel-btn:hover {
+          background-color: #218838;
+        }
+        .results-info-banner {
+          background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+          border: 1px solid #bbdefb;
+          border-radius: 12px;
+          padding: 20px;
+          margin-bottom: 30px;
+          display: flex;
+          align-items: flex-start;
+          gap: 15px;
+        }
+        .info-icon {
+          font-size: 24px;
+          flex-shrink: 0;
+        }
+        .info-content h3 {
+          margin: 0 0 10px 0;
+          color: #1976d2;
+          font-size: 18px;
+        }
+        .info-content p {
+          margin: 0 0 15px 0;
+          color: #424242;
+          line-height: 1.5;
+        }
+        .info-content ul {
+          margin: 0;
+          padding-left: 20px;
+        }
+        .info-content li {
+          margin-bottom: 5px;
+          color: #616161;
+        }
       `}</style>
       <Header onLogout={onLogout} userRole={userRole} />
       
       <main className="results-main">
         <div className="results-container">
           <h1 className="results-title">Historial de Evaluaciones de Desempeño</h1>
+          
+          <div className="results-info-banner">
+            <div className="info-icon">ℹ️</div>
+            <div className="info-content">
+              <h3>Reportes Disponibles</h3>
+              <p>Ahora puedes generar reportes tanto en <strong>PDF</strong> como en <strong>Excel</strong>. Los reportes incluyen toda la información de la evaluación, incluyendo el estado de las firmas digitales.</p>
+              <ul>
+                <li><strong>📄 PDF:</strong> Reporte visual completo con firmas integradas</li>
+                <li><strong>📊 Excel:</strong> Datos estructurados en hojas organizadas para análisis</li>
+              </ul>
+            </div>
+          </div>
           
           {loading ? (
             <div className="results-loading">
@@ -595,14 +887,24 @@ function Results({ onLogout, userRole }) {
                             {promedioHseq > 0 ? promedioHseq.toFixed(2) : 'N/A'}
                           </td>
                           <td>
-                            <button 
-                              className="download-btn"
-                              onClick={() => generatePDF(evaluacion)}
-                              disabled={generatingPDF}
-                              title="Generar reporte en PDF con firmas"
-                            >
-                              {generatingPDF ? '⏳ Generando...' : '📄 Generar PDF'}
-                            </button>
+                            <div className="action-buttons">
+                              <button 
+                                className="download-btn pdf-btn"
+                                onClick={() => generatePDF(evaluacion)}
+                                disabled={generatingPDF}
+                                title="Generar reporte en PDF con firmas"
+                              >
+                                {generatingPDF ? '⏳ Generando...' : '📄 PDF'}
+                              </button>
+                              <button 
+                                className="download-btn excel-btn"
+                                onClick={() => generateExcel(evaluacion)}
+                                disabled={generatingExcel}
+                                title="Generar reporte en Excel con firmas"
+                              >
+                                {generatingExcel ? '⏳ Generando...' : '📊 Excel'}
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       );
