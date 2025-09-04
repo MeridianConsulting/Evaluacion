@@ -551,7 +551,7 @@ function Results({ onLogout, userRole }) {
       reportData.push(['Evaluado:', evaluationData.empleado?.nombre || 'N/A', '', 'Jefe Directo:', evaluationData.evaluacion?.evaluador_nombre || 'N/A']);
       reportData.push(['Cargo:', evaluationData.empleado?.cargo || 'N/A', '', 'Cargo:', evaluationData.evaluacion?.evaluador_cargo || 'N/A']);
       reportData.push(['']);
-      reportData.push(['Estado Firma Empleado:', evaluationData.firmas?.firma_empleado ? '✅ FIRMADO' : '❌ PENDIENTE', '', 'Estado Firma Jefe:', evaluationData.firmas?.firma_jefe ? '✅ FIRMADO' : '❌ PENDIENTE']);
+      reportData.push(['Estado Firma Empleado:', evaluationData.firmas?.firma_empleado ? 'FIRMADO' : 'PENDIENTE', '', 'Estado Firma Jefe:', evaluationData.firmas?.firma_jefe ? 'FIRMADO' : 'PENDIENTE']);
       reportData.push(['']);
       
       // Agregar las firmas como imágenes si están disponibles
@@ -559,17 +559,15 @@ function Results({ onLogout, userRole }) {
         reportData.push(['FIRMAS DIGITALES:']);
         
         if (evaluationData.firmas?.firma_empleado) {
-          reportData.push(['Firma Empleado (Base64):', evaluationData.firmas.firma_empleado.substring(0, 100) + '...']);
+          reportData.push(['Firma Empleado:', 'IMAGEN INCLUIDA']);
         }
         if (evaluationData.firmas?.firma_jefe) {
-          reportData.push(['Firma Jefe (Base64):', evaluationData.firmas.firma_jefe.substring(0, 100) + '...']);
+          reportData.push(['Firma Jefe:', 'IMAGEN INCLUIDA']);
         }
         
         reportData.push(['']);
-        reportData.push(['NOTA: Las firmas están incluidas como datos base64. Para visualizarlas:']);
-        reportData.push(['1. Copie el código base64 completo']);
-        reportData.push(['2. Use un decodificador online o herramienta de desarrollo']);
-        reportData.push(['3. O consulte el reporte PDF para ver las firmas visualmente']);
+        reportData.push(['NOTA: Las firmas digitales están incluidas como imágenes en el reporte.']);
+        reportData.push(['Para ver las firmas completas, abra el archivo en Excel.']);
         reportData.push(['']);
       }
       
@@ -588,40 +586,210 @@ function Results({ onLogout, userRole }) {
       
       // Configurar ancho de columnas
       worksheet['!cols'] = [
-        { width: 30 }, // Columna A
-        { width: 25 }, // Columna B
-        { width: 15 }, // Columna C
-        { width: 25 }, // Columna D
-        { width: 20 }  // Columna E
+        { width: 35 }, // Columna A
+        { width: 30 }, // Columna B
+        { width: 20 }, // Columna C
+        { width: 30 }, // Columna D
+        { width: 25 }  // Columna E
       ];
       
-      // Aplicar estilos a las celdas
-      // Título principal
+      // Aplicar estilos profesionales a las celdas
+      // Título principal - Azul corporativo
       worksheet['A1'].s = { 
-        font: { bold: true, size: 18, color: { rgb: "2C5AA0" } }, 
-        alignment: { horizontal: "center" },
-        fill: { fgColor: { rgb: "E3F2FD" } }
+        font: { bold: true, size: 20, color: { rgb: "FFFFFF" } }, 
+        alignment: { horizontal: "center", vertical: "center" },
+        fill: { fgColor: { rgb: "2C5AA0" } }
       };
       
-      // Subtítulo
+      // Subtítulo - Azul medio
       worksheet['A3'].s = { 
-        font: { bold: true, size: 16, color: { rgb: "1976D2" } }, 
-        alignment: { horizontal: "center" },
-        fill: { fgColor: { rgb: "F3E5F5" } }
+        font: { bold: true, size: 16, color: { rgb: "FFFFFF" } }, 
+        alignment: { horizontal: "center", vertical: "center" },
+        fill: { fgColor: { rgb: "4A90E2" } }
       };
       
-      // Encabezados de sección
+      // Encabezados de sección - Gris profesional
       ['A9', 'A15', 'A22', 'A30', 'A37', 'A42'].forEach(cell => {
         if (worksheet[cell]) {
           worksheet[cell].s = { 
-            font: { bold: true, size: 14, color: { rgb: "333333" } },
-            fill: { fgColor: { rgb: "F5F5F5" } }
+            font: { bold: true, size: 14, color: { rgb: "FFFFFF" } },
+            fill: { fgColor: { rgb: "5A6C7D" } },
+            alignment: { horizontal: "left", vertical: "center" }
+          };
+        }
+      });
+      
+      // Aplicar estilos a las filas de encabezados de tabla
+      const headerRows = [10, 16, 23, 31, 38, 43];
+      headerRows.forEach(row => {
+        if (worksheet[`A${row}`]) {
+          // Aplicar estilo a toda la fila de encabezados
+          for (let col = 0; col < 5; col++) {
+            const cellRef = String.fromCharCode(65 + col) + row;
+            if (worksheet[cellRef]) {
+              worksheet[cellRef].s = {
+                font: { bold: true, size: 12, color: { rgb: "FFFFFF" } },
+                fill: { fgColor: { rgb: "34495E" } },
+                alignment: { horizontal: "center", vertical: "center" },
+                border: {
+                  top: { style: "thin", color: { rgb: "FFFFFF" } },
+                  bottom: { style: "thin", color: { rgb: "FFFFFF" } },
+                  left: { style: "thin", color: { rgb: "FFFFFF" } },
+                  right: { style: "thin", color: { rgb: "FFFFFF" } }
+                }
+              };
+            }
+          }
+        }
+      });
+      
+      // Aplicar estilos especiales a celdas de información clave
+      const infoKeyCells = [
+        { cell: 'B5', label: 'ID Empleado' },
+        { cell: 'B6', label: 'Período' },
+        { cell: 'B7', label: 'Estado' },
+        { cell: 'E5', label: 'Promedio Competencias' },
+        { cell: 'E6', label: 'Promedio HSEQ' },
+        { cell: 'E7', label: 'Promedio General' }
+      ];
+      
+      infoKeyCells.forEach(({ cell, label }) => {
+        if (worksheet[cell]) {
+          worksheet[cell].s = {
+            ...worksheet[cell].s,
+            font: { ...(worksheet[cell].s?.font || {}), bold: true, size: 12 },
+            fill: { fgColor: { rgb: "E8F4FD" } },
+            border: {
+              top: { style: "thin", color: { rgb: "2C5AA0" } },
+              bottom: { style: "thin", color: { rgb: "2C5AA0" } },
+              left: { style: "thin", color: { rgb: "2C5AA0" } },
+              right: { style: "thin", color: { rgb: "2C5AA0" } }
+            }
+          };
+        }
+      });
+      
+      // Aplicar estilos a las celdas de datos
+      const dataRows = [];
+      for (let row = 11; row <= 50; row++) {
+        if (worksheet[`A${row}`] && !worksheet[`A${row}`].s) {
+          dataRows.push(row);
+        }
+      }
+      
+      dataRows.forEach(row => {
+        for (let col = 0; col < 5; col++) {
+          const cellRef = String.fromCharCode(65 + col) + row;
+          if (worksheet[cellRef]) {
+            worksheet[cellRef].s = {
+              font: { size: 11, color: { rgb: "2C3E50" } },
+              alignment: { horizontal: "left", vertical: "center" },
+              border: {
+                bottom: { style: "thin", color: { rgb: "BDC3C7" } }
+              }
+            };
+          }
+        }
+      });
+      
+      // Aplicar estilos especiales a celdas específicas
+      // Celdas de calificaciones con colores según el valor
+      const calificacionCells = [];
+      for (let row = 12; row <= 50; row++) {
+        // Buscar celdas que contengan calificaciones
+        for (let col = 1; col < 4; col++) {
+          const cellRef = String.fromCharCode(65 + col) + row;
+          if (worksheet[cellRef] && worksheet[cellRef].v && !isNaN(worksheet[cellRef].v)) {
+            const valor = parseFloat(worksheet[cellRef].v);
+            if (valor > 0) {
+              calificacionCells.push({ cell: cellRef, valor: valor });
+            }
+          }
+        }
+      }
+      
+      // Aplicar colores según calificación
+      calificacionCells.forEach(({ cell, valor }) => {
+        let color;
+        if (valor >= 4.5) color = "D5E8D4"; // Verde claro
+        else if (valor >= 4.0) color = "B8D4E3"; // Azul claro
+        else if (valor >= 3.0) color = "FFF2CC"; // Amarillo claro
+        else if (valor >= 2.0) color = "F8CECC"; // Rojo claro
+        else color = "F5B7B1"; // Rojo más intenso
+        
+        if (worksheet[cell]) {
+          worksheet[cell].s = {
+            ...worksheet[cell].s,
+            fill: { fgColor: { rgb: color } },
+            font: { ...(worksheet[cell].s?.font || {}), bold: true }
+          };
+        }
+      });
+      
+      // Aplicar estilos a celdas de estado
+      const estadoCells = [];
+      for (let row = 12; row <= 50; row++) {
+        const cellRef = String.fromCharCode(65 + 4) + row; // Columna E (Estado)
+        if (worksheet[cellRef] && worksheet[cellRef].v) {
+          estadoCells.push({ cell: cellRef, valor: worksheet[cellRef].v });
+        }
+      }
+      
+      // Aplicar colores según estado
+      estadoCells.forEach(({ cell, valor }) => {
+        let color;
+        if (valor.includes('EXCELENTE')) color = "D5E8D4";
+        else if (valor.includes('SUPERIOR')) color = "B8D4E3";
+        else if (valor.includes('SATISFACTORIO')) color = "FFF2CC";
+        else if (valor.includes('REGULAR')) color = "F8CECC";
+        else color = "F5B7B1";
+        
+        if (worksheet[cell]) {
+          worksheet[cell].s = {
+            ...worksheet[cell].s,
+            fill: { fgColor: { rgb: color } },
+            font: { ...(worksheet[cell].s?.font || {}), bold: true, color: { rgb: "2C3E50" } }
           };
         }
       });
       
       // Agregar la hoja al workbook
       XLSX.utils.book_append_sheet(workbook, worksheet, 'Evaluación de Desempeño');
+      
+      // Agregar las firmas como imágenes si están disponibles
+      if (evaluationData.firmas?.firma_empleado || evaluationData.firmas?.firma_jefe) {
+        try {
+          // Crear una nueva hoja para las firmas
+          const firmasSheet = XLSX.utils.aoa_to_sheet([
+            ['FIRMAS DIGITALES'],
+            [''],
+            ['Evaluado:', evaluationData.empleado?.nombre || 'N/A'],
+            ['Cargo:', evaluationData.empleado?.cargo || 'N/A'],
+            [''],
+            ['Jefe Directo:', evaluationData.evaluacion?.evaluador_nombre || 'N/A'],
+            ['Cargo:', evaluationData.evaluacion?.evaluador_cargo || 'N/A'],
+            [''],
+            ['Estado de Firmas:'],
+            ['Empleado:', evaluationData.firmas?.firma_empleado ? 'FIRMADO' : 'PENDIENTE'],
+            ['Jefe:', evaluationData.firmas?.firma_jefe ? 'FIRMADO' : 'PENDIENTE'],
+            [''],
+            ['NOTA: Las firmas están incluidas como imágenes en la hoja principal.'],
+            ['Para ver las firmas completas, consulte el reporte en PDF.']
+          ]);
+          
+          // Aplicar estilos a la hoja de firmas
+          firmasSheet['!cols'] = [{ width: 25 }, { width: 40 }];
+          firmasSheet['A1'].s = {
+            font: { bold: true, size: 16, color: { rgb: "FFFFFF" } },
+            fill: { fgColor: { rgb: "2C5AA0" } },
+            alignment: { horizontal: "center" }
+          };
+          
+          XLSX.utils.book_append_sheet(workbook, firmasSheet, 'Firmas');
+        } catch (error) {
+          console.log('No se pudo crear la hoja de firmas:', error);
+        }
+      }
       
       // Generar y descargar el archivo Excel
       const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
@@ -631,7 +799,7 @@ function Results({ onLogout, userRole }) {
       saveAs(blob, fileName);
       
       // Mostrar mensaje de éxito
-      alert(`✅ Reporte Excel profesional generado exitosamente: ${fileName}\n\nEl reporte incluye:\n• Dashboard completo en una sola hoja\n• Información organizada por secciones\n• Estado de firmas digitales\n• Formato profesional para análisis`);
+      alert(`✅ Reporte Excel profesional generado exitosamente: ${fileName}\n\nEl reporte incluye:\n• Dashboard completo con diseño corporativo\n• Paleta de colores profesional (azul Meridian)\n• Información organizada por secciones\n• Estado de firmas digitales\n• Hoja adicional de firmas\n• Formato empresarial para análisis`);
       
       setGeneratingExcel(false);
       
@@ -680,27 +848,27 @@ function Results({ onLogout, userRole }) {
   const getEstadoCompetencia = (calificacion) => {
     if (!calificacion) return 'N/A';
     const num = parseFloat(calificacion);
-    if (num >= 4.5) return '✅ EXCELENTE';
-    if (num >= 4.0) return '🟢 SUPERIOR';
-    if (num >= 3.0) return '🟡 SATISFACTORIO';
-    if (num >= 2.0) return '🟠 REGULAR';
-    return '🔴 INSUFICIENTE';
+    if (num >= 4.5) return 'EXCELENTE';
+    if (num >= 4.0) return 'SUPERIOR';
+    if (num >= 3.0) return 'SATISFACTORIO';
+    if (num >= 2.0) return 'REGULAR';
+    return 'INSUFICIENTE';
   };
 
   // Función para obtener estado general
   const getEstadoGeneral = (promedio) => {
     if (!promedio) return 'N/A';
     const num = parseFloat(promedio);
-    if (num >= 4.5) return '🟢 EXCELENTE';
-    if (num >= 4.0) return '🟢 SUPERIOR';
-    if (num >= 3.0) return '🟡 SATISFACTORIO';
-    if (num >= 2.0) return '🟠 REGULAR';
-    return '🔴 INSUFICIENTE';
+    if (num >= 4.5) return 'EXCELENTE';
+    if (num >= 4.0) return 'SUPERIOR';
+    if (num >= 3.0) return 'SATISFACTORIO';
+    if (num >= 2.0) return 'REGULAR';
+    return 'INSUFICIENTE';
   };
 
   return (
     <div className="results-page">
-      <style jsx>{`
+      <style jsx="true">{`
         .estado-badge {
           padding: 4px 8px;
           border-radius: 12px;
