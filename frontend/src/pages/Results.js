@@ -652,7 +652,7 @@ function Results({ onLogout, userRole }) {
         ws.addRow(['']);
       }
 
-      // Sección: Firmas y validación (texto)
+      // Sección: Firmas y validación (con imágenes)
       {
         const start = ws.lastRow.number + 1;
         ws.getCell(`A${start}`).value = 'FIRMAS Y VALIDACIÓN';
@@ -660,7 +660,40 @@ function Results({ onLogout, userRole }) {
         ws.addRow(['Evaluado:', evaluationData.empleado?.nombre || 'N/A', '', 'Jefe Directo:', evaluationData.evaluacion?.evaluador_nombre || 'N/A']);
         ws.addRow(['Cargo:', evaluationData.empleado?.cargo || 'N/A', '', 'Cargo:', evaluationData.evaluacion?.evaluador_cargo || 'N/A']);
         ws.addRow(['']);
-        ws.addRow(['Estado Firma Empleado:', evaluationData.firmas?.firma_empleado ? 'FIRMADO' : 'PENDIENTE', '', 'Estado Firma Jefe:', evaluationData.firmas?.firma_jefe ? 'FIRMADO' : 'PENDIENTE']);
+        
+        // Agregar espacio para las firmas
+        ws.addRow(['Firma del Empleado:', '', '', 'Firma del Jefe:', '']);
+        ws.addRow(['', '', '', '', '']); // Espacio adicional
+        ws.addRow(['', '', '', '', '']); // Espacio adicional
+        ws.addRow(['', '', '', '', '']); // Espacio adicional
+        ws.addRow(['', '', '', '', '']); // Espacio adicional
+        ws.addRow(['', '', '', '', '']); // Espacio adicional
+        ws.addRow(['', '', '', '', '']); // Espacio adicional
+        ws.addRow(['', '', '', '', '']); // Espacio adicional
+        ws.addRow(['', '', '', '', '']); // Espacio adicional
+        
+        // Insertar imágenes de firmas si existen
+        const empDataUrl = toDataUrl(evaluationData.firmas?.firma_empleado);
+        const jefeDataUrl = toDataUrl(evaluationData.firmas?.firma_jefe);
+        
+        if (empDataUrl) {
+          const imgId = wb.addImage({ base64: empDataUrl, extension: 'png' });
+          ws.addImage(imgId, {
+            tl: { col: 1, row: start + 4 }, // Columna B, fila donde empieza el espacio para firma empleado
+            ext: { width: 200, height: 80 },
+            editAs: 'oneCell'
+          });
+        }
+        
+        if (jefeDataUrl) {
+          const imgId = wb.addImage({ base64: jefeDataUrl, extension: 'png' });
+          ws.addImage(imgId, {
+            tl: { col: 4, row: start + 4 }, // Columna E, fila donde empieza el espacio para firma jefe
+            ext: { width: 200, height: 80 },
+            editAs: 'oneCell'
+          });
+        }
+        
         ws.addRow(['']);
       }
 
@@ -676,66 +709,6 @@ function Results({ onLogout, userRole }) {
         ['Promedio General:', evaluationData.promedios?.promedio_general || 'N/A', '', 'Estado General:', estadoPorValor(evaluationData.promedios?.promedio_general)],
       ]);
 
-      // ===== Hoja “Firmas” con imágenes
-      const wsSign = wb.addWorksheet('Firmas', {
-        pageSetup: { paperSize: 9, orientation: 'portrait' }
-      });
-
-      wsSign.columns = [{ width: 25 }, { width: 40 }, { width: 30 }];
-
-      const titleRow = wsSign.addRow(['FIRMAS DIGITALES']);
-      wsSign.mergeCells(`A${titleRow.number}:C${titleRow.number}`);
-      const tCell = wsSign.getCell(`A${titleRow.number}`);
-      tCell.font = { bold: true, size: 16, color: { argb: 'FFFFFFFF' } };
-      tCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: azulMeridian } };
-      tCell.alignment = { horizontal: 'center' };
-      wsSign.addRow([]);
-
-      wsSign.addRows([
-        ['Evaluado:', evaluationData.empleado?.nombre || 'N/A'],
-        ['Cargo:',    evaluationData.empleado?.cargo  || 'N/A'],
-        [''],
-        ['Jefe Directo:', evaluationData.evaluacion?.evaluador_nombre || 'N/A'],
-        ['Cargo:',        evaluationData.evaluacion?.evaluador_cargo  || 'N/A'],
-        [''],
-        ['Estado de Firmas:'],
-        ['Empleado:', evaluationData.firmas?.firma_empleado ? 'FIRMADO' : 'PENDIENTE'],
-        ['Jefe:',     evaluationData.firmas?.firma_jefe     ? 'FIRMADO' : 'PENDIENTE'],
-        [''],
-        ['Firma del Empleado:'],
-      ]);
-
-      const empDataUrl  = toDataUrl(evaluationData.firmas?.firma_empleado);
-      const jefeDataUrl = toDataUrl(evaluationData.firmas?.firma_jefe);
-
-      let nextRow = wsSign.lastRow.number + 1;
-
-      if (empDataUrl) {
-        const imgId = wb.addImage({ base64: empDataUrl, extension: 'png' });
-        wsSign.addImage(imgId, {
-          tl: { col: 1, row: nextRow - 1 }, // anclado aprox en columna B
-          ext: { width: 420, height: 160 },
-          editAs: 'oneCell'
-        });
-        nextRow += 7;
-        wsSign.addRow([]);
-        wsSign.addRow(['Firma del Jefe:']);
-        nextRow = wsSign.lastRow.number + 1;
-      }
-
-      if (jefeDataUrl) {
-        const imgId = wb.addImage({ base64: jefeDataUrl, extension: 'png' });
-        wsSign.addImage(imgId, {
-          tl: { col: 1, row: nextRow - 1 },
-          ext: { width: 420, height: 160 },
-          editAs: 'oneCell'
-        });
-        nextRow += 7;
-      }
-
-      wsSign.addRow([]);
-      wsSign.addRow(['NOTA: Las firmas están incluidas como imágenes en esta hoja.']);
-      wsSign.addRow(['Para una mejor visualización, puede revisar también el reporte en PDF.']);
 
       // Exportar
       const buf = await wb.xlsx.writeBuffer({ useStyles: true, useSharedStrings: true });
