@@ -106,12 +106,36 @@ const pdfStyles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#2c5aa0',
   },
+  tableCellSm: { 
+    flex: 1, 
+    paddingHorizontal: 6, 
+    textAlign: 'center' 
+  },
+  tableCellAspect: { 
+    flex: 2.2, 
+    paddingHorizontal: 6, 
+    textAlign: 'left' 
+  },
+  tableCellObs: { 
+    flex: 2.6, 
+    paddingHorizontal: 6, 
+    textAlign: 'left', 
+    lineHeight: 1.2 
+  },
 });
+
+// Devuelve la observación/justificación del ítem o 'N/A'
+const getObs = (obj) =>
+  obj?.observaciones ??
+  obj?.observacion ??
+  obj?.justificacion ??
+  obj?.comentario ??
+  'N/A';
 
 // ===================== PDF Component (SIN CAMBIOS) =====================
 const MyDocument = ({ evaluationData }) => (
   <Document>
-    <Page size="A4" style={pdfStyles.page}>
+    <Page size="A4" orientation="landscape" style={pdfStyles.page}>
       <View style={pdfStyles.header}>
         <Text style={pdfStyles.title}>EVALUACIÓN DE DESEMPEÑO</Text>
         <Text style={pdfStyles.subtitle}>MERIDIAN CONSULTING LTDA</Text>
@@ -179,17 +203,19 @@ const MyDocument = ({ evaluationData }) => (
           <View style={pdfStyles.sectionContent}>
             <View style={pdfStyles.table}>
               <View style={[pdfStyles.tableRow, pdfStyles.tableHeader]}>
-                <Text style={pdfStyles.tableCell}>Aspecto</Text>
-                <Text style={pdfStyles.tableCell}>Calificación Empleado</Text>
-                <Text style={pdfStyles.tableCell}>Calificación Jefe</Text>
-                <Text style={pdfStyles.tableCell}>Promedio</Text>
+                <Text style={pdfStyles.tableCellAspect}>Aspecto</Text>
+                <Text style={pdfStyles.tableCellSm}>Trabajador</Text>
+                <Text style={pdfStyles.tableCellSm}>Jefe</Text>
+                <Text style={pdfStyles.tableCellSm}>Promedio</Text>
+                <Text style={pdfStyles.tableCellObs}>Observaciones</Text>
               </View>
-              {evaluationData.competencias.map((competencia, index) => (
-                <View key={index} style={pdfStyles.tableRow}>
-                  <Text style={pdfStyles.tableCell}>{competencia.aspecto || 'N/A'}</Text>
-                  <Text style={pdfStyles.tableCell}>{competencia.calificacion_empleado || 'N/A'}</Text>
-                  <Text style={pdfStyles.tableCell}>{competencia.calificacion_jefe || 'N/A'}</Text>
-                  <Text style={pdfStyles.tableCell}>{competencia.promedio || 'N/A'}</Text>
+              {evaluationData.competencias.map((c, idx) => (
+                <View key={idx} style={pdfStyles.tableRow}>
+                  <Text style={pdfStyles.tableCellAspect}>{c.aspecto || 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellSm}>{c.calificacion_empleado ?? 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellSm}>{c.calificacion_jefe ?? 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellSm}>{c.promedio ?? 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellObs}>{getObs(c)}</Text>
                 </View>
               ))}
             </View>
@@ -205,17 +231,19 @@ const MyDocument = ({ evaluationData }) => (
           <View style={pdfStyles.sectionContent}>
             <View style={pdfStyles.table}>
               <View style={[pdfStyles.tableRow, pdfStyles.tableHeader]}>
-                <Text style={pdfStyles.tableCell}>Responsabilidad</Text>
-                <Text style={pdfStyles.tableCell}>Calificación</Text>
-                <Text style={pdfStyles.tableCell}>Autoevaluación</Text>
-                <Text style={pdfStyles.tableCell}>Evaluación Jefe</Text>
+                <Text style={pdfStyles.tableCellAspect}>Responsabilidad</Text>
+                <Text style={pdfStyles.tableCellSm}>Calificación</Text>
+                <Text style={pdfStyles.tableCellSm}>Autoeval.</Text>
+                <Text style={pdfStyles.tableCellSm}>Eval. Jefe</Text>
+                <Text style={pdfStyles.tableCellObs}>Observaciones</Text>
               </View>
-              {evaluationData.hseq_data.map((hseq, index) => (
-                <View key={index} style={pdfStyles.tableRow}>
-                  <Text style={pdfStyles.tableCell}>{hseq.responsabilidad || 'N/A'}</Text>
-                  <Text style={pdfStyles.tableCell}>{hseq.calificacion || 'N/A'}</Text>
-                  <Text style={pdfStyles.tableCell}>{hseq.autoevaluacion || 'N/A'}</Text>
-                  <Text style={pdfStyles.tableCell}>{hseq.evaluacion_jefe || 'N/A'}</Text>
+              {evaluationData.hseq_data.map((h, idx) => (
+                <View key={idx} style={pdfStyles.tableRow}>
+                  <Text style={pdfStyles.tableCellAspect}>{h.responsabilidad || 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellSm}>{h.calificacion ?? 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellSm}>{h.autoevaluacion ?? 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellSm}>{h.evaluacion_jefe ?? 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellObs}>{getObs(h)}</Text>
                 </View>
               ))}
             </View>
