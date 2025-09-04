@@ -433,7 +433,8 @@ const generateExcel = async (evaluacion) => {
     const apiUrl = process.env.REACT_APP_API_BASE_URL;
     const resp = await fetch(`${apiUrl}/api/evaluations/${evaluacion.id_evaluacion}/complete/${employeeId}`);
     if (!resp.ok) throw new Error('Error al obtener datos completos de la evaluación');
-    const { data: evaluationData } = await resp.json();
+    const responseData = await resp.json();
+    const { data: evaluationData } = responseData;
 
     // ---------- Paleta AA y helpers
     const PALETTE = {
@@ -450,7 +451,7 @@ const generateExcel = async (evaluacion) => {
     const FONT_SUB   = { name: 'Calibri', size: 14, bold: true, color: { argb: 'FFFFFFFF' } };
     const FONT_BODY  = { name: 'Calibri', size: 11, color: { argb: 'FF' + PALETTE.text } };
     const ONE_DEC = '0.0';
-    const dash = (v) => (v === undefined || v === null || v === '' || v === 'N/A') ? '—' : v;
+    const dash = (v) => (v === undefined || v === null || v === '' || v === 'N/A' || v === 'null') ? '—' : v;
     const numOrBlank = (v) => Number.isFinite(parseFloat(v)) ? parseFloat(v) : null;
 
     const estadoPorValor = (n) => {
@@ -580,17 +581,20 @@ const generateExcel = async (evaluacion) => {
     };
     
     // Datos del empleado
-    putPair('Nombre:', evaluationData.empleado?.nombre || 'N/A', 'Cargo:', evaluationData.empleado?.cargo || 'N/A');
-    putPair('Área:', evaluationData.empleado?.area || 'N/A', 'ID Empleado:', evaluationData.empleado?.id_empleado || 'N/A');
-    putPair('Email:', evaluationData.empleado?.email || 'N/A', 'Teléfono:', evaluationData.empleado?.telefono || 'N/A');
-    putPair('Fecha Ingreso:', evaluationData.empleado?.fecha_ingreso ? new Date(evaluationData.empleado.fecha_ingreso).toLocaleDateString('es-ES') : 'N/A', 
-            'Proceso Gestión:', evaluationData.empleado?.proceso_gestion || 'N/A');
+    putPair('Nombre:', evaluationData.empleado?.nombre || 'N/A', 'Cédula:', evaluationData.empleado?.cedula || 'N/A');
+    putPair('Cargo:', evaluationData.empleado?.cargo || 'N/A', 'Área:', evaluationData.empleado?.area || 'N/A');
+    putPair('ID Empleado:', evaluationData.empleado?.id_empleado || 'N/A', 'Tipo Documento:', evaluationData.empleado?.tipo_documento || 'N/A');
+    putPair('Email:', evaluationData.empleado?.email || 'N/A', 'Teléfono:', evaluationData.empleado?.numero_telefonico || 'N/A');
+    putPair('Teléfono Empresa:', evaluationData.empleado?.telefono_empresa || 'N/A', 'Teléfono Internacional:', evaluationData.empleado?.telefono_internacional || 'N/A');
+    putPair('Fecha Inicio Contrato:', evaluationData.empleado?.fecha_inicio_contrato ? new Date(evaluationData.empleado.fecha_inicio_contrato).toLocaleDateString('es-ES') : 'N/A', 
+            'Reporta a:', evaluationData.empleado?.reporta_directamente || 'N/A');
+    putPair('Nivel:', evaluationData.empleado?.nivel || 'N/A', 'Compañía:', evaluationData.empleado?.compania || 'N/A');
+    putPair('Proyecto:', evaluationData.empleado?.proyecto || 'N/A', 'ODS:', evaluationData.empleado?.ods || 'N/A');
     
     // Datos de la evaluación
     putPair('Fecha evaluación:', evaluationData.evaluacion?.fecha_evaluacion ? new Date(evaluationData.evaluacion.fecha_evaluacion).toLocaleDateString('es-ES') : 'N/A',
-            'Evaluador:', evaluationData.evaluacion?.evaluador_nombre || 'N/A');
-    putPair('Cargo Evaluador:', evaluationData.evaluacion?.evaluador_cargo || 'N/A', 
             'Período:', evaluationData.evaluacion?.periodo_evaluacion || 'N/A');
+    putPair('Estado evaluación:', evaluationData.evaluacion?.estado_evaluacion || 'N/A', 'ID Evaluación:', evaluationData.evaluacion?.id_evaluacion || 'N/A');
     ws.addRow([]);
 
 

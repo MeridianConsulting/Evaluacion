@@ -506,9 +506,12 @@ class EvaluationControllerNativo {
      */
     public function getEvaluationComplete($evaluationId, $employeeId) {
         try {
-            // Verificar que la evaluación pertenece al empleado
+            // Verificar que la evaluación pertenece al empleado y obtener todos los datos del empleado
             $stmt = $this->db->prepare("
-                SELECT e.*, emp.nombre, emp.cargo, emp.area 
+                SELECT e.id_evaluacion, e.fecha_evaluacion, e.periodo_evaluacion, e.observaciones_generales, e.estado_evaluacion, e.fecha_creacion, e.fecha_actualizacion,
+                       emp.id_empleado, emp.cedula, emp.nombre, emp.tipo_documento, emp.cargo, emp.area, emp.fecha_inicio_contrato, 
+                       emp.reporta_directamente, emp.nivel, emp.numero_telefonico, emp.email, emp.compania, emp.telefono_empresa, 
+                       emp.telefono_internacional, emp.proyecto, emp.ods, emp.rol
                 FROM evaluacion e 
                 JOIN empleados emp ON e.id_empleado = emp.id_empleado 
                 WHERE e.id_evaluacion = ? AND e.id_empleado = ?
@@ -517,6 +520,7 @@ class EvaluationControllerNativo {
             $stmt->execute();
             $evaluacion = $stmt->get_result()->fetch_assoc();
             $stmt->close();
+            
 
             if (!$evaluacion) {
                 http_response_code(404);
@@ -552,9 +556,23 @@ class EvaluationControllerNativo {
             // Obtener todos los datos relacionados
             $evaluacionCompleta = [
                 'empleado' => [
+                    'id_empleado' => $evaluacion['id_empleado'],
+                    'cedula' => $evaluacion['cedula'],
                     'nombre' => $evaluacion['nombre'],
+                    'tipo_documento' => $evaluacion['tipo_documento'],
                     'cargo' => $evaluacion['cargo'],
-                    'area' => $evaluacion['area']
+                    'area' => $evaluacion['area'],
+                    'fecha_inicio_contrato' => $evaluacion['fecha_inicio_contrato'],
+                    'reporta_directamente' => $evaluacion['reporta_directamente'],
+                    'nivel' => $evaluacion['nivel'],
+                    'numero_telefonico' => $evaluacion['numero_telefonico'],
+                    'email' => $evaluacion['email'],
+                    'compania' => $evaluacion['compania'],
+                    'telefono_empresa' => $evaluacion['telefono_empresa'],
+                    'telefono_internacional' => $evaluacion['telefono_internacional'],
+                    'proyecto' => $evaluacion['proyecto'],
+                    'ods' => $evaluacion['ods'],
+                    'rol' => $evaluacion['rol']
                 ],
                 'evaluacion' => [
                     'id_evaluacion' => $evaluacion['id_evaluacion'],
@@ -570,6 +588,7 @@ class EvaluationControllerNativo {
                 'firmas' => $firmasBase64
             ];
 
+            
             echo json_encode([
                 'success' => true,
                 'data' => $evaluacionCompleta
