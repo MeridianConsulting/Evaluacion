@@ -1833,8 +1833,8 @@ footer {
 
 .evaluation-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse;
+  table-layout: fixed;            /* evita que Justificación empuje el layout */
 }
 
 .evaluation-table th, 
@@ -2942,6 +2942,39 @@ td .rating-select {
   }
 }
 
+/* --- Promedio Competencias --- */
+
+.evaluation-table .avg-row td {
+  background: #f5f5f5 !important;
+  font-weight: 700;
+  padding: .8rem 1rem;
+  border-top: 2px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.evaluation-table .avg-wrap {
+  display: flex;                  /* centra el contenido en toda la fila */
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  width: 100%;
+}
+
+.evaluation-table .avg-label {
+  letter-spacing: .2px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.evaluation-table .avg-value {
+  min-width: 3.5ch;               /* ancho estable para el número */
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1F3B73;
+}
+
 /* Estilos para PerformanceEvaluation.js */
 .evaluation-hr {
   margin: 2rem 0;
@@ -2962,11 +2995,6 @@ td .rating-select {
   line-height: 1.6;
 }
 
-.evaluation-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: Arial, sans-serif;
-}
 
 .evaluation-th-header {
   background-color: #2a5885;
