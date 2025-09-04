@@ -1,4 +1,9 @@
 <?php
+// Autoload de Composer (para PhpSpreadsheet si está instalado)
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+}
+
 // Configurar manejo de errores
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -728,6 +733,239 @@ class EvaluationControllerNativo {
                 'success' => false,
                 'message' => 'Error al generar el PDF',
                 'error' => $e->getMessage(),
+            ], JSON_UNESCAPED_UNICODE);
+        }
+    }
+
+    /**
+     * Genera y descarga un Excel (XLSX o CSV fallback) de la evaluación
+     * Incluye SIEMPRE los datos del empleado con alias para evitar campos vacíos.
+     */
+    public function downloadEvaluationExcel($evaluationId, $employeeId) {
+        try {
+            // Verificar que la evaluación pertenece al empleado y traer datos con ALIAS
+            $stmt = $this->db->prepare("
+                SELECT 
+                    e.*,
+                    emp.cedula                           AS empleado_cedula,
+                    emp.nombre                           AS empleado_nombre,
+                    emp.tipo_documento                   AS empleado_tipo_documento,
+                    emp.cargo                            AS empleado_cargo,
+                    emp.area                             AS empleado_area,
+                    emp.email                            AS empleado_email,
+                    emp.fecha_inicio_contrato            AS empleado_fecha_inicio_contrato,
+                    emp.reporta_directamente             AS empleado_reporta_directamente,
+                    emp.nivel                            AS empleado_nivel,
+                    emp.numero_telefonico                AS empleado_numero_telefonico,
+                    emp.compania                         AS empleado_compania,
+                    emp.telefono_empresa                 AS empleado_telefono_empresa,
+                    emp.telefono_internacional           AS empleado_telefono_internacional,
+                    emp.proyecto                         AS empleado_proyecto,
+                    emp.ods                              AS empleado_ods,
+                    emp.rol                              AS empleado_rol
+                FROM evaluacion e
+                JOIN empleados emp ON e.id_empleado = emp.id_empleado
+                WHERE e.id_evaluacion = ? AND e.id_empleado = ?
+            ");
+            $stmt->bind_param('ii', $evaluationId, $employeeId);
+            $stmt->execute();
+            $evaluacion = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            if (!$evaluacion) {
+                http_response_code(404);
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Evaluación no encontrada o no autorizada'
+                ], JSON_UNESCAPED_UNICODE);
+                return;
+            }
+
+            // Traer demás datos
+            $promedios     = $this->getPromedios($evaluationId) ?: [];
+            $competencias  = $this->getCompetencias($evaluationId) ?: [];
+            $hseqData      = $this->getHseqData($evaluationId) ?: [];
+            $mejoramiento  = $this->getMejoramiento($evaluationId) ?: [];
+            $planAccion    = $this->getPlanAccion($evaluationId) ?: [];
+
+            // Normaliza campos del empleado (con fallback "N/D")
+            $emp = [
+                'Nombre'            => $evaluacion['empleado_nombre']            ?? 'N/D',
+                'Cédula'            => $evaluacion['empleado_cedula']            ?? 'N/D',
+                'Tipo documento'    => $evaluacion['empleado_tipo_documento']    ?? 'N/D',
+                'Cargo'             => $evaluacion['empleado_cargo']             ?? 'N/D',
+                'Área'              => $evaluacion['empleado_area']              ?? 'N/D',
+                'Email'             => $evaluacion['empleado_email']             ?? 'N/D',
+                'Nivel'             => $evaluacion['empleado_nivel']             ?? 'N/D',
+                'Teléfono'          => $evaluacion['empleado_numero_telefonico'] ?? 'N/D',
+                'Compañía'          => $evaluacion['empleado_compania']          ?? 'N/D',
+                'Fecha inicio'      => $evaluacion['empleado_fecha_inicio_contrato'] ?? 'N/D',
+                'Reporta a'         => $evaluacion['empleado_reporta_directamente']  ?? 'N/D',
+                'Proyecto'          => $evaluacion['empleado_proyecto']          ?? 'N/D',
+                'ODS'               => $evaluacion['empleado_ods']               ?? 'N/D',
+                'Rol'               => $evaluacion['empleado_rol']               ?? 'N/D',
+            ];
+
+            // Datos de evaluación
+            $eval = [
+                'ID Evaluación'     => $evaluacion['id_evaluacion'] ?? 'N/D',
+                'Fecha evaluación'  => !empty($evaluacion['fecha_evaluacion']) ? date('d/m/Y', strtotime($evaluacion['fecha_evaluacion'])) : 'N/D',
+                'Período'           => $evaluacion['periodo_evaluacion'] ?? 'N/D',
+                'Estado'            => $evaluacion['estado_evaluacion'] ?? 'N/D',
+            ];
+
+            // Intentar XLSX con PhpSpreadsheet, de lo contrario CSV
+            if (class_exists('\PhpOffice\PhpSpreadsheet\Spreadsheet')) {
+                $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+
+                // -------- Hoja Resumen --------
+                $sheet = $spreadsheet->getActiveSheet();
+                $sheet->setTitle('Resumen');
+
+                $row = 1;
+                $sheet->setCellValue('A'.$row, 'EVALUACIÓN DE DESEMPEÑO - MERIDIAN CONSULTING LTDA'); $row += 2;
+
+                // Bloque Empleado
+                $sheet->setCellValue('A'.$row, 'DATOS DEL EMPLEADO'); $row++;
+                foreach ($emp as $k => $v) {
+                    $sheet->setCellValue('A'.$row, $k);
+                    $sheet->setCellValue('B'.$row, (string)$v);
+                    $row++;
+                }
+                $row++;
+
+                // Bloque Evaluación
+                $sheet->setCellValue('A'.$row, 'DATOS DE LA EVALUACIÓN'); $row++;
+                foreach ($eval as $k => $v) {
+                    $sheet->setCellValue('A'.$row, $k);
+                    $sheet->setCellValue('B'.$row, (string)$v);
+                    $row++;
+                }
+                $row++;
+
+                // Resumen de calificaciones
+                if (!empty($promedios)) {
+                    $sheet->setCellValue('A'.$row, 'RESUMEN DE CALIFICACIONES'); $row++;
+                    $sheet->setCellValue('A'.$row, 'Promedio Competencias');
+                    $sheet->setCellValue('B'.$row, $promedios['promedio_competencias'] ?? 0); $row++;
+                    $sheet->setCellValue('A'.$row, 'Promedio HSEQ');
+                    $sheet->setCellValue('B'.$row, $promedios['promedio_hseq'] ?? 0); $row++;
+                    $sheet->setCellValue('A'.$row, 'Promedio General');
+                    $sheet->setCellValue('B'.$row, $promedios['promedio_general'] ?? 0); $row += 2;
+
+                    // Por apartado (si existen)
+                    $labels = [
+                        'promedio_comunicacion_efectiva'        => 'Comunicación efectiva',
+                        'promedio_instrumentalidad_decisiones'  => 'Instrumentalidad de decisiones',
+                        'promedio_aporte_profesional'           => 'Aporte profesional',
+                        'promedio_colaboracion'                  => 'Colaboración',
+                        'promedio_relaciones_interpersonales'   => 'Relaciones interpersonales',
+                        'promedio_gestion_procedimientos'       => 'Gestión de procedimientos',
+                        'promedio_cumplimiento_funciones'       => 'Cumplimiento de funciones del cargo',
+                    ];
+                    $sheet->setCellValue('A'.$row, 'Promedios por apartado'); $row++;
+                    foreach ($labels as $key => $label) {
+                        if (isset($promedios[$key])) {
+                            $sheet->setCellValue('A'.$row, $label);
+                            $sheet->setCellValue('B'.$row, $promedios[$key]);
+                            $row++;
+                        }
+                    }
+                    $row++;
+                }
+
+                // Mejoramiento y Plan de Acción (si existen)
+                if (!empty($mejoramiento)) {
+                    $sheet->setCellValue('A'.$row, 'MEJORAMIENTO Y DESARROLLO'); $row++;
+                    $sheet->setCellValue('A'.$row, 'Fortalezas'); 
+                    $sheet->setCellValue('B'.$row, (string)($mejoramiento['fortalezas'] ?? ''));
+                    $row++;
+                    $sheet->setCellValue('A'.$row, 'Aspectos a Mejorar'); 
+                    $sheet->setCellValue('B'.$row, (string)($mejoramiento['aspectos_mejorar'] ?? ($mejoramiento['aspectosMejorar'] ?? '')));
+                    $row += 2;
+                }
+                if (!empty($planAccion)) {
+                    $sheet->setCellValue('A'.$row, 'PLAN DE ACCIÓN'); $row++;
+                    $sheet->setCellValue('A'.$row, 'Actividad');   $sheet->setCellValue('B'.$row, (string)($planAccion['actividad'] ?? '')); $row++;
+                    $sheet->setCellValue('A'.$row, 'Responsable'); $sheet->setCellValue('B'.$row, (string)($planAccion['responsable'] ?? '')); $row++;
+                    $sheet->setCellValue('A'.$row, 'Seguimiento'); $sheet->setCellValue('B'.$row, (string)($planAccion['seguimiento'] ?? '')); $row++;
+                    $sheet->setCellValue('A'.$row, 'Fecha');       $sheet->setCellValue('B'.$row, (string)($planAccion['fecha'] ?? '')); $row++;
+                }
+
+                // -------- Hoja Competencias --------
+                $sheet2 = $spreadsheet->createSheet();
+                $sheet2->setTitle('Competencias');
+                $sheet2->fromArray(['Aspecto', 'Calificación Empleado', 'Calificación Jefe', 'Promedio'], NULL, 'A1');
+                $r = 2;
+                foreach ($competencias as $c) {
+                    $sheet2->setCellValue('A'.$r, (string)($c['aspecto'] ?? ''));
+                    $sheet2->setCellValue('B'.$r, (string)($c['calificacion_empleado'] ?? ''));
+                    $sheet2->setCellValue('C'.$r, (string)($c['calificacion_jefe'] ?? ''));
+                    $sheet2->setCellValue('D'.$r, (string)($c['promedio'] ?? ''));
+                    $r++;
+                }
+
+                // -------- Hoja HSEQ --------
+                $sheet3 = $spreadsheet->createSheet();
+                $sheet3->setTitle('HSEQ');
+                $sheet3->fromArray(['ID Resp.', 'Responsabilidad', 'Calificación', 'Autoevaluación', 'Evaluación Jefe'], NULL, 'A1');
+                $r = 2;
+                foreach ($hseqData as $h) {
+                    $sheet3->setCellValue('A'.$r, (string)($h['id_responsabilidad'] ?? ''));
+                    $sheet3->setCellValue('B'.$r, (string)($h['responsabilidad'] ?? ''));
+                    $sheet3->setCellValue('C'.$r, (string)($h['calificacion'] ?? ''));
+                    $sheet3->setCellValue('D'.$r, (string)($h['autoevaluacion'] ?? ''));
+                    $sheet3->setCellValue('E'.$r, (string)($h['evaluacion_jefe'] ?? ''));
+                    $r++;
+                }
+
+                // Salida XLSX
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header('Content-Disposition: attachment; filename="evaluacion_'.$evaluationId.'.xlsx"');
+                header('Cache-Control: max-age=0');
+
+                $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+                $writer->save('php://output');
+                return;
+
+            } else {
+                // Fallback a CSV simple (una sola hoja "Resumen" con los datos del empleado y evaluación)
+                $filename = 'evaluacion_'.$evaluationId.'.csv';
+                header('Content-Type: text/csv; charset=UTF-8');
+                header('Content-Disposition: attachment; filename="'.$filename.'"');
+                $out = fopen('php://output', 'w');
+
+                // BOM para Excel en Windows
+                fprintf($out, chr(0xEF).chr(0xBB).chr(0xBF));
+
+                fputcsv($out, ['EVALUACIÓN DE DESEMPEÑO - MERIDIAN CONSULTING LTDA']);
+                fputcsv($out, []);
+                fputcsv($out, ['DATOS DEL EMPLEADO']);
+                foreach ($emp as $k => $v) {
+                    fputcsv($out, [$k, $v]);
+                }
+                fputcsv($out, []);
+                fputcsv($out, ['DATOS DE LA EVALUACIÓN']);
+                foreach ($eval as $k => $v) {
+                    fputcsv($out, [$k, $v]);
+                }
+                if (!empty($promedios)) {
+                    fputcsv($out, []);
+                    fputcsv($out, ['RESUMEN DE CALIFICACIONES']);
+                    fputcsv($out, ['Promedio Competencias', $promedios['promedio_competencias'] ?? 0]);
+                    fputcsv($out, ['Promedio HSEQ', $promedios['promedio_hseq'] ?? 0]);
+                    fputcsv($out, ['Promedio General', $promedios['promedio_general'] ?? 0]);
+                }
+                fclose($out);
+                return;
+            }
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error al generar el Excel',
+                'error'   => $e->getMessage(),
             ], JSON_UNESCAPED_UNICODE);
         }
     }

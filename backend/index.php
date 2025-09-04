@@ -113,6 +113,15 @@ function handleRequest($method, $path) {
         return;
     }
 
+    // Ruta para descargar Excel de evaluación
+    if (preg_match("#^api/evaluations/(\d+)/excel/(\d+)$#", $path, $matches) && $method === "GET") {
+        $evaluationId = $matches[1];
+        $employeeId = $matches[2];
+        $controller = new EvaluationControllerNativo();
+        $controller->downloadEvaluationExcel($evaluationId, $employeeId);
+        return;
+    }
+
     // Ruta para servir imágenes de firmas con CORS habilitado
     if (preg_match("#^api/signatures/(.+)$#", $path, $matches) && $method === "GET") {
         $imagePath = $matches[1];

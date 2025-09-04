@@ -569,13 +569,20 @@ const generateExcel = async (evaluacion) => {
     addSectionHeader('DATOS DEL EMPLEADO');
 
     const rowStartDatos = ws.lastRow.number + 1;
-    const putPair = (lA,vA,lB,vB) => {
-      const r = ws.addRow([lA, dash(vA), '', lB, dash(vB)]);
-      ws.mergeCells(`A${r.number}:B${r.number}`);
-      ws.mergeCells(`D${r.number}:E${r.number}`);
-      r.eachCell(cell => { 
-        cell.font = FONT_BODY; 
-        cell.border = { bottom:{style:'thin', color:{argb:PALETTE.border}} }; 
+    const putPair = (lA, vA, lB, vB) => {
+      // A: etiqueta izquierda, B: valor (se expandirá a C), D: etiqueta derecha, E: valor (se expandirá a F)
+      const r = ws.addRow([lA, dash(vA), null, lB, dash(vB), null]);
+
+      // Unimos SOLO las celdas de valor, no las de etiqueta
+      ws.mergeCells(`B${r.number}:C${r.number}`);
+      ws.mergeCells(`E${r.number}:F${r.number}`);
+
+      // Estilos ligeros
+      r.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } }; // etiqueta izq
+      r.getCell(4).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } }; // etiqueta der
+      r.eachCell(cell => {
+        cell.font = cell.font || { name: 'Calibri', size: 11, color: { argb: 'FF2B2B2B' } };
+        cell.border = { bottom: { style: 'thin', color: { argb: PALETTE.border } } };
         cell.alignment = { vertical: 'middle' };
       });
     };
