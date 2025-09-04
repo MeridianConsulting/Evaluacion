@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import './CRUD.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { useNotification } from '../components/NotificationSystem';
 
 function EmpleadosCRUD({ onLogout, userRole }) {
+  const { success, error: showError } = useNotification();
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -125,13 +127,13 @@ function EmpleadosCRUD({ onLogout, userRole }) {
         if (result.success) {
           // Actualizar el estado eliminando el empleado
           setEmpleados(empleados.filter(emp => emp.id_empleado !== id));
-          alert('Empleado eliminado con éxito');
+          success('Empleado eliminado', 'Empleado eliminado con éxito');
         } else {
           throw new Error(result.message || 'Error al eliminar empleado');
         }
       } catch (error) {
         console.error('Error al eliminar empleado:', error);
-        alert(`Error al eliminar empleado: ${error.message}`);
+        showError('Error al eliminar', `Error al eliminar empleado: ${error.message}`);
       }
     }
   };
@@ -187,13 +189,16 @@ function EmpleadosCRUD({ onLogout, userRole }) {
         }
         
         setShowForm(false);
-        alert(isCreateOperation ? 'Empleado creado con éxito' : 'Empleado actualizado con éxito');
+        success(
+          isCreateOperation ? 'Empleado creado' : 'Empleado actualizado', 
+          isCreateOperation ? 'Empleado creado con éxito' : 'Empleado actualizado con éxito'
+        );
       } else {
         throw new Error(result.message || `Error al ${isCreateOperation ? 'crear' : 'actualizar'} empleado`);
       }
     } catch (error) {
       console.error(`Error al ${isEditing ? 'actualizar' : 'crear'} empleado:`, error);
-      alert(`Error: ${error.message}`);
+      showError('Error de operación', `Error: ${error.message}`);
     }
   };
 

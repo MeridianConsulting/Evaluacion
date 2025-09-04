@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import './CRUD.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { useNotification } from '../components/NotificationSystem';
 
 function FuncionesCRUD({ onLogout }) {
+  const { success, error: showError } = useNotification();
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -146,13 +148,13 @@ function FuncionesCRUD({ onLogout }) {
         if (result.success) {
           // Actualizar el estado eliminando la función
           setFunciones(funciones.filter(func => func.hoja_funciones !== hojaFunciones));
-          alert('Función eliminada con éxito');
+          success('Función eliminada', 'Función eliminada con éxito');
         } else {
           throw new Error(result.message || 'Error al eliminar función');
         }
       } catch (error) {
         console.error('Error al eliminar función:', error);
-        alert(`Error al eliminar función: ${error.message}`);
+        showError('Error al eliminar', `Error al eliminar función: ${error.message}`);
       }
     }
   };
@@ -218,13 +220,16 @@ function FuncionesCRUD({ onLogout }) {
         }
         
         setShowForm(false);
-        alert(isCreateOperation ? 'Función creada con éxito' : 'Función actualizada con éxito');
+        success(
+          isCreateOperation ? 'Función creada' : 'Función actualizada', 
+          isCreateOperation ? 'Función creada con éxito' : 'Función actualizada con éxito'
+        );
       } else {
         throw new Error(result.message || `Error al ${isCreateOperation ? 'crear' : 'actualizar'} función`);
       }
     } catch (error) {
       console.error(`Error al ${isEditing ? 'actualizar' : 'crear'} función:`, error);
-      alert(`Error: ${error.message}`);
+      showError('Error de operación', `Error: ${error.message}`);
     }
   };
 

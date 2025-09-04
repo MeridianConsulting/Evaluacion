@@ -3,9 +3,11 @@ import "../assets/css/Styles1.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import SignatureUploader from '../components/SignatureUploader';
+import { useNotification } from '../components/NotificationSystem';
 
 
 function PerformanceEvaluation() {
+  const { success, error: showError, warning } = useNotification();
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -588,14 +590,14 @@ function PerformanceEvaluation() {
     if (!promedioNumber || promedioNumber <= 0) {
       setValidationErrors(erroresBasicos);
       window.scrollTo(0, 0);
-      alert('Seleccione al menos una calificación en competencias para calcular el promedio.');
+      warning('Validación requerida', 'Seleccione al menos una calificación en competencias para calcular el promedio.');
       return;
     }
 
     if (Object.keys(erroresBasicos).length > 0) {
       setValidationErrors(erroresBasicos);
       window.scrollTo(0, 0);
-      alert('Las firmas del Evaluado y del Jefe Directo son obligatorias.');
+      warning('Firmas requeridas', 'Las firmas del Evaluado y del Jefe Directo son obligatorias.');
       return;
     }
 
@@ -648,7 +650,7 @@ function PerformanceEvaluation() {
 
       if (response.ok) {
         // Mostrar mensaje de éxito
-        alert('¡Evaluación diligenciada con éxito!');
+        success('¡Evaluación completada!', 'La evaluación ha sido diligenciada exitosamente.');
         
         // Limpiar el formulario después del éxito
         setRows([
@@ -940,11 +942,11 @@ function PerformanceEvaluation() {
         const errorMessage = data.error ? 
           `Error: ${data.error}` : 
           `Error al guardar: ${data.message || 'Error desconocido'}`;
-        alert(errorMessage);
+        showError('Error al guardar', errorMessage);
       }
     } catch (error) {
       console.error('Error al enviar la evaluación:', error);
-      alert('Error al guardar la evaluación. Intente nuevamente.');
+      showError('Error de conexión', 'Error al guardar la evaluación. Intente nuevamente.');
     } finally {
       setIsSubmitting(false);
     }

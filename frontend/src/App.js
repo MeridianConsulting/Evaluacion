@@ -15,6 +15,7 @@ import EmpleadosCRUD from "./admin/EmpleadosCRUD";
 import FuncionesCRUD from "./admin/FuncionesCRUD";
 import CargosCRUD from "./admin/CargosCRUD";
 import TeamEvaluations from "./pages/TeamEvaluations";
+import { NotificationProvider } from "./components/NotificationSystem";
 import "./App.css";
 
 function App() {
@@ -61,8 +62,9 @@ function App() {
   }, [isAuthenticated, userRole]);
 
   return (
-    <Router>
-      <Routes>
+    <NotificationProvider>
+      <Router>
+        <Routes>
         {/* Ruta de login pública */}
         <Route
           path="/"
@@ -220,8 +222,9 @@ function App() {
             )
           }
         />
-      </Routes>
-    </Router>
+        </Routes>
+      </Router>
+    </NotificationProvider>
   );
 }
 

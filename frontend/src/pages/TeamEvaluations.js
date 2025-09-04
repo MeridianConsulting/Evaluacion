@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import '../assets/css/Styles1.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { useNotification } from '../components/NotificationSystem';
 
 function TeamEvaluations({ onLogout, userRole }) {
+  const { info } = useNotification();
   const [teamMembers, setTeamMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,7 +31,7 @@ function TeamEvaluations({ onLogout, userRole }) {
 
   const handleEvaluate = (employeeId) => {
     // Aquí se redigiría a la página de evaluación para el empleado específico
-    alert(`Redirigiendo a la evaluación del empleado con ID: ${employeeId}`);
+    info('Redirigiendo', `Redirigiendo a la evaluación del empleado con ID: ${employeeId}`);
     // En una implementación real:
     // navigate(`/evaluate-employee/${employeeId}`);
   };

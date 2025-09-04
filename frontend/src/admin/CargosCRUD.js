@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import './CRUD.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { useNotification } from '../components/NotificationSystem';
 
 function CargosCRUD({ onLogout }) {
+  const { success, error: showError } = useNotification();
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -96,13 +98,13 @@ function CargosCRUD({ onLogout }) {
         if (result.success) {
           // Actualizar el estado eliminando el cargo
           setCargos(cargos.filter(cargo => cargo.id_cargo !== id));
-          alert('Cargo eliminado con éxito');
+          success('Cargo eliminado', 'Cargo eliminado con éxito');
         } else {
           throw new Error(result.message || 'Error al eliminar cargo');
         }
       } catch (error) {
         console.error('Error al eliminar cargo:', error);
-        alert(`Error al eliminar cargo: ${error.message}`);
+        showError('Error al eliminar', `Error al eliminar cargo: ${error.message}`);
       }
     }
   };
@@ -159,13 +161,16 @@ function CargosCRUD({ onLogout }) {
         }
         
         setShowForm(false);
-        alert(isCreateOperation ? 'Cargo creado con éxito' : 'Cargo actualizado con éxito');
+        success(
+          isCreateOperation ? 'Cargo creado' : 'Cargo actualizado', 
+          isCreateOperation ? 'Cargo creado con éxito' : 'Cargo actualizado con éxito'
+        );
       } else {
         throw new Error(result.message || `Error al ${isCreateOperation ? 'crear' : 'actualizar'} cargo`);
       }
     } catch (error) {
       console.error(`Error al ${isEditing ? 'actualizar' : 'crear'} cargo:`, error);
-      alert(`Error: ${error.message}`);
+      showError('Error de operación', `Error: ${error.message}`);
     }
   };
 

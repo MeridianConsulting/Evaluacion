@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import { Document, Page, Text, View, StyleSheet, pdf, Image } from '@react-pdf/renderer';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { useNotification } from '../components/NotificationSystem';
 
 // ===================== Estilos PDF (SIN CAMBIOS) =====================
 const pdfStyles = StyleSheet.create({
@@ -335,6 +336,7 @@ const toDataUrl = (b64) => {
 };
 
 function Results({ onLogout, userRole }) {
+  const { success, error: showError } = useNotification();
   const [evaluacionesHistoricas, setEvaluacionesHistoricas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -411,302 +413,320 @@ function Results({ onLogout, userRole }) {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      alert(`✅ Archivo PDF generado exitosamente: ${fileName}`);
+      success('PDF generado', `Archivo PDF generado exitosamente: ${fileName}`);
     } catch (error) {
       console.error('Error al generar PDF:', error);
-      alert('Error al generar el PDF. Intente nuevamente.');
+      showError('Error al generar PDF', 'Error al generar el PDF. Intente nuevamente.');
     } finally {
       setGeneratingPDF(false);
     }
   };
 
-  // ===================== EXCEL (con columna OBSERVACIONES) =====================
-  const generateExcel = async (evaluacion) => {
-    try {
-      setGeneratingExcel(true);
+  // ===================== EXCEL (mejorado AA + chips + zebra + heatmap) =====================
+// ========= NUEVA FUNCIÓN generateExcel (estructura + AA + KPIs + chips + zebra + heatmap + pie) =========
+const generateExcel = async (evaluacion) => {
+  try {
+    setGeneratingExcel(true);
 
-      // Traer datos completos
-      const employeeId = localStorage.getItem('employeeId');
-      const apiUrl = process.env.REACT_APP_API_BASE_URL;
-      const resp = await fetch(`${apiUrl}/api/evaluations/${evaluacion.id_evaluacion}/complete/${employeeId}`);
-      if (!resp.ok) throw new Error('Error al obtener datos completos de la evaluación');
-      const { data: evaluationData } = await resp.json();
+    // ----- Fetch datos completos
+    const employeeId = localStorage.getItem('employeeId');
+    const apiUrl = process.env.REACT_APP_API_BASE_URL;
+    const resp = await fetch(`${apiUrl}/api/evaluations/${evaluacion.id_evaluacion}/complete/${employeeId}`);
+    if (!resp.ok) throw new Error('Error al obtener datos completos de la evaluación');
+    const { data: evaluationData } = await resp.json();
 
-      // Workbook
-      const wb = new ExcelJS.Workbook();
-      wb.created = new Date();
-      wb.properties.title = `Evaluación ${evaluacion.id_evaluacion}`;
-      wb.properties.company = 'Meridian Consulting LTDA';
+    // ---------- Paleta AA y helpers
+    const PALETTE = {
+      blue: '184C8C',           // azul corporativo
+      text: '2B2B2B',           // gris oscuro texto
+      bg: 'F5F6F8',             // neutro fondo
+      border: 'DADFE5',         // bordes sutiles
+      zebra: 'FAFBFC',
+      heat: { green: 'D5E8D4', yellow: 'FFF2CC', red: 'F8CECC' },
+      status: { SUPERIOR: '2E7D32', SATISFACTORIO: '1976D2', REGULAR: 'F9A825', INSUFICIENTE: 'C62828', EXCELENTE: '2E7D32' }
+    };
 
-      // Colores
-      const azulMeridian = '2C5AA0';
-      const grisHeader   = '34495E';
-      const grisSeccion  = '5A6C7D';
+    const FONT_TITLE = { name: 'Calibri', size: 20, bold: true, color: { argb: 'FFFFFFFF' } };
+    const FONT_SUB   = { name: 'Calibri', size: 14, bold: true, color: { argb: 'FFFFFFFF' } };
+    const FONT_BODY  = { name: 'Calibri', size: 11, color: { argb: 'FF' + PALETTE.text } };
+    const ONE_DEC = '0.0';
+    const dash = (v) => (v === undefined || v === null || v === '' || v === 'N/A') ? '—' : v;
+    const numOrBlank = (v) => Number.isFinite(parseFloat(v)) ? parseFloat(v) : null;
 
-      // Hoja
-      const ws = wb.addWorksheet('Evaluación de Desempeño', {
-        pageSetup: { paperSize: 9, orientation: 'portrait', fitToPage: true }
+    const estadoPorValor = (n) => {
+      const v = parseFloat(n || 0);
+      if (v >= 4.5) return 'EXCELENTE';
+      if (v >= 4.0) return 'SUPERIOR';
+      if (v >= 3.0) return 'SATISFACTORIO';
+      if (v >= 2.0) return 'REGULAR';
+      return 'INSUFICIENTE';
+    };
+
+    const normalizeObs = (obj) =>
+      obj?.observaciones ?? obj?.observacion ?? obj?.justificacion ?? obj?.comentario ?? obj?.nota ?? '';
+
+    const applyEstadoChip = (cell, estado) => {
+      const MAP = { EXCELENTE:'★ Excelente', SUPERIOR:'✓ Superior', SATISFACTORIO:'✓ Satisfactorio', REGULAR:'! Regular', INSUFICIENTE:'× Insuficiente' };
+      const text = MAP[estado] ?? dash(estado);
+      const color = PALETTE.status[estado] || PALETTE.text;
+      cell.value = { richText: [{ text: ` ${text} `, font: { name: 'Calibri', bold: true, color: { argb: 'FF' + color } } }] };
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PALETTE.bg } };
+      cell.border = { top:{style:'thin',color:{argb:PALETTE.border}}, left:{style:'thin',color:{argb:PALETTE.border}},
+                      bottom:{style:'thin',color:{argb:PALETTE.border}}, right:{style:'thin',color:{argb:PALETTE.border}} };
+    };
+
+    const heatFill = (val) => {
+      const v = parseFloat(val);
+      if (!Number.isFinite(v)) return null;
+      if (v >= 4.5) return PALETTE.heat.green;
+      if (v >= 3.0) return PALETTE.heat.yellow;
+      return PALETTE.heat.red;
+    };
+
+    // ---------- Workbook
+    const wb = new ExcelJS.Workbook();
+    wb.created = new Date();
+    wb.properties.title = `Evaluación ${evaluacion.id_evaluacion}`;
+    wb.properties.company = 'Meridian Consulting LTDA';
+
+    // ---------- Hoja
+    const ws = wb.addWorksheet('Evaluación de Desempeño', {
+      pageSetup: {
+        paperSize: 9, orientation: 'portrait', fitToPage: true,
+        margins: { left: 0.6, right: 0.6, top: 0.8, bottom: 0.8, header: 0.3, footer: 0.3 }
+      }
+    });
+
+    // 8 columnas para acomodar 4 KPIs horizontales (A:B, C:D, E:F, G:H)
+    ws.columns = [
+      { key: 'A', width: 26 }, { key: 'B', width: 16 },
+      { key: 'C', width: 22 }, { key: 'D', width: 16 },
+      { key: 'E', width: 22 }, { key: 'F', width: 16 },
+      { key: 'G', width: 22 }, { key: 'H', width: 16 },
+    ];
+
+    // ---------- Encabezado compacto: Título + Período + Estado
+    ws.mergeCells('A1:H1');
+    const cTitle = ws.getCell('A1');
+    cTitle.value = 'EVALUACIÓN DE DESEMPEÑO – MERIDIAN CONSULTING LTDA';
+    cTitle.font = FONT_TITLE; cTitle.alignment = { horizontal: 'center', vertical: 'middle' };
+    cTitle.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PALETTE.blue } };
+    ws.addRow([]);
+
+    ws.mergeCells('A3:D3');
+    ws.getCell('A3').value = `Período: ${dash(evaluationData.evaluacion?.periodo_evaluacion)}`;
+    ws.getCell('A3').font = FONT_BODY;
+
+    ws.mergeCells('E3:H3');
+    const st = estadoPorValor(evaluationData.promedios?.promedio_general);
+    const estadoCell = ws.getCell('E3'); estadoCell.font = FONT_BODY;
+    applyEstadoChip(estadoCell, st);
+
+    ws.addRow([]);
+
+    // ---------- Tarjetas KPI (4 horizontales, una cifra decimal)
+    const promComp = numOrBlank(evaluationData.promedios?.promedio_competencias);
+    const promHseq = numOrBlank(evaluationData.promedios?.promedio_hseq);
+    const promGral = numOrBlank(evaluationData.promedios?.promedio_general);
+    const estadoGral = estadoPorValor(promGral);
+
+    const drawCard = (range, value, label, estadoOpt=null) => {
+      ws.mergeCells(range);
+      const c = ws.getCell(range.split(':')[0]);
+      const big = (value===null ? '—' : value.toFixed(1));
+      c.value = { richText: [
+        { text: `${big}\n`, font: { name:'Calibri', size: 22, bold: true, color:{ argb:'FF'+PALETTE.text } } },
+        { text: label,        font: { name:'Calibri', size: 11, color:{ argb:'FF'+PALETTE.text } } },
+      ]};
+      c.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PALETTE.bg } };
+      c.border = { top:{style:'thin',color:{argb:PALETTE.border}}, left:{style:'thin',color:{argb:PALETTE.border}},
+                   bottom:{style:'thin',color:{argb:PALETTE.border}}, right:{style:'thin',color:{argb:PALETTE.border}} };
+      // chip a la derecha (celda superior derecha del rango)
+      if (estadoOpt) {
+        const topRight = range.split(':')[1];
+        const chipCell = ws.getCell(topRight);
+        applyEstadoChip(chipCell, estadoOpt);
+      }
+    };
+
+    // fila de inicio para KPIs
+    const kpiTop = 5;
+    drawCard(`A${kpiTop}:B${kpiTop+3}`, promComp, 'Promedio Competencias');
+    drawCard(`C${kpiTop}:D${kpiTop+3}`, promHseq, 'Promedio HSEQ');
+    drawCard(`E${kpiTop}:F${kpiTop+3}`, promGral, 'Promedio General', estadoGral);
+    drawCard(`G${kpiTop}:H${kpiTop+3}`, promGral, 'Calificación Final', estadoGral);
+    ws.addRow([]); ws.addRow([]);
+
+    // ---------- Datos del empleado (2 columnas)
+    const addSectionHeader = (title) => {
+      const r = ws.addRow([title]); ws.mergeCells(`A${r.number}:H${r.number}`);
+      const c = ws.getCell(`A${r.number}`);
+      c.font = FONT_SUB; c.alignment = { horizontal: 'left', vertical: 'middle' };
+      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4B5A6B' } };
+      return r.number;
+    };
+    addSectionHeader('DATOS DEL EMPLEADO');
+
+    const rowStartDatos = ws.lastRow.number + 1;
+    const putPair = (lA,vA,lB,vB) => {
+      const r = ws.addRow([lA, dash(vA), '', '', lB, dash(vB)]);
+      ws.mergeCells(`A${r.number}:B${r.number}`);
+      ws.mergeCells(`E${r.number}:F${r.number}`);
+      r.eachCell(cell => { cell.font = FONT_BODY; cell.border = { bottom:{style:'thin', color:{argb:PALETTE.border}} }; });
+    };
+    putPair('Nombre:', evaluationData.empleado?.nombre, 'Cargo:', evaluationData.empleado?.cargo);
+    putPair('Área:',   evaluationData.empleado?.area,   'ID Empleado:', evaluationData.empleado?.id_empleado);
+    putPair('Fecha evaluación:', evaluationData.evaluacion?.fecha_evaluacion ? new Date(evaluationData.evaluacion.fecha_evaluacion).toLocaleDateString('es-ES') : '—',
+            'Evaluador:', evaluationData.evaluacion?.evaluador_nombre);
+    ws.addRow([]);
+
+
+    // Leyenda / microcopy
+    const note = ws.addRow([
+      'Escala 1–5: 1=Insuficiente, 2=Regular, 3=Satisfactorio, 4–5=Superior. ' +
+      'Estados: 4.0–5.0 Superior; 3.0–3.9 Satisfactorio; 2.0–2.9 Regular; <2.0 Insuficiente.'
+    ]);
+    ws.mergeCells(`A${note.number}:H${note.number}`);
+    ws.getCell(`A${note.number}`).font = { name:'Calibri', size:10, color:{ argb:'FF6B6B6B' } };
+    ws.addRow([]);
+
+    // ---------- Competencias (tabla con Observaciones)
+    addSectionHeader('RESULTADOS POR COMPETENCIA');
+    const hdrComp = ws.addRow(['Aspecto', 'Empleado', 'Jefe', 'Promedio', 'Estado', 'Observaciones', '', '']);
+    hdrComp.eachCell((c, i) => {
+      if (i<=6) {
+        c.font = { name:'Calibri', bold:true, color:{ argb:'FFFFFFFF' } };
+        c.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:'FF34495E' } };
+        c.alignment = { horizontal:'center', vertical:'middle', wrapText: i===6 };
+      }
+    });
+    const headerCompRow = hdrComp.number;
+
+    let zebra = false;
+    (evaluationData.competencias || []).forEach(item => {
+      zebra = !zebra;
+      const emp = numOrBlank(item.calificacion_empleado);
+      const jef = numOrBlank(item.calificacion_jefe);
+      const pro = numOrBlank(item.promedio);
+      const est = estadoPorValor(pro);
+      const obs = normalizeObs(item);
+
+      const r = ws.addRow([dash(item.aspecto), emp, jef, pro, '', obs, '', '']);
+      r.eachCell((cell, col) => {
+        cell.font = FONT_BODY;
+        cell.border = { bottom:{ style:'thin', color:{ argb:PALETTE.border } } };
+        cell.alignment = { vertical:'middle', wrapText: col===6, horizontal: (col>=2 && col<=4) ? 'right' : (col===5 ? 'center' : 'left') };
+        if (zebra && col !== 4) cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:PALETTE.zebra } };
       });
+      // formato 1 decimal
+      ['B','C','D'].forEach(col => { const c = ws.getCell(`${col}${r.number}`); if (c.value !== null) c.numFmt = ONE_DEC; });
+      // heat ONLY in Promedio
+      const dCell = ws.getCell(`D${r.number}`); const hf = heatFill(dCell.value); if (hf) dCell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:hf } };
+      // chip de estado
+      applyEstadoChip(ws.getCell(`E${r.number}`), est);
+      // auto altura segun observación
+      const obsLen = (`${obs}` || '').length; if (obsLen > 80) r.height = Math.min(140, 18 + Math.ceil(obsLen/70)*14);
+    });
+    ws.addRow([]);
 
-      // AHORA SON 6 COLUMNAS (A..F) para incluir "Observaciones"
-      ws.columns = [
-        { header: '', key: 'c1', width: 34 }, // A
-        { header: '', key: 'c2', width: 26 }, // B
-        { header: '', key: 'c3', width: 18 }, // C
-        { header: '', key: 'c4', width: 24 }, // D
-        { header: '', key: 'c5', width: 18 }, // E (Estado)
-        { header: '', key: 'c6', width: 45 }, // F (Observaciones) - ancho para textos largos
-      ];
-
-      // Helpers
-      const addSectionHeader = (title) => {
-        const r = ws.addRow([title]);
-        ws.mergeCells(`A${r.number}:F${r.number}`);
-        const c = ws.getCell(`A${r.number}`);
-        c.font = { bold: true, size: 14, color: { argb: 'FFFFFFFF' } };
-        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: grisSeccion } };
-        c.alignment = { horizontal: 'left', vertical: 'middle' };
-        return r.number;
-      };
-
-      const estadoPorValor = (n) => {
-        const v = parseFloat(n || 0);
-        if (v >= 4.5) return 'EXCELENTE';
-        if (v >= 4.0) return 'SUPERIOR';
-        if (v >= 3.0) return 'SATISFACTORIO';
-        if (v >= 2.0) return 'REGULAR';
-        return 'INSUFICIENTE';
-      };
-
-      const colorPorCalificacion = (val) => {
-        const v = parseFloat(val);
-        if (isNaN(v)) return null;
-        if (v >= 4.5) return 'FFD5E8D4';
-        if (v >= 4.0) return 'FFB8D4E3';
-        if (v >= 3.0) return 'FFFFF2CC';
-        if (v >= 2.0) return 'FFF8CECC';
-        return 'FFF5B7B1';
-      };
-
-      const normalizeObs = (obj) =>
-        obj?.observaciones ??
-        obj?.observacion ??
-        obj?.justificacion ??
-        obj?.comentario ??
-        obj?.nota ??
-        'N/A';
-
-      const setRowBaseStyle = (row) => {
-        row.eachCell((cell, colNum) => {
-          cell.font = { size: 11, color: { argb: 'FF2C3E50' } };
-          cell.border = { bottom: { style: 'thin', color: { argb: 'FFBDC3C7' } } };
-          cell.alignment = { vertical: 'middle', wrapText: colNum === 6 ? true : false }; // wrap solo en OBS
-        });
-      };
-
-      // Título
-      ws.mergeCells('A1:F1');
-      ws.getCell('A1').value = 'EVALUACIÓN DE DESEMPEÑO - MERIDIAN CONSULTING LTDA';
-      ws.getCell('A1').font = { bold: true, size: 20, color: { argb: 'FFFFFFFF' } };
-      ws.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
-      ws.getCell('A1').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: azulMeridian } };
-      ws.addRow([]);
-
-      ws.mergeCells('A3:F3');
-      ws.getCell('A3').value = 'CUADRO DE MANDO - EVALUACIÓN DE DESEMPEÑO';
-      ws.getCell('A3').font = { bold: true, size: 16, color: { argb: 'FFFFFFFF' } };
-      ws.getCell('A3').alignment = { horizontal: 'center' };
-      ws.getCell('A3').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '4A90E2' } };
-      ws.addRow([]);
-
-      // Período/fecha/estado
-      ws.addRows([
-        ['Período de Evaluación:', evaluationData.evaluacion?.periodo_evaluacion || 'N/A', '', 'Estado:', evaluationData.evaluacion?.estado_evaluacion || 'N/A', ''],
-        ['Fecha de Evaluación:', evaluationData.evaluacion?.fecha_evaluacion ? new Date(evaluationData.evaluacion.fecha_evaluacion).toLocaleDateString('es-ES') : 'N/A', '', '', '', ''],
-        [''],
-      ]);
-
-      // Datos del empleado + Resumen
-      addSectionHeader('DATOS DEL EMPLEADO');
-      ws.addRow(['Nombre:', evaluationData.empleado?.nombre || 'N/A', '', 'Promedio Competencias:', evaluationData.promedios?.promedio_competencias || 'N/A', '']);
-      ws.addRow(['Cargo:',   evaluationData.empleado?.cargo  || 'N/A', '', 'Promedio HSEQ:',       evaluationData.promedios?.promedio_hseq || 'N/A', '']);
-      ws.addRow(['Área:',    evaluationData.empleado?.area   || 'N/A', '', 'Promedio General:',    evaluationData.promedios?.promedio_general || 'N/A', '']);
-      ws.addRow(['ID Empleado:', evaluationData.empleado?.id_empleado || 'N/A', '', 'Calificación Final:', estadoPorValor(evaluationData.promedios?.promedio_general), '']);
-      ws.addRow(['']);
-
-      // ===================== Competencias (con OBSERVACIONES) =====================
-      if (Array.isArray(evaluationData.competencias) && evaluationData.competencias.length) {
-        addSectionHeader('COMPETENCIAS EVALUADAS');
-
-        const hdr = ws.addRow(['Aspecto', 'Calificación Empleado', 'Calificación Jefe', 'Promedio', 'Estado', 'Observaciones']);
-        hdr.eachCell((c, col) => {
-          c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-          c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: grisHeader } };
-          c.alignment = { horizontal: col === 6 ? 'left' : 'center', vertical: 'middle', wrapText: col === 6 };
-          c.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
-        });
-
-        evaluationData.competencias.forEach((c) => {
-          const obs = normalizeObs(c);
-          const row = ws.addRow([
-            c.aspecto || 'N/A',
-            c.calificacion_empleado ?? 'N/A',
-            c.calificacion_jefe ?? 'N/A',
-            c.promedio ?? 'N/A',
-            estadoPorValor(c.promedio),
-            obs,
-          ]);
-          setRowBaseStyle(row);
-
-          // Coloreos B, C, D
-          ['B', 'C', 'D'].forEach((col) => {
-            const cell = ws.getCell(`${col}${row.number}`);
-            const fill = colorPorCalificacion(cell.value);
-            if (fill) {
-              cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: fill } };
-              cell.font = { ...cell.font, bold: true };
-              cell.alignment = { ...cell.alignment, horizontal: 'center' };
-            }
-          });
-
-          // Estado (E)
-          const eCell = ws.getCell(`E${row.number}`);
-          const txt = `${eCell.value || ''}`;
-          let fill = 'FFF5B7B1';
-          if (txt.includes('EXCELENTE')) fill = 'FFD5E8D4';
-          else if (txt.includes('SUPERIOR')) fill = 'FFB8D4E3';
-          else if (txt.includes('SATISFACTORIO')) fill = 'FFFFF2CC';
-          else if (txt.includes('REGULAR')) fill = 'FFF8CECC';
-          eCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: fill } };
-          eCell.font = { ...eCell.font, bold: true, color: { argb: 'FF2C3E50' } };
-          eCell.alignment = { horizontal: 'center', vertical: 'middle' };
-
-          // Altura estimada por longitud de observación
-          const len = (obs || '').toString().length;
-          if (len > 60) {
-            row.height = Math.min(120, 18 + Math.ceil(len / 70) * 15);
-          }
-        });
-
-        ws.addRow(['']);
+    // ---------- HSEQ (tabla)
+    addSectionHeader('RESPONSABILIDADES HSEQ');
+    const hdrH = ws.addRow(['Responsabilidad', 'Calificación', 'Autoeval.', 'Eval. Jefe', 'Estado', 'Observaciones', '', '']);
+    hdrH.eachCell((c, i) => {
+      if (i<=6) {
+        c.font = { name:'Calibri', bold:true, color:{ argb:'FFFFFFFF' } };
+        c.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:'FF34495E' } };
+        c.alignment = { horizontal:'center', vertical:'middle', wrapText: i===6 };
       }
+    });
+    const headerHseqRow = hdrH.number;
 
-      // ===================== HSEQ (con OBSERVACIONES) =====================
-      if (Array.isArray(evaluationData.hseq_data) && evaluationData.hseq_data.length) {
-        addSectionHeader('RESPONSABILIDADES HSEQ');
+    zebra = false;
+    (evaluationData.hseq_data || []).forEach(h => {
+      zebra = !zebra;
+      const cal = numOrBlank(h.calificacion);
+      const est = estadoPorValor(cal);
+      const r = ws.addRow([dash(h.responsabilidad), cal, numOrBlank(h.autoevaluacion), numOrBlank(h.evaluacion_jefe), '', normalizeObs(h), '', '']);
+      r.eachCell((cell, col) => {
+        cell.font = FONT_BODY;
+        cell.border = { bottom:{ style:'thin', color:{ argb:PALETTE.border } } };
+        cell.alignment = { vertical:'middle', wrapText: col===6, horizontal: (col>=2 && col<=4) ? 'right' : (col===5 ? 'center' : 'left') };
+        if (zebra) cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:PALETTE.zebra } };
+      });
+      ['B','C','D'].forEach(col => { const c = ws.getCell(`${col}${r.number}`); if (c.value !== null) c.numFmt = ONE_DEC; });
+      applyEstadoChip(ws.getCell(`E${r.number}`), est);
+    });
+    ws.addRow([]);
 
-        const hdr = ws.addRow(['Responsabilidad', 'Calificación', 'Autoevaluación', 'Evaluación Jefe', 'Estado', 'Observaciones']);
-        hdr.eachCell((c, col) => {
-          c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-          c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: grisHeader } };
-          c.alignment = { horizontal: col === 6 ? 'left' : 'center', vertical: 'middle', wrapText: col === 6 };
-        });
+    // ---------- Plan de mejora (SMART + semáforo)
+    addSectionHeader('PLAN DE MEJORA');
+    const hdrP = ws.addRow(['Acción', 'Métrica', 'Responsable', 'Fecha', 'Estado', 'Observaciones', '', '']);
+    hdrP.eachCell((c,i)=>{ if(i<=6){ c.font={ name:'Calibri', bold:true, color:{argb:'FFFFFFFF'} }; c.fill={ type:'pattern', pattern:'solid', fgColor:{argb:'FF34495E'} }; c.alignment={ horizontal:'center', vertical:'middle' }; } });
 
-        evaluationData.hseq_data.forEach((h) => {
-          const obs = normalizeObs(h);
-          const row = ws.addRow([
-            h.responsabilidad || 'N/A',
-            h.calificacion ?? 'N/A',
-            h.autoevaluacion ?? 'N/A',
-            h.evaluacion_jefe ?? 'N/A',
-            estadoPorValor(h.calificacion),
-            obs,
-          ]);
-          setRowBaseStyle(row);
+    const acciones = Array.isArray(evaluationData.plan_accion?.acciones)
+      ? evaluationData.plan_accion.acciones
+      : (evaluationData.plan_accion ? [evaluationData.plan_accion] : []);
+    (acciones.length ? acciones : [{ actividad: dash(evaluationData.plan_accion?.actividad), seguimiento: dash(evaluationData.plan_accion?.seguimiento), responsable: dash(evaluationData.plan_accion?.responsable), fecha: dash(evaluationData.plan_accion?.fecha), estado: 'Pendiente' }])
+      .forEach(a => {
+        const r = ws.addRow([
+          dash(a.actividad), dash(a.metrica || a.seguimiento), dash(a.responsable),
+          dash(a.fecha), '', dash(a.observaciones || ''), '', ''
+        ]);
+        r.eachCell((cell) => { cell.font = FONT_BODY; cell.border = { bottom:{ style:'thin', color:{ argb:PALETTE.border } } }; });
+        const est = (a.estado || 'Pendiente').toUpperCase();
+        const map = { 'PENDIENTE':'REGULAR', 'EN CURSO':'SATISFACTORIO', 'CERRADA':'SUPERIOR' };
+        applyEstadoChip(ws.getCell(`E${r.number}`), map[est] || 'REGULAR');
+      });
+    ws.addRow([]);
 
-          // colorear B
-          const bCell = ws.getCell(`B${row.number}`);
-          const bFill = colorPorCalificacion(bCell.value);
-          if (bFill) {
-            bCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bFill } };
-            bCell.font = { ...bCell.font, bold: true };
-            bCell.alignment = { ...bCell.alignment, horizontal: 'center' };
-          }
+    // ---------- Firmas y validación (cajas ligeras)
+    addSectionHeader('FIRMAS');
+    ws.addRow(['Evaluado:', dash(evaluationData.empleado?.nombre), '', '', 'Jefe Directo:', dash(evaluationData.evaluacion?.evaluador_nombre || ''), '', '']);
+    ws.addRow(['Cargo:', dash(evaluationData.empleado?.cargo), '', '', 'Cargo:', dash(evaluationData.evaluacion?.evaluador_cargo || ''), '', '']);
+    ws.addRow(['Firma del Empleado:', '', '', '', 'Firma del Jefe:', '', '', '']);
+    for (let i = 0; i < 6; i++) ws.addRow(['', '', '', '', '', '', '', '']);
 
-          // estado (E)
-          const eCell = ws.getCell(`E${row.number}`);
-          const txt = `${eCell.value || ''}`;
-          let fill = 'FFF5B7B1';
-          if (txt.includes('EXCELENTE')) fill = 'FFD5E8D4';
-          else if (txt.includes('SUPERIOR')) fill = 'FFB8D4E3';
-          else if (txt.includes('SATISFACTORIO')) fill = 'FFFFF2CC';
-          else if (txt.includes('REGULAR')) fill = 'FFF8CECC';
-          eCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: fill } };
-          eCell.font = { ...eCell.font, bold: true, color: { argb: 'FF2C3E50' } };
-          eCell.alignment = { horizontal: 'center', vertical: 'middle' };
-
-          const len = (obs || '').toString().length;
-          if (len > 60) {
-            row.height = Math.min(120, 18 + Math.ceil(len / 70) * 15);
-          }
-        });
-
-        ws.addRow(['']);
-      }
-
-      // ===================== Plan de Mejoramiento =====================
-      if (evaluationData.mejoramiento || evaluationData.plan_accion) {
-        addSectionHeader('PLAN DE MEJORAMIENTO Y DESARROLLO');
-        ws.addRow(['Fortalezas:', evaluationData.mejoramiento?.fortalezas || 'N/A', '', 'Aspectos a Mejorar:', evaluationData.mejoramiento?.aspectos_mejorar || 'N/A', '']);
-        ws.addRow(['PLAN DE ACCIÓN', '', '', '', '', '']);
-        ws.addRow(['Actividad:', evaluationData.plan_accion?.actividad || 'N/A', '', 'Responsable:', evaluationData.plan_accion?.responsable || 'N/A', '']);
-        ws.addRow(['Seguimiento:', evaluationData.plan_accion?.seguimiento || 'N/A', '', 'Fecha:', evaluationData.plan_accion?.fecha || 'N/A', '']);
-        ws.addRow(['']);
-      }
-
-      // ===================== Firmas y validación (imágenes) =====================
-      const firmasHeaderRow = addSectionHeader('FIRMAS Y VALIDACIÓN');
-      ws.addRow(['Evaluado:', evaluationData.empleado?.nombre || 'N/A', '', 'Jefe Directo:', evaluationData.evaluacion?.evaluador_nombre || 'N/A', '']);
-      ws.addRow(['Cargo:', evaluationData.empleado?.cargo || 'N/A', '', 'Cargo:', evaluationData.evaluacion?.evaluador_cargo || 'N/A', '']);
-      ws.addRow(['']);
-      ws.addRow(['Firma del Empleado:', '', '', 'Firma del Jefe:', '', '']);
-      // Espacio para imágenes
-      for (let i = 0; i < 8; i++) ws.addRow(['', '', '', '', '', '']);
-
-      const empDataUrl = toDataUrl(evaluationData.firmas?.firma_empleado);
-      const jefeDataUrl = toDataUrl(evaluationData.firmas?.firma_jefe);
-
-      if (empDataUrl) {
-        const imgId = wb.addImage({ base64: empDataUrl, extension: 'png' });
-        ws.addImage(imgId, {
-          tl: { col: 1, row: firmasHeaderRow + 5 }, // Columna B
-          ext: { width: 200, height: 80 },
-          editAs: 'oneCell'
-        });
-      }
-      if (jefeDataUrl) {
-        const imgId = wb.addImage({ base64: jefeDataUrl, extension: 'png' });
-        ws.addImage(imgId, {
-          tl: { col: 4, row: firmasHeaderRow + 5 }, // Columna E
-          ext: { width: 200, height: 80 },
-          editAs: 'oneCell'
-        });
-      }
-      ws.addRow(['']);
-
-      // ===================== Información técnica =====================
-      const tech = addSectionHeader('INFORMACIÓN TÉCNICA DEL REPORTE');
-      ws.addRow(['ID Evaluación:', evaluationData.evaluacion?.id_evaluacion || 'N/A', '', 'Versión Sistema:', '1.0', '']);
-      ws.addRow(['ID Empleado:', evaluationData.empleado?.id_empleado || 'N/A', '', 'Formato:', 'Excel (.xlsx)', '']);
-      ws.addRow(['Fecha Generación:', new Date().toLocaleDateString('es-ES'), '', 'Hora:', new Date().toLocaleTimeString('es-ES'), '']);
-      ws.addRow(['ESTADÍSTICAS:', '', '', '', '', '']);
-      ws.addRow(['Total Competencias:', evaluationData.competencias?.length || 0, '', 'Total HSEQ:', evaluationData.hseq_data?.length || 0, '']);
-      ws.addRow(['Promedio General:', evaluationData.promedios?.promedio_general || 'N/A', '', 'Estado General:', estadoPorValor(evaluationData.promedios?.promedio_general), '']);
-
-      // Exportar
-      const buf = await wb.xlsx.writeBuffer({ useStyles: true, useSharedStrings: true });
-      const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const fileName = `evaluacion_${evaluacion.id_evaluacion}_${new Date().toISOString().split('T')[0]}.xlsx`;
-      saveAs(blob, fileName);
-
-      alert(`✅ Reporte Excel generado con observaciones: ${fileName}`);
-    } catch (e) {
-      console.error('Error al generar Excel:', e);
-      alert('Error al generar el archivo Excel. Intente nuevamente.');
-    } finally {
-      setGeneratingExcel(false);
+    const toDataUrl = (b64) => !b64 ? null : (b64.startsWith('data:image') ? b64 : `data:image/png;base64,${b64}`);
+    const empDataUrl = toDataUrl(evaluationData.firmas?.firma_empleado);
+    const jefeDataUrl = toDataUrl(evaluationData.firmas?.firma_jefe);
+    const firmaAnchorRow = ws.lastRow.number - 5;
+    if (empDataUrl) {
+      const imgId = wb.addImage({ base64: empDataUrl, extension: 'png' });
+      ws.addImage(imgId, { tl: { col: 1, row: firmaAnchorRow }, ext: { width: 220, height: 80 }, editAs: 'oneCell' });
     }
-  };
+    if (jefeDataUrl) {
+      const imgId = wb.addImage({ base64: jefeDataUrl, extension: 'png' });
+      ws.addImage(imgId, { tl: { col: 5, row: firmaAnchorRow }, ext: { width: 220, height: 80 }, editAs: 'oneCell' });
+    }
+    ws.addRow([]);
+
+    // ---------- Índice interno (hipervínculos) y pie con metadatos
+    const idxStart = ws.rowCount + 1;
+    ws.addRow(['Índice (clic para ir):  • KPIs  • Datos  • Competencias  • HSEQ  • Plan  • Firmas']);
+    ws.mergeCells(`A${idxStart}:H${idxStart}`);
+    ws.getCell(`A${idxStart}`).font = { name:'Calibri', size:10, color:{argb:'FF356DB1'} };
+    ws.getCell(`A${idxStart}`).value = { text: 'Ir a Competencias', hyperlink: `#A${headerCompRow}` };
+
+    ws.headerFooter.oddFooter = `&L ID Eval: ${dash(evaluationData.evaluacion?.id_evaluacion)}  |  Plantilla v1.0 &R Página &P de &N`;
+    // área de impresión
+    ws.pageSetup.printArea = `A1:F${ws.lastRow.number}`;
+
+    // ---------- Guardar
+    const buf = await wb.xlsx.writeBuffer({ useStyles: true, useSharedStrings: true });
+    const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const fileName = `evaluacion_${evaluacion.id_evaluacion}_${new Date().toISOString().split('T')[0]}.xlsx`;
+    saveAs(blob, fileName);
+    success('Excel generado', `Reporte Excel mejorado generado: ${fileName}`);
+  } catch (e) {
+    console.error('Error al generar Excel:', e);
+    showError('Error al generar Excel', 'Error al generar el archivo Excel. Intente nuevamente.');
+  } finally {
+    setGeneratingExcel(false);
+  }
+};
+
 
   // Descarga PDF directa (compat)
   const downloadPDF = async (evaluationId) => {
@@ -717,7 +737,7 @@ function Results({ onLogout, userRole }) {
       window.open(downloadUrl, '_blank');
     } catch (error) {
       console.error('Error al descargar PDF:', error);
-      alert('Error al descargar el reporte. Intente nuevamente.');
+      showError('Error al descargar', 'Error al descargar el reporte. Intente nuevamente.');
     }
   };
 
@@ -790,10 +810,10 @@ function Results({ onLogout, userRole }) {
             <div className="info-icon">ℹ️</div>
             <div className="info-content">
               <h3>Reportes Disponibles</h3>
-              <p>Genera reportes en <strong>PDF</strong> y <strong>Excel</strong>. El Excel ahora incluye una columna de <strong>Observaciones</strong> al frente de cada ítem.</p>
+              <p>Genera reportes en <strong>PDF</strong> y <strong>Excel</strong>. El Excel ahora incluye <strong>paleta corporativa AA</strong>, <strong>chips de estado con icono</strong>, <strong>zebra</strong> y <strong>mapa de calor</strong> solo en Promedio.</p>
               <ul>
                 <li><strong>📄 PDF:</strong> Reporte visual con firmas integradas</li>
-                <li><strong>📊 Excel:</strong> Tablas con Observaciones y firmas</li>
+                <li><strong>📊 Excel:</strong> Tablas con Observaciones, accesible y legible</li>
               </ul>
             </div>
           </div>
