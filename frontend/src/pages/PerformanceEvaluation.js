@@ -22,6 +22,11 @@ function PerformanceEvaluation() {
   const [formTouched, setFormTouched] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
+  const [realAverages, setRealAverages] = useState({
+    promedioCompetencias: 0,
+    promedioHseq: 0,
+    promedioGeneral: 0
+  });
   const [datosGenerales, setDatosGenerales] = useState({
     fechaIngreso: '',
     fechaEvaluacion: '',
@@ -374,6 +379,39 @@ function PerformanceEvaluation() {
 
   const clearFormData = () => {
     localStorage.removeItem('evaluationFormData');
+  };
+
+  // Función para obtener promedios reales de la base de datos
+  const fetchRealAverages = async (evaluationId) => {
+    try {
+      const apiUrl = process.env.REACT_APP_API_BASE_URL;
+      const response = await fetch(`${apiUrl}/api/evaluations/${evaluationId}/complete/${employee?.id_empleado}`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.data?.promedios) {
+          const promedios = data.data.promedios;
+          setRealAverages({
+            promedioCompetencias: parseFloat(promedios.promedio_competencias) || 0,
+            promedioHseq: parseFloat(promedios.promedio_hseq) || 0,
+            promedioGeneral: parseFloat(promedios.promedio_general) || 0
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error al obtener promedios reales:', error);
+      // En caso de error, usar los promedios calculados localmente
+      setRealAverages({
+        promedioCompetencias: Number(calcularPromedioCompetencias()) || 0,
+        promedioHseq: Number(calcularPromedioHseq()) || 0,
+        promedioGeneral: (() => {
+          const pc = Number(calcularPromedioCompetencias()) || 0;
+          const ph = Number(calcularPromedioHseq()) || 0;
+          const parts = [pc, ph].filter(n => n > 0);
+          return parts.length ? (parts.reduce((a,b)=>a+b,0) / parts.length) : 0;
+        })()
+      });
+    }
   };
 
   useEffect(() => {
@@ -750,6 +788,15 @@ function PerformanceEvaluation() {
       if (response.ok) {
         // Mostrar mensaje de éxito
         success('¡Evaluación completada!', 'La evaluación ha sido diligenciada exitosamente.');
+        
+        // Obtener el ID de la evaluación recién guardada
+        const evaluationId = data.id_evaluacion;
+        
+        // Guardar el ID de la evaluación para poder descargar el PDF
+        localStorage.setItem('lastEvaluationId', evaluationId);
+        
+        // Obtener promedios reales de la base de datos
+        await fetchRealAverages(evaluationId);
         
         // Limpiar datos guardados y tokens
         clearFormData();
@@ -1321,14 +1368,6 @@ function PerformanceEvaluation() {
             </div>
         </section>
 
-        <hr className="evaluation-hr"/>
-        <section className="evaluation-section">
-          <h2 className="evaluation-h2">OBJETIVO DEL CARGO A EVALUAR</h2>
-          <p>
-            Describe las funciones principales y la razón de ser del cargo. 
-            Incluye responsabilidades generales, alcance y actividades clave.
-          </p>
-        </section>
         <hr className="evaluation-hr"/>
         <section className="evaluation-section instrucciones">
           <h2 className="evaluation-h2-center">INSTRUCCIONES</h2>
@@ -3030,24 +3069,23 @@ function PerformanceEvaluation() {
       <CompletionCelebration
         open={showCompletion}
         employeeName={employee?.nombre || ''}
-        compAvg={Number(calcularPromedioCompetencias())}
-        hseqAvg={Number(calcularPromedioHseq())}
-        generalAvg={
-          (() => {
-            const pc = Number(calcularPromedioCompetencias()) || 0;
-            const ph = Number(calcularPromedioHseq()) || 0;
-            const parts = [pc, ph].filter(n => n > 0);
-            return parts.length ? (parts.reduce((a,b)=>a+b,0) / parts.length) : 0;
-          })()
-        }
+        compAvg={realAverages.promedioCompetencias}
+        hseqAvg={realAverages.promedioHseq}
+        generalAvg={realAverages.promedioGeneral}
         autoCloseMs={0}
         closeOnBackdrop={false}
         onClose={() => setShowCompletion(false)}
         onPrimaryAction={() => (window.location.href = '/')}
         onDownload={() => {
-          // Aquí puedes disparar tu lógica de generar/descargar constancia (PDF, etc.)
-          // Por ejemplo: generarPDF(employee, datosGenerales, rows, hseqItems, ...);
-          console.log('Descargar constancia de evaluación');
+          // Descargar PDF de la evaluación usando el endpoint existente
+          const evaluationId = localStorage.getItem('lastEvaluationId');
+          if (evaluationId && employee?.id_empleado) {
+            const apiUrl = process.env.REACT_APP_API_BASE_URL;
+            const downloadUrl = `${apiUrl}/api/evaluations/${evaluationId}/pdf/${employee.id_empleado}`;
+            window.open(downloadUrl, '_blank');
+          } else {
+            showError('Error', 'No se pudo obtener la información necesaria para descargar el PDF');
+          }
         }}
       />
     </div>

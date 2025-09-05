@@ -9,26 +9,27 @@ export default function CompletionCelebration({
   compAvg = 0,
   hseqAvg = 0,
   generalAvg = 0,
-  autoCloseMs = 4500,
-  onClose,                 // se llama al cerrar manual o auto
-  onDownload,              // por si quieres descargar constancia/PDF
+  // 1) Por defecto no se autocierra
+  autoCloseMs = 0,
+  onClose,
+  onDownload,
   primaryActionText = "Volver al inicio",
   secondaryActionText = "Descargar constancia",
-  onPrimaryAction,         // por defecto: window.location.href = "/"
+  onPrimaryAction,
+  // 2) Evitar cierres accidentales
+  closeOnBackdrop = false,
 }) {
-  // Normaliza valores 0–5
+  // Normaliza 0–5
   const comp = clamp(Number(compAvg) || 0, 0, 5);
   const hseq = clamp(Number(hseqAvg) || 0, 0, 5);
   const gen  = clamp(Number(generalAvg) || 0, 0, 5);
 
-  // Cálculo del anillo de progreso (sobre 100%)
+  // Progreso 0–100
   const pct = useMemo(() => Math.round((gen / 5) * 100), [gen]);
 
   useEffect(() => {
     if (!open || !autoCloseMs) return;
-    const id = setTimeout(() => {
-      onClose && onClose();
-    }, autoCloseMs);
+    const id = setTimeout(() => { onClose && onClose(); }, autoCloseMs);
     return () => clearTimeout(id);
   }, [open, autoCloseMs, onClose]);
 
@@ -36,15 +37,30 @@ export default function CompletionCelebration({
 
   return (
     <div className="cc-portal" role="dialog" aria-modal="true" aria-label="Evaluación finalizada">
-      <div className="cc-backdrop" onClick={() => onClose && onClose()} />
+      <div
+        className="cc-backdrop"
+        onClick={closeOnBackdrop ? () => onClose && onClose() : undefined}
+        aria-hidden="true"
+      />
 
       <div className="cc-layer-beams" aria-hidden="true" />
       <div className="cc-layer-dust" aria-hidden="true" />
 
       <div className="cc-card">
+        {/* 3) Botón de cierre */}
+        <button
+          type="button"
+          className="cc-close"
+          onClick={() => onClose && onClose()}
+          aria-label="Cerrar"
+          title="Cerrar"
+        >
+          ×
+        </button>
+
         <div className="cc-check-wrap" aria-hidden="true">
           <svg className="cc-check" viewBox="0 0 72 72">
-            <circle className="cc-check-ring" cx="36" cy="36" r="33" />
+            <circle className="cc-check-ring" cx="36" cy="36" r="33" stroke="url(#ccGradSuccess)" />
             <path
               className="cc-check-mark"
               d="M20 36.5 L31 47 L52 26"
@@ -66,7 +82,6 @@ export default function CompletionCelebration({
 
         <div className="cc-metrics">
           <ProgressBadge percent={pct} label="Promedio General" value={gen.toFixed(2)} />
-
           <div className="cc-mini-metrics">
             <Metric label="Competencias" value={comp.toFixed(2)} />
             <Metric label="HSEQ" value={hseq.toFixed(2)} />
@@ -83,10 +98,7 @@ export default function CompletionCelebration({
           >
             {primaryActionText}
           </button>
-          <button
-            className="cc-btn ghost"
-            onClick={() => onDownload && onDownload()}
-          >
+          <button className="cc-btn ghost" onClick={() => onDownload && onDownload()}>
             {secondaryActionText}
           </button>
         </div>
@@ -120,9 +132,9 @@ function ProgressBadge({ percent = 0, value = "0.00", label = "General" }) {
     <div className="cc-badge">
       <svg viewBox="0 0 140 140" className="cc-badge-ring" aria-hidden="true">
         <defs>
-          <linearGradient id="ccGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#1F3B73" />
-            <stop offset="100%" stopColor="#0A0F1A" />
+          <linearGradient id="ccGradSuccess" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#22C55E" />
+            <stop offset="100%" stopColor="#16A34A" />
           </linearGradient>
         </defs>
         <circle cx="70" cy="70" r={R} className="cc-badge-track" />
@@ -131,10 +143,7 @@ function ProgressBadge({ percent = 0, value = "0.00", label = "General" }) {
           cy="70"
           r={R}
           className="cc-badge-progress"
-          style={{
-            strokeDasharray: C,
-            strokeDashoffset: dash,
-          }}
+          style={{ strokeDasharray: C, strokeDashoffset: dash }}
         />
       </svg>
       <div className="cc-badge-content">
