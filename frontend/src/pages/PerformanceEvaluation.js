@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import SignatureUploader from '../components/SignatureUploader';
 import { useNotification } from '../components/NotificationSystem';
+import CompletionCelebration from '../components/CompletionCelebration';
 
 
 function PerformanceEvaluation() {
@@ -20,6 +21,7 @@ function PerformanceEvaluation() {
   const [visibleErrors, setVisibleErrors] = useState({}); // Estado para controlar errores visibles
   const [formTouched, setFormTouched] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [showCompletion, setShowCompletion] = useState(false);
   const [datosGenerales, setDatosGenerales] = useState({
     fechaIngreso: '',
     fechaEvaluacion: '',
@@ -755,6 +757,9 @@ function PerformanceEvaluation() {
         localStorage.removeItem('evaluationTokenExpiry');
         localStorage.removeItem('instructionsRead');
         
+        // Mostrar animación de cierre épico
+        setShowCompletion(true);
+        
         // Limpiar el formulario después del éxito
         setRows([
           {
@@ -1046,8 +1051,8 @@ function PerformanceEvaluation() {
           procesoGestionEvaluador: '',
         });
         
-        // Redirigir al inicio de la página web
-        window.location.href = '/';
+        // Redirigir al inicio de la página web (comentado para permitir el modal de celebración)
+        // window.location.href = '/';
       } else {
         const errorMessage = data.error ? 
           `Error: ${data.error}` : 
@@ -3020,6 +3025,31 @@ function PerformanceEvaluation() {
         </section>
       </main>
       <Footer />
+      
+      {/* Componente de celebración épica */}
+      <CompletionCelebration
+        open={showCompletion}
+        employeeName={employee?.nombre || ''}
+        compAvg={Number(calcularPromedioCompetencias())}
+        hseqAvg={Number(calcularPromedioHseq())}
+        generalAvg={
+          (() => {
+            const pc = Number(calcularPromedioCompetencias()) || 0;
+            const ph = Number(calcularPromedioHseq()) || 0;
+            const parts = [pc, ph].filter(n => n > 0);
+            return parts.length ? (parts.reduce((a,b)=>a+b,0) / parts.length) : 0;
+          })()
+        }
+        autoCloseMs={0}
+        closeOnBackdrop={false}
+        onClose={() => setShowCompletion(false)}
+        onPrimaryAction={() => (window.location.href = '/')}
+        onDownload={() => {
+          // Aquí puedes disparar tu lógica de generar/descargar constancia (PDF, etc.)
+          // Por ejemplo: generarPDF(employee, datosGenerales, rows, hseqItems, ...);
+          console.log('Descargar constancia de evaluación');
+        }}
+      />
     </div>
   );
 };
