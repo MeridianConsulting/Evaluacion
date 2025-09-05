@@ -30,11 +30,14 @@ function PerformanceEvaluation() {
   const [datosGenerales, setDatosGenerales] = useState({
     fechaIngreso: '',
     fechaEvaluacion: '',
-    procesoGestion: '',
+    area: '',
     nombreEvaluador: '',
     cargoEvaluador: '',
-    procesoGestionEvaluador: '',
+    areaEvaluador: '',
   });
+  const [empleados, setEmpleados] = useState([]);
+  const [empleadosFiltrados, setEmpleadosFiltrados] = useState([]);
+  const [busquedaEvaluador, setBusquedaEvaluador] = useState('');
   const [mejoramiento, setMejoramiento] = useState({
     fortalezas: '',
     aspectosMejorar: ''
@@ -439,6 +442,13 @@ function PerformanceEvaluation() {
             // Si tu aplicación maneja el rol como un estado global, actualízalo aquí
           }
           
+          // Rellenar automáticamente la fecha de evaluación y el área del evaluado INMEDIATAMENTE
+          setDatosGenerales(prev => ({
+            ...prev,
+            fechaEvaluacion: new Date().toISOString().split('T')[0], // Fecha actual
+            area: data.area || '' // Área del empleado evaluado
+          }));
+          
           // Cargar datos guardados después de obtener los datos del empleado
           loadFormData();
         }
@@ -448,8 +458,38 @@ function PerformanceEvaluation() {
       setLoading(false);
     };
 
+    const fetchEmpleados = async () => {
+      try {
+        const apiUrl = process.env.REACT_APP_API_BASE_URL;
+        const response = await fetch(`${apiUrl}/api/employees`);
+        const data = await response.json();
+        
+        if (response.ok) {
+          setEmpleados(data && (data.data || data) || []);
+        } else {
+          console.error('Error al cargar empleados:', data);
+        }
+      } catch (err) {
+        console.error('Error al cargar empleados:', err);
+      }
+    };
+
     fetchEmployee();
+    fetchEmpleados();
   }, []);
+
+  // Filtrar empleados cuando cambie la búsqueda
+  useEffect(() => {
+    if (busquedaEvaluador.trim() === '') {
+      setEmpleadosFiltrados(empleados);
+    } else {
+      const filtrados = empleados.filter(empleado => 
+        empleado.nombre.toLowerCase().includes(busquedaEvaluador.toLowerCase()) ||
+        empleado.cargo.toLowerCase().includes(busquedaEvaluador.toLowerCase())
+      );
+      setEmpleadosFiltrados(filtrados);
+    }
+  }, [empleados, busquedaEvaluador]);
 
   // Guardar datos automáticamente cuando cambien
   useEffect(() => {
@@ -711,7 +751,40 @@ function PerformanceEvaluation() {
   };
 
   // Modificar el manejador de envío del formulario para la nueva estructura nativa
+  // Función para validar todos los campos de calificaciones
+  const validateAllCalifications = () => {
+    const errores = {};
+
+    // Validar competencias (rows) - autoevaluación y evaluación del jefe
+    rows.forEach((row, index) => {
+      if (!row.worker || row.worker === '' || row.worker === '0') {
+        errores[`competencia_worker_${row.id}`] = true;
+      }
+      if (!row.boss || row.boss === '' || row.boss === '0') {
+        errores[`competencia_boss_${row.id}`] = true;
+      }
+    });
+
+    // Validar HSEQ items
+    hseqItems.forEach((item, index) => {
+      if (item.autoevaluacion !== undefined && (!item.autoevaluacion || item.autoevaluacion === '' || item.autoevaluacion === '0')) {
+        errores[`hseq_autoevaluacion_${item.id}`] = true;
+      }
+      if (item.evaluacionJefe !== undefined && (!item.evaluacionJefe || item.evaluacionJefe === '' || item.evaluacionJefe === '0')) {
+        errores[`hseq_evaluacionJefe_${item.id}`] = true;
+      }
+      if (item.calificacion !== undefined && (!item.calificacion || item.calificacion === '' || item.calificacion === '0')) {
+        errores[`hseq_calificacion_${item.id}`] = true;
+      }
+    });
+
+    return errores;
+  };
+
   const handleSubmitEvaluation = async () => {
+    // Validar todos los campos de calificaciones
+    const erroresCalificaciones = validateAllCalifications();
+    
     // Validación básica: promedio de competencias y firmas
     const promedioCompetencias = calcularPromedioCompetencias();
     const promedioNumber = Number(promedioCompetencias);
@@ -724,15 +797,25 @@ function PerformanceEvaluation() {
       erroresBasicos.bossSignature = true;
     }
 
+    // Combinar todos los errores
+    const todosLosErrores = { ...erroresBasicos, ...erroresCalificaciones };
+
+    if (Object.keys(erroresCalificaciones).length > 0) {
+      setValidationErrors(todosLosErrores);
+      window.scrollTo(0, 0);
+      warning('Campos obligatorios', 'Todos los campos de calificaciones son obligatorios. Por favor complete todas las evaluaciones.');
+      return;
+    }
+
     if (!promedioNumber || promedioNumber <= 0) {
-      setValidationErrors(erroresBasicos);
+      setValidationErrors(todosLosErrores);
       window.scrollTo(0, 0);
       warning('Validación requerida', 'Seleccione al menos una calificación en competencias para calcular el promedio.');
       return;
     }
 
     if (Object.keys(erroresBasicos).length > 0) {
-      setValidationErrors(erroresBasicos);
+      setValidationErrors(todosLosErrores);
       window.scrollTo(0, 0);
       warning('Firmas requeridas', 'Las firmas del Evaluado y del Jefe Directo son obligatorias.');
       return;
@@ -1092,10 +1175,10 @@ function PerformanceEvaluation() {
         setDatosGenerales({
           fechaIngreso: '',
           fechaEvaluacion: '',
-          procesoGestion: '',
+          area: '',
           nombreEvaluador: '',
           cargoEvaluador: '',
-          procesoGestionEvaluador: '',
+          areaEvaluador: '',
         });
         
         // Redirigir al inicio de la página web (comentado para permitir el modal de celebración)
@@ -1138,6 +1221,22 @@ function PerformanceEvaluation() {
   // Estilo para campos con error - ahora verificando visibleErrors en lugar de validationErrors
   const getErrorStyle = (fieldName) => {
     return visibleErrors[fieldName] ? {
+      border: '2px solid #ff3860',
+      boxShadow: '0 0 0 1px #ff3860'
+    } : {};
+  };
+
+  // Función helper para obtener estilos de error de calificaciones
+  const getCalificationErrorStyle = (rowId, field) => {
+    return visibleErrors[`competencia_${field}_${rowId}`] ? {
+      border: '2px solid #ff3860',
+      boxShadow: '0 0 0 1px #ff3860'
+    } : {};
+  };
+
+  // Función helper para obtener estilos de error de HSEQ
+  const getHseqErrorStyle = (itemId, field) => {
+    return visibleErrors[`hseq_${field}_${itemId}`] ? {
       border: '2px solid #ff3860',
       boxShadow: '0 0 0 1px #ff3860'
     } : {};
@@ -1244,9 +1343,11 @@ function PerformanceEvaluation() {
 
 
       <main className="evaluation-container-unique" style={{ 
-        padding: "clamp(1rem, 5vw, 2rem)" 
+        padding: "clamp(1rem, 5vw, 2rem)",
+        position: 'relative',
+        zIndex: 10001
       }}>
-        <section className="evaluation-section">
+        <section className="evaluation-section" style={{ position: 'relative', zIndex: 10002 }}>
             <div className="evaluation-row">
               <div className="evaluation-field">
                 <label>Nombre del evaluado:</label>
@@ -1298,24 +1399,32 @@ function PerformanceEvaluation() {
                   type="date" 
                   name="fechaEvaluacion"
                   value={datosGenerales.fechaEvaluacion}
-                  onChange={handleDatosGeneralesChange}
-                  style={getErrorStyle('datosGenerales_fechaEvaluacion')}
+                  readOnly
+                  style={{
+                    ...getErrorStyle('datosGenerales_fechaEvaluacion'),
+                    backgroundColor: '#f5f5f5',
+                    cursor: 'not-allowed'
+                  }}
                 />
                 {visibleErrors.datosGenerales_fechaEvaluacion && (
                   <span className="error-message">Este campo es obligatorio</span>
                 )}
               </div>
               <div className="evaluation-field">
-                <label>Proceso de gestión:</label>
+                <label>Área:</label>
                 <input 
                   type="text" 
-                  placeholder="Proceso asociado" 
-                  name="procesoGestion"
-                  value={datosGenerales.procesoGestion}
-                  onChange={handleDatosGeneralesChange}
-                  style={getErrorStyle('datosGenerales_procesoGestion')}
+                  placeholder="Se llena automáticamente con el área del evaluado" 
+                  name="area"
+                  value={datosGenerales.area || ''}
+                  readOnly
+                  style={{
+                    ...getErrorStyle('datosGenerales_area'),
+                    backgroundColor: '#f5f5f5',
+                    cursor: 'not-allowed'
+                  }}
                 />
-                {visibleErrors.datosGenerales_procesoGestion && (
+                {visibleErrors.datosGenerales_area && (
                   <span className="error-message">Este campo es obligatorio</span>
                 )}
               </div>
@@ -1323,45 +1432,116 @@ function PerformanceEvaluation() {
 
             {/* Fila 3 */}
             <div className="evaluation-row">
-              <div className="evaluation-field">
+              <div className="evaluation-field" style={{ position: 'relative', zIndex: 9999 }}>
                 <label>Nombre del evaluador:</label>
-                <input 
-                  type="text" 
-                  placeholder="Ingrese el nombre del evaluador" 
-                  name="nombreEvaluador"
-                  value={datosGenerales.nombreEvaluador}
-                  onChange={handleDatosGeneralesChange}
-                  style={getErrorStyle('datosGenerales_nombreEvaluador')}
-                />
+                <div style={{ position: 'relative', zIndex: 10000 }}>
+                  <input 
+                    type="text"
+                    placeholder="Buscar evaluador..."
+                    value={busquedaEvaluador}
+                    onChange={(e) => {
+                      setBusquedaEvaluador(e.target.value);
+                      if (e.target.value === '') {
+                        setDatosGenerales(prev => ({ 
+                          ...prev, 
+                          nombreEvaluador: '',
+                          cargoEvaluador: '',
+                          areaEvaluador: ''
+                        }));
+                      }
+                    }}
+                    onFocus={() => setBusquedaEvaluador('')}
+                    style={getErrorStyle('datosGenerales_nombreEvaluador')}
+                  />
+                  {busquedaEvaluador && empleadosFiltrados.length > 0 && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      right: 0,
+                      backgroundColor: 'white',
+                      border: '1px solid #ccc',
+                      borderTop: 'none',
+                      maxHeight: '200px',
+                      overflowY: 'auto',
+                      zIndex: 10001,
+                      boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+                    }}>
+                      {empleadosFiltrados.map((empleado) => (
+                        <div
+                          key={empleado.id_empleado}
+                          style={{
+                            padding: '8px 12px',
+                            cursor: 'pointer',
+                            borderBottom: '1px solid #eee'
+                          }}
+                          onClick={() => {
+                            setDatosGenerales(prev => ({ 
+                              ...prev, 
+                              nombreEvaluador: empleado.nombre,
+                              cargoEvaluador: empleado.cargo || '',
+                              areaEvaluador: empleado.area || ''
+                            }));
+                            setBusquedaEvaluador('');
+                          }}
+                          onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'}
+                          onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
+                        >
+                          {empleado.nombre}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {datosGenerales.nombreEvaluador && (
+                  <div style={{ 
+                    marginTop: '5px', 
+                    padding: '5px 10px', 
+                    backgroundColor: '#e8f4fd', 
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                    color: '#0066cc'
+                  }}>
+                    Seleccionado: {datosGenerales.nombreEvaluador}
+                  </div>
+                )}
                 {visibleErrors.datosGenerales_nombreEvaluador && (
                   <span className="error-message">Este campo es obligatorio</span>
                 )}
               </div>
               <div className="evaluation-field">
-                <label>Cargo/servicio prestado:</label>
+                <label>Cargo de Evaluador:</label>
                 <input 
                   type="text" 
-                  placeholder="Cargo o servicio prestado" 
+                  placeholder="Se llena automáticamente al seleccionar evaluador" 
                   name="cargoEvaluador"
-                  value={datosGenerales.cargoEvaluador}
-                  onChange={handleDatosGeneralesChange}
-                  style={getErrorStyle('datosGenerales_cargoEvaluador')}
+                  value={datosGenerales.cargoEvaluador || ''}
+                  readOnly
+                  style={{
+                    ...getErrorStyle('datosGenerales_cargoEvaluador'),
+                    backgroundColor: '#f5f5f5',
+                    cursor: 'not-allowed'
+                  }}
                 />
                 {visibleErrors.datosGenerales_cargoEvaluador && (
                   <span className="error-message">Este campo es obligatorio</span>
                 )}
               </div>
               <div className="evaluation-field">
-                <label>Proceso de gestión:</label>
+                <label>Área:</label>
                 <input 
                   type="text" 
-                  placeholder="Proceso asociado" 
-                  name="procesoGestionEvaluador"
-                  value={datosGenerales.procesoGestionEvaluador}
-                  onChange={handleDatosGeneralesChange}
-                  style={getErrorStyle('datosGenerales_procesoGestionEvaluador')}
+                  placeholder="Se llena automáticamente al seleccionar evaluador" 
+                  name="areaEvaluador"
+                  value={datosGenerales.areaEvaluador || ''}
+                  readOnly
+                  style={{
+                    ...getErrorStyle('datosGenerales_areaEvaluador'),
+                    backgroundColor: '#f5f5f5',
+                    cursor: 'not-allowed'
+                  }}
                 />
-                {visibleErrors.datosGenerales_procesoGestionEvaluador && (
+                {visibleErrors.datosGenerales_areaEvaluador && (
                   <span className="error-message">Este campo es obligatorio</span>
                 )}
               </div>
@@ -1549,6 +1729,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[0].worker === 0 ? "" : rows[0].worker}
                     onChange={(e) => handleSelectChange(rows[0].id, "worker", e.target.value)}
+                    style={getCalificationErrorStyle(rows[0].id, 'worker')}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1563,6 +1744,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[0].boss === 0 ? "" : rows[0].boss}
                     onChange={(e) => handleSelectChange(rows[0].id, "boss", e.target.value)}
+                    style={getCalificationErrorStyle(rows[0].id, 'boss')}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1591,6 +1773,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[1].worker === 0 ? "" : rows[1].worker}
                     onChange={(e) => handleSelectChange(rows[1].id, "worker", e.target.value)}
+                    style={getCalificationErrorStyle(rows[1].id, 'worker')}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1605,6 +1788,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[1].boss === 0 ? "" : rows[1].boss}
                     onChange={(e) => handleSelectChange(rows[1].id, "boss", e.target.value)}
+                    style={getCalificationErrorStyle(rows[1].id, 'boss')}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2740,6 +2924,7 @@ function PerformanceEvaluation() {
                       className="rating-select"
                       value={item.autoevaluacion}
                       onChange={(e) => handleHseqChange(item.id, "autoevaluacion", e.target.value)}
+                      style={getHseqErrorStyle(item.id, 'autoevaluacion')}
                     >
                       <option value="">1 - 5</option>
                       <option value="1">1 - No Cumple</option>
@@ -2754,6 +2939,7 @@ function PerformanceEvaluation() {
                       className="rating-select"
                       value={item.evaluacionJefe}
                       onChange={(e) => handleHseqChange(item.id, "evaluacionJefe", e.target.value)}
+                      style={getHseqErrorStyle(item.id, 'evaluacionJefe')}
                     >
                       <option value="">1 - 5</option>
                       <option value="1">1 - No Cumple</option>
