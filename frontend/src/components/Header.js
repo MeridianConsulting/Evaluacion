@@ -7,6 +7,7 @@ function Header({ onLogout, userRole: propUserRole }) {
   // Si no se pasa userRole como prop, lo obtenemos del localStorage
   const [userRole, setUserRole] = useState(propUserRole || localStorage.getItem('userRole') || 'empleado');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [hasEvaluationToken, setHasEvaluationToken] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,6 +44,37 @@ function Header({ onLogout, userRole: propUserRole }) {
     }
   }, [menuOpen]); // Verificamos cuando se abre el menú para tener datos actualizados
 
+  // Verificar si existe un token de evaluación válido
+  useEffect(() => {
+    const checkEvaluationToken = () => {
+      const token = localStorage.getItem('evaluationToken');
+      const tokenExpiry = localStorage.getItem('evaluationTokenExpiry');
+      
+      if (token && tokenExpiry) {
+        const now = new Date().getTime();
+        const expiry = parseInt(tokenExpiry);
+        
+        if (now < expiry) {
+          setHasEvaluationToken(true);
+        } else {
+          // Token expirado, limpiar
+          localStorage.removeItem('evaluationToken');
+          localStorage.removeItem('evaluationTokenExpiry');
+          setHasEvaluationToken(false);
+        }
+      } else {
+        setHasEvaluationToken(false);
+      }
+    };
+
+    checkEvaluationToken();
+    
+    // Verificar cada vez que se abre el menú
+    if (menuOpen) {
+      checkEvaluationToken();
+    }
+  }, [menuOpen]);
+
   const handleToggleMenu = () => {
     setMenuOpen(prev => !prev);
   };
@@ -73,7 +105,12 @@ function Header({ onLogout, userRole: propUserRole }) {
             <img src={burgerMenu} alt="Menú" className="burger-icon" />
           </div>
           <div className={`side-menu ${menuOpen ? 'open' : ''}`}>
-            <button className="menu-item" onClick={() => goToPage('/LandingPage')}>Inicio</button>
+            {/* Botón de evaluación solo si hay token válido */}
+            {hasEvaluationToken && (
+              <button className="menu-item evaluation" onClick={() => goToPage('/performance')}>
+                Evaluación de Desempeño
+              </button>
+            )}
             
             {/* Todos pueden ver resultados */}
             <button className="menu-item" onClick={() => goToPage('/results')}>Resultados</button>

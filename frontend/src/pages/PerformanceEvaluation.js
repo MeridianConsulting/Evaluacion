@@ -19,6 +19,7 @@ function PerformanceEvaluation() {
   const [validationErrors, setValidationErrors] = useState({});
   const [visibleErrors, setVisibleErrors] = useState({}); // Estado para controlar errores visibles
   const [formTouched, setFormTouched] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [datosGenerales, setDatosGenerales] = useState({
     fechaIngreso: '',
     fechaEvaluacion: '',
@@ -31,12 +32,15 @@ function PerformanceEvaluation() {
     fortalezas: '',
     aspectosMejorar: ''
   });
-  const [planAccion, setPlanAccion] = useState({
-    actividad: '',
-    responsable: '',
-    seguimiento: '',
-    fecha: ''
-  });
+  const [planesAccion, setPlanesAccion] = useState([
+    {
+      id: 1,
+      actividad: '',
+      responsable: '',
+      seguimiento: '',
+      fecha: ''
+    }
+  ]);
 
   // Manejo de estado para filas
   const [rows, setRows] = useState([
@@ -321,6 +325,55 @@ function PerformanceEvaluation() {
 
   
 
+  // Funciones para guardar y cargar datos del localStorage
+  const saveFormData = () => {
+    const formData = {
+      datosGenerales,
+      rows,
+      hseqItems,
+      mejoramiento,
+      planesAccion,
+      employeeSignature,
+      bossSignature,
+      timestamp: new Date().getTime()
+    };
+    localStorage.setItem('evaluationFormData', JSON.stringify(formData));
+  };
+
+  const loadFormData = () => {
+    const savedData = localStorage.getItem('evaluationFormData');
+    if (savedData) {
+      try {
+        const formData = JSON.parse(savedData);
+        
+        // Verificar que los datos no sean muy antiguos (máximo 7 días)
+        const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 días en milisegundos
+        const now = new Date().getTime();
+        
+        if (formData.timestamp && (now - formData.timestamp) < maxAge) {
+          setDatosGenerales(formData.datosGenerales || datosGenerales);
+          setRows(formData.rows || rows);
+          setHseqItems(formData.hseqItems || hseqItems);
+          setMejoramiento(formData.mejoramiento || mejoramiento);
+          setPlanesAccion(formData.planesAccion || planesAccion);
+          setEmployeeSignature(formData.employeeSignature || null);
+          setBossSignature(formData.bossSignature || null);
+          return true;
+        } else {
+          // Datos muy antiguos, limpiar
+          localStorage.removeItem('evaluationFormData');
+        }
+      } catch (error) {
+        localStorage.removeItem('evaluationFormData');
+      }
+    }
+    return false;
+  };
+
+  const clearFormData = () => {
+    localStorage.removeItem('evaluationFormData');
+  };
+
   useEffect(() => {
     const employeeId = localStorage.getItem('employeeId');
     if (!employeeId) {
@@ -345,6 +398,9 @@ function PerformanceEvaluation() {
             localStorage.setItem('userRole', data.rol);
             // Si tu aplicación maneja el rol como un estado global, actualízalo aquí
           }
+          
+          // Cargar datos guardados después de obtener los datos del empleado
+          loadFormData();
         }
       } catch (err) {
         setError('Error en la conexión con el servidor.');
@@ -354,6 +410,19 @@ function PerformanceEvaluation() {
 
     fetchEmployee();
   }, []);
+
+  // Guardar datos automáticamente cuando cambien
+  useEffect(() => {
+    if (employee && formTouched) {
+      setIsSaving(true);
+      saveFormData();
+      
+      // Simular un pequeño delay para mostrar el indicador de guardado
+      setTimeout(() => {
+        setIsSaving(false);
+      }, 500);
+    }
+  }, [datosGenerales, rows, hseqItems, mejoramiento, planesAccion, employeeSignature, bossSignature, employee, formTouched]);
 
   // Calcula promedio cada vez que cambie autoevaluación o evaluación
   const handleSelectChange = (rowId, field, value) => {
@@ -521,12 +590,14 @@ function PerformanceEvaluation() {
       isValid = false;
     }
 
-    // Validar plan de acción
-    Object.keys(planAccion).forEach(key => {
-      if (!planAccion[key]) {
-        errores[`planAccion_${key}`] = true;
-        isValid = false;
-      }
+    // Validar planes de acción
+    planesAccion.forEach((plan, index) => {
+      Object.keys(plan).forEach(key => {
+        if (key !== 'id' && !plan[key]) {
+          errores[`planAccion_${index}_${key}`] = true;
+          isValid = false;
+        }
+      });
     });
 
     // Validar firmas
@@ -564,13 +635,39 @@ function PerformanceEvaluation() {
   };
 
   // Manejar cambio en plan de acción
-  const handlePlanAccionChange = (e) => {
-    const { name, value } = e.target;
-    setPlanAccion(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  const handlePlanAccionChange = (planId, field, value) => {
+    setPlanesAccion(prev => 
+      prev.map(plan => 
+        plan.id === planId ? { ...plan, [field]: value } : plan
+      )
+    );
     setFormTouched(true);
+  };
+
+  // Agregar nuevo plan de acción
+  const addPlanAccion = () => {
+    if (planesAccion.length < 4) {
+      const newId = Math.max(...planesAccion.map(p => p.id)) + 1;
+      setPlanesAccion(prev => [
+        ...prev,
+        {
+          id: newId,
+          actividad: '',
+          responsable: '',
+          seguimiento: '',
+          fecha: ''
+        }
+      ]);
+      setFormTouched(true);
+    }
+  };
+
+  // Eliminar plan de acción
+  const removePlanAccion = (planId) => {
+    if (planesAccion.length > 1) {
+      setPlanesAccion(prev => prev.filter(plan => plan.id !== planId));
+      setFormTouched(true);
+    }
   };
 
   // Modificar el manejador de envío del formulario para la nueva estructura nativa
@@ -629,7 +726,7 @@ function PerformanceEvaluation() {
     formData.append('competenciasData', JSON.stringify(rows));
     formData.append('hseqData', JSON.stringify(hseqItems));
     formData.append('mejoramiento', JSON.stringify(mejoramiento));
-    formData.append('planAccion', JSON.stringify(planAccion));
+    formData.append('planesAccion', JSON.stringify(planesAccion));
 
     if (employeeSignature) {
       formData.append('employeeSignature', employeeSignature);
@@ -651,6 +748,12 @@ function PerformanceEvaluation() {
       if (response.ok) {
         // Mostrar mensaje de éxito
         success('¡Evaluación completada!', 'La evaluación ha sido diligenciada exitosamente.');
+        
+        // Limpiar datos guardados y tokens
+        clearFormData();
+        localStorage.removeItem('evaluationToken');
+        localStorage.removeItem('evaluationTokenExpiry');
+        localStorage.removeItem('instructionsRead');
         
         // Limpiar el formulario después del éxito
         setRows([
@@ -923,7 +1026,15 @@ function PerformanceEvaluation() {
         ]);
         
         setMejoramiento({ fortalezas: '', aspectosMejorar: '' });
-        setPlanAccion({ actividad: '', responsable: '', seguimiento: '', fecha: '' });
+        setPlanesAccion([
+          {
+            id: 1,
+            actividad: '',
+            responsable: '',
+            seguimiento: '',
+            fecha: ''
+          }
+        ]);
         setEmployeeSignature(null);
         setBossSignature(null);
         setDatosGenerales({
@@ -938,14 +1049,12 @@ function PerformanceEvaluation() {
         // Redirigir al inicio de la página web
         window.location.href = '/';
       } else {
-        console.error('Error del servidor:', data);
         const errorMessage = data.error ? 
           `Error: ${data.error}` : 
           `Error al guardar: ${data.message || 'Error desconocido'}`;
         showError('Error al guardar', errorMessage);
       }
     } catch (error) {
-      console.error('Error al enviar la evaluación:', error);
       showError('Error de conexión', 'Error al guardar la evaluación. Intente nuevamente.');
     } finally {
       setIsSubmitting(false);
@@ -1018,12 +1127,40 @@ function PerformanceEvaluation() {
 
   return (
     <div className="evaluation-page-unique">
+      <style jsx>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
       <Header />
       <div className="hero" style={{ 
         textAlign: "center", 
         padding: "clamp(1rem, 5vw, 2rem)" 
       }}>
         <h1 className="evaluacion-desempeno">EVALUACIÓN DE DESEMPEÑO</h1>
+        {isSaving && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            marginTop: '10px',
+            color: '#059669',
+            fontSize: '0.9rem',
+            fontWeight: '500'
+          }}>
+            <div style={{
+              width: '16px',
+              height: '16px',
+              border: '2px solid #059669',
+              borderTop: '2px solid transparent',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite'
+            }}></div>
+            Guardando progreso...
+          </div>
+        )}
       </div>
 
       {/* Alerta de campos obligatorios */}
@@ -1052,6 +1189,7 @@ function PerformanceEvaluation() {
           ✕
         </button>
       </div>
+
 
       <main className="evaluation-container-unique" style={{ 
         padding: "clamp(1rem, 5vw, 2rem)" 
@@ -2532,7 +2670,7 @@ function PerformanceEvaluation() {
                   borderLeft: "1px solid #243447",
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)"
-                }}>JEFE INMEDIATO</th>
+                }}>HSEQ</th>
                 <th style={{ 
                   width: "10%", 
                   background: "#1E2A3A", 
@@ -2719,65 +2857,132 @@ function PerformanceEvaluation() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input 
-                    type="text" 
-                    placeholder="Actividad" 
-                    className="plan-accion-input"
-                    name="actividad"
-                    value={planAccion.actividad}
-                    onChange={handlePlanAccionChange}
-                    style={getErrorStyle('planAccion_actividad')}
-                  />
-                  {visibleErrors.planAccion_actividad && (
-                    <span className="error-message">Obligatorio</span>
-                  )}
-                </td>
-                <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input 
-                    type="text" 
-                    placeholder="Responsable" 
-                    className="plan-accion-input"
-                    name="responsable"
-                    value={planAccion.responsable}
-                    onChange={handlePlanAccionChange}
-                    style={getErrorStyle('planAccion_responsable')}
-                  />
-                  {visibleErrors.planAccion_responsable && (
-                    <span className="error-message">Obligatorio</span>
-                  )}
-                </td>
-                <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input 
-                    type="text" 
-                    placeholder="Indicadores / Frecuencia" 
-                    className="plan-accion-input"
-                    name="seguimiento"
-                    value={planAccion.seguimiento}
-                    onChange={handlePlanAccionChange}
-                    style={getErrorStyle('planAccion_seguimiento')}
-                  />
-                  {visibleErrors.planAccion_seguimiento && (
-                    <span className="error-message">Obligatorio</span>
-                  )}
-                </td>
-                <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <input 
-                    type="date" 
-                    className="plan-accion-input"
-                    name="fecha"
-                    value={planAccion.fecha}
-                    onChange={handlePlanAccionChange}
-                    style={getErrorStyle('planAccion_fecha')}
-                  />
-                  {visibleErrors.planAccion_fecha && (
-                    <span className="error-message">Obligatorio</span>
-                  )}
-                </td>
-              </tr>
+              {planesAccion.map((plan, index) => (
+                <tr key={plan.id}>
+                  <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                    <input 
+                      type="text" 
+                      placeholder="Actividad" 
+                      className="plan-accion-input"
+                      value={plan.actividad}
+                      onChange={(e) => handlePlanAccionChange(plan.id, 'actividad', e.target.value)}
+                      style={getErrorStyle(`planAccion_${index}_actividad`)}
+                    />
+                    {visibleErrors[`planAccion_${index}_actividad`] && (
+                      <span className="error-message">Obligatorio</span>
+                    )}
+                  </td>
+                  <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                    <input 
+                      type="text" 
+                      placeholder="Responsable" 
+                      className="plan-accion-input"
+                      value={plan.responsable}
+                      onChange={(e) => handlePlanAccionChange(plan.id, 'responsable', e.target.value)}
+                      style={getErrorStyle(`planAccion_${index}_responsable`)}
+                    />
+                    {visibleErrors[`planAccion_${index}_responsable`] && (
+                      <span className="error-message">Obligatorio</span>
+                    )}
+                  </td>
+                  <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                    <input 
+                      type="text" 
+                      placeholder="Indicadores / Frecuencia" 
+                      className="plan-accion-input"
+                      value={plan.seguimiento}
+                      onChange={(e) => handlePlanAccionChange(plan.id, 'seguimiento', e.target.value)}
+                      style={getErrorStyle(`planAccion_${index}_seguimiento`)}
+                    />
+                    {visibleErrors[`planAccion_${index}_seguimiento`] && (
+                      <span className="error-message">Obligatorio</span>
+                    )}
+                  </td>
+                  <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem", position: 'relative' }}>
+                    <input 
+                      type="date" 
+                      className="plan-accion-input"
+                      value={plan.fecha}
+                      onChange={(e) => handlePlanAccionChange(plan.id, 'fecha', e.target.value)}
+                      style={getErrorStyle(`planAccion_${index}_fecha`)}
+                    />
+                    {visibleErrors[`planAccion_${index}_fecha`] && (
+                      <span className="error-message">Obligatorio</span>
+                    )}
+                    {planesAccion.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removePlanAccion(plan.id)}
+                        style={{
+                          position: 'absolute',
+                          top: '5px',
+                          right: '5px',
+                          background: '#ff3860',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '50%',
+                          width: '24px',
+                          height: '24px',
+                          cursor: 'pointer',
+                          fontSize: '14px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                        title="Eliminar plan"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
+          
+          {/* Botón para agregar más planes de acción */}
+          <div style={{ textAlign: 'center', marginTop: '16px' }}>
+            <button
+              type="button"
+              onClick={addPlanAccion}
+              disabled={planesAccion.length >= 4}
+              style={{
+                background: planesAccion.length >= 4 
+                  ? '#e5e7eb' 
+                  : 'linear-gradient(135deg, #1F3B73, #0A0F1A)',
+                color: planesAccion.length >= 4 ? '#9ca3af' : 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '12px 24px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: planesAccion.length >= 4 ? 'not-allowed' : 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                boxShadow: planesAccion.length >= 4 
+                  ? 'none' 
+                  : '0 4px 12px rgba(31, 59, 115, 0.3)',
+                transition: 'all 0.3s ease',
+                opacity: planesAccion.length >= 4 ? 0.6 : 1
+              }}
+              onMouseOver={(e) => {
+                if (planesAccion.length < 4) {
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 6px 16px rgba(31, 59, 115, 0.4)';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (planesAccion.length < 4) {
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 4px 12px rgba(31, 59, 115, 0.3)';
+                }
+              }}
+            >
+              <span style={{ fontSize: '16px' }}>+</span>
+              {planesAccion.length >= 4 ? 'Máximo 4 planes' : 'Agregar Plan de Acción'}
+            </button>
+          </div>
         </section>
 
         <section className="evaluation-section" style={{ textAlign: "center" }}>

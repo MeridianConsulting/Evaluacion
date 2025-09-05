@@ -13,6 +13,27 @@ function LandingPage({ onLogout }) {
   const navigate = useNavigate();
 
   const handleOpenModal = () => {
+    // Verificar si ya se han leído las instrucciones
+    const instructionsRead = localStorage.getItem('instructionsRead');
+    const token = localStorage.getItem('evaluationToken');
+    const tokenExpiry = localStorage.getItem('evaluationTokenExpiry');
+    
+    if (instructionsRead === 'true' && token && tokenExpiry) {
+      const now = new Date().getTime();
+      const expiry = parseInt(tokenExpiry);
+      
+      if (now < expiry) {
+        // Token válido, ir directamente a la evaluación
+        navigate('/performance');
+        return;
+      } else {
+        // Token expirado, limpiar y mostrar modal
+        localStorage.removeItem('evaluationToken');
+        localStorage.removeItem('evaluationTokenExpiry');
+        localStorage.removeItem('instructionsRead');
+      }
+    }
+    
     setShowModal(true);
     setAccepted(false);
     setCountdown(30);
@@ -29,6 +50,16 @@ function LandingPage({ onLogout }) {
 
   const handleAccept = () => {
     if (accepted && canAccept) {
+      // Generar token de evaluación válido por 24 horas
+      const token = 'eval_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      const expiry = new Date().getTime() + (24 * 60 * 60 * 1000); // 24 horas
+      
+      localStorage.setItem('evaluationToken', token);
+      localStorage.setItem('evaluationTokenExpiry', expiry.toString());
+      
+      // Marcar que ya se han leído las instrucciones
+      localStorage.setItem('instructionsRead', 'true');
+      
       setIsTransitioning(true);
       setShowModal(false);
       
