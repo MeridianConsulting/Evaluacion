@@ -34,10 +34,15 @@ function PerformanceEvaluation() {
     nombreEvaluador: '',
     cargoEvaluador: '',
     areaEvaluador: '',
+    idEvaluador: '',
   });
   const [empleados, setEmpleados] = useState([]);
   const [empleadosFiltrados, setEmpleadosFiltrados] = useState([]);
   const [busquedaEvaluador, setBusquedaEvaluador] = useState('');
+  // Modo de evaluación: autoevaluación (empleado) o revisión de jefe
+  // Por defecto: vista del empleado. Para vista de jefe, abrir con ?as=manager
+  const [isManagerView, setIsManagerView] = useState(false);
+  const isSelfView = !isManagerView;
   const [mejoramiento, setMejoramiento] = useState({
     fortalezas: '',
     aspectosMejorar: ''
@@ -51,6 +56,34 @@ function PerformanceEvaluation() {
       fecha: ''
     }
   ]);
+
+  // Detectar modo de vista desde querystring/localStorage
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const asParam = (params.get('as') || '').toLowerCase();
+      if (asParam === 'manager' || asParam === 'jefe') {
+        setIsManagerView(true);
+      } else {
+        const stored = (localStorage.getItem('evalMode') || '').toLowerCase();
+        setIsManagerView(stored === 'manager' || stored === 'jefe');
+      }
+    } catch (_) {
+      // no-op
+    }
+  }, []);
+
+  // Evaluación existente (para modo jefe o continuar edición)
+  const [existingEvaluationId, setExistingEvaluationId] = useState(null);
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const eid = params.get('eid');
+      if (eid) setExistingEvaluationId(eid);
+    } catch (_) {
+      // no-op
+    }
+  }, []);
 
   // Manejo de estado para filas
   const [rows, setRows] = useState([
@@ -224,102 +257,142 @@ function PerformanceEvaluation() {
       responsabilidad: "Procurar el cuidado integral de su salud.",
       autoevaluacion: "",
       evaluacionJefe: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 2,
       responsabilidad: "Suministrar información clara, veraz y completa sobre su estado de salud.",
       autoevaluacion: "",
       evaluacionJefe: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 3,
       responsabilidad: "Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.",
       calificacion: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 4,
       responsabilidad: "Informar oportunamente al empleador o contratante acerca de los riesgos y/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.",
       calificacion: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 5,
       responsabilidad: "Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.",
       calificacion: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 6,
       responsabilidad: "Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.",
       calificacion: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 7,
       responsabilidad: "Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.",
       calificacion: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 8,
       responsabilidad: "Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.",
       calificacion: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 9,
       responsabilidad: "Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.",
       calificacion: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 10,
       responsabilidad: "Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.",
       calificacion: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 11,
       responsabilidad: "Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.",
       calificacion: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 12,
       responsabilidad: "Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.",
       calificacion: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 13,
       responsabilidad: "Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.",
       calificacion: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 14,
       responsabilidad: "Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.",
       calificacion: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 15,
       responsabilidad: "Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.",
       calificacion: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 16,
       responsabilidad: "Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.",
       calificacion: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 17,
       responsabilidad: "Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.",
       calificacion: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 18,
       responsabilidad: "Participar en simulacros, elección de COPASST y elección de comité de convivencia.",
       calificacion: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 19,
       responsabilidad: "Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y/o comité de emergencias.",
       calificacion: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 20,
       responsabilidad: "Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.",
       calificacion: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     }
   ]);
 
@@ -506,6 +579,10 @@ function PerformanceEvaluation() {
 
   // Calcula promedio cada vez que cambie autoevaluación o evaluación
   const handleSelectChange = (rowId, field, value) => {
+    // En vista del empleado, bloquear columna del jefe
+    if (isSelfView && field === 'boss') return;
+    // En vista del jefe, bloquear columna del trabajador
+    if (isManagerView && field === 'worker') return;
     const numericValue = value === "" ? 0 : Number(value);
 
     setRows((prevRows) =>
@@ -526,6 +603,21 @@ function PerformanceEvaluation() {
 
   // Manejador para cambios en la calificación HSEQ
   const handleHseqChange = (id, field, value) => {
+    // En vista del empleado, bloquear toda edición de HSEQ
+    if (isSelfView) return;
+    setHseqItems(prevItems => 
+      prevItems.map(item => 
+        item.id === id ? { ...item, [field]: value } : item
+      )
+    );
+    setFormTouched(true);
+  };
+
+  // Manejador para cambios en justificaciones HSEQ
+  const handleHseqJustificacionChange = (id, field, value) => {
+    // Bloquear edición según rol
+    if (isSelfView && field === 'justificacionJefe') return;
+    if (isManagerView && field === 'justificacionTrabajador') return;
     setHseqItems(prevItems => 
       prevItems.map(item => 
         item.id === id ? { ...item, [field]: value } : item
@@ -800,6 +892,16 @@ function PerformanceEvaluation() {
     // Combinar todos los errores
     const todosLosErrores = { ...erroresBasicos, ...erroresCalificaciones };
 
+    // En vista del empleado, NO exigir jefe ni HSEQ
+    if (isSelfView) {
+      // Eliminar errores de jefe e HSEQ antes de validar
+      Object.keys(erroresCalificaciones).forEach(k => {
+        if (k.startsWith('competencia_boss_') || k.startsWith('hseq_')) {
+          delete erroresCalificaciones[k];
+        }
+      });
+    }
+
     if (Object.keys(erroresCalificaciones).length > 0) {
       setValidationErrors(todosLosErrores);
       window.scrollTo(0, 0);
@@ -834,6 +936,8 @@ function PerformanceEvaluation() {
     // Crear un objeto FormData para enviar datos a la nueva estructura nativa
     const formData = new FormData();
     formData.append('employeeId', employee.id_empleado);
+    if (datosGenerales.idEvaluador) formData.append('bossId', String(datosGenerales.idEvaluador));
+    if (existingEvaluationId) formData.append('evaluationId', String(existingEvaluationId));
     formData.append('promedioCompetencias', String(promedioCompetencias));
     formData.append('hseqAverage', String(promedioHseq));
     formData.append('generalAverage', String(promedioGeneral));
@@ -1435,8 +1539,8 @@ function PerformanceEvaluation() {
               <div className="evaluation-field" style={{ position: 'relative', zIndex: 9999 }}>
                 <label>Nombre del evaluador:</label>
                 <div style={{ position: 'relative', zIndex: 10000 }}>
-                  <input 
-                    type="text"
+                <input 
+                  type="text" 
                     placeholder="Buscar evaluador..."
                     value={busquedaEvaluador}
                     onChange={(e) => {
@@ -1451,8 +1555,8 @@ function PerformanceEvaluation() {
                       }
                     }}
                     onFocus={() => setBusquedaEvaluador('')}
-                    style={getErrorStyle('datosGenerales_nombreEvaluador')}
-                  />
+                  style={getErrorStyle('datosGenerales_nombreEvaluador')}
+                />
                   {busquedaEvaluador && empleadosFiltrados.length > 0 && (
                     <div style={{
                       position: 'absolute',
@@ -1480,8 +1584,24 @@ function PerformanceEvaluation() {
                               ...prev, 
                               nombreEvaluador: empleado.nombre,
                               cargoEvaluador: empleado.cargo || '',
-                              areaEvaluador: empleado.area || ''
+                              areaEvaluador: empleado.area || '',
+                              idEvaluador: empleado.id_empleado || ''
                             }));
+                            // Guardar asignación local para TeamEvaluations
+                            try {
+                              const evaluationId = localStorage.getItem('lastEvaluationId');
+                              const currentAssignments = JSON.parse(localStorage.getItem('bossAssignments') || '[]');
+                              const newAssignment = {
+                                id: `${employee?.id_empleado || ''}-${empleado.id_empleado}-${Date.now()}`,
+                                employeeId: employee?.id_empleado || null,
+                                evaluationId: existingEvaluationId || evaluationId || null,
+                                nombre: employee?.nombre || '',
+                                cargo: employee?.cargo || '',
+                                evaluacionEstado: 'Pendiente'
+                              };
+                              const updated = [newAssignment, ...currentAssignments.filter(a => !(a.employeeId === newAssignment.employeeId && a.evaluationId === newAssignment.evaluationId))];
+                              localStorage.setItem('bossAssignments', JSON.stringify(updated));
+                            } catch(_){}
                             setBusquedaEvaluador('');
                           }}
                           onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'}
@@ -1587,7 +1707,7 @@ function PerformanceEvaluation() {
               {/* Barra de título "COMPETENCIAS" con un ÚNICO gradiente */}
               <tr>
                 <th
-                  colSpan={6}
+                  colSpan={7}
                   style={{
                     background: "linear-gradient(90deg, #1F3B73 0%, #0A0F1A 100%)",
                     color: "#FFFFFF",
@@ -1687,8 +1807,22 @@ function PerformanceEvaluation() {
                   borderLeft: "1px solid #243447",
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)",
-                  width: "22%"
-                }}>JUSTIFICACIÓN</th>
+                  width: "11%"
+                }}>JUSTIFICACIÓN TRABAJADOR</th>
+                <th style={{ 
+                  background: "#1E2A3A", 
+                  color: "#FFFFFF", 
+                  padding: "0.6rem 0.4rem",
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  fontSize: "0.9rem",
+                  height: "24px",
+                  borderTop: "1px solid #1E2A3A",
+                  borderLeft: "1px solid #243447",
+                  borderBottom: "1px solid #243447",
+                  borderRight: "1px solid rgba(51,51,51,0.5)",
+                  width: "11%"
+                }}>JUSTIFICACIÓN JEFE</th>
               </tr>
             </thead>
             <tbody>
@@ -1730,6 +1864,7 @@ function PerformanceEvaluation() {
                     value={rows[0].worker === 0 ? "" : rows[0].worker}
                     onChange={(e) => handleSelectChange(rows[0].id, "worker", e.target.value)}
                     style={getCalificationErrorStyle(rows[0].id, 'worker')}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1745,6 +1880,7 @@ function PerformanceEvaluation() {
                     value={rows[0].boss === 0 ? "" : rows[0].boss}
                     onChange={(e) => handleSelectChange(rows[0].id, "boss", e.target.value)}
                     style={getCalificationErrorStyle(rows[0].id, 'boss')}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1758,7 +1894,28 @@ function PerformanceEvaluation() {
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Justificación del trabajador"
+                    value={rows[0].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      if(isManagerView) return;
+                      setRows(prev=>prev.map(r=> r.id===rows[0].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                    disabled={isManagerView}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[0].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      if(isSelfView) return;
+                      setRows(prev=>prev.map(r=> r.id===rows[0].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                    disabled={isSelfView}
                   />
                 </td>
               </tr>
@@ -1774,6 +1931,7 @@ function PerformanceEvaluation() {
                     value={rows[1].worker === 0 ? "" : rows[1].worker}
                     onChange={(e) => handleSelectChange(rows[1].id, "worker", e.target.value)}
                     style={getCalificationErrorStyle(rows[1].id, 'worker')}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1789,6 +1947,7 @@ function PerformanceEvaluation() {
                     value={rows[1].boss === 0 ? "" : rows[1].boss}
                     onChange={(e) => handleSelectChange(rows[1].id, "boss", e.target.value)}
                     style={getCalificationErrorStyle(rows[1].id, 'boss')}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1817,6 +1976,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[2].worker === 0 ? "" : rows[2].worker}
                     onChange={(e) => handleSelectChange(rows[2].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1831,6 +1991,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[2].boss === 0 ? "" : rows[2].boss}
                     onChange={(e) => handleSelectChange(rows[2].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1859,6 +2020,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[3].worker === 0 ? "" : rows[3].worker}
                     onChange={(e) => handleSelectChange(rows[3].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1873,6 +2035,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[3].boss === 0 ? "" : rows[3].boss}
                     onChange={(e) => handleSelectChange(rows[3].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1932,6 +2095,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[4].worker === 0 ? "" : rows[4].worker}
                     onChange={(e) => handleSelectChange(rows[4].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1946,6 +2110,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[4].boss === 0 ? "" : rows[4].boss}
                     onChange={(e) => handleSelectChange(rows[4].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1974,6 +2139,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[5].worker === 0 ? "" : rows[5].worker}
                     onChange={(e) => handleSelectChange(rows[5].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1988,6 +2154,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[5].boss === 0 ? "" : rows[5].boss}
                     onChange={(e) => handleSelectChange(rows[5].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2047,6 +2214,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[6].worker === 0 ? "" : rows[6].worker}
                     onChange={(e) => handleSelectChange(rows[6].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2061,6 +2229,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[6].boss === 0 ? "" : rows[6].boss}
                     onChange={(e) => handleSelectChange(rows[6].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2089,6 +2258,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[7].worker === 0 ? "" : rows[7].worker}
                     onChange={(e) => handleSelectChange(rows[7].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2103,6 +2273,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[7].boss === 0 ? "" : rows[7].boss}
                     onChange={(e) => handleSelectChange(rows[7].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2131,6 +2302,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[8].worker === 0 ? "" : rows[8].worker}
                     onChange={(e) => handleSelectChange(rows[8].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2145,6 +2317,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[8].boss === 0 ? "" : rows[8].boss}
                     onChange={(e) => handleSelectChange(rows[8].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2173,6 +2346,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[9].worker === 0 ? "" : rows[9].worker}
                     onChange={(e) => handleSelectChange(rows[9].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2187,6 +2361,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[9].boss === 0 ? "" : rows[9].boss}
                     onChange={(e) => handleSelectChange(rows[9].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2245,6 +2420,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[10].worker === 0 ? "" : rows[10].worker}
                     onChange={(e) => handleSelectChange(rows[10].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2259,6 +2435,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[10].boss === 0 ? "" : rows[10].boss}
                     onChange={(e) => handleSelectChange(rows[10].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2287,6 +2464,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[11].worker === 0 ? "" : rows[11].worker}
                     onChange={(e) => handleSelectChange(rows[11].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2301,6 +2479,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[11].boss === 0 ? "" : rows[11].boss}
                     onChange={(e) => handleSelectChange(rows[11].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2329,6 +2508,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[12].worker === 0 ? "" : rows[12].worker}
                     onChange={(e) => handleSelectChange(rows[12].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2343,6 +2523,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[12].boss === 0 ? "" : rows[12].boss}
                     onChange={(e) => handleSelectChange(rows[12].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2402,6 +2583,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[13].worker === 0 ? "" : rows[13].worker}
                     onChange={(e) => handleSelectChange(rows[13].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2416,6 +2598,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[13].boss === 0 ? "" : rows[13].boss}
                     onChange={(e) => handleSelectChange(rows[13].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2444,6 +2627,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[14].worker === 0 ? "" : rows[14].worker}
                     onChange={(e) => handleSelectChange(rows[14].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2458,6 +2642,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[14].boss === 0 ? "" : rows[14].boss}
                     onChange={(e) => handleSelectChange(rows[14].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2486,6 +2671,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[15].worker === 0 ? "" : rows[15].worker}
                     onChange={(e) => handleSelectChange(rows[15].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2500,6 +2686,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[15].boss === 0 ? "" : rows[15].boss}
                     onChange={(e) => handleSelectChange(rows[15].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2560,6 +2747,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[16].worker === 0 ? "" : rows[16].worker}
                     onChange={(e) => handleSelectChange(rows[16].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2574,6 +2762,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[16].boss === 0 ? "" : rows[16].boss}
                     onChange={(e) => handleSelectChange(rows[16].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2602,6 +2791,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[17].worker === 0 ? "" : rows[17].worker}
                     onChange={(e) => handleSelectChange(rows[17].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2616,6 +2806,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[17].boss === 0 ? "" : rows[17].boss}
                     onChange={(e) => handleSelectChange(rows[17].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2644,6 +2835,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[18].worker === 0 ? "" : rows[18].worker}
                     onChange={(e) => handleSelectChange(rows[18].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2658,6 +2850,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[18].boss === 0 ? "" : rows[18].boss}
                     onChange={(e) => handleSelectChange(rows[18].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2709,6 +2902,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[19].worker === 0 ? "" : rows[19].worker}
                     onChange={(e) => handleSelectChange(rows[19].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2723,6 +2917,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[19].boss === 0 ? "" : rows[19].boss}
                     onChange={(e) => handleSelectChange(rows[19].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2749,6 +2944,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[20].worker === 0 ? "" : rows[20].worker}
                     onChange={(e) => handleSelectChange(rows[20].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2763,6 +2959,7 @@ function PerformanceEvaluation() {
                     className="rating-select"
                     value={rows[20].boss === 0 ? "" : rows[20].boss}
                     onChange={(e) => handleSelectChange(rows[20].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2789,6 +2986,7 @@ function PerformanceEvaluation() {
                       className="rating-select"
                     value={rows[21].worker === 0 ? "" : rows[21].worker}
                     onChange={(e) => handleSelectChange(rows[21].id, "worker", e.target.value)}
+                    disabled={isManagerView}
                     >
                       <option value="">1 - 5</option>
                       <option value="1">1 - No Cumple</option>
@@ -2803,6 +3001,7 @@ function PerformanceEvaluation() {
                       className="rating-select"
                     value={rows[21].boss === 0 ? "" : rows[21].boss}
                     onChange={(e) => handleSelectChange(rows[21].id, "boss", e.target.value)}
+                    disabled={isSelfView}
                     >
                       <option value="">1 - 5</option>
                       <option value="1">1 - No Cumple</option>
@@ -2840,7 +3039,7 @@ function PerformanceEvaluation() {
               {/* Barra de título "HSEQ" con un ÚNICO gradiente */}
               <tr>
                 <th 
-                  colSpan={4} 
+                  colSpan={5} 
                   style={{ 
                     background: "linear-gradient(90deg, #1F3B73 0%, #0A0F1A 100%)", 
                     color: "#FFFFFF", 
@@ -2912,7 +3111,21 @@ function PerformanceEvaluation() {
                   borderLeft: "1px solid #243447",
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)"
-                }}>JUSTIFICACIÓN</th>
+                }}>JUSTIFICACIÓN TRABAJADOR</th>
+                <th style={{ 
+                  width: "10%", 
+                  background: "#1E2A3A", 
+                  color: "#FFFFFF",
+                  textAlign: "center",
+                  padding: "0.6rem 0.4rem",
+                  fontWeight: "bold",
+                  fontSize: "0.9rem",
+                  height: "24px",
+                  borderTop: "1px solid #1E2A3A",
+                  borderLeft: "1px solid #243447",
+                  borderBottom: "1px solid #243447",
+                  borderRight: "1px solid rgba(51,51,51,0.5)"
+                }}>JUSTIFICACIÓN JEFE</th>
               </tr>
             </thead>
             <tbody>
@@ -2925,6 +3138,7 @@ function PerformanceEvaluation() {
                       value={item.autoevaluacion}
                       onChange={(e) => handleHseqChange(item.id, "autoevaluacion", e.target.value)}
                       style={getHseqErrorStyle(item.id, 'autoevaluacion')}
+                      disabled={isSelfView}
                     >
                       <option value="">1 - 5</option>
                       <option value="1">1 - No Cumple</option>
@@ -2940,6 +3154,7 @@ function PerformanceEvaluation() {
                       value={item.evaluacionJefe}
                       onChange={(e) => handleHseqChange(item.id, "evaluacionJefe", e.target.value)}
                       style={getHseqErrorStyle(item.id, 'evaluacionJefe')}
+                      disabled={isSelfView}
                     >
                       <option value="">1 - 5</option>
                       <option value="1">1 - No Cumple</option>
@@ -2949,11 +3164,24 @@ function PerformanceEvaluation() {
                       <option value="5">5 - Excelente</option>
                     </select>
                   </td>
-                  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <td style={{ backgroundColor: "#fff", padding: "0.5rem" }}>
                     <textarea
                       className="hseq-textarea"
                       rows={1}
-                      placeholder="Justificación"
+                      placeholder="Justificación del trabajador"
+                      value={item.justificacionTrabajador || ''}
+                      onChange={(e)=> handleHseqJustificacionChange(item.id, 'justificacionTrabajador', e.target.value)}
+                      disabled={isManagerView}
+                    />
+                  </td>
+                  <td style={{ backgroundColor: "#fff", padding: "0.5rem" }}>
+                    <textarea
+                      className="hseq-textarea"
+                      rows={1}
+                      placeholder="Justificación del jefe"
+                      value={item.justificacionJefe || ''}
+                      onChange={(e)=> handleHseqJustificacionChange(item.id, 'justificacionJefe', e.target.value)}
+                      disabled={isSelfView}
                     />
                   </td>
                 </tr>

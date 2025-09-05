@@ -10,30 +10,39 @@ function TeamEvaluations({ onLogout, userRole }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Simulamos la carga de los miembros del equipo
+  // Cargar asignaciones donde soy jefe inmediato: vienen de backend o localStorage
   useEffect(() => {
-    // Esta sería una llamada a la API en una implementación real
-    const fetchTeamMembers = () => {
-      // Simulamos una respuesta de API con datos ficticios
-      setTimeout(() => {
-        setTeamMembers([
-          { id: 1, nombre: 'Ana Gómez', cargo: 'Desarrollador Front-end', evaluacionEstado: 'Pendiente' },
-          { id: 2, nombre: 'Carlos Díaz', cargo: 'Desarrollador Back-end', evaluacionEstado: 'Completada' },
-          { id: 3, nombre: 'Lucía Pérez', cargo: 'Diseñador UX/UI', evaluacionEstado: 'En progreso' },
-          { id: 4, nombre: 'Miguel Torres', cargo: 'QA Tester', evaluacionEstado: 'No iniciada' },
-        ]);
+    const loadAssignments = async () => {
+      try {
+        // Intentar leer de localStorage (asignación creada al guardar autoevaluación)
+        const raw = localStorage.getItem('bossAssignments');
+        if (raw) {
+          const list = JSON.parse(raw);
+          setTeamMembers(Array.isArray(list) ? list : []);
+          setLoading(false);
+          return;
+        }
+        // Si no hay local, dejar vacío por ahora
+        setTeamMembers([]);
+      } catch (_) {
+        setTeamMembers([]);
+      } finally {
         setLoading(false);
-      }, 1000);
+      }
     };
-
-    fetchTeamMembers();
+    loadAssignments();
   }, []);
 
-  const handleEvaluate = (employeeId) => {
-    // Aquí se redigiría a la página de evaluación para el empleado específico
-    info('Redirigiendo', `Redirigiendo a la evaluación del empleado con ID: ${employeeId}`);
-    // En una implementación real:
-    // navigate(`/evaluate-employee/${employeeId}`);
+  const handleEvaluate = (assignment) => {
+    const { employeeId, evaluationId } = assignment;
+    if (!employeeId || !evaluationId) {
+      return info('Datos incompletos', 'No se encontró el identificador de evaluación.');
+    }
+    // Configurar modo jefe y employeeId en localStorage
+    localStorage.setItem('evalMode', 'manager');
+    localStorage.setItem('employeeId', String(employeeId));
+    // Abrir evaluación en modo jefe, apuntando al registro existente
+    window.location.href = `/performance-evaluation?as=manager&eid=${encodeURIComponent(evaluationId)}`;
   };
 
   if (loading) {
@@ -86,16 +95,16 @@ function TeamEvaluations({ onLogout, userRole }) {
                 {teamMembers.map(member => (
                   <tr key={member.id}>
                     <td>{member.nombre}</td>
-                    <td>{member.cargo}</td>
+                    <td>{member.cargo || ''}</td>
                     <td>
-                      <span className={`status-badge ${member.evaluacionEstado.toLowerCase().replace(' ', '-')}`}>
-                        {member.evaluacionEstado}
+                      <span className={`status-badge ${(member.evaluacionEstado||'pendiente').toLowerCase().replace(' ', '-')}`}>
+                        {member.evaluacionEstado || 'Pendiente'}
                       </span>
                     </td>
                     <td>
                       <button 
                         className="evaluate-button"
-                        onClick={() => handleEvaluate(member.id)}
+                        onClick={() => handleEvaluate(member)}
                       >
                         {member.evaluacionEstado === 'Completada' ? 'Ver evaluación' : 'Evaluar'}
                       </button>
