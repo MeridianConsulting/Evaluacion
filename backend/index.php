@@ -86,12 +86,25 @@ function handleRequest($method, $path) {
         $controller->saveEvaluation();
         return;
     }
+    if ($path === "api/evaluations/update-native" && $method === "POST") {
+        $controller = new EvaluationControllerNativo();
+        $controller->updateEvaluation();
+        return;
+    }
 
     // Ruta para obtener evaluaciones del empleado con detalles
     if (preg_match("#^api/evaluations/employee/(\d+)$#", $path, $matches) && $method === "GET") {
         $employeeId = $matches[1];
         $controller = new EvaluationControllerNativo();
         $controller->getEmployeeEvaluationsWithDetails($employeeId);
+        return;
+    }
+
+    // Ruta para obtener evaluaciones asignadas a un jefe inmediato
+    if (preg_match("#^api/evaluations/assigned/(\d+)$#", $path, $matches) && $method === "GET") {
+        $bossId = $matches[1];
+        $controller = new EvaluationControllerNativo();
+        $controller->getAssignedToBoss($bossId);
         return;
     }
 

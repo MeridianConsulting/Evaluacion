@@ -71,12 +71,13 @@ class EvaluationControllerNativo {
             $competenciasData = json_decode($_POST['competenciasData'] ?? '[]', true);
             $hseqData = json_decode($_POST['hseqData'] ?? '[]', true);
             $mejoramiento = json_decode($_POST['mejoramiento'] ?? 'null', true);
-            $planAccion = json_decode($_POST['planAccion'] ?? 'null', true);
+            $planAccion = json_decode(($_POST['planesAccion'] ?? ($_POST['planAccion'] ?? 'null')), true);
             $promedioCompetencias = isset($_POST['promedioCompetencias']) ? (float)$_POST['promedioCompetencias'] : null;
             $hseqAverage = isset($_POST['hseqAverage']) ? (float)$_POST['hseqAverage'] : null;
             $generalAverage = isset($_POST['generalAverage']) ? (float)$_POST['generalAverage'] : null;
             $groupAverages = json_decode($_POST['groupAverages'] ?? 'null', true);
             $periodoEvaluacion = $_POST['periodoEvaluacion'] ?? null;
+            $bossId = isset($_POST['bossId']) ? (int)$_POST['bossId'] : null;
             
             if (!$employeeId) {
                 http_response_code(400);
@@ -122,13 +123,14 @@ class EvaluationControllerNativo {
             $this->db->begin_transaction();
             try {
                 // 1. Insertar evaluación principal
-                $insertEvalSql = 'INSERT INTO evaluacion (id_empleado, fecha_evaluacion, periodo_evaluacion, estado_evaluacion) VALUES (?, NOW(), ?, ?)';
+                $insertEvalSql = 'INSERT INTO evaluacion (id_empleado, fecha_evaluacion, periodo_evaluacion, estado_evaluacion, id_jefe) VALUES (?, NOW(), ?, ?, ?)';
                 $stmtEval = $this->db->prepare($insertEvalSql);
                 if (!$stmtEval) {
                     throw new Exception('Error al preparar INSERT evaluacion: ' . $this->db->error);
                 }
-                $estado = 'COMPLETADA';
-                $stmtEval->bind_param('iss', $employeeId, $periodoEvaluacion, $estado);
+                // Si no hay firma de jefe aún, dejar en BORRADOR (pendiente del jefe)
+                $estado = $bossSignaturePath ? 'COMPLETADA' : 'BORRADOR';
+                $stmtEval->bind_param('issi', $employeeId, $periodoEvaluacion, $estado, $bossId);
                 if (!$stmtEval->execute()) {
                     throw new Exception('Error al ejecutar INSERT evaluacion: ' . $stmtEval->error);
                 }
@@ -195,6 +197,123 @@ class EvaluationControllerNativo {
                 'error' => $e->getMessage(),
             ], JSON_UNESCAPED_UNICODE);
             return;
+        }
+    }
+
+    /**
+     * Actualiza una evaluación existente (uso del JEFE para completar)
+     */
+    public function updateEvaluation() {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                http_response_code(405);
+                echo json_encode(["success" => false, "message" => "Método no permitido"]);
+                return;
+            }
+
+            $evaluationId = isset($_POST['evaluationId']) ? (int)$_POST['evaluationId'] : 0;
+            if (!$evaluationId) {
+                http_response_code(400);
+                echo json_encode(["success" => false, "message" => "evaluationId es requerido"]);
+                return;
+            }
+
+            $competenciasData = json_decode($_POST['competenciasData'] ?? '[]', true);
+            $hseqData = json_decode($_POST['hseqData'] ?? '[]', true);
+            $mejoramiento = json_decode($_POST['mejoramiento'] ?? 'null', true);
+            $planAccion = json_decode($_POST['planesAccion'] ?? 'null', true);
+            $promedioCompetencias = isset($_POST['promedioCompetencias']) ? (float)$_POST['promedioCompetencias'] : null;
+            $hseqAverage = isset($_POST['hseqAverage']) ? (float)$_POST['hseqAverage'] : null;
+            $generalAverage = isset($_POST['generalAverage']) ? (float)$_POST['generalAverage'] : null;
+            $groupAverages = json_decode($_POST['groupAverages'] ?? 'null', true);
+
+            $employeeSignaturePath = null;
+            $bossSignaturePath = null;
+
+            $uploadDir = __DIR__ . '/../uploads/signatures/';
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            if (isset($_FILES['employeeSignature']) && $_FILES['employeeSignature']['error'] === UPLOAD_ERR_OK) {
+                $tempFile = $_FILES['employeeSignature']['tmp_name'];
+                $fileName = 'employee_upd_' . $evaluationId . '_' . time() . '.png';
+                $targetFile = $uploadDir . $fileName;
+                if (move_uploaded_file($tempFile, $targetFile)) {
+                    $employeeSignaturePath = 'uploads/signatures/' . $fileName;
+                }
+            }
+            if (isset($_FILES['bossSignature']) && $_FILES['bossSignature']['error'] === UPLOAD_ERR_OK) {
+                $tempFile = $_FILES['bossSignature']['tmp_name'];
+                $fileName = 'boss_upd_' . $evaluationId . '_' . time() . '.png';
+                $targetFile = $uploadDir . $fileName;
+                if (move_uploaded_file($tempFile, $targetFile)) {
+                    $bossSignaturePath = 'uploads/signatures/' . $fileName;
+                }
+            }
+
+            $this->db->begin_transaction();
+            try {
+                // Actualizar evaluación a COMPLETADA si llega firma del jefe; de lo contrario, BORRADOR
+                $estado = $bossSignaturePath ? 'COMPLETADA' : 'BORRADOR';
+                $stmt = $this->db->prepare("UPDATE evaluacion SET estado_evaluacion = ?, fecha_actualizacion = NOW() WHERE id_evaluacion = ?");
+                $stmt->bind_param('si', $estado, $evaluationId);
+                $stmt->execute();
+                $stmt->close();
+
+                // Limpiar y reinsertar detalles para reflejar la última edición
+                $this->db->query("DELETE FROM evaluacion_competencias WHERE id_evaluacion = " . (int)$evaluationId);
+                $this->db->query("DELETE FROM evaluacion_hseq WHERE id_evaluacion = " . (int)$evaluationId);
+                $this->db->query("DELETE FROM evaluacion_mejoramiento WHERE id_evaluacion = " . (int)$evaluationId);
+                $this->db->query("DELETE FROM evaluacion_plan_accion WHERE id_evaluacion = " . (int)$evaluationId);
+                $this->db->query("DELETE FROM evaluacion_promedios WHERE id_evaluacion = " . (int)$evaluationId);
+
+                if ($mejoramiento) { $this->saveMejoramiento($evaluationId, $mejoramiento); }
+                if ($planAccion)   { $this->savePlanAccion($evaluationId, $planAccion); }
+                if ($hseqData)     { $this->saveHseqData($evaluationId, $hseqData); }
+                if ($competenciasData) { $this->saveCompetencias($evaluationId, $competenciasData); }
+                $this->savePromedios($evaluationId, $promedioCompetencias, $hseqAverage, $generalAverage, $groupAverages);
+
+                if ($employeeSignaturePath || $bossSignaturePath) {
+                    // upsert de firmas
+                    $this->db->query("DELETE FROM evaluacion_firmas WHERE id_evaluacion = " . (int)$evaluationId);
+                    $this->saveFirmas($evaluationId, $employeeSignaturePath, $bossSignaturePath);
+                }
+
+                $this->db->commit();
+                echo json_encode(["success" => true, "message" => "Evaluación actualizada", "id_evaluacion" => $evaluationId]);
+            } catch (Exception $e) {
+                $this->db->rollback();
+                http_response_code(500);
+                echo json_encode(["success" => false, "message" => "Error al actualizar", "error" => $e->getMessage()]);
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Error general", "error" => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Lista evaluaciones asignadas a un jefe
+     */
+    public function getAssignedToBoss($bossId) {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT e.id_evaluacion, e.id_empleado, e.periodo_evaluacion, e.estado_evaluacion,
+                       emp.nombre, emp.cargo, emp.area
+                FROM evaluacion e
+                JOIN empleados emp ON emp.id_empleado = e.id_empleado
+                WHERE e.id_jefe = ?
+                ORDER BY e.fecha_evaluacion DESC
+            ");
+            $stmt->bind_param('i', $bossId);
+            $stmt->execute();
+            $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+
+            echo json_encode(["success" => true, "data" => $rows]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Error al listar asignaciones", "error" => $e->getMessage()]);
         }
     }
 

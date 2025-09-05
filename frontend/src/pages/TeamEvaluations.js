@@ -10,20 +10,34 @@ function TeamEvaluations({ onLogout, userRole }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Cargar asignaciones donde soy jefe inmediato: vienen de backend o localStorage
+  // Cargar asignaciones donde soy jefe inmediato: ahora desde API (fallback a localStorage)
   useEffect(() => {
     const loadAssignments = async () => {
       try {
-        // Intentar leer de localStorage (asignación creada al guardar autoevaluación)
-        const raw = localStorage.getItem('bossAssignments');
-        if (raw) {
-          const list = JSON.parse(raw);
-          setTeamMembers(Array.isArray(list) ? list : []);
-          setLoading(false);
-          return;
+        const currentUserId = localStorage.getItem('employeeId');
+        const apiUrl = process.env.REACT_APP_API_BASE_URL;
+        if (currentUserId && apiUrl) {
+          const resp = await fetch(`${apiUrl}/api/evaluations/assigned/${currentUserId}`);
+          if (resp.ok) {
+            const json = await resp.json();
+            const rows = (json && (json.data || json.evaluaciones)) || [];
+            const mapped = rows.map(r => ({
+              id: r.id_evaluacion,
+              employeeId: r.id_empleado,
+              evaluationId: r.id_evaluacion,
+              nombre: r.nombre,
+              cargo: r.cargo,
+              evaluacionEstado: r.estado_evaluacion || 'Pendiente'
+            }));
+            setTeamMembers(mapped);
+            setLoading(false);
+            return;
+          }
         }
-        // Si no hay local, dejar vacío por ahora
-        setTeamMembers([]);
+        // Fallback a localStorage si la API no está disponible
+        const raw = currentUserId ? localStorage.getItem(`bossAssignmentsByBossId:${currentUserId}`) : null;
+        const list = raw ? JSON.parse(raw) : [];
+        setTeamMembers(Array.isArray(list) ? list : []);
       } catch (_) {
         setTeamMembers([]);
       } finally {

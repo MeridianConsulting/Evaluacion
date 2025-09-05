@@ -596,6 +596,7 @@ CREATE TABLE `evaluacion` (
   `periodo_evaluacion` varchar(50) DEFAULT NULL,
   `observaciones_generales` longtext DEFAULT NULL,
   `estado_evaluacion` enum('BORRADOR','COMPLETADA','APROBADA') DEFAULT 'BORRADOR',
+  `id_jefe` int(11) DEFAULT NULL,
   `fecha_creacion` datetime DEFAULT current_timestamp(),
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -5060,7 +5061,8 @@ ALTER TABLE `evaluacion`
   ADD PRIMARY KEY (`id_evaluacion`),
   ADD KEY `fk_evaluacion_empleado` (`id_empleado`),
   ADD KEY `idx_evaluacion_empleado_fecha` (`id_empleado`,`fecha_evaluacion`),
-  ADD KEY `idx_evaluacion_estado` (`estado_evaluacion`);
+  ADD KEY `idx_evaluacion_estado` (`estado_evaluacion`),
+  ADD KEY `idx_evaluacion_id_jefe` (`id_jefe`);
 
 --
 -- Indices de la tabla `evaluacion_competencias`

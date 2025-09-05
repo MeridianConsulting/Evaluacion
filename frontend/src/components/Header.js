@@ -92,6 +92,21 @@ function Header({ onLogout, userRole: propUserRole }) {
     setMenuOpen(false);
   };
 
+  // Mostrar Evaluar Equipo si rol es jefe/admin o si hay asignaciones locales para este usuario
+  const canSeeTeamEvaluations = (() => {
+    if (userRole === 'jefe' || userRole === 'admin') return true;
+    try {
+      const currentUserId = localStorage.getItem('employeeId');
+      if (!currentUserId) return false;
+      const raw = localStorage.getItem(`bossAssignmentsByBossId:${currentUserId}`);
+      if (!raw) return false;
+      const list = JSON.parse(raw);
+      return Array.isArray(list) && list.length > 0;
+    } catch (_) {
+      return false;
+    }
+  })();
+
   return (
     <header>
       <nav className="navbar">
@@ -119,8 +134,8 @@ function Header({ onLogout, userRole: propUserRole }) {
             <button className="menu-item" onClick={() => goToPage('/profile')}>Perfil</button>
             
             
-            {/* Solo jefes y administradores pueden ver evaluaciones de subordinados */}
-            {(userRole === "jefe" || userRole === "admin") && (
+            {/* Mostrar Evaluar Equipo si rol es jefe/admin o si tiene asignaciones */}
+            {canSeeTeamEvaluations && (
               <button className="menu-item" onClick={() => goToPage('/team-evaluations')}>
                 Evaluar Equipo
               </button>
