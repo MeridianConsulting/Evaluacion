@@ -81,8 +81,6 @@ function Header({ onLogout, userRole: propUserRole }) {
             {/* Todos pueden ver su perfil */}
             <button className="menu-item" onClick={() => goToPage('/profile')}>Perfil</button>
             
-            {/* Todos pueden realizar evaluaciones */}
-            <button className="menu-item" onClick={() => goToPage('/performance')}>Evaluación</button>
             
             {/* Solo jefes y administradores pueden ver evaluaciones de subordinados */}
             {(userRole === "jefe" || userRole === "admin") && (
