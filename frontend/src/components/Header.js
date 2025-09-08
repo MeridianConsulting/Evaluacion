@@ -8,6 +8,7 @@ function Header({ onLogout, userRole: propUserRole }) {
   const [userRole, setUserRole] = useState(propUserRole || localStorage.getItem('userRole') || 'empleado');
   const [menuOpen, setMenuOpen] = useState(false);
   const [hasEvaluationToken, setHasEvaluationToken] = useState(false);
+  const [hasAssignedAsEvaluator, setHasAssignedAsEvaluator] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -75,6 +76,35 @@ function Header({ onLogout, userRole: propUserRole }) {
     }
   }, [menuOpen]);
 
+  // Consultar si el usuario actual tiene evaluaciones asignadas como evaluador (en DB)
+  useEffect(() => {
+    const checkAssignedEvaluations = async () => {
+      try {
+        const currentUserId = localStorage.getItem('employeeId');
+        const apiUrl = process.env.REACT_APP_API_BASE_URL;
+        if (!currentUserId || !apiUrl) {
+          setHasAssignedAsEvaluator(false);
+          return;
+        }
+        const resp = await fetch(`${apiUrl}/api/evaluations/assigned/${currentUserId}`);
+        if (!resp.ok) {
+          setHasAssignedAsEvaluator(false);
+          return;
+        }
+        const data = await resp.json();
+        const assigned = (data && (data.data || data.evaluaciones || data)) || [];
+        setHasAssignedAsEvaluator(Array.isArray(assigned) && assigned.length > 0);
+      } catch (_) {
+        setHasAssignedAsEvaluator(false);
+      }
+    };
+
+    checkAssignedEvaluations();
+    if (menuOpen) {
+      checkAssignedEvaluations();
+    }
+  }, [menuOpen]);
+
   const handleToggleMenu = () => {
     setMenuOpen(prev => !prev);
   };
@@ -92,20 +122,8 @@ function Header({ onLogout, userRole: propUserRole }) {
     setMenuOpen(false);
   };
 
-  // Mostrar Evaluar Equipo si rol es jefe/admin o si hay asignaciones locales para este usuario
-  const canSeeTeamEvaluations = (() => {
-    if (userRole === 'jefe' || userRole === 'admin') return true;
-    try {
-      const currentUserId = localStorage.getItem('employeeId');
-      if (!currentUserId) return false;
-      const raw = localStorage.getItem(`bossAssignmentsByBossId:${currentUserId}`);
-      if (!raw) return false;
-      const list = JSON.parse(raw);
-      return Array.isArray(list) && list.length > 0;
-    } catch (_) {
-      return false;
-    }
-  })();
+  // Mostrar Evaluar Equipo solo si el usuario tiene evaluaciones asignadas en la base de datos
+  const canSeeTeamEvaluations = hasAssignedAsEvaluator;
 
   return (
     <header>

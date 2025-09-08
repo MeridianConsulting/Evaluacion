@@ -903,16 +903,13 @@ function PerformanceEvaluation() {
       }
     });
 
-    // Validar HSEQ items
+    // Validar HSEQ items (autoevaluación y evaluación del jefe requeridas para todos)
     hseqItems.forEach((item, index) => {
-      if (item.autoevaluacion !== undefined && (!item.autoevaluacion || item.autoevaluacion === '' || item.autoevaluacion === '0')) {
+      if (!item.autoevaluacion || item.autoevaluacion === '' || item.autoevaluacion === '0') {
         errores[`hseq_autoevaluacion_${item.id}`] = true;
       }
-      if (item.evaluacionJefe !== undefined && (!item.evaluacionJefe || item.evaluacionJefe === '' || item.evaluacionJefe === '0')) {
+      if (!item.evaluacionJefe || item.evaluacionJefe === '' || item.evaluacionJefe === '0') {
         errores[`hseq_evaluacionJefe_${item.id}`] = true;
-      }
-      if (item.calificacion !== undefined && (!item.calificacion || item.calificacion === '' || item.calificacion === '0')) {
-        errores[`hseq_calificacion_${item.id}`] = true;
       }
     });
 
@@ -920,11 +917,10 @@ function PerformanceEvaluation() {
   };
 
   const handleSubmitEvaluation = async () => {
-    // Validar todos los campos de calificaciones
+    // Validar calificaciones de todas las secciones
     const erroresCalificaciones = validateAllCalifications();
-    const isInitialSave = !existingEvaluationId;
-    
-    // Validación básica: promedio de competencias y firmas
+
+    // Validar promedio y firmas (ambas requeridas)
     const promedioCompetencias = calcularPromedioCompetencias();
     const promedioNumber = Number(promedioCompetencias);
 
@@ -932,40 +928,32 @@ function PerformanceEvaluation() {
     if (!employeeSignature) {
       erroresBasicos.employeeSignature = true;
     }
-    if (!isInitialSave && !bossSignature) {
+    if (!bossSignature) {
       erroresBasicos.bossSignature = true;
     }
 
-    // Combinar todos los errores
-    const todosLosErrores = { ...erroresBasicos, ...erroresCalificaciones };
+    // Validar otros campos (datos generales, mejoramiento, plan de acción)
+    const formularioValido = validarFormulario();
+    // Fusionar errores de calificaciones y firmas con los del formulario
+    setValidationErrors(prev => ({ ...prev, ...erroresCalificaciones, ...erroresBasicos }));
+    const hayErroresCalif = Object.keys(erroresCalificaciones).length > 0;
+    const hayErroresFirmas = Object.keys(erroresBasicos).length > 0;
 
-    // En guardado inicial, NO exigir jefe ni HSEQ
-    if (isInitialSave) {
-      Object.keys(erroresCalificaciones).forEach(k => {
-        if (k.startsWith('competencia_boss_') || k.startsWith('hseq_')) {
-          delete erroresCalificaciones[k];
-        }
-      });
-    }
-
-    if (Object.keys(erroresCalificaciones).length > 0) {
-      setValidationErrors(todosLosErrores);
+    if (hayErroresCalif || !formularioValido) {
       window.scrollTo(0, 0);
-      warning('Campos obligatorios', 'Todos los campos de calificaciones son obligatorios. Por favor complete todas las evaluaciones.');
+      warning('Campos obligatorios', 'Complete todas las calificaciones y los campos requeridos antes de enviar.');
       return;
     }
 
     if (!promedioNumber || promedioNumber <= 0) {
-      setValidationErrors(todosLosErrores);
       window.scrollTo(0, 0);
       warning('Validación requerida', 'Seleccione al menos una calificación en competencias para calcular el promedio.');
       return;
     }
 
-    if (Object.keys(erroresBasicos).length > 0) {
-      setValidationErrors(todosLosErrores);
+    if (hayErroresFirmas) {
       window.scrollTo(0, 0);
-      warning('Firmas requeridas', isInitialSave ? 'La firma del Evaluado es obligatoria.' : 'Las firmas del Evaluado y del Jefe Directo son obligatorias.');
+      warning('Firmas requeridas', 'Las firmas del Evaluado y del Jefe Directo son obligatorias.');
       return;
     }
 
