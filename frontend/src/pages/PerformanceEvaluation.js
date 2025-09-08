@@ -58,12 +58,17 @@ function PerformanceEvaluation() {
     }
   ]);
 
-  // Desactivar detección de modo de vista (siempre habilitado para ambos)
+  // Detectar modo de vista: jefe vs empleado (por querystring, localStorage o rol)
   useEffect(() => {
     try {
-      setIsManagerView(false);
+      const params = new URLSearchParams(window.location.search);
+      const asParam = params.get('as');
+      const evalMode = localStorage.getItem('evalMode');
+      const userRole = localStorage.getItem('userRole');
+      const manager = (asParam === 'manager') || (evalMode === 'manager') || (userRole === 'jefe' || userRole === 'admin');
+      setIsManagerView(Boolean(manager));
     } catch (_) {
-      // no-op
+      setIsManagerView(false);
     }
   }, []);
 
@@ -780,9 +785,11 @@ function PerformanceEvaluation() {
         errores[`worker_${index}`] = true;
         isValid = false;
       }
+      if (isManagerView) {
       if (!row.boss || row.boss === '') {
         errores[`boss_${index}`] = true;
         isValid = false;
+        }
       }
     });
 
@@ -793,9 +800,11 @@ function PerformanceEvaluation() {
         errores[`hseq_auto_${index}`] = true;
         isValid = false;
       }
+      if (isManagerView) {
       if (!item.evaluacionJefe || item.evaluacionJefe === '') {
         errores[`hseq_jefe_${index}`] = true;
         isValid = false;
+        }
       }
     });
 
@@ -824,9 +833,11 @@ function PerformanceEvaluation() {
       errores.employeeSignature = true;
       isValid = false;
     }
+    if (isManagerView) {
     if (!bossSignature) {
       errores.bossSignature = true;
       isValid = false;
+      }
     }
 
     setValidationErrors(errores);
@@ -899,8 +910,10 @@ function PerformanceEvaluation() {
       if (!row.worker || row.worker === '' || row.worker === '0') {
         errores[`competencia_worker_${row.id}`] = true;
       }
+      if (isManagerView) {
       if (!row.boss || row.boss === '' || row.boss === '0') {
         errores[`competencia_boss_${row.id}`] = true;
+        }
       }
     });
 
@@ -909,8 +922,10 @@ function PerformanceEvaluation() {
       if (!item.autoevaluacion || item.autoevaluacion === '' || item.autoevaluacion === '0') {
         errores[`hseq_autoevaluacion_${item.id}`] = true;
       }
+      if (isManagerView) {
       if (!item.evaluacionJefe || item.evaluacionJefe === '' || item.evaluacionJefe === '0') {
         errores[`hseq_evaluacionJefe_${item.id}`] = true;
+        }
       }
     });
 
@@ -1354,7 +1369,13 @@ function PerformanceEvaluation() {
     animation: alertFading ? 'fadeOut 0.8s ease' : 'fadeIn 0.5s ease',
     opacity: alertFading ? '0' : '1',
     transition: 'opacity 0.8s ease',
-    position: 'relative'
+    position: 'fixed',
+    top: '12px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    zIndex: 100050,
+    maxWidth: '1000px',
+    width: 'calc(100% - 32px)'
   };
 
   // Estilo para campos con error - ahora verificando visibleErrors en lugar de validationErrors
@@ -1744,7 +1765,7 @@ function PerformanceEvaluation() {
               {/* Barra de título "COMPETENCIAS" con un ÚNICO gradiente */}
               <tr>
                 <th
-                  colSpan={7}
+                  colSpan={isManagerView ? 7 : 5}
                   style={{
                     background: "linear-gradient(90deg, #1F3B73 0%, #0A0F1A 100%)",
                     color: "#FFFFFF",
@@ -1818,6 +1839,7 @@ function PerformanceEvaluation() {
                   borderRight: "1px solid rgba(51,51,51,0.5)",
                   width: "14%"
                 }}>TRABAJADOR</th>
+                {isManagerView && (
                 <th style={{ 
                   background: "#1E2A3A", 
                   color: "#FFFFFF", 
@@ -1832,6 +1854,7 @@ function PerformanceEvaluation() {
                   borderRight: "1px solid rgba(51,51,51,0.5)",
                   width: "16%"
                 }}>JEFE INMEDIATO</th>
+                )}
                 <th style={{ 
                   background: "#1E2A3A", 
                   color: "#FFFFFF", 
@@ -1846,6 +1869,7 @@ function PerformanceEvaluation() {
                   borderRight: "1px solid rgba(51,51,51,0.5)",
                   width: "11%"
                 }}>JUSTIFICACIÓN TRABAJADOR</th>
+                {isManagerView && (
                 <th style={{ 
                   background: "#1E2A3A", 
                   color: "#FFFFFF", 
@@ -1860,6 +1884,7 @@ function PerformanceEvaluation() {
                   borderRight: "1px solid rgba(51,51,51,0.5)",
                   width: "11%"
                 }}>JUSTIFICACIÓN JEFE</th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -1911,13 +1936,13 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[0].boss === 0 ? "" : rows[0].boss}
                     onChange={(e) => handleSelectChange(rows[0].id, "boss", e.target.value)}
                     style={getCalificationErrorStyle(rows[0].id, 'boss')}
-                    
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1927,6 +1952,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -1940,6 +1966,7 @@ function PerformanceEvaluation() {
                     
                   />
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -1950,9 +1977,9 @@ function PerformanceEvaluation() {
                       setRows(prev=>prev.map(r=> r.id===rows[0].id?{...r, justificacionJefe: e.target.value}:r));
                       setFormTouched(true);
                     }}
-                    
                   />
                 </td>
+                )}
               </tr>
 
               {/* Aspecto 2 */}
@@ -1976,13 +2003,13 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[1].boss === 0 ? "" : rows[1].boss}
                     onChange={(e) => handleSelectChange(rows[1].id, "boss", e.target.value)}
                     style={getCalificationErrorStyle(rows[1].id, 'boss')}
-                    
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1992,6 +2019,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2004,6 +2032,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2016,6 +2045,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                )}
               </tr>
 
               {/* Aspecto 3 */}
@@ -2038,12 +2068,12 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[2].boss === 0 ? "" : rows[2].boss}
                     onChange={(e) => handleSelectChange(rows[2].id, "boss", e.target.value)}
-                    
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2053,6 +2083,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2065,6 +2096,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2077,6 +2109,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                )}
               </tr>
 
               {/* Aspecto 4 */}
@@ -2099,12 +2132,12 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[3].boss === 0 ? "" : rows[3].boss}
                     onChange={(e) => handleSelectChange(rows[3].id, "boss", e.target.value)}
-                    
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2114,6 +2147,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2126,6 +2160,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2138,9 +2173,10 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                )}
               </tr>
             <tr>
-              <td colSpan={7} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
+              <td colSpan={isManagerView ? 7 : 5} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
             </tr>
 
             {/* Nueva Competencia: Instrumentalidad de decisiones */}
@@ -2191,12 +2227,12 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[4].boss === 0 ? "" : rows[4].boss}
                     onChange={(e) => handleSelectChange(rows[4].id, "boss", e.target.value)}
-                    
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2206,6 +2242,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2218,6 +2255,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2230,6 +2268,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                )}
               </tr>
 
               {/* Segunda fila para el segundo aspecto */}
@@ -2252,12 +2291,12 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[5].boss === 0 ? "" : rows[5].boss}
                     onChange={(e) => handleSelectChange(rows[5].id, "boss", e.target.value)}
-                    
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2267,6 +2306,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2279,6 +2319,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2291,9 +2332,10 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                )}
               </tr>
               <tr>
-              <td colSpan={7} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
+              <td colSpan={isManagerView ? 7 : 5} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
             </tr>
 
               {/* Nueva Competencia: Aporte profesional */}
@@ -2344,12 +2386,12 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[6].boss === 0 ? "" : rows[6].boss}
                     onChange={(e) => handleSelectChange(rows[6].id, "boss", e.target.value)}
-                    
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2359,6 +2401,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2371,6 +2414,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2383,6 +2427,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                )}
               </tr>
 
               {/* Fila 2 de la competencia: Aspecto 2 */}
@@ -2405,12 +2450,12 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[7].boss === 0 ? "" : rows[7].boss}
                     onChange={(e) => handleSelectChange(rows[7].id, "boss", e.target.value)}
-                    
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2420,6 +2465,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2432,6 +2478,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2444,6 +2491,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                )}
               </tr>
 
               {/* Fila 3 de la competencia: Aspecto 3 */}
@@ -2466,12 +2514,12 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[8].boss === 0 ? "" : rows[8].boss}
                     onChange={(e) => handleSelectChange(rows[8].id, "boss", e.target.value)}
-                    
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2481,6 +2529,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2493,6 +2542,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2505,6 +2555,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                )}
               </tr>
 
               {/* Fila 4 de la competencia: Aspecto 4 */}
@@ -2527,12 +2578,12 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[9].boss === 0 ? "" : rows[9].boss}
                     onChange={(e) => handleSelectChange(rows[9].id, "boss", e.target.value)}
-                    
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2542,6 +2593,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2554,6 +2606,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2566,9 +2619,10 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                )}
               </tr>
               <tr>
-              <td colSpan={7} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
+              <td colSpan={isManagerView ? 7 : 5} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
             </tr>
 
               {/* Nueva Competencia: Colaboración */}
@@ -2618,12 +2672,12 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[10].boss === 0 ? "" : rows[10].boss}
                     onChange={(e) => handleSelectChange(rows[10].id, "boss", e.target.value)}
-                    
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2633,6 +2687,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2645,6 +2700,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2657,6 +2713,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                )}
               </tr>
 
               {/* Fila 2 de la competencia: Aspecto 2 */}
@@ -2679,12 +2736,12 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[11].boss === 0 ? "" : rows[11].boss}
                     onChange={(e) => handleSelectChange(rows[11].id, "boss", e.target.value)}
-                    
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2694,6 +2751,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2706,6 +2764,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2718,6 +2777,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                )}
               </tr>
 
               {/* Fila 3 de la competencia: Aspecto 3 */}
@@ -2740,12 +2800,12 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[12].boss === 0 ? "" : rows[12].boss}
                     onChange={(e) => handleSelectChange(rows[12].id, "boss", e.target.value)}
-                    
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2755,6 +2815,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2767,6 +2828,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2779,6 +2841,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                )}
               </tr>
               <tr>
               <td colSpan={7} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
@@ -2832,12 +2895,12 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[13].boss === 0 ? "" : rows[13].boss}
                     onChange={(e) => handleSelectChange(rows[13].id, "boss", e.target.value)}
-                    
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2847,6 +2910,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2859,6 +2923,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2871,6 +2936,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                )}
               </tr>
 
               {/* Fila 2 de la competencia: Aspecto 2 */}
@@ -2893,12 +2959,12 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[14].boss === 0 ? "" : rows[14].boss}
                     onChange={(e) => handleSelectChange(rows[14].id, "boss", e.target.value)}
-                    
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2908,6 +2974,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2920,6 +2987,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2932,6 +3000,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                )}
               </tr>
 
               {/* Fila 3 de la competencia: Aspecto 3 */}
@@ -2954,12 +3023,12 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[15].boss === 0 ? "" : rows[15].boss}
                     onChange={(e) => handleSelectChange(rows[15].id, "boss", e.target.value)}
-                    
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -2969,6 +3038,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2981,6 +3051,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -2993,6 +3064,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                )}
               </tr>
               <tr>
               <td colSpan={7} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
@@ -3047,12 +3119,12 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[16].boss === 0 ? "" : rows[16].boss}
                     onChange={(e) => handleSelectChange(rows[16].id, "boss", e.target.value)}
-                    
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -3062,6 +3134,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -3074,6 +3147,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -3086,6 +3160,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                )}
               </tr>
 
               {/* Fila 2 de la competencia: Aspecto 2 */}
@@ -3108,12 +3183,12 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
                     value={rows[17].boss === 0 ? "" : rows[17].boss}
                     onChange={(e) => handleSelectChange(rows[17].id, "boss", e.target.value)}
-                    
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -3123,6 +3198,7 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -3135,6 +3211,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                {isManagerView && (
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -3147,6 +3224,7 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
+                )}
               </tr>
 
               {/* Fila 3 de la competencia: Aspecto 3 */}
@@ -3169,21 +3247,22 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
-                  <select
-                    className="rating-select"
-                    value={rows[18].boss === 0 ? "" : rows[18].boss}
-                    onChange={(e) => handleSelectChange(rows[18].id, "boss", e.target.value)}
-                    
-                  >
-                    <option value="">1 - 5</option>
-                    <option value="1">1 - No Cumple</option>
-                    <option value="2">2 - Regular</option>
-                    <option value="3">3 - Parcial</option>
-                    <option value="4">4 - Satisfactorio</option>
-                    <option value="5">5 - Excelente</option>
-                  </select>
-                </td>
+                {isManagerView && (
+                  <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                    <select
+                      className="rating-select"
+                      value={rows[18].boss === 0 ? "" : rows[18].boss}
+                      onChange={(e) => handleSelectChange(rows[18].id, "boss", e.target.value)}
+                    >
+                      <option value="">1 - 5</option>
+                      <option value="1">1 - No Cumple</option>
+                      <option value="2">2 - Regular</option>
+                      <option value="3">3 - Parcial</option>
+                      <option value="4">4 - Satisfactorio</option>
+                      <option value="5">5 - Excelente</option>
+                    </select>
+                  </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -3196,18 +3275,20 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <textarea
-                    className="justificacion-textarea"
-                    rows={2}
-                    placeholder="Justificación del jefe"
-                    value={rows[18].justificacionJefe || ''}
-                    onChange={(e)=>{
-                      setRows(prev=>prev.map(r=> r.id===rows[18].id?{...r, justificacionJefe: e.target.value}:r));
-                      setFormTouched(true);
-                    }}
-                  />
-                </td>
+                {isManagerView && (
+                  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                    <textarea
+                      className="justificacion-textarea"
+                      rows={2}
+                      placeholder="Justificación del jefe"
+                      value={rows[18].justificacionJefe || ''}
+                      onChange={(e)=>{
+                        setRows(prev=>prev.map(r=> r.id===rows[18].id?{...r, justificacionJefe: e.target.value}:r));
+                        setFormTouched(true);
+                      }}
+                    />
+                  </td>
+                )}
               </tr>
               {/* Competencia: Cumplimiento de funciones del cargo */}
               <tr>
@@ -3253,21 +3334,22 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
-                  <select
-                    className="rating-select"
-                    value={rows[19].boss === 0 ? "" : rows[19].boss}
-                    onChange={(e) => handleSelectChange(rows[19].id, "boss", e.target.value)}
-                    
-                  >
-                    <option value="">1 - 5</option>
-                    <option value="1">1 - No Cumple</option>
-                    <option value="2">2 - Regular</option>
-                    <option value="3">3 - Parcial</option>
-                    <option value="4">4 - Satisfactorio</option>
-                    <option value="5">5 - Excelente</option>
-                  </select>
-                </td>
+                {isManagerView && (
+                  <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                    <select
+                      className="rating-select"
+                      value={rows[19].boss === 0 ? "" : rows[19].boss}
+                      onChange={(e) => handleSelectChange(rows[19].id, "boss", e.target.value)}
+                    >
+                      <option value="">1 - 5</option>
+                      <option value="1">1 - No Cumple</option>
+                      <option value="2">2 - Regular</option>
+                      <option value="3">3 - Parcial</option>
+                      <option value="4">4 - Satisfactorio</option>
+                      <option value="5">5 - Excelente</option>
+                    </select>
+                  </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -3280,18 +3362,20 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <textarea
-                    className="justificacion-textarea"
-                    rows={2}
-                    placeholder="Justificación del jefe"
-                    value={rows[19].justificacionJefe || ''}
-                    onChange={(e)=>{
-                      setRows(prev=>prev.map(r=> r.id===rows[19].id?{...r, justificacionJefe: e.target.value}:r));
-                      setFormTouched(true);
-                    }}
-                  />
-                </td>
+                {isManagerView && (
+                  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                    <textarea
+                      className="justificacion-textarea"
+                      rows={2}
+                      placeholder="Justificación del jefe"
+                      value={rows[19].justificacionJefe || ''}
+                      onChange={(e)=>{
+                        setRows(prev=>prev.map(r=> r.id===rows[19].id?{...r, justificacionJefe: e.target.value}:r));
+                        setFormTouched(true);
+                      }}
+                    />
+                  </td>
+                )}
               </tr>
               <tr>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
@@ -3312,21 +3396,22 @@ function PerformanceEvaluation() {
                     <option value="5">5 - Excelente</option>
                   </select>
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
-                  <select
-                    className="rating-select"
-                    value={rows[20].boss === 0 ? "" : rows[20].boss}
-                    onChange={(e) => handleSelectChange(rows[20].id, "boss", e.target.value)}
-                    
-                  >
-                    <option value="">1 - 5</option>
-                    <option value="1">1 - No Cumple</option>
-                    <option value="2">2 - Regular</option>
-                    <option value="3">3 - Parcial</option>
-                    <option value="4">4 - Satisfactorio</option>
-                    <option value="5">5 - Excelente</option>
-                  </select>
-                </td>
+                {isManagerView && (
+                  <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                    <select
+                      className="rating-select"
+                      value={rows[20].boss === 0 ? "" : rows[20].boss}
+                      onChange={(e) => handleSelectChange(rows[20].id, "boss", e.target.value)}
+                    >
+                      <option value="">1 - 5</option>
+                      <option value="1">1 - No Cumple</option>
+                      <option value="2">2 - Regular</option>
+                      <option value="3">3 - Parcial</option>
+                      <option value="4">4 - Satisfactorio</option>
+                      <option value="5">5 - Excelente</option>
+                    </select>
+                  </td>
+                )}
                 <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                   <textarea
                     className="justificacion-textarea"
@@ -3339,18 +3424,20 @@ function PerformanceEvaluation() {
                     }}
                   />
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                  <textarea
-                    className="justificacion-textarea"
-                    rows={2}
-                    placeholder="Justificación del jefe"
-                    value={rows[20].justificacionJefe || ''}
-                    onChange={(e)=>{
-                      setRows(prev=>prev.map(r=> r.id===rows[20].id?{...r, justificacionJefe: e.target.value}:r));
-                      setFormTouched(true);
-                    }}
-                  />
-                </td>
+                {isManagerView && (
+                  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                    <textarea
+                      className="justificacion-textarea"
+                      rows={2}
+                      placeholder="Justificación del jefe"
+                      value={rows[20].justificacionJefe || ''}
+                      onChange={(e)=>{
+                        setRows(prev=>prev.map(r=> r.id===rows[20].id?{...r, justificacionJefe: e.target.value}:r));
+                        setFormTouched(true);
+                      }}
+                    />
+                  </td>
+                )}
               </tr>
               <tr>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
@@ -3370,20 +3457,22 @@ function PerformanceEvaluation() {
                       <option value="5">5 - Excelente</option>
                     </select>
                   </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
-                    <select
-                      className="rating-select"
-                    value={rows[21].boss === 0 ? "" : rows[21].boss}
-                    onChange={(e) => handleSelectChange(rows[21].id, "boss", e.target.value)}
-                    >
-                      <option value="">1 - 5</option>
-                      <option value="1">1 - No Cumple</option>
-                      <option value="2">2 - Regular</option>
-                      <option value="3">3 - Parcial</option>
-                      <option value="4">4 - Satisfactorio</option>
-                      <option value="5">5 - Excelente</option>
-                    </select>
-                  </td>
+                {isManagerView && (
+                  <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                      <select
+                        className="rating-select"
+                        value={rows[21].boss === 0 ? "" : rows[21].boss}
+                        onChange={(e) => handleSelectChange(rows[21].id, "boss", e.target.value)}
+                      >
+                        <option value="">1 - 5</option>
+                        <option value="1">1 - No Cumple</option>
+                        <option value="2">2 - Regular</option>
+                        <option value="3">3 - Parcial</option>
+                        <option value="4">4 - Satisfactorio</option>
+                        <option value="5">5 - Excelente</option>
+                      </select>
+                    </td>
+                )}
                   <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
                     <textarea
                       className="justificacion-textarea"
@@ -3396,18 +3485,20 @@ function PerformanceEvaluation() {
                       }}
                     />
                   </td>
-                  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                    <textarea
-                      className="justificacion-textarea"
-                    rows={2}
-                    placeholder="Justificación del jefe"
-                      value={rows[21].justificacionJefe || ''}
-                      onChange={(e)=>{
-                        setRows(prev=>prev.map(r=> r.id===rows[21].id?{...r, justificacionJefe: e.target.value}:r));
-                        setFormTouched(true);
-                      }}
-                    />
-                  </td>
+                  {isManagerView && (
+                    <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                      <textarea
+                        className="justificacion-textarea"
+                        rows={2}
+                        placeholder="Justificación del jefe"
+                        value={rows[21].justificacionJefe || ''}
+                        onChange={(e)=>{
+                          setRows(prev=>prev.map(r=> r.id===rows[21].id?{...r, justificacionJefe: e.target.value}:r));
+                          setFormTouched(true);
+                        }}
+                      />
+                    </td>
+                  )}
                 </tr>
               <tr className="avg-row">
                 <td colSpan={6}>
@@ -3684,6 +3775,7 @@ function PerformanceEvaluation() {
                   </span>
                 )}
               </div>
+              {isManagerView && (
               <div style={{ position: 'relative' }}>
                 <SignatureUploader 
                   label="Firma (Jefe Directo)" 
@@ -3696,6 +3788,7 @@ function PerformanceEvaluation() {
                   </span>
                 )}
               </div>
+              )}
             </div>
           </div>
           <button className="finalizar-btn" onClick={handleSubmitEvaluation} disabled={isSubmitting}>
