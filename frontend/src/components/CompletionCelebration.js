@@ -18,6 +18,8 @@ export default function CompletionCelebration({
   onPrimaryAction,
   // 2) Evitar cierres accidentales
   closeOnBackdrop = false,
+  // 3) Mostrar aviso de que faltan etapas (jefe y HSEQ)
+  showPendingNotice = true,
 }) {
   // Normaliza 0–5
   const comp = clamp(Number(compAvg) || 0, 0, 5);
@@ -87,6 +89,17 @@ export default function CompletionCelebration({
             <Metric label="HSEQ" value={hseq.toFixed(2)} />
           </div>
         </div>
+
+        {showPendingNotice && (
+          <div className="cc-pending" role="note">
+            <div className="cc-pending-title">Esta es una autoevaluación</div>
+            <p className="cc-pending-desc">Aún falta completar:</p>
+            <ul className="cc-pending-list">
+              <li><span className="cc-chip">Respuesta del Jefe inmediato</span></li>
+              <li><span className="cc-chip">Evaluación HSEQ</span></li>
+            </ul>
+          </div>
+        )}
 
         <div className="cc-actions">
           <button

@@ -7,7 +7,7 @@ import Footer from '../components/Footer';
 function LandingPage({ onLogout }) {
   const [showModal, setShowModal] = useState(false);
   const [accepted, setAccepted] = useState(false);
-  const [countdown, setCountdown] = useState(30);
+  const [countdown, setCountdown] = useState(15);
   const [canAccept, setCanAccept] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const navigate = useNavigate();
@@ -36,14 +36,14 @@ function LandingPage({ onLogout }) {
     
     setShowModal(true);
     setAccepted(false);
-    setCountdown(30);
+    setCountdown(15);
     setCanAccept(false);
     setIsTransitioning(false);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setCountdown(30);
+    setCountdown(15);
     setCanAccept(false);
     setIsTransitioning(false);
   };

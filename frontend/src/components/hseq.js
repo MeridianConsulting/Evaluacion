@@ -56,7 +56,7 @@ function Hseq({
               borderLeft: "1px solid #243447",
               borderBottom: "1px solid #243447",
               borderRight: "1px solid rgba(51,51,51,0.5)"
-            }}>JUSTIFICACIÓN HSEQ</th>
+            }}>CALIFICACIÓN HSEQ</th>
             <th style={{ 
               width: "15%", 
               background: "#1E2A3A", 
@@ -70,7 +70,7 @@ function Hseq({
               borderLeft: "1px solid #243447",
               borderBottom: "1px solid #243447",
               borderRight: "1px solid rgba(51,51,51,0.5)"
-            }}>HSEQ</th>
+            }}>JUSTIFICACIÓN HSEQ</th>
           </tr>
         </thead>
         <tbody>
