@@ -2008,6 +2008,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[1].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[1].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[1].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[1].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -2052,6 +2069,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[2].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[2].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[2].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[2].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -2096,6 +2130,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[3].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[3].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[3].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[3].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -2171,6 +2222,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[4].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[4].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[4].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[4].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -2215,6 +2283,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[5].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[5].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[5].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[5].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -2290,6 +2375,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[6].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[6].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[6].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[6].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -2334,6 +2436,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[7].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[7].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[7].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[7].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -2378,6 +2497,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[8].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[8].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[8].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[8].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -2422,6 +2558,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[9].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[9].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[9].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[9].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -2496,6 +2649,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[10].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[10].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[10].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[10].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -2540,6 +2710,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[11].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[11].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[11].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[11].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -2584,6 +2771,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[12].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[12].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[12].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[12].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -2659,6 +2863,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[13].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[13].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[13].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[13].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -2703,6 +2924,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[14].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[14].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[14].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[14].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -2747,6 +2985,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[15].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[15].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[15].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[15].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -2823,6 +3078,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[16].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[16].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[16].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[16].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -2867,6 +3139,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[17].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[17].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[17].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[17].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -2911,6 +3200,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[18].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[18].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[18].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[18].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -2978,6 +3284,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[19].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[19].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[19].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[19].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -3020,6 +3343,23 @@ function PerformanceEvaluation() {
                     className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                    value={rows[20].justificacionTrabajador || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[20].id?{...r, justificacionTrabajador: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
+                  />
+                </td>
+                <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                  <textarea
+                    className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                    value={rows[20].justificacionJefe || ''}
+                    onChange={(e)=>{
+                      setRows(prev=>prev.map(r=> r.id===rows[20].id?{...r, justificacionJefe: e.target.value}:r));
+                      setFormTouched(true);
+                    }}
                   />
                 </td>
               </tr>
@@ -3060,6 +3400,23 @@ function PerformanceEvaluation() {
                       className="justificacion-textarea"
                     rows={2}
                     placeholder="Explique la calificación (si 5 o ≤2)"
+                      value={rows[21].justificacionTrabajador || ''}
+                      onChange={(e)=>{
+                        setRows(prev=>prev.map(r=> r.id===rows[21].id?{...r, justificacionTrabajador: e.target.value}:r));
+                        setFormTouched(true);
+                      }}
+                    />
+                  </td>
+                  <td style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                    <textarea
+                      className="justificacion-textarea"
+                    rows={2}
+                    placeholder="Justificación del jefe"
+                      value={rows[21].justificacionJefe || ''}
+                      onChange={(e)=>{
+                        setRows(prev=>prev.map(r=> r.id===rows[21].id?{...r, justificacionJefe: e.target.value}:r));
+                        setFormTouched(true);
+                      }}
                     />
                   </td>
                 </tr>
