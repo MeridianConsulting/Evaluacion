@@ -58,15 +58,16 @@ function PerformanceEvaluation() {
     }
   ]);
 
-  // Detectar modo de vista: jefe vs empleado (por querystring, localStorage o rol)
+  // Detectar modo de vista: jefe vs empleado (solo por querystring desde TeamEvaluations)
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
       const asParam = params.get('as');
-      const evalMode = localStorage.getItem('evalMode');
-      const userRole = localStorage.getItem('userRole');
-      const manager = (asParam === 'manager') || (evalMode === 'manager') || (userRole === 'jefe' || userRole === 'admin');
-      setIsManagerView(Boolean(manager));
+      const manager = (asParam === 'manager');
+      if (!manager) {
+        try { localStorage.removeItem('evalMode'); } catch (_) {}
+      }
+      setIsManagerView(manager);
     } catch (_) {
       setIsManagerView(false);
     }
@@ -771,39 +772,48 @@ function PerformanceEvaluation() {
     const errores = {};
     let isValid = true;
 
-    // Validar datos generales
-    Object.keys(datosGenerales).forEach(key => {
+    // Validar datos generales (según modo)
+    const requiredGeneralFields = isManagerView
+      ? ['fechaEvaluacion']
+      : ['fechaIngreso','fechaEvaluacion','area'];
+    requiredGeneralFields.forEach(key => {
       if (!datosGenerales[key]) {
         errores[`datosGenerales_${key}`] = true;
         isValid = false;
       }
     });
 
-    // Validar competencias
+    // Validar competencias (condicional por modo)
     rows.forEach((row, index) => {
-      if (!row.worker || row.worker === '') {
+      const workerOk = row.worker && String(row.worker) !== '' && String(row.worker) !== '0';
+      const bossOk = row.boss && String(row.boss) !== '' && String(row.boss) !== '0';
+      if (!workerOk) {
         errores[`worker_${index}`] = true;
         isValid = false;
       }
-      if (isManagerView) {
-      if (!row.boss || row.boss === '') {
+      if (isManagerView && !bossOk) {
         errores[`boss_${index}`] = true;
         isValid = false;
-        }
       }
     });
 
 
-    // Validar HSEQ
+    // Validar HSEQ (solo para ítems que realmente tienen esos campos)
     hseqItems.forEach((item, index) => {
-      if (!item.autoevaluacion || item.autoevaluacion === '') {
-        errores[`hseq_auto_${index}`] = true;
-        isValid = false;
+      const hasAuto = Object.prototype.hasOwnProperty.call(item, 'autoevaluacion');
+      const hasBoss = Object.prototype.hasOwnProperty.call(item, 'evaluacionJefe');
+      if (hasAuto) {
+        const autoOk = item.autoevaluacion && String(item.autoevaluacion) !== '' && String(item.autoevaluacion) !== '0';
+        if (!autoOk) {
+          errores[`hseq_auto_${index}`] = true;
+          isValid = false;
+        }
       }
-      if (isManagerView) {
-      if (!item.evaluacionJefe || item.evaluacionJefe === '') {
-        errores[`hseq_jefe_${index}`] = true;
-        isValid = false;
+      if (isManagerView && hasBoss) {
+        const jefeOk = item.evaluacionJefe && String(item.evaluacionJefe) !== '' && String(item.evaluacionJefe) !== '0';
+        if (!jefeOk) {
+          errores[`hseq_jefe_${index}`] = true;
+          isValid = false;
         }
       }
     });
@@ -818,14 +828,18 @@ function PerformanceEvaluation() {
       isValid = false;
     }
 
-    // Validar planes de acción
+    // Validar planes de acción (opcional): si un plan tiene algún campo diligenciado, exigir todos
     planesAccion.forEach((plan, index) => {
-      Object.keys(plan).forEach(key => {
-        if (key !== 'id' && !plan[key]) {
-          errores[`planAccion_${index}_${key}`] = true;
-          isValid = false;
-        }
-      });
+      const keys = Object.keys(plan).filter(k => k !== 'id');
+      const hasAny = keys.some(k => plan[k] && String(plan[k]).trim() !== '');
+      if (hasAny) {
+        keys.forEach(k => {
+          if (!plan[k] || String(plan[k]).trim() === '') {
+            errores[`planAccion_${index}_${k}`] = true;
+            isValid = false;
+          }
+        });
+      }
     });
 
     // Validar firmas
@@ -905,27 +919,27 @@ function PerformanceEvaluation() {
   const validateAllCalifications = () => {
     const errores = {};
 
-    // Validar competencias (rows) - autoevaluación y evaluación del jefe
-    rows.forEach((row, index) => {
-      if (!row.worker || row.worker === '' || row.worker === '0') {
+    // Validar competencias (rows) - condicional por modo
+    rows.forEach((row) => {
+      const workerOk = row.worker && String(row.worker) !== '' && String(row.worker) !== '0';
+      const bossOk = row.boss && String(row.boss) !== '' && String(row.boss) !== '0';
+      if (!workerOk) {
         errores[`competencia_worker_${row.id}`] = true;
       }
-      if (isManagerView) {
-      if (!row.boss || row.boss === '' || row.boss === '0') {
+      if (isManagerView && !bossOk) {
         errores[`competencia_boss_${row.id}`] = true;
-        }
       }
     });
 
-    // Validar HSEQ items (autoevaluación y evaluación del jefe requeridas para todos)
-    hseqItems.forEach((item, index) => {
-      if (!item.autoevaluacion || item.autoevaluacion === '' || item.autoevaluacion === '0') {
+    // Validar HSEQ items - condicional por modo
+    hseqItems.forEach((item) => {
+      const autoOk = item.autoevaluacion && String(item.autoevaluacion) !== '' && String(item.autoevaluacion) !== '0';
+      const jefeOk = item.evaluacionJefe && String(item.evaluacionJefe) !== '' && String(item.evaluacionJefe) !== '0';
+      if (!autoOk) {
         errores[`hseq_autoevaluacion_${item.id}`] = true;
       }
-      if (isManagerView) {
-      if (!item.evaluacionJefe || item.evaluacionJefe === '' || item.evaluacionJefe === '0') {
+      if (isManagerView && !jefeOk) {
         errores[`hseq_evaluacionJefe_${item.id}`] = true;
-        }
       }
     });
 
@@ -941,10 +955,10 @@ function PerformanceEvaluation() {
     const promedioNumber = Number(promedioCompetencias);
 
     const erroresBasicos = {};
-    if (!employeeSignature) {
+    if (!isManagerView && !employeeSignature) {
       erroresBasicos.employeeSignature = true;
     }
-    if (!bossSignature) {
+    if (isManagerView && !bossSignature) {
       erroresBasicos.bossSignature = true;
     }
 
@@ -957,7 +971,10 @@ function PerformanceEvaluation() {
 
     if (hayErroresCalif || !formularioValido) {
       window.scrollTo(0, 0);
-      warning('Campos obligatorios', 'Complete todas las calificaciones y los campos requeridos antes de enviar.');
+      const msg = isManagerView
+        ? 'Complete las calificaciones del trabajador y del jefe, y los campos requeridos.'
+        : 'Complete las calificaciones del trabajador y los campos requeridos.';
+      warning('Campos obligatorios', msg);
       return;
     }
 
@@ -969,7 +986,13 @@ function PerformanceEvaluation() {
 
     if (hayErroresFirmas) {
       window.scrollTo(0, 0);
-      warning('Firmas requeridas', 'Las firmas del Evaluado y del Jefe Directo son obligatorias.');
+      const faltantes = [];
+      if (!employeeSignature) faltantes.push('Evaluado');
+      if (isManagerView && !bossSignature) faltantes.push('Jefe Directo');
+      const mensaje = faltantes.length === 2 
+        ? 'Las firmas del Evaluado y del Jefe Directo son obligatorias.' 
+        : `La firma del ${faltantes[0]} es obligatoria.`;
+      warning('Firmas requeridas', mensaje);
       return;
     }
 
