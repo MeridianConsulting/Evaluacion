@@ -185,6 +185,16 @@ function App() {
             )
           }  
         />
+        <Route  
+          path="/evaluaciones/:empleadoId/revision-jefe"
+          element={
+            isAuthenticated ? (
+              <PerformanceEvaluationBoss onLogout={handleLogout} userRole={userRole} />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }  
+        />
         
         {/* Rutas accesibles solo para administradores */}
         <Route

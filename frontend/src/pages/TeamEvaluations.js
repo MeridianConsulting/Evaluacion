@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../assets/css/Styles1.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useNotification } from '../components/NotificationSystem';
 
 function TeamEvaluations({ onLogout, userRole }) {
+  const navigate = useNavigate();
   const { info } = useNotification();
   const [teamMembers, setTeamMembers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -52,11 +54,8 @@ function TeamEvaluations({ onLogout, userRole }) {
     if (!employeeId || !evaluationId) {
       return info('Datos incompletos', 'No se encontró el identificador de evaluación.');
     }
-    // Configurar modo jefe y employeeId en localStorage
-    localStorage.setItem('evalMode', 'manager');
-    localStorage.setItem('employeeId', String(employeeId));
-    // Abrir evaluación en modo jefe (página dedicada)
-    window.location.href = `/performance-evaluation-boss?as=manager&eid=${encodeURIComponent(evaluationId)}&empId=${encodeURIComponent(employeeId)}`;
+    // Navegar a la nueva ruta limpia para revisión de jefe (SPA)
+    navigate(`/evaluaciones/${encodeURIComponent(employeeId)}/revision-jefe?evaluacionId=${encodeURIComponent(evaluationId)}`);
   };
 
   if (loading) {

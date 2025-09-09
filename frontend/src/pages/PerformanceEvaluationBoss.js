@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams, useLocation } from 'react-router-dom';
 import "../assets/css/Styles1.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -6,6 +7,7 @@ import SignatureUploader from '../components/SignatureUploader';
 import { useNotification } from '../components/NotificationSystem';
 import CompletionCelebration from '../components/CompletionCelebration';
 import CompetenciasTable from "../components/CompetenciasTable";
+import CompetenciasTableBoss from "../components/CompetenciasTableBoss";
 
 
 function PerformanceEvaluationBoss() {
@@ -57,6 +59,7 @@ function PerformanceEvaluationBoss() {
       fecha: ''
     }
   ]);
+  const [comentariosJefe, setComentariosJefe] = useState('');
 
   // HSEQ deshabilitado temporalmente en la UI
   const HSEQ_ENABLED = false;
@@ -71,32 +74,24 @@ function PerformanceEvaluationBoss() {
     }));
   }, [employee]);
 
-  // Detectar modo de vista: jefe vs empleado (solo por querystring desde TeamEvaluations)
+  // Detectar modo de vista por ruta: si hay :empleadoId => modo jefe
+  const { empleadoId } = useParams();
+  const location = useLocation();
   useEffect(() => {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const asParam = params.get('as');
-      const manager = (asParam === 'manager');
-      if (!manager) {
-        try { localStorage.removeItem('evalMode'); } catch (_) {}
-      }
-      setIsManagerView(manager);
-    } catch (_) {
-      setIsManagerView(false);
-    }
-  }, []);
+    setIsManagerView(!!empleadoId);
+  }, [empleadoId]);
 
   // Evaluación existente (para modo jefe o continuar edición)
   const [existingEvaluationId, setExistingEvaluationId] = useState(null);
   useEffect(() => {
     try {
-      const params = new URLSearchParams(window.location.search);
-      const eid = params.get('eid');
+      const params = new URLSearchParams(location.search);
+      const eid = params.get('evaluacionId');
       if (eid) setExistingEvaluationId(eid);
     } catch (_) {
       // no-op
     }
-  }, []);
+  }, [location.search]);
 
   // Cargar evaluación existente cuando hay eid (para que el jefe complete) 
   useEffect(() => {
@@ -566,7 +561,7 @@ function PerformanceEvaluationBoss() {
   };
 
   useEffect(() => {
-    const employeeId = localStorage.getItem('employeeId');
+    const employeeId = empleadoId || localStorage.getItem('employeeId');
     if (!employeeId) {
       setError('No se encontró el ID del empleado.');
       setLoading(false);
@@ -624,7 +619,7 @@ function PerformanceEvaluationBoss() {
 
     fetchEmployee();
     fetchEmpleados();
-  }, []);
+  }, [empleadoId]);
 
   // Filtrar empleados cuando cambie la búsqueda
   useEffect(() => {
@@ -808,6 +803,14 @@ function PerformanceEvaluationBoss() {
         errores[`boss_${index}`] = true;
         isValid = false;
       }
+      if (isManagerView && bossOk) {
+        const bossVal = Number(row.boss);
+        const needsJust = bossVal === 5 || bossVal <= 2;
+        if (needsJust && !String(row.justificacionJefe || '').trim()) {
+          errores[`boss_just_${index}`] = true;
+          isValid = false;
+        }
+      }
     });
 
 
@@ -863,9 +866,9 @@ function PerformanceEvaluationBoss() {
       isValid = false;
     }
     if (isManagerView) {
-    if (!bossSignature) {
-      errores.bossSignature = true;
-      isValid = false;
+      if (!bossSignature) {
+        errores.bossSignature = true;
+        isValid = false;
       }
     }
 
@@ -944,6 +947,13 @@ function PerformanceEvaluationBoss() {
       if (isManagerView && !bossOk) {
         errores[`competencia_boss_${row.id}`] = true;
       }
+      if (isManagerView && bossOk) {
+        const bossVal = Number(row.boss);
+        const needsJust = bossVal === 5 || bossVal <= 2;
+        if (needsJust && !String(row.justificacionJefe || '').trim()) {
+          errores[`competencia_boss_justificacion_${row.id}`] = true;
+        }
+      }
     });
 
     // Validar HSEQ items solo si está habilitado
@@ -963,7 +973,15 @@ function PerformanceEvaluationBoss() {
     return errores;
   };
 
-  const handleSubmitEvaluation = async () => {
+  const fileToBase64 = (file) => new Promise((resolve) => {
+    if (!file) return resolve('');
+    if (typeof file === 'string' && file.startsWith('data:')) return resolve(file);
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.readAsDataURL(file);
+  });
+
+  const handleSave = async (finalizar = false) => {
     // Validar calificaciones de todas las secciones
     const erroresCalificaciones = validateAllCalifications();
 
@@ -1012,62 +1030,37 @@ function PerformanceEvaluationBoss() {
       warning('Firmas requeridas', mensaje);
       return;
     }
-
-    // Calcular promedios por apartado, HSEQ y resultado general
-    const promediosPorApartado = calcularPromediosPorApartado();
-    const promedioHseq = Number(calcularPromedioHseq());
-    const promediosComponentes = [];
-    if (promedioNumber > 0) promediosComponentes.push(promedioNumber);
-    if (promedioHseq > 0) promediosComponentes.push(promedioHseq);
-    const promedioGeneral = promediosComponentes.length > 0 
-      ? Number((promediosComponentes.reduce((a, b) => a + b, 0) / promediosComponentes.length).toFixed(2)) 
-      : 0;
-
-    // Crear un objeto FormData para enviar datos a la nueva estructura nativa
-    const formData = new FormData();
-    formData.append('employeeId', employee.id_empleado);
-    if (datosGenerales.idEvaluador) formData.append('bossId', String(datosGenerales.idEvaluador));
-    if (existingEvaluationId) formData.append('evaluationId', String(existingEvaluationId));
-    formData.append('promedioCompetencias', String(promedioCompetencias));
-    formData.append('hseqAverage', String(promedioHseq));
-    formData.append('generalAverage', String(promedioGeneral));
-    formData.append('groupAverages', JSON.stringify(promediosPorApartado));
-    
-    // Agregar período de evaluación (puedes modificar esto según tus necesidades)
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-    formData.append('periodoEvaluacion', `${year}-${month}`);
-
-    // Enviar datos completos para persistencia detallada en las nuevas tablas
-    formData.append('competenciasData', JSON.stringify(rows));
-    formData.append('hseqData', JSON.stringify(hseqItems));
-    formData.append('mejoramiento', JSON.stringify(mejoramiento));
-    formData.append('planesAccion', JSON.stringify(planesAccion));
-
-    if (employeeSignature) {
-      formData.append('employeeSignature', employeeSignature);
-    }
-    if (bossSignature) {
-      formData.append('bossSignature', bossSignature);
-    }
-
+    // Preparar payload para endpoint PUT revision-jefe
     try {
       setIsSubmitting(true);
       const apiUrl = process.env.REACT_APP_API_BASE_URL;
-      const endpoint = existingEvaluationId ? 'update-native' : 'save-native';
-      const response = await fetch(`${apiUrl}/api/evaluations/${endpoint}`, {
-        method: 'POST',
-        body: formData,
+      if (!existingEvaluationId) {
+        warning('Falta identificador', 'No se encontró el ID de la evaluación.');
+        setIsSubmitting(false);
+        return;
+      }
+      const jefeId = localStorage.getItem('employeeId') || datosGenerales.idEvaluador || '';
+      const firmaJefeB64 = await fileToBase64(bossSignature);
+      const payload = {
+        jefeId: String(jefeId || ''),
+        competencias: rows.map(r => ({ id: r.id, calificacion_jefe: Number(r.boss) || 0, justificacion_jefe: r.justificacionJefe || '' })),
+        firma_jefe: firmaJefeB64 || '',
+        comentarios_jefe: comentariosJefe || '',
+        finalizar: Boolean(finalizar)
+      };
+      const response = await fetch(`${apiUrl}/api/evaluaciones/${existingEvaluationId}/revision-jefe`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
       const data = await response.json();
 
       if (response.ok) {
         // Mostrar mensaje de éxito
-        success('¡Evaluación completada!', 'La evaluación ha sido diligenciada exitosamente.');
+        success('¡Cambios guardados!', finalizar ? 'La evaluación fue finalizada por el jefe.' : 'Se guardó el progreso de la revisión del jefe.');
         
         // Obtener el ID de la evaluación recién guardada
-        const evaluationId = data.id_evaluacion;
+        const evaluationId = existingEvaluationId || data.id_evaluacion;
         
         // Guardar el ID de la evaluación para poder descargar el PDF
         localStorage.setItem('lastEvaluationId', evaluationId);
@@ -1081,8 +1074,8 @@ function PerformanceEvaluationBoss() {
         localStorage.removeItem('evaluationTokenExpiry');
         localStorage.removeItem('instructionsRead');
         
-        // Mostrar animación de cierre épico
-        setShowCompletion(true);
+        // Mostrar animación si finaliza
+        if (finalizar) setShowCompletion(true);
         
         // Limpiar el formulario después del éxito
         setRows([
@@ -1800,15 +1793,26 @@ function PerformanceEvaluationBoss() {
 
       
         
-        {/* Después de la sección de competencias, antes de la sección de mejoramiento */}
-        <CompetenciasTable
-          rows={rows}
-          handleSelectChange={handleSelectChange}
-          setRows={setRows}
-          setFormTouched={setFormTouched}
-          getCalificationErrorStyle={getCalificationErrorStyle}
-          calcularPromedioCompetencias={calcularPromedioCompetencias}
-        />
+        {/* Tabla de competencias: si es modo jefe, usar tabla de jefe */}
+        {isManagerView ? (
+          <CompetenciasTableBoss
+            rows={rows}
+            handleSelectChange={handleSelectChange}
+            setRows={setRows}
+            setFormTouched={setFormTouched}
+            getCalificationErrorStyle={getCalificationErrorStyle}
+            calcularPromedioCompetencias={calcularPromedioCompetencias}
+          />
+        ) : (
+          <CompetenciasTable
+            rows={rows}
+            handleSelectChange={handleSelectChange}
+            setRows={setRows}
+            setFormTouched={setFormTouched}
+            getCalificationErrorStyle={getCalificationErrorStyle}
+            calcularPromedioCompetencias={calcularPromedioCompetencias}
+          />
+        )}
         {/* HSEQ temporalmente deshabilitado */}
 
         <hr className="evaluation-hr"/>
@@ -2055,6 +2059,19 @@ function PerformanceEvaluationBoss() {
           </div>
         </section>
 
+        {isManagerView && (
+        <section className="evaluation-section">
+          <h2 className="seccion-titulo">COMENTARIOS DEL JEFE</h2>
+          <textarea 
+            rows="3" 
+            className="textoarea-campo campo-textarea"
+            value={comentariosJefe}
+            onChange={(e)=>{ setComentariosJefe(e.target.value); setFormTouched(true); }}
+            placeholder="Comentarios generales del jefe"
+          />
+        </section>
+        )}
+
         <section className="evaluation-section" style={{ textAlign: "center" }}>
           <div className="signatures-container">
             <div className="signatures-row">
@@ -2086,9 +2103,14 @@ function PerformanceEvaluationBoss() {
               )}
             </div>
           </div>
-          <button className="finalizar-btn" onClick={handleSubmitEvaluation} disabled={isSubmitting}>
-            {isSubmitting ? 'Guardando...' : 'Finalizar Evaluación'}
-          </button>
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+            <button className="finalizar-btn" onClick={() => handleSave(false)} disabled={isSubmitting}>
+              {isSubmitting ? 'Guardando...' : 'Guardar'}
+            </button>
+            <button className="finalizar-btn" onClick={() => handleSave(true)} disabled={isSubmitting}>
+              {isSubmitting ? 'Guardando...' : 'Guardar y finalizar'}
+            </button>
+          </div>
         </section>
       </main>
       <Footer />

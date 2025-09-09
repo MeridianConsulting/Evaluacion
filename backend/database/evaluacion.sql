@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 01-09-2025 a las 23:07:28
+-- Tiempo de generación: 09-09-2025 a las 18:31:06
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -605,8 +605,16 @@ CREATE TABLE `evaluacion` (
 -- Volcado de datos para la tabla `evaluacion`
 --
 
-INSERT INTO `evaluacion` (`id_evaluacion`, `id_empleado`, `fecha_evaluacion`, `periodo_evaluacion`, `observaciones_generales`, `estado_evaluacion`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 794, '2025-09-01 15:34:54', NULL, '{\"mejoramiento\":{\"fortalezas\":\"tes\",\"aspectosMejorar\":\"tes\"},\"planAccion\":{\"actividad\":\"tes\",\"responsable\":\"test\",\"seguimiento\":\"tes\",\"fecha\":\"232323-03-31\"},\"hseqData\":[{\"id\":1,\"responsabilidad\":\"Procurar el cuidado integral de su salud.\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":2,\"responsabilidad\":\"Suministrar información clara, veraz y completa sobre su estado de salud.\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"2\"},{\"id\":3,\"responsabilidad\":\"Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":4,\"responsabilidad\":\"Informar oportunamente al empleador o contratante acerca de los riesgos y\\/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":5,\"responsabilidad\":\"Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":6,\"responsabilidad\":\"Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":7,\"responsabilidad\":\"Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":8,\"responsabilidad\":\"Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":9,\"responsabilidad\":\"Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":10,\"responsabilidad\":\"Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":11,\"responsabilidad\":\"Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"1\"},{\"id\":12,\"responsabilidad\":\"Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.\",\"calificacion\":\"\",\"autoevaluacion\":\"2\",\"evaluacionJefe\":\"1\"},{\"id\":13,\"responsabilidad\":\"Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\"},{\"id\":14,\"responsabilidad\":\"Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.\",\"calificacion\":\"\",\"autoevaluacion\":\"2\",\"evaluacionJefe\":\"3\"},{\"id\":15,\"responsabilidad\":\"Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.\",\"calificacion\":\"\",\"autoevaluacion\":\"2\",\"evaluacionJefe\":\"1\"},{\"id\":16,\"responsabilidad\":\"Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.\",\"calificacion\":\"\",\"autoevaluacion\":\"2\",\"evaluacionJefe\":\"1\"},{\"id\":17,\"responsabilidad\":\"Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.\",\"calificacion\":\"\",\"autoevaluacion\":\"1\",\"evaluacionJefe\":\"3\"},{\"id\":18,\"responsabilidad\":\"Participar en simulacros, elección de COPASST y elección de comité de convivencia.\",\"calificacion\":\"\",\"autoevaluacion\":\"2\",\"evaluacionJefe\":\"2\"},{\"id\":19,\"responsabilidad\":\"Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y\\/o comité de emergencias.\",\"calificacion\":\"\",\"autoevaluacion\":\"2\",\"evaluacionJefe\":\"2\"},{\"id\":20,\"responsabilidad\":\"Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.\",\"calificacion\":\"\",\"autoevaluacion\":\"3\",\"evaluacionJefe\":\"1\"}],\"competenciasData\":[{\"id\":1,\"aspecto\":\"Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor\",\"worker\":3,\"boss\":3,\"average\":\"3.0\"},{\"id\":2,\"aspecto\":\"Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión\",\"worker\":2,\"boss\":3,\"average\":\"2.5\"},{\"id\":3,\"aspecto\":\"Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.\",\"worker\":2,\"boss\":2,\"average\":\"2.0\"},{\"id\":4,\"aspecto\":\"Da respuesta a cada comunicación recibida de modo inmediato\",\"worker\":1,\"boss\":1,\"average\":\"1.0\"},{\"id\":5,\"aspecto\":\"Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia\",\"worker\":2,\"boss\":3,\"average\":\"2.5\"},{\"id\":6,\"aspecto\":\"Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.\",\"worker\":2,\"boss\":3,\"average\":\"2.5\"},{\"id\":7,\"aspecto\":\"Aporta soluciones alternativas en lo que refiere a sus saberes específicos.\",\"worker\":2,\"boss\":2,\"average\":\"2.0\"},{\"id\":8,\"aspecto\":\"Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.\",\"worker\":2,\"boss\":2,\"average\":\"2.0\"},{\"id\":9,\"aspecto\":\"Anticipa problemas y posibles que advierten su carácter de especialista.\",\"worker\":2,\"boss\":2,\"average\":\"2.0\"},{\"id\":10,\"aspecto\":\"Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.\",\"worker\":2,\"boss\":2,\"average\":\"2.0\"},{\"id\":11,\"aspecto\":\"Articula sus actuaciones con las de los demás\",\"worker\":1,\"boss\":2,\"average\":\"1.5\"},{\"id\":12,\"aspecto\":\"Cumple los compromisos adquiridos\",\"worker\":2,\"boss\":2,\"average\":\"2.0\"},{\"id\":13,\"aspecto\":\"Facilita la labor de sus supervisores y compañeros de trabajo\",\"worker\":2,\"boss\":2,\"average\":\"2.0\"},{\"id\":14,\"aspecto\":\"Escucha con interés y capta las necesidades de los demás.\",\"worker\":2,\"boss\":3,\"average\":\"2.5\"},{\"id\":15,\"aspecto\":\"Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.\",\"worker\":4,\"boss\":3,\"average\":\"3.5\"},{\"id\":16,\"aspecto\":\"Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.\",\"worker\":1,\"boss\":2,\"average\":\"1.5\"},{\"id\":17,\"aspecto\":\"Ejecuta sus tareas con los criterios de calidad establecidos.\",\"worker\":2,\"boss\":1,\"average\":\"1.5\"},{\"id\":18,\"aspecto\":\"Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.\",\"worker\":1,\"boss\":1,\"average\":\"1.0\"},{\"id\":19,\"aspecto\":\"Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.\",\"worker\":1,\"boss\":\"\",\"average\":\"0.5\"},{\"id\":20,\"aspecto\":\"Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.\",\"worker\":1,\"boss\":1,\"average\":\"1.0\"},{\"id\":21,\"aspecto\":\"Demuestra dominio técnico y procedimental en las tareas críticas del rol.\",\"worker\":2,\"boss\":1,\"average\":\"1.5\"},{\"id\":22,\"aspecto\":\"Entrega resultados alineados con los estándares y tiempos definidos para su cargo.\",\"worker\":1,\"boss\":\"\",\"average\":\"0.5\"},{\"id\":23,\"aspecto\":\"Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.\",\"worker\":\"\",\"boss\":\"\",\"average\":\"\"}],\"promedios\":{\"competencias\":1.89,\"hseq\":1.38,\"general\":1.63,\"porApartado\":{\"Comunicacion efectiva\":2.13,\"Instrumentalidad de decisiones\":2.5,\"Aporte profesional\":2,\"Colaboracion\":1.83,\"Relaciones interpersonales\":2.5,\"Gestion de procedimientos\":1.17,\"Cumplimiento de funciones del cargo\":1.17}},\"employeeSignature\":\"uploads\\/signatures\\/employee_794_1756758894.png\",\"bossSignature\":\"uploads\\/signatures\\/boss_794_1756758894.png\"}', 'BORRADOR', '2025-09-01 16:00:06', '2025-09-01 16:00:06');
+INSERT INTO `evaluacion` (`id_evaluacion`, `id_empleado`, `fecha_evaluacion`, `periodo_evaluacion`, `observaciones_generales`, `estado_evaluacion`, `id_jefe`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(2, 794, '2025-09-08 14:15:09', '2025-09', NULL, 'BORRADOR', 589, '2025-09-08 14:15:09', '2025-09-08 14:15:09'),
+(3, 794, '2025-09-08 14:34:39', '2025-09', NULL, 'BORRADOR', 589, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(4, 794, '2025-09-08 14:41:08', '2025-09', NULL, 'BORRADOR', 589, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(5, 794, '2025-09-08 14:44:10', '2025-09', NULL, 'BORRADOR', 589, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(6, 794, '2025-09-08 14:54:28', '2025-09', NULL, 'BORRADOR', 589, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(7, 794, '2025-09-08 14:58:28', '2025-09', NULL, 'BORRADOR', 773, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(8, 794, '2025-09-08 15:14:16', '2025-09', NULL, 'BORRADOR', 589, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(9, 794, '2025-09-08 15:29:41', '2025-09', NULL, 'BORRADOR', 589, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(10, 794, '2025-09-09 11:11:55', '2025-09', NULL, 'BORRADOR', 589, '2025-09-09 11:11:55', '2025-09-09 11:11:55');
 
 -- --------------------------------------------------------
 
@@ -626,6 +634,219 @@ CREATE TABLE `evaluacion_competencias` (
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `evaluacion_competencias`
+--
+
+INSERT INTO `evaluacion_competencias` (`id_competencia`, `id_evaluacion`, `id_aspecto`, `aspecto`, `calificacion_empleado`, `calificacion_jefe`, `promedio`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 2, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '5', '', 2.50, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(2, 2, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '5', '', 2.50, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(3, 2, 3, 'Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.', '5', '', 2.50, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(4, 2, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '4', '', 2.00, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(5, 2, 5, 'Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia', '5', '', 2.50, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(6, 2, 6, 'Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.', '4', '', 2.00, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(7, 2, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '2', '', 1.00, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(8, 2, 8, 'Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.', '5', '', 2.50, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(9, 2, 9, 'Anticipa problemas y posibles que advierten su carácter de especialista.', '4', '', 2.00, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(10, 2, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.', '4', '', 2.00, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(11, 2, 11, 'Articula sus actuaciones con las de los demás', '2', '', 1.00, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(12, 2, 12, 'Cumple los compromisos adquiridos', '3', '', 1.50, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(13, 2, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '4', '', 2.00, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(14, 2, 14, 'Escucha con interés y capta las necesidades de los demás.', '3', '', 1.50, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(15, 2, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '5', '', 2.50, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(16, 2, 16, 'Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.', '5', '', 2.50, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(17, 2, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '5', '', 2.50, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(18, 2, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '3', '', 1.50, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(19, 2, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '4', '', 2.00, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(20, 2, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '5', '', 2.50, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(21, 2, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '5', '', 2.50, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(22, 2, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '5', '', 2.50, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(23, 2, 23, 'Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.', '4', '', 2.00, '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(24, 3, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '5', '', 2.50, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(25, 3, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '5', '', 2.50, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(26, 3, 3, 'Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.', '5', '', 2.50, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(27, 3, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '4', '', 2.00, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(28, 3, 5, 'Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia', '5', '', 2.50, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(29, 3, 6, 'Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.', '4', '', 2.00, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(30, 3, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '2', '', 1.00, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(31, 3, 8, 'Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.', '5', '', 2.50, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(32, 3, 9, 'Anticipa problemas y posibles que advierten su carácter de especialista.', '4', '', 2.00, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(33, 3, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.', '4', '', 2.00, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(34, 3, 11, 'Articula sus actuaciones con las de los demás', '2', '', 1.00, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(35, 3, 12, 'Cumple los compromisos adquiridos', '3', '', 1.50, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(36, 3, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '4', '', 2.00, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(37, 3, 14, 'Escucha con interés y capta las necesidades de los demás.', '3', '', 1.50, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(38, 3, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '5', '', 2.50, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(39, 3, 16, 'Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.', '5', '', 2.50, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(40, 3, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '5', '', 2.50, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(41, 3, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '3', '', 1.50, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(42, 3, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '4', '', 2.00, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(43, 3, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '5', '', 2.50, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(44, 3, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '5', '', 2.50, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(45, 3, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '5', '', 2.50, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(46, 3, 23, 'Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.', '4', '', 2.00, '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(47, 4, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '5', '', 2.50, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(48, 4, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '4', '', 2.00, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(49, 4, 3, 'Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.', '2', '', 1.00, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(50, 4, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '4', '', 2.00, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(51, 4, 5, 'Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia', '2', '', 1.00, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(52, 4, 6, 'Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.', '3', '', 1.50, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(53, 4, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '4', '', 2.00, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(54, 4, 8, 'Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.', '5', '', 2.50, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(55, 4, 9, 'Anticipa problemas y posibles que advierten su carácter de especialista.', '3', '', 1.50, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(56, 4, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.', '4', '', 2.00, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(57, 4, 11, 'Articula sus actuaciones con las de los demás', '4', '', 2.00, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(58, 4, 12, 'Cumple los compromisos adquiridos', '3', '', 1.50, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(59, 4, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '2', '', 1.00, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(60, 4, 14, 'Escucha con interés y capta las necesidades de los demás.', '3', '', 1.50, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(61, 4, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '3', '', 1.50, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(62, 4, 16, 'Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.', '4', '', 2.00, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(63, 4, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '4', '', 2.00, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(64, 4, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '3', '', 1.50, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(65, 4, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '2', '', 1.00, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(66, 4, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '2', '', 1.00, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(67, 4, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '3', '', 1.50, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(68, 4, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '5', '', 2.50, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(69, 4, 23, 'Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.', '5', '', 2.50, '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(70, 5, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '5', '', 2.50, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(71, 5, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '4', '', 2.00, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(72, 5, 3, 'Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.', '2', '', 1.00, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(73, 5, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '4', '', 2.00, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(74, 5, 5, 'Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia', '2', '', 1.00, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(75, 5, 6, 'Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.', '3', '', 1.50, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(76, 5, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '4', '', 2.00, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(77, 5, 8, 'Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.', '5', '', 2.50, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(78, 5, 9, 'Anticipa problemas y posibles que advierten su carácter de especialista.', '3', '', 1.50, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(79, 5, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.', '4', '', 2.00, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(80, 5, 11, 'Articula sus actuaciones con las de los demás', '4', '', 2.00, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(81, 5, 12, 'Cumple los compromisos adquiridos', '3', '', 1.50, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(82, 5, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '2', '', 1.00, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(83, 5, 14, 'Escucha con interés y capta las necesidades de los demás.', '3', '', 1.50, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(84, 5, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '3', '', 1.50, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(85, 5, 16, 'Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.', '4', '', 2.00, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(86, 5, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '4', '', 2.00, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(87, 5, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '3', '', 1.50, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(88, 5, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '2', '', 1.00, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(89, 5, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '2', '', 1.00, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(90, 5, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '3', '', 1.50, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(91, 5, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '5', '', 2.50, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(92, 5, 23, 'Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.', '5', '', 2.50, '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(93, 6, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '4', '', 2.00, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(94, 6, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '2', '', 1.00, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(95, 6, 3, 'Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.', '2', '', 1.00, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(96, 6, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '1', '', 0.50, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(97, 6, 5, 'Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia', '5', '', 2.50, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(98, 6, 6, 'Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.', '3', '', 1.50, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(99, 6, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '2', '', 1.00, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(100, 6, 8, 'Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.', '2', '', 1.00, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(101, 6, 9, 'Anticipa problemas y posibles que advierten su carácter de especialista.', '2', '', 1.00, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(102, 6, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.', '2', '', 1.00, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(103, 6, 11, 'Articula sus actuaciones con las de los demás', '2', '', 1.00, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(104, 6, 12, 'Cumple los compromisos adquiridos', '3', '', 1.50, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(105, 6, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '2', '', 1.00, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(106, 6, 14, 'Escucha con interés y capta las necesidades de los demás.', '3', '', 1.50, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(107, 6, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '3', '', 1.50, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(108, 6, 16, 'Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.', '3', '', 1.50, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(109, 6, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '3', '', 1.50, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(110, 6, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '2', '', 1.00, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(111, 6, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '3', '', 1.50, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(112, 6, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '3', '', 1.50, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(113, 6, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '4', '', 2.00, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(114, 6, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '5', '', 2.50, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(115, 6, 23, 'Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.', '5', '', 2.50, '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(116, 7, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '5', '', 2.50, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(117, 7, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '2', '', 1.00, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(118, 7, 3, 'Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.', '4', '', 2.00, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(119, 7, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '2', '', 1.00, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(120, 7, 5, 'Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia', '5', '', 2.50, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(121, 7, 6, 'Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.', '3', '', 1.50, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(122, 7, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '4', '', 2.00, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(123, 7, 8, 'Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.', '5', '', 2.50, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(124, 7, 9, 'Anticipa problemas y posibles que advierten su carácter de especialista.', '4', '', 2.00, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(125, 7, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.', '4', '', 2.00, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(126, 7, 11, 'Articula sus actuaciones con las de los demás', '4', '', 2.00, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(127, 7, 12, 'Cumple los compromisos adquiridos', '4', '', 2.00, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(128, 7, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '5', '', 2.50, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(129, 7, 14, 'Escucha con interés y capta las necesidades de los demás.', '4', '', 2.00, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(130, 7, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '4', '', 2.00, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(131, 7, 16, 'Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.', '4', '', 2.00, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(132, 7, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '4', '', 2.00, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(133, 7, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '4', '', 2.00, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(134, 7, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '5', '', 2.50, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(135, 7, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '5', '', 2.50, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(136, 7, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '5', '', 2.50, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(137, 7, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '4', '', 2.00, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(138, 7, 23, 'Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.', '4', '', 2.00, '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(139, 8, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '5', '', 2.50, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(140, 8, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '1', '', 0.50, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(141, 8, 3, 'Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.', '1', '', 0.50, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(142, 8, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '1', '', 0.50, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(143, 8, 5, 'Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia', '4', '', 2.00, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(144, 8, 6, 'Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.', '4', '', 2.00, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(145, 8, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '4', '', 2.00, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(146, 8, 8, 'Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.', '3', '', 1.50, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(147, 8, 9, 'Anticipa problemas y posibles que advierten su carácter de especialista.', '3', '', 1.50, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(148, 8, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.', '2', '', 1.00, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(149, 8, 11, 'Articula sus actuaciones con las de los demás', '4', '', 2.00, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(150, 8, 12, 'Cumple los compromisos adquiridos', '3', '', 1.50, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(151, 8, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '3', '', 1.50, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(152, 8, 14, 'Escucha con interés y capta las necesidades de los demás.', '5', '', 2.50, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(153, 8, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '4', '', 2.00, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(154, 8, 16, 'Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.', '4', '', 2.00, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(155, 8, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '4', '', 2.00, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(156, 8, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '4', '', 2.00, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(157, 8, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '5', '', 2.50, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(158, 8, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '3', '', 1.50, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(159, 8, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '5', '', 2.50, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(160, 8, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '4', '', 2.00, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(161, 8, 23, 'Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.', '5', '', 2.50, '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(162, 9, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '4', '', 2.00, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(163, 9, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '2', '', 1.00, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(164, 9, 3, 'Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.', '2', '', 1.00, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(165, 9, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '2', '', 1.00, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(166, 9, 5, 'Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia', '2', '', 1.00, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(167, 9, 6, 'Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.', '2', '', 1.00, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(168, 9, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '1', '', 0.50, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(169, 9, 8, 'Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.', '2', '', 1.00, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(170, 9, 9, 'Anticipa problemas y posibles que advierten su carácter de especialista.', '2', '', 1.00, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(171, 9, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.', '1', '', 0.50, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(172, 9, 11, 'Articula sus actuaciones con las de los demás', '1', '', 0.50, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(173, 9, 12, 'Cumple los compromisos adquiridos', '2', '', 1.00, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(174, 9, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '1', '', 0.50, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(175, 9, 14, 'Escucha con interés y capta las necesidades de los demás.', '1', '', 0.50, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(176, 9, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '1', '', 0.50, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(177, 9, 16, 'Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.', '1', '', 0.50, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(178, 9, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '1', '', 0.50, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(179, 9, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '2', '', 1.00, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(180, 9, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '2', '', 1.00, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(181, 9, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '2', '', 1.00, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(182, 9, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '2', '', 1.00, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(183, 9, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '3', '', 1.50, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(184, 9, 23, 'Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.', '1', '', 0.50, '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(185, 10, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '5', '', 2.50, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(186, 10, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '4', '', 2.00, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(187, 10, 3, 'Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.', '4', '', 2.00, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(188, 10, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '5', '', 2.50, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(189, 10, 5, 'Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia', '1', '', 0.50, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(190, 10, 6, 'Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.', '3', '', 1.50, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(191, 10, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '4', '', 2.00, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(192, 10, 8, 'Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.', '4', '', 2.00, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(193, 10, 9, 'Anticipa problemas y posibles que advierten su carácter de especialista.', '5', '', 2.50, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(194, 10, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.', '5', '', 2.50, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(195, 10, 11, 'Articula sus actuaciones con las de los demás', '4', '', 2.00, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(196, 10, 12, 'Cumple los compromisos adquiridos', '1', '', 0.50, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(197, 10, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '4', '', 2.00, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(198, 10, 14, 'Escucha con interés y capta las necesidades de los demás.', '4', '', 2.00, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(199, 10, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '5', '', 2.50, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(200, 10, 16, 'Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.', '5', '', 2.50, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(201, 10, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '4', '', 2.00, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(202, 10, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '4', '', 2.00, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(203, 10, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '5', '', 2.50, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(204, 10, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '4', '', 2.00, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(205, 10, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '4', '', 2.00, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(206, 10, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '4', '', 2.00, '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(207, 10, 23, 'Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.', '4', '', 2.00, '2025-09-09 11:11:55', '2025-09-09 11:11:55');
+
 -- --------------------------------------------------------
 
 --
@@ -640,6 +861,13 @@ CREATE TABLE `evaluacion_firmas` (
   `fecha_creacion` datetime DEFAULT current_timestamp(),
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `evaluacion_firmas`
+--
+
+INSERT INTO `evaluacion_firmas` (`id_firma`, `id_evaluacion`, `firma_empleado`, `firma_jefe`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 10, 'uploads/signatures/employee_794_1757434315.png', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55');
 
 -- --------------------------------------------------------
 
@@ -659,6 +887,192 @@ CREATE TABLE `evaluacion_hseq` (
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `evaluacion_hseq`
+--
+
+INSERT INTO `evaluacion_hseq` (`id_hseq`, `id_evaluacion`, `id_responsabilidad`, `responsabilidad`, `calificacion`, `autoevaluacion`, `evaluacion_jefe`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 2, 1, 'Procurar el cuidado integral de su salud.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(2, 2, 2, 'Suministrar información clara, veraz y completa sobre su estado de salud.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(3, 2, 3, 'Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(4, 2, 4, 'Informar oportunamente al empleador o contratante acerca de los riesgos y/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(5, 2, 5, 'Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(6, 2, 6, 'Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(7, 2, 7, 'Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(8, 2, 8, 'Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(9, 2, 9, 'Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(10, 2, 10, 'Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(11, 2, 11, 'Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(12, 2, 12, 'Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(13, 2, 13, 'Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(14, 2, 14, 'Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(15, 2, 15, 'Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(16, 2, 16, 'Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(17, 2, 17, 'Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(18, 2, 18, 'Participar en simulacros, elección de COPASST y elección de comité de convivencia.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(19, 2, 19, 'Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y/o comité de emergencias.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(20, 2, 20, 'Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.', '', '', '', '2025-09-08 14:15:10', '2025-09-08 14:15:10'),
+(21, 3, 1, 'Procurar el cuidado integral de su salud.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(22, 3, 2, 'Suministrar información clara, veraz y completa sobre su estado de salud.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(23, 3, 3, 'Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(24, 3, 4, 'Informar oportunamente al empleador o contratante acerca de los riesgos y/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(25, 3, 5, 'Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(26, 3, 6, 'Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(27, 3, 7, 'Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(28, 3, 8, 'Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(29, 3, 9, 'Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(30, 3, 10, 'Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(31, 3, 11, 'Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(32, 3, 12, 'Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(33, 3, 13, 'Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(34, 3, 14, 'Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(35, 3, 15, 'Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(36, 3, 16, 'Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(37, 3, 17, 'Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(38, 3, 18, 'Participar en simulacros, elección de COPASST y elección de comité de convivencia.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(39, 3, 19, 'Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y/o comité de emergencias.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(40, 3, 20, 'Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.', '', '', '', '2025-09-08 14:34:39', '2025-09-08 14:34:39'),
+(41, 4, 1, 'Procurar el cuidado integral de su salud.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(42, 4, 2, 'Suministrar información clara, veraz y completa sobre su estado de salud.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(43, 4, 3, 'Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(44, 4, 4, 'Informar oportunamente al empleador o contratante acerca de los riesgos y/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(45, 4, 5, 'Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(46, 4, 6, 'Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(47, 4, 7, 'Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(48, 4, 8, 'Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(49, 4, 9, 'Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(50, 4, 10, 'Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(51, 4, 11, 'Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(52, 4, 12, 'Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(53, 4, 13, 'Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(54, 4, 14, 'Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(55, 4, 15, 'Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(56, 4, 16, 'Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(57, 4, 17, 'Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(58, 4, 18, 'Participar en simulacros, elección de COPASST y elección de comité de convivencia.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(59, 4, 19, 'Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y/o comité de emergencias.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(60, 4, 20, 'Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.', '', '', '', '2025-09-08 14:41:08', '2025-09-08 14:41:08'),
+(61, 5, 1, 'Procurar el cuidado integral de su salud.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(62, 5, 2, 'Suministrar información clara, veraz y completa sobre su estado de salud.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(63, 5, 3, 'Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(64, 5, 4, 'Informar oportunamente al empleador o contratante acerca de los riesgos y/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(65, 5, 5, 'Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(66, 5, 6, 'Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(67, 5, 7, 'Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(68, 5, 8, 'Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(69, 5, 9, 'Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(70, 5, 10, 'Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(71, 5, 11, 'Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(72, 5, 12, 'Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(73, 5, 13, 'Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(74, 5, 14, 'Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(75, 5, 15, 'Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(76, 5, 16, 'Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(77, 5, 17, 'Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(78, 5, 18, 'Participar en simulacros, elección de COPASST y elección de comité de convivencia.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(79, 5, 19, 'Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y/o comité de emergencias.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(80, 5, 20, 'Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.', '', '', '', '2025-09-08 14:44:10', '2025-09-08 14:44:10'),
+(81, 6, 1, 'Procurar el cuidado integral de su salud.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(82, 6, 2, 'Suministrar información clara, veraz y completa sobre su estado de salud.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(83, 6, 3, 'Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(84, 6, 4, 'Informar oportunamente al empleador o contratante acerca de los riesgos y/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(85, 6, 5, 'Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(86, 6, 6, 'Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(87, 6, 7, 'Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(88, 6, 8, 'Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(89, 6, 9, 'Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(90, 6, 10, 'Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(91, 6, 11, 'Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(92, 6, 12, 'Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(93, 6, 13, 'Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(94, 6, 14, 'Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(95, 6, 15, 'Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(96, 6, 16, 'Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(97, 6, 17, 'Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(98, 6, 18, 'Participar en simulacros, elección de COPASST y elección de comité de convivencia.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(99, 6, 19, 'Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y/o comité de emergencias.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(100, 6, 20, 'Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.', '', '', '', '2025-09-08 14:54:28', '2025-09-08 14:54:28'),
+(101, 7, 1, 'Procurar el cuidado integral de su salud.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(102, 7, 2, 'Suministrar información clara, veraz y completa sobre su estado de salud.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(103, 7, 3, 'Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(104, 7, 4, 'Informar oportunamente al empleador o contratante acerca de los riesgos y/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(105, 7, 5, 'Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(106, 7, 6, 'Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(107, 7, 7, 'Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(108, 7, 8, 'Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(109, 7, 9, 'Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(110, 7, 10, 'Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(111, 7, 11, 'Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(112, 7, 12, 'Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(113, 7, 13, 'Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(114, 7, 14, 'Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(115, 7, 15, 'Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(116, 7, 16, 'Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(117, 7, 17, 'Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(118, 7, 18, 'Participar en simulacros, elección de COPASST y elección de comité de convivencia.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(119, 7, 19, 'Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y/o comité de emergencias.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(120, 7, 20, 'Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.', '', '', '', '2025-09-08 14:58:28', '2025-09-08 14:58:28'),
+(121, 8, 1, 'Procurar el cuidado integral de su salud.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(122, 8, 2, 'Suministrar información clara, veraz y completa sobre su estado de salud.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(123, 8, 3, 'Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(124, 8, 4, 'Informar oportunamente al empleador o contratante acerca de los riesgos y/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(125, 8, 5, 'Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(126, 8, 6, 'Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(127, 8, 7, 'Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(128, 8, 8, 'Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(129, 8, 9, 'Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(130, 8, 10, 'Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(131, 8, 11, 'Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(132, 8, 12, 'Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(133, 8, 13, 'Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(134, 8, 14, 'Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(135, 8, 15, 'Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(136, 8, 16, 'Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(137, 8, 17, 'Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(138, 8, 18, 'Participar en simulacros, elección de COPASST y elección de comité de convivencia.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(139, 8, 19, 'Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y/o comité de emergencias.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(140, 8, 20, 'Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.', '', '', '', '2025-09-08 15:14:16', '2025-09-08 15:14:16'),
+(141, 9, 1, 'Procurar el cuidado integral de su salud.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(142, 9, 2, 'Suministrar información clara, veraz y completa sobre su estado de salud.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(143, 9, 3, 'Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(144, 9, 4, 'Informar oportunamente al empleador o contratante acerca de los riesgos y/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(145, 9, 5, 'Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(146, 9, 6, 'Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(147, 9, 7, 'Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(148, 9, 8, 'Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(149, 9, 9, 'Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(150, 9, 10, 'Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(151, 9, 11, 'Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(152, 9, 12, 'Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(153, 9, 13, 'Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(154, 9, 14, 'Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(155, 9, 15, 'Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(156, 9, 16, 'Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(157, 9, 17, 'Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(158, 9, 18, 'Participar en simulacros, elección de COPASST y elección de comité de convivencia.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(159, 9, 19, 'Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y/o comité de emergencias.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(160, 9, 20, 'Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.', '', '', '', '2025-09-08 15:29:41', '2025-09-08 15:29:41'),
+(161, 10, 1, 'Procurar el cuidado integral de su salud.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(162, 10, 2, 'Suministrar información clara, veraz y completa sobre su estado de salud.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(163, 10, 3, 'Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(164, 10, 4, 'Informar oportunamente al empleador o contratante acerca de los riesgos y/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(165, 10, 5, 'Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(166, 10, 6, 'Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(167, 10, 7, 'Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(168, 10, 8, 'Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(169, 10, 9, 'Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(170, 10, 10, 'Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(171, 10, 11, 'Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(172, 10, 12, 'Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(173, 10, 13, 'Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(174, 10, 14, 'Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(175, 10, 15, 'Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(176, 10, 16, 'Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(177, 10, 17, 'Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(178, 10, 18, 'Participar en simulacros, elección de COPASST y elección de comité de convivencia.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(179, 10, 19, 'Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y/o comité de emergencias.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55'),
+(180, 10, 20, 'Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.', '', '', '', '2025-09-09 11:11:55', '2025-09-09 11:11:55');
+
 -- --------------------------------------------------------
 
 --
@@ -673,6 +1087,13 @@ CREATE TABLE `evaluacion_mejoramiento` (
   `fecha_creacion` datetime DEFAULT current_timestamp(),
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `evaluacion_mejoramiento`
+--
+
+INSERT INTO `evaluacion_mejoramiento` (`id_mejoramiento`, `id_evaluacion`, `fortalezas`, `aspectos_mejorar`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 10, 'test', 'test', '2025-09-09 11:11:55', '2025-09-09 11:11:55');
 
 -- --------------------------------------------------------
 
@@ -690,6 +1111,13 @@ CREATE TABLE `evaluacion_plan_accion` (
   `fecha_creacion` datetime DEFAULT current_timestamp(),
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `evaluacion_plan_accion`
+--
+
+INSERT INTO `evaluacion_plan_accion` (`id_plan_accion`, `id_evaluacion`, `actividad`, `responsable`, `seguimiento`, `fecha`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 10, '', '', '', '0000-00-00', '2025-09-09 11:11:55', '2025-09-09 11:11:55');
 
 -- --------------------------------------------------------
 
@@ -713,6 +1141,13 @@ CREATE TABLE `evaluacion_promedios` (
   `fecha_creacion` datetime DEFAULT current_timestamp(),
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `evaluacion_promedios`
+--
+
+INSERT INTO `evaluacion_promedios` (`id_promedio`, `id_evaluacion`, `promedio_competencias`, `promedio_hseq`, `promedio_general`, `promedio_comunicacion_efectiva`, `promedio_instrumentalidad_decisiones`, `promedio_aporte_profesional`, `promedio_colaboracion`, `promedio_relaciones_interpersonales`, `promedio_gestion_procedimientos`, `promedio_cumplimiento_funciones`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 10, 4.00, 0.00, 4.00, 4.50, 2.00, 4.50, 3.00, 4.67, 4.33, 4.00, '2025-09-09 11:11:55', '2025-09-09 11:11:55');
 
 -- --------------------------------------------------------
 
@@ -5139,43 +5574,43 @@ ALTER TABLE `empleados`
 -- AUTO_INCREMENT de la tabla `evaluacion`
 --
 ALTER TABLE `evaluacion`
-  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_competencias`
 --
 ALTER TABLE `evaluacion_competencias`
-  MODIFY `id_competencia` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_competencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=208;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_firmas`
 --
 ALTER TABLE `evaluacion_firmas`
-  MODIFY `id_firma` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_firma` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_hseq`
 --
 ALTER TABLE `evaluacion_hseq`
-  MODIFY `id_hseq` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_hseq` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=181;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_mejoramiento`
 --
 ALTER TABLE `evaluacion_mejoramiento`
-  MODIFY `id_mejoramiento` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_mejoramiento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_plan_accion`
 --
 ALTER TABLE `evaluacion_plan_accion`
-  MODIFY `id_plan_accion` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_plan_accion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_promedios`
 --
 ALTER TABLE `evaluacion_promedios`
-  MODIFY `id_promedio` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_promedio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Restricciones para tablas volcadas
