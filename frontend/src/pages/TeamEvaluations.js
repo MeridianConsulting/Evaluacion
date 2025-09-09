@@ -55,8 +55,8 @@ function TeamEvaluations({ onLogout, userRole }) {
     // Configurar modo jefe y employeeId en localStorage
     localStorage.setItem('evalMode', 'manager');
     localStorage.setItem('employeeId', String(employeeId));
-    // Abrir evaluación en modo jefe, apuntando al registro existente
-    window.location.href = `/performance-evaluation?as=manager&eid=${encodeURIComponent(evaluationId)}`;
+    // Abrir evaluación en modo jefe (página dedicada)
+    window.location.href = `/performance-evaluation-boss?as=manager&eid=${encodeURIComponent(evaluationId)}&empId=${encodeURIComponent(employeeId)}`;
   };
 
   if (loading) {

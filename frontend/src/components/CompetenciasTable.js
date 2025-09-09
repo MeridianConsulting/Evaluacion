@@ -92,7 +92,7 @@ const CompetenciasTable = ({
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)",
                   width: "14%"
-                }}>TRABAJADOR</th>
+                }}>JEFE</th>
                 <th style={{ 
                   background: "#1E2A3A", 
                   color: "#FFFFFF", 
@@ -106,7 +106,7 @@ const CompetenciasTable = ({
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)",
                   width: "11%"
-                }}>JUSTIFICACIÓN TRABAJADOR</th>
+                }}>JUSTIFICACIÓN JEFE</th>
                 
               </tr>
             </thead>
@@ -164,7 +164,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Justificación del trabajador"
+                    placeholder="Justificación del jefe"
                     value={rows[0].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[0].id?{...r, justificacionTrabajador: e.target.value}:r));

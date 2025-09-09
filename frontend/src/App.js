@@ -10,6 +10,7 @@ import Terms from "./pages/Terms";
 import Profile from "./pages/Profile";
 import Results from "./pages/Results";
 import PerformanceEvaluation from "./pages/PerformanceEvaluation";
+import PerformanceEvaluationBoss from "./pages/PerformanceEvaluationBoss";
 import DashboardSelector from "./admin/DashboardSelector";
 import EmpleadosCRUD from "./admin/EmpleadosCRUD";
 import FuncionesCRUD from "./admin/FuncionesCRUD";
@@ -59,6 +60,12 @@ function App() {
   };
 
   useEffect(() => {
+    // Asegura rol admin para la cédula especial aún si vino del backend con otro rol
+    const cedula = localStorage.getItem('cedula');
+    if (isAuthenticated && cedula === '1011202252' && userRole !== 'admin') {
+      setUserRole('admin');
+      localStorage.setItem('userRole', 'admin');
+    }
   }, [isAuthenticated, userRole]);
 
   return (
@@ -168,6 +175,16 @@ function App() {
             )
           }  
         />
+        <Route  
+          path="/performance-evaluation-boss"
+          element={
+            isAuthenticated && hasAccess("jefe") ? (
+              <PerformanceEvaluationBoss onLogout={handleLogout} userRole={userRole} />
+            ) : (
+              <Navigate to={isAuthenticated ? "/LandingPage" : "/"} replace />
+            )
+          }  
+        />
         
         {/* Rutas accesibles solo para administradores */}
         <Route
@@ -211,14 +228,15 @@ function App() {
           }
         />
         
-        {/* Ruta para jefes y administradores */}
+        {/* Ruta para evaluaciones de equipo: visible si está autenticado.
+            El propio Header controla la visibilidad del botón según asignaciones. */}
         <Route
           path="/team-evaluations"
           element={
-            isAuthenticated && hasAccess("jefe") ? (
+            isAuthenticated ? (
               <TeamEvaluations onLogout={handleLogout} userRole={userRole} />
             ) : (
-              <Navigate to={isAuthenticated ? "/LandingPage" : "/"} replace />
+              <Navigate to="/" replace />
             )
           }
         />

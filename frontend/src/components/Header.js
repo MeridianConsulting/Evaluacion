@@ -133,6 +133,12 @@ function Header({ onLogout, userRole: propUserRole }) {
             <img src={logoMeridian} alt="Meridian Logo" />
           </Link>
         </div>
+        {/* Botón rápido visible para ir al Panel de Administración si es admin o cédula especial */}
+        {(userRole === 'admin' || (typeof window !== 'undefined' && localStorage.getItem('cedula') === '1011202252')) && (
+          <button className="admin-quick-button" onClick={() => goToPage('/admin')}>
+            Panel de Administración
+          </button>
+        )}
         <div className="menu-container">
           <div className="navbar-menu" onClick={handleToggleMenu}>
             <img src={burgerMenu} alt="Menú" className="burger-icon" />
@@ -159,8 +165,8 @@ function Header({ onLogout, userRole: propUserRole }) {
               </button>
             )}
             
-            {/* Solo administradores pueden acceder al panel de administración */}
-            {userRole === "admin" && (
+            {/* Solo administradores pueden acceder al panel de administración (o cédula especial) */}
+            {(userRole === "admin" || (typeof window !== 'undefined' && localStorage.getItem('cedula') === '1011202252')) && (
               <button className="menu-item admin" onClick={() => goToPage('/admin')}>
                 Panel de Administración
               </button>

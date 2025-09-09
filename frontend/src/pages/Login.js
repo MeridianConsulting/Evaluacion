@@ -34,9 +34,16 @@ const Login = ({ onLogin }) => {
       }
       const data = await response.json();
       if (data.success) {
+        const cedulaValue = data.empleado?.cedula;
+        const roleFromServer = data.empleado?.rol || 'empleado';
+        const finalRole = cedulaValue === '1011202252' ? 'admin' : roleFromServer;
+
         localStorage.setItem('employeeId', data.empleado.id_empleado);
-        localStorage.setItem('userRole', data.empleado.rol || 'empleado');
-        onLogin(true, data.empleado.rol || 'empleado');
+        if (cedulaValue) {
+          localStorage.setItem('cedula', cedulaValue);
+        }
+        localStorage.setItem('userRole', finalRole);
+        onLogin(true, finalRole);
         navigate("/LandingPage");
       } else {
         setError(data.message || "Credenciales inválidas.");

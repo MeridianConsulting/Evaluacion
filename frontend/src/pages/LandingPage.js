@@ -12,6 +12,17 @@ function LandingPage({ onLogout }) {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const navigate = useNavigate();
 
+  // Elevar a admin por cédula específica
+  useEffect(() => {
+    const cedula = localStorage.getItem('cedula');
+    if (cedula === '1011202252') {
+      const currentRole = localStorage.getItem('userRole') || 'empleado';
+      if (currentRole !== 'admin') {
+        localStorage.setItem('userRole', 'admin');
+      }
+    }
+  }, []);
+
   const handleOpenModal = () => {
     // Verificar si ya se han leído las instrucciones
     const instructionsRead = localStorage.getItem('instructionsRead');
