@@ -4,8 +4,8 @@ import logoMeridian from '../assets/img/logo_meridian_blanco.png';
 import burgerMenu from '../assets/img/burger.png';
 
 function Header({ onLogout, userRole: propUserRole }) {
-  // Si no se pasa userRole como prop, lo obtenemos del localStorage
-  const [userRole, setUserRole] = useState(propUserRole || localStorage.getItem('userRole') || 'empleado');
+  // Usar SIEMPRE el rol que viene por props (estado global de autenticación)
+  const [userRole, setUserRole] = useState(propUserRole || 'empleado');
   const [menuOpen, setMenuOpen] = useState(false);
   const [hasEvaluationToken, setHasEvaluationToken] = useState(false);
   const [hasAssignedAsEvaluator, setHasAssignedAsEvaluator] = useState(false);
@@ -37,13 +37,8 @@ function Header({ onLogout, userRole: propUserRole }) {
     }
   }, [propUserRole]);
 
-  // También verificamos el localStorage por si cambia
-  useEffect(() => {
-    const storedRole = localStorage.getItem('userRole');
-    if (storedRole && storedRole !== userRole) {
-      setUserRole(storedRole);
-    }
-  }, [menuOpen]); // Verificamos cuando se abre el menú para tener datos actualizados
+  // IMPORTANTE: No sincronizar el rol desde localStorage dinámicamente para evitar
+  // contaminar el rol del usuario autenticado con el rol del empleado evaluado
 
   // Verificar si existe un token de evaluación válido
   useEffect(() => {
@@ -133,8 +128,8 @@ function Header({ onLogout, userRole: propUserRole }) {
             <img src={logoMeridian} alt="Meridian Logo" />
           </Link>
         </div>
-        {/* Botón rápido visible para ir al Panel de Administración si es admin o cédula especial */}
-        {(userRole === 'admin' || (typeof window !== 'undefined' && localStorage.getItem('cedula') === '1011202252')) && (
+        {/* Botón rápido visible para ir al Panel de Administración solo si es admin autenticado */}
+        {userRole === 'admin' && (
           <button className="admin-quick-button" onClick={() => goToPage('/admin')}>
             Panel de Administración
           </button>
@@ -165,8 +160,8 @@ function Header({ onLogout, userRole: propUserRole }) {
               </button>
             )}
             
-            {/* Solo administradores pueden acceder al panel de administración (o cédula especial) */}
-            {(userRole === "admin" || (typeof window !== 'undefined' && localStorage.getItem('cedula') === '1011202252')) && (
+            {/* Solo administradores pueden acceder al panel de administración */}
+            {userRole === "admin" && (
               <button className="menu-item admin" onClick={() => goToPage('/admin')}>
                 Panel de Administración
               </button>

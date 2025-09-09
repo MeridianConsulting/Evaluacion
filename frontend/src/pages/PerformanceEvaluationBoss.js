@@ -157,6 +157,18 @@ function PerformanceEvaluationBoss() {
           }));
         }
 
+        // Precargar fecha de ingreso que ya diligenció el evaluado (si existe en la evaluación)
+        const fechaIngresoGuardada =
+          data?.fecha_ingreso ||
+          data?.fechaIngreso ||
+          (data?.datos_generales && (data.datos_generales.fecha_ingreso || data.datos_generales.fechaIngreso));
+        if (fechaIngresoGuardada) {
+          setDatosGenerales(prev => ({
+            ...prev,
+            fechaIngreso: fechaIngresoGuardada
+          }));
+        }
+
         // Mejoramiento
         if (data.mejoramiento) {
           setMejoramiento({
