@@ -81,6 +81,31 @@ function PerformanceEvaluationBoss() {
     setIsManagerView(!!empleadoId);
   }, [empleadoId]);
 
+  // Precargar datos del Jefe Inmediato en modo jefe
+  useEffect(() => {
+    const preloadBossInfo = async () => {
+      if (!isManagerView) return;
+      try {
+        const bossId = localStorage.getItem('employeeId');
+        const apiUrl = process.env.REACT_APP_API_BASE_URL;
+        if (!bossId || !apiUrl) return;
+        const resp = await fetch(`${apiUrl}/employees/${bossId}`);
+        const data = await resp.json();
+        if (!resp.ok) return;
+        setDatosGenerales(prev => ({
+          ...prev,
+          nombreEvaluador: data?.data?.nombre || data?.nombre || prev.nombreEvaluador || '',
+          cargoEvaluador: data?.data?.cargo || data?.cargo || prev.cargoEvaluador || '',
+          areaEvaluador: data?.data?.area || data?.area || prev.areaEvaluador || '',
+          idEvaluador: data?.data?.id_empleado || data?.id_empleado || prev.idEvaluador || ''
+        }));
+      } catch (_) {
+        // no-op
+      }
+    };
+    preloadBossInfo();
+  }, [isManagerView]);
+
   // Evaluación existente (para modo jefe o continuar edición)
   const [existingEvaluationId, setExistingEvaluationId] = useState(null);
   useEffect(() => {
@@ -861,7 +886,7 @@ function PerformanceEvaluationBoss() {
     });
 
     // Validar firmas
-    if (!employeeSignature) {
+    if (!isManagerView && !employeeSignature) {
       errores.employeeSignature = true;
       isValid = false;
     }
@@ -1039,7 +1064,7 @@ function PerformanceEvaluationBoss() {
         setIsSubmitting(false);
         return;
       }
-      const jefeId = localStorage.getItem('employeeId') || datosGenerales.idEvaluador || '';
+      const jefeId = datosGenerales.idEvaluador || localStorage.getItem('employeeId') || '';
       const firmaJefeB64 = await fileToBase64(bossSignature);
       const payload = {
         jefeId: String(jefeId || ''),
@@ -2077,19 +2102,6 @@ function PerformanceEvaluationBoss() {
             <div className="signatures-row">
               <div style={{ position: 'relative' }}>
                 <SignatureUploader 
-                  label="Firma (Evaluado)" 
-                  onChange={setEmployeeSignature}
-                  value={employeeSignature}
-                />
-                {visibleErrors.employeeSignature && (
-                  <span className="error-message" style={{ position: 'absolute', bottom: '-20px', left: '0', right: '0', textAlign: 'center' }}>
-                    La firma es obligatoria
-                  </span>
-                )}
-              </div>
-              {isManagerView && (
-              <div style={{ position: 'relative' }}>
-                <SignatureUploader 
                   label="Firma (Jefe Directo)" 
                   onChange={setBossSignature}
                   value={bossSignature}
@@ -2100,13 +2112,9 @@ function PerformanceEvaluationBoss() {
                   </span>
                 )}
               </div>
-              )}
             </div>
           </div>
           <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-            <button className="finalizar-btn" onClick={() => handleSave(false)} disabled={isSubmitting}>
-              {isSubmitting ? 'Guardando...' : 'Guardar'}
-            </button>
             <button className="finalizar-btn" onClick={() => handleSave(true)} disabled={isSubmitting}>
               {isSubmitting ? 'Guardando...' : 'Guardar y finalizar'}
             </button>
