@@ -76,8 +76,8 @@ class AdminController {
     public function crearEmpleado($data) {
         global $db;
         
-        $sql = 'INSERT INTO empleados (nombre, cargo, numero_telefonico, email, telefono_empresa) 
-                VALUES (?, ?, ?, ?, ?)';
+        $sql = 'INSERT INTO empleados (nombre, cargo, email) 
+                VALUES (?, ?, ?)';
 
         $stmt = $db->prepare($sql);
         if (!$stmt) {
@@ -86,12 +86,10 @@ class AdminController {
             return;
         }
 
-        $stmt->bind_param("sssss", 
+        $stmt->bind_param("sss", 
             $data['nombre'], 
             $data['cargo'], 
-            $data['numero_telefonico'], 
-            $data['email'], 
-            $data['telefono_empresa']
+            $data['email']
         );
 
         if ($stmt->execute()) {
@@ -106,16 +104,14 @@ class AdminController {
     }
     // Actualizar un empleado
     public static function updateEmployee($id, $request) {
-        $query = "UPDATE empleados SET nombre = ?, cargo = ?, numero_telefonico = ?, email = ?, telefono_empresa = ? WHERE id = ?";
+        $query = "UPDATE empleados SET nombre = ?, cargo = ?, email = ? WHERE id = ?";
         $stmt = $GLOBALS['db']->prepare($query);
 
         $stmt->bind_param(
-            "sssssi",
+            "sssi",
             $request['nombre'],
             $request['cargo'],
-            $request['numero_telefonico'],
             $request['email'],
-            $request['telefono_empresa'],
             $id
         );
 

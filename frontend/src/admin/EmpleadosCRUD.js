@@ -20,7 +20,6 @@ function EmpleadosCRUD({ onLogout, userRole }) {
     nombre: '',
     cargo: '',
     area: '',
-    numero_telefonico: '',
     email: '',
     rol: 'empleado'
   });
@@ -95,7 +94,6 @@ function EmpleadosCRUD({ onLogout, userRole }) {
       nombre: '',
       cargo: '',
       area: 'Administracion',
-      numero_telefonico: '',
       email: '',
       rol: 'empleado'
     });
@@ -312,17 +310,7 @@ function EmpleadosCRUD({ onLogout, userRole }) {
                 </select>
               </div>
               
-              <div className="form-group">
-                <label htmlFor="numero_telefonico">Teléfono:</label>
-                <input 
-                  type="text" 
-                  id="numero_telefonico" 
-                  name="numero_telefonico" 
-                  value={currentEmpleado.numero_telefonico} 
-                  onChange={handleInputChange} 
-                  required 
-                />
-              </div>
+              {/* Campo teléfono eliminado */}
               
               <div className="form-group">
                 <label htmlFor="email">Correo electrónico:</label>
@@ -374,7 +362,6 @@ function EmpleadosCRUD({ onLogout, userRole }) {
                   <th>Nombre</th>
                   <th>Cargo</th>
                   <th>Área</th>
-                  <th>Teléfono</th>
                   <th>Correo</th>
                   <th>Rol</th>
                   <th>Acciones</th>
@@ -388,7 +375,6 @@ function EmpleadosCRUD({ onLogout, userRole }) {
                     <td>{empleado.nombre}</td>
                     <td>{empleado.cargo}</td>
                     <td>{empleado.area}</td>
-                    <td>{empleado.numero_telefonico}</td>
                     <td>{empleado.email}</td>
                     <td>
                       <span className={`role-badge ${empleado.rol}`}>

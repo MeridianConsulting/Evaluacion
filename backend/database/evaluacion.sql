@@ -349,9 +349,7 @@ CREATE TABLE `empleados` (
   `cargo` varchar(100) DEFAULT NULL,
   `area` varchar(100) NOT NULL,
   `fecha_inicio_contrato` date NOT NULL,
-  `numero_telefonico` varchar(15) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
-  `telefono_empresa` varchar(20) DEFAULT NULL,
   `contrasena` varchar(255) DEFAULT NULL,
   `proyecto` varchar(100) DEFAULT NULL,
   `ods` varchar(100) DEFAULT NULL,
@@ -362,7 +360,7 @@ CREATE TABLE `empleados` (
 -- Volcado de datos para la tabla `empleados`
 --
 
-INSERT INTO `empleados` (`id_empleado`, `cedula`, `nombre`, `tipo_documento`, `cargo`, `area`, `fecha_inicio_contrato`, `numero_telefonico`, `email`, `telefono_empresa`, `contrasena`, `proyecto`, `ods`, `rol`) VALUES
+INSERT INTO `empleados` (`id_empleado`, `cedula`, `nombre`, `tipo_documento`, `cargo`, `area`, `fecha_inicio_contrato`, `email`, `contrasena`, `proyecto`, `ods`, `rol`) VALUES
 (581, 1022942596, 'ANDREA IRENE DEL PILAR PINZON', 'Cédula de Ciudadanía', 'Asistente de Gestión Humana y Nómina', 'Administracion', '2024-08-13', '000000', 'asistentegestionhumana@meridian.com.co', '000000', '1022942596', 'ADMINISTRACION', '', 'empleado'),
 (582, 1007627524, 'ANDRES CAMILO CARDENAS REYES', 'Cédula de Ciudadanía', 'Soporte IT Primer Nivel', 'Administracion', '2023-12-04', '000000', 'soporteit.nivel1@meridian.com.co', '000000', '1007627524', 'ADMINISTRACION', '', 'empleado'),
 (583, 1014251428, 'AURA ALEJANDRA CONTRERAS TORRES', 'Cédula de Ciudadanía', 'Asistente Administrativo', 'Administracion', '2020-12-01', '000000', 'asistenteadministrativo1@meridian.com.co', '000000', '1014251428', 'ADMINISTRACION', '', 'empleado'),

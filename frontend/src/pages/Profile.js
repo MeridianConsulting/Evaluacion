@@ -68,9 +68,7 @@ const Profile = ({ onLogout, userRole }) => {
                 <div className="profile-detail">
                   <strong>Cargo:</strong> {employee.cargo}
                 </div>
-                <div className="profile-detail">
-                  <strong>Teléfono Personal:</strong> {employee.numero_telefonico}
-                </div>
+                {/* Teléfono Personal eliminado del perfil */}
                 <div className="profile-detail">
                   <strong>Email:</strong> {employee.email}
                 </div>

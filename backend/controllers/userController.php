@@ -49,9 +49,7 @@ class UserController {
                 $data['cedula'], 
                 $data['nombre'], 
                 $data['cargo'], 
-                $data['numero_telefonico'], 
                 $data['email'], 
-                $data['telefono_empresa'], 
                 $data['contrasena']
             )
         ) {
@@ -65,8 +63,8 @@ class UserController {
         
         // Prepara la consulta considerando todos los campos de la tabla
         $sql = 'INSERT INTO empleados 
-                (cedula, nombre, cargo, numero_telefonico, email, telefono_empresa, contrasena) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)';
+                (cedula, nombre, cargo, email, contrasena) 
+                VALUES (?, ?, ?, ?, ?)';
         
         $stmt = $db->prepare($sql);
         if (!$stmt) {
@@ -81,13 +79,11 @@ class UserController {
         
         // cedula es un entero y los demás campos son cadenas de texto
         $stmt->bind_param(
-            "issssss", 
+            "issss", 
             $data['cedula'], 
             $data['nombre'], 
             $data['cargo'], 
-            $data['numero_telefonico'], 
             $data['email'], 
-            $data['telefono_empresa'], 
             $data['contrasena']
         );
         
@@ -113,8 +109,7 @@ class UserController {
 
     public function obtenerEmpleadoPorId($id) {
         global $db;
-        $sql = 'SELECT id_empleado, cedula, nombre, cargo, area, numero_telefonico, email, 
-                telefono_empresa, rol FROM empleados WHERE id_empleado = ?';
+        $sql = 'SELECT id_empleado, cedula, nombre, cargo, area, email, rol FROM empleados WHERE id_empleado = ?';
         $stmt = $db->prepare($sql);
         if (!$stmt) {
             http_response_code(500);
@@ -129,7 +124,7 @@ class UserController {
             echo json_encode(["error" => "Empleado no encontrado"]);
         } else {
             $empleado = $result->fetch_assoc();
-            if (!isset($empleado['email']) || !isset($empleado['numero_telefonico'])) {
+            if (!isset($empleado['email'])) {
                 http_response_code(500);
                 echo json_encode(["error" => "Faltan datos necesarios en la respuesta"]);
             } else {
