@@ -15,6 +15,7 @@ import DashboardSelector from "./admin/DashboardSelector";
 import EmpleadosCRUD from "./admin/EmpleadosCRUD";
 import CargosCRUD from "./admin/CargosCRUD";
 import TeamEvaluations from "./pages/TeamEvaluations";
+import HseqEvaluation from "./pages/HseqEvaluation";
 import { NotificationProvider } from "./components/NotificationSystem";
 import "./App.css";
 
@@ -54,6 +55,8 @@ function App() {
       return userRole === "jefe" || userRole === "admin"; // Jefes y admins tienen acceso
     } else if (requiredRole === "admin") {
       return userRole === "admin"; // Solo admins tienen acceso a rutas de admin
+    } else if (requiredRole === "HSEQ") {
+      return (userRole || '').toLowerCase() === 'hseq';
     }
     return false;
   };
@@ -237,6 +240,18 @@ function App() {
               <TeamEvaluations onLogout={handleLogout} userRole={userRole} />
             ) : (
               <Navigate to="/" replace />
+            )
+          }
+        />
+
+        {/* Ruta para evaluación HSEQ - solo rol HSEQ */}
+        <Route
+          path="/hseq-evaluation"
+          element={
+            isAuthenticated && hasAccess("HSEQ") ? (
+              <HseqEvaluation onLogout={handleLogout} userRole={userRole} />
+            ) : (
+              <Navigate to={isAuthenticated ? "/LandingPage" : "/"} replace />
             )
           }
         />

@@ -200,6 +200,12 @@ function PerformanceEvaluationBoss() {
             fecha: fechaPlan
           }]);
         }
+
+        // Precargar firmas si existen en la evaluación
+        const firmaEmpleado = data?.firmas?.firma_empleado;
+        const firmaJefe = data?.firmas?.firma_jefe;
+        if (firmaEmpleado) setEmployeeSignature(firmaEmpleado);
+        if (firmaJefe) setBossSignature(firmaJefe);
       } catch (_) {}
     };
     loadExistingEvaluation();
@@ -2202,7 +2208,18 @@ function PerformanceEvaluationBoss() {
 
         <section className="evaluation-section" style={{ textAlign: "center" }}>
           <div className="signatures-container">
-            <div className="signatures-row">
+            <div className="signatures-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', alignItems: 'start' }}>
+              {/* Firma del Evaluado (solo lectura, precargada) */}
+              <div style={{ position: 'relative' }}>
+                <SignatureUploader 
+                  label="Firma (Evaluado)" 
+                  onChange={() => {}}
+                  value={employeeSignature}
+                  disabled={true}
+                />
+              </div>
+
+              {/* Firma del Jefe (editable, precargada si existe) */}
               <div style={{ position: 'relative' }}>
                 <SignatureUploader 
                   label="Firma (Jefe Directo)" 

@@ -107,6 +107,10 @@ function Header({ onLogout, userRole: propUserRole }) {
   // Mostrar Evaluar Equipo solo si el usuario tiene evaluaciones asignadas en la base de datos
   const canSeeTeamEvaluations = hasAssignedAsEvaluator;
 
+  // Rol efectivo: prioriza prop; si falta, usa localStorage
+  const effectiveRole = (propUserRole && String(propUserRole)) || localStorage.getItem('userRole') || userRole || 'empleado';
+  const isHseqRole = String(effectiveRole || '').toLowerCase() === 'hseq';
+
   return (
     <header>
       <nav className="navbar">
@@ -116,7 +120,7 @@ function Header({ onLogout, userRole: propUserRole }) {
           </Link>
         </div>
         {/* Botón rápido visible para ir al Panel de Administración solo si es admin autenticado */}
-        {userRole === 'admin' && (
+        {effectiveRole === 'admin' && (
           <button className="admin-quick-button" onClick={() => goToPage('/admin')}>
             Panel de Administración
           </button>
@@ -146,9 +150,16 @@ function Header({ onLogout, userRole: propUserRole }) {
                 Evaluar Equipo
               </button>
             )}
+
+            {/* Solo HSEQ: acceso a evaluación HSEQ global */}
+            {isHseqRole && (
+              <button className="menu-item" onClick={() => goToPage('/hseq-evaluation')}>
+                Evaluar HSEQ
+              </button>
+            )}
             
             {/* Solo administradores pueden acceder al panel de administración */}
-            {userRole === "admin" && (
+            {effectiveRole === "admin" && (
               <button className="menu-item admin" onClick={() => goToPage('/admin')}>
                 Panel de Administración
               </button>

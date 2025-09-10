@@ -1,9 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './SignatureUploader.css';
 
 const SignatureUploader = ({ label, onChange, value, disabled = false }) => {
   const [previewUrl, setPreviewUrl] = useState(value || '');
   const [error, setError] = useState('');
+
+  // Sincronizar cambios de la prop `value` (permite precargar base64 o File)
+  useEffect(() => {
+    if (!value) {
+      setPreviewUrl('');
+      return;
+    }
+    if (typeof value === 'string') {
+      setPreviewUrl(value);
+      return;
+    }
+    if (value instanceof File) {
+      const objectUrl = URL.createObjectURL(value);
+      setPreviewUrl(objectUrl);
+      return;
+    }
+  }, [value]);
 
   const handleFileChange = (e) => {
     if (disabled) return;
@@ -45,14 +62,16 @@ const SignatureUploader = ({ label, onChange, value, disabled = false }) => {
         {previewUrl ? (
           <div className="signature-preview">
             <img src={previewUrl} alt="Firma" />
-            <button 
-              type="button" 
-              className="remove-signature" 
-              onClick={handleRemove}
-              aria-label="Eliminar firma"
-            >
-              ×
-            </button>
+            {!disabled && (
+              <button 
+                type="button" 
+                className="remove-signature" 
+                onClick={handleRemove}
+                aria-label="Eliminar firma"
+              >
+                ×
+              </button>
+            )}
           </div>
         ) : (
           <div className="signature-placeholder">
