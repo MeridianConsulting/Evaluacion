@@ -76,8 +76,8 @@ class AdminController {
     public function crearEmpleado($data) {
         global $db;
         
-        $sql = 'INSERT INTO empleados (nombre, cargo, numero_telefonico, email, compania, telefono_empresa, telefono_internacional) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)';
+        $sql = 'INSERT INTO empleados (nombre, cargo, numero_telefonico, email, telefono_empresa) 
+                VALUES (?, ?, ?, ?, ?)';
 
         $stmt = $db->prepare($sql);
         if (!$stmt) {
@@ -86,14 +86,12 @@ class AdminController {
             return;
         }
 
-        $stmt->bind_param("sssssss", 
+        $stmt->bind_param("sssss", 
             $data['nombre'], 
             $data['cargo'], 
             $data['numero_telefonico'], 
             $data['email'], 
-            $data['compania'], 
-            $data['telefono_empresa'], 
-            $data['telefono_internacional']
+            $data['telefono_empresa']
         );
 
         if ($stmt->execute()) {
@@ -108,18 +106,16 @@ class AdminController {
     }
     // Actualizar un empleado
     public static function updateEmployee($id, $request) {
-        $query = "UPDATE empleados SET nombre = ?, cargo = ?, numero_telefonico = ?, email = ?, compania = ?, telefono_empresa = ?, telefono_internacional = ? WHERE id = ?";
+        $query = "UPDATE empleados SET nombre = ?, cargo = ?, numero_telefonico = ?, email = ?, telefono_empresa = ? WHERE id = ?";
         $stmt = $GLOBALS['db']->prepare($query);
 
         $stmt->bind_param(
-            "sssssssi",
+            "sssssi",
             $request['nombre'],
             $request['cargo'],
             $request['numero_telefonico'],
             $request['email'],
-            $request['compania'],
             $request['telefono_empresa'],
-            $request['telefono_internacional'],
             $id
         );
 

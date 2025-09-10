@@ -10,7 +10,7 @@ class CargoController {
     
     // Obtener todos los cargos
     public function getAllCargos() {
-        $sql = 'SELECT id_cargo, nombre_cargo, descripcion_cargo, objetivo_cargo, proceso_gestion 
+        $sql = 'SELECT id_cargo, nombre_cargo, objetivo_cargo, proceso_gestion 
                 FROM cargo ORDER BY id_cargo DESC';
         
         $stmt = $this->db->prepare($sql);
@@ -39,7 +39,7 @@ class CargoController {
     
     // Obtener un cargo por ID
     public function getCargoById($id) {
-        $sql = 'SELECT id_cargo, nombre_cargo, descripcion_cargo, objetivo_cargo, proceso_gestion 
+        $sql = 'SELECT id_cargo, nombre_cargo, objetivo_cargo, proceso_gestion 
                 FROM cargo WHERE id_cargo = ?';
                 
         $stmt = $this->db->prepare($sql);
@@ -88,8 +88,8 @@ class CargoController {
         }
         $checkStmt->close();
         
-        $sql = 'INSERT INTO cargo (nombre_cargo, descripcion_cargo, objetivo_cargo, proceso_gestion) 
-                VALUES (?, ?, ?, ?)';
+        $sql = 'INSERT INTO cargo (nombre_cargo, objetivo_cargo, proceso_gestion) 
+                VALUES (?, ?, ?)';
                 
         $stmt = $this->db->prepare($sql);
         if (!$stmt) {
@@ -103,14 +103,12 @@ class CargoController {
         }
         
         // Valores por defecto para campos opcionales
-        $descripcion = isset($data['descripcion_cargo']) ? $data['descripcion_cargo'] : '';
         $objetivo = isset($data['objetivo_cargo']) ? $data['objetivo_cargo'] : '';
         $proceso = isset($data['proceso_gestion']) ? $data['proceso_gestion'] : '';
         
         $stmt->bind_param(
-            "ssss",
+            "sss",
             $data['nombre_cargo'],
-            $descripcion,
             $objetivo,
             $proceso
         );
@@ -180,7 +178,6 @@ class CargoController {
         // Campos que pueden actualizarse
         $fields = [
             'nombre_cargo' => 's',
-            'descripcion_cargo' => 's',
             'objetivo_cargo' => 's',
             'proceso_gestion' => 's'
         ];

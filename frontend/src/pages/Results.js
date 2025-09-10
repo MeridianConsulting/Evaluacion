@@ -592,10 +592,7 @@ const generateExcel = async (evaluacion) => {
     putPair('Cargo:', evaluationData.empleado?.cargo || 'N/A', 'Área:', evaluationData.empleado?.area || 'N/A');
     putPair('ID Empleado:', evaluationData.empleado?.id_empleado || 'N/A', 'Tipo Documento:', evaluationData.empleado?.tipo_documento || 'N/A');
     putPair('Email:', evaluationData.empleado?.email || 'N/A', 'Teléfono:', evaluationData.empleado?.numero_telefonico || 'N/A');
-    putPair('Teléfono Empresa:', evaluationData.empleado?.telefono_empresa || 'N/A', 'Teléfono Internacional:', evaluationData.empleado?.telefono_internacional || 'N/A');
-    putPair('Fecha Inicio Contrato:', evaluationData.empleado?.fecha_inicio_contrato ? new Date(evaluationData.empleado.fecha_inicio_contrato).toLocaleDateString('es-ES') : 'N/A', 
-            'Reporta a:', evaluationData.empleado?.reporta_directamente || 'N/A');
-    putPair('Nivel:', evaluationData.empleado?.nivel || 'N/A', 'Compañía:', evaluationData.empleado?.compania || 'N/A');
+    putPair('Teléfono Empresa:', evaluationData.empleado?.telefono_empresa || 'N/A', 'Fecha Inicio Contrato:', evaluationData.empleado?.fecha_inicio_contrato ? new Date(evaluationData.empleado.fecha_inicio_contrato).toLocaleDateString('es-ES') : 'N/A');
     putPair('Proyecto:', evaluationData.empleado?.proyecto || 'N/A', 'ODS:', evaluationData.empleado?.ods || 'N/A');
     
     // Datos de la evaluación

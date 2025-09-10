@@ -13,7 +13,6 @@ function CargosCRUD({ onLogout }) {
   const [currentCargo, setCurrentCargo] = useState({
     id_cargo: '',
     nombre_cargo: '',
-    descripcion_cargo: '',
     objetivo_cargo: '',
     proceso_gestion: ''
   });
@@ -65,7 +64,6 @@ function CargosCRUD({ onLogout }) {
     setCurrentCargo({
       id_cargo: '',
       nombre_cargo: '',
-      descripcion_cargo: '',
       objetivo_cargo: '',
       proceso_gestion: ''
     });
@@ -235,16 +233,7 @@ function CargosCRUD({ onLogout }) {
                 />
               </div>
               
-              <div className="form-group">
-                <label htmlFor="descripcion_cargo">Descripción:</label>
-                <textarea 
-                  id="descripcion_cargo" 
-                  name="descripcion_cargo" 
-                  value={currentCargo.descripcion_cargo || ''} 
-                  onChange={handleInputChange} 
-                  rows="3"
-                ></textarea>
-              </div>
+              {/* Campo descripción eliminado */}
               
               <div className="form-group">
                 <label htmlFor="objetivo_cargo">Objetivo del Cargo:</label>
@@ -286,7 +275,7 @@ function CargosCRUD({ onLogout }) {
               <tr>
                 <th>ID</th>
                 <th>Nombre del Cargo</th>
-                <th>Descripción</th>
+                {/* Columna descripción eliminada */}
                 <th>Proceso de Gestión</th>
                 <th>Acciones</th>
               </tr>
@@ -296,7 +285,7 @@ function CargosCRUD({ onLogout }) {
                 <tr key={cargo.id_cargo}>
                   <td>{cargo.id_cargo}</td>
                   <td>{cargo.nombre_cargo}</td>
-                  <td className="descripcion-cell">{cargo.descripcion_cargo}</td>
+                  {/* Descripción eliminada */}
                   <td>{cargo.proceso_gestion}</td>
                   <td className="acciones">
                     <button 

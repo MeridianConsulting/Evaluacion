@@ -51,9 +51,7 @@ class UserController {
                 $data['cargo'], 
                 $data['numero_telefonico'], 
                 $data['email'], 
-                $data['compania'], 
                 $data['telefono_empresa'], 
-                $data['telefono_internacional'], 
                 $data['contrasena']
             )
         ) {
@@ -67,8 +65,8 @@ class UserController {
         
         // Prepara la consulta considerando todos los campos de la tabla
         $sql = 'INSERT INTO empleados 
-                (cedula, nombre, cargo, numero_telefonico, email, compania, telefono_empresa, telefono_internacional, contrasena) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                (cedula, nombre, cargo, numero_telefonico, email, telefono_empresa, contrasena) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)';
         
         $stmt = $db->prepare($sql);
         if (!$stmt) {
@@ -83,15 +81,13 @@ class UserController {
         
         // cedula es un entero y los demás campos son cadenas de texto
         $stmt->bind_param(
-            "issssssss", 
+            "issssss", 
             $data['cedula'], 
             $data['nombre'], 
             $data['cargo'], 
             $data['numero_telefonico'], 
             $data['email'], 
-            $data['compania'], 
             $data['telefono_empresa'], 
-            $data['telefono_internacional'], 
             $data['contrasena']
         );
         
@@ -117,8 +113,8 @@ class UserController {
 
     public function obtenerEmpleadoPorId($id) {
         global $db;
-        $sql = 'SELECT id_empleado, cedula, nombre, cargo, area, numero_telefonico, email, compania, 
-                telefono_empresa, telefono_internacional, rol FROM empleados WHERE id_empleado = ?';
+        $sql = 'SELECT id_empleado, cedula, nombre, cargo, area, numero_telefonico, email, 
+                telefono_empresa, rol FROM empleados WHERE id_empleado = ?';
         $stmt = $db->prepare($sql);
         if (!$stmt) {
             http_response_code(500);

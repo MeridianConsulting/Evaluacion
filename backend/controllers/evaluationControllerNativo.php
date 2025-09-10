@@ -634,8 +634,8 @@ class EvaluationControllerNativo {
             $stmt = $this->db->prepare("
                 SELECT e.id_evaluacion, e.fecha_evaluacion, e.periodo_evaluacion, e.observaciones_generales, e.estado_evaluacion, e.fecha_creacion, e.fecha_actualizacion,
                        emp.id_empleado, emp.cedula, emp.nombre, emp.tipo_documento, emp.cargo, emp.area, emp.fecha_inicio_contrato, 
-                       emp.reporta_directamente, emp.nivel, emp.numero_telefonico, emp.email, emp.compania, emp.telefono_empresa, 
-                       emp.telefono_internacional, emp.proyecto, emp.ods, emp.rol
+                       emp.numero_telefonico, emp.email, emp.telefono_empresa, 
+                       emp.proyecto, emp.ods, emp.rol
                 FROM evaluacion e 
                 JOIN empleados emp ON e.id_empleado = emp.id_empleado 
                 WHERE e.id_evaluacion = ? AND e.id_empleado = ?
@@ -687,13 +687,9 @@ class EvaluationControllerNativo {
                     'cargo' => $evaluacion['cargo'],
                     'area' => $evaluacion['area'],
                     'fecha_inicio_contrato' => $evaluacion['fecha_inicio_contrato'],
-                    'reporta_directamente' => $evaluacion['reporta_directamente'],
-                    'nivel' => $evaluacion['nivel'],
                     'numero_telefonico' => $evaluacion['numero_telefonico'],
                     'email' => $evaluacion['email'],
-                    'compania' => $evaluacion['compania'],
                     'telefono_empresa' => $evaluacion['telefono_empresa'],
-                    'telefono_internacional' => $evaluacion['telefono_internacional'],
                     'proyecto' => $evaluacion['proyecto'],
                     'ods' => $evaluacion['ods'],
                     'rol' => $evaluacion['rol']
@@ -873,12 +869,8 @@ class EvaluationControllerNativo {
                     emp.area                             AS empleado_area,
                     emp.email                            AS empleado_email,
                     emp.fecha_inicio_contrato            AS empleado_fecha_inicio_contrato,
-                    emp.reporta_directamente             AS empleado_reporta_directamente,
-                    emp.nivel                            AS empleado_nivel,
                     emp.numero_telefonico                AS empleado_numero_telefonico,
-                    emp.compania                         AS empleado_compania,
                     emp.telefono_empresa                 AS empleado_telefono_empresa,
-                    emp.telefono_internacional           AS empleado_telefono_internacional,
                     emp.proyecto                         AS empleado_proyecto,
                     emp.ods                              AS empleado_ods,
                     emp.rol                              AS empleado_rol
@@ -915,11 +907,8 @@ class EvaluationControllerNativo {
                 'Cargo'             => $evaluacion['empleado_cargo']             ?? 'N/D',
                 'Área'              => $evaluacion['empleado_area']              ?? 'N/D',
                 'Email'             => $evaluacion['empleado_email']             ?? 'N/D',
-                'Nivel'             => $evaluacion['empleado_nivel']             ?? 'N/D',
                 'Teléfono'          => $evaluacion['empleado_numero_telefonico'] ?? 'N/D',
-                'Compañía'          => $evaluacion['empleado_compania']          ?? 'N/D',
                 'Fecha inicio'      => $evaluacion['empleado_fecha_inicio_contrato'] ?? 'N/D',
-                'Reporta a'         => $evaluacion['empleado_reporta_directamente']  ?? 'N/D',
                 'Proyecto'          => $evaluacion['empleado_proyecto']          ?? 'N/D',
                 'ODS'               => $evaluacion['empleado_ods']               ?? 'N/D',
                 'Rol'               => $evaluacion['empleado_rol']               ?? 'N/D',

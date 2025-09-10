@@ -41,8 +41,8 @@ class EmployeeController {
     // Obtener un empleado por ID
     public function getEmployeeById($id) {
         $sql = 'SELECT id_empleado, cedula, nombre, tipo_documento, cargo, area, 
-                fecha_inicio_contrato, reporta_directamente, nivel, numero_telefonico, 
-                email, compania, telefono_empresa, telefono_internacional, 
+                fecha_inicio_contrato, numero_telefonico, 
+                email, telefono_empresa, 
                 proyecto, ods, rol FROM empleados WHERE id_empleado = ?';
                 
         $stmt = $this->db->prepare($sql);
@@ -74,10 +74,10 @@ class EmployeeController {
     // Crear un nuevo empleado
     public function createEmployee($data) {
         $sql = 'INSERT INTO empleados (cedula, nombre, tipo_documento, cargo, area, 
-                fecha_inicio_contrato, reporta_directamente, nivel, numero_telefonico, 
-                email, compania, telefono_empresa, telefono_internacional, contrasena, 
+                fecha_inicio_contrato, numero_telefonico, 
+                email, telefono_empresa, contrasena, 
                 proyecto, ods, rol) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
                 
         $stmt = $this->db->prepare($sql);
         if (!$stmt) {
@@ -99,30 +99,22 @@ class EmployeeController {
         $tipoDocumento = isset($data['tipo_documento']) ? $data['tipo_documento'] : 'Cédula de Ciudadanía';
         $area = isset($data['area']) ? $data['area'] : 'Administracion';
         $fechaInicio = isset($data['fecha_inicio_contrato']) ? $data['fecha_inicio_contrato'] : date('Y-m-d');
-        $reportaA = isset($data['reporta_directamente']) ? $data['reporta_directamente'] : 'Gerente General';
-        $nivel = isset($data['nivel']) ? $data['nivel'] : '3';
-        $compania = isset($data['compania']) ? $data['compania'] : 'Desconocida';
         $telEmpresa = isset($data['telefono_empresa']) ? $data['telefono_empresa'] : '000000';
-        $telInternacional = isset($data['telefono_internacional']) ? $data['telefono_internacional'] : 'N/A';
         $proyecto = isset($data['proyecto']) ? $data['proyecto'] : '';
         $ods = isset($data['ods']) ? $data['ods'] : '';
         $rol = isset($data['rol']) ? $data['rol'] : 'empleado';
         
         $stmt->bind_param(
-            "issssssssssssssss",
+            "isssssssssssss",
             $data['cedula'],
             $data['nombre'],
             $tipoDocumento,
             $data['cargo'],
             $area,
             $fechaInicio,
-            $reportaA,
-            $nivel,
             $data['numero_telefonico'],
             $data['email'],
-            $compania,
             $telEmpresa,
-            $telInternacional,
             $data['contrasena'],
             $proyecto,
             $ods,
@@ -179,13 +171,9 @@ class EmployeeController {
             'cargo' => 's',
             'area' => 's',
             'fecha_inicio_contrato' => 's',
-            'reporta_directamente' => 's',
-            'nivel' => 's',
             'numero_telefonico' => 's',
             'email' => 's',
-            'compania' => 's',
             'telefono_empresa' => 's',
-            'telefono_internacional' => 's',
             'contrasena' => 's',
             'proyecto' => 's',
             'ods' => 's',
