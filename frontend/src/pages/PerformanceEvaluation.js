@@ -66,8 +66,18 @@ function PerformanceEvaluation() {
     if (!employee) return;
     setDatosGenerales(prev => ({
       ...prev,
-      fechaEvaluacion: prev.fechaEvaluacion || new Date().toISOString().split('T')[0],
-      area: prev.area || (employee.area || '')
+      fechaEvaluacion: (!prev.fechaEvaluacion || prev.fechaEvaluacion === '0000-00-00')
+        ? new Date().toISOString().split('T')[0]
+        : prev.fechaEvaluacion,
+      area: prev.area || (employee.area || ''),
+      // Autocompletar fecha de ingreso con dato del empleado si existe y si está vacía
+      fechaIngreso: (!prev.fechaIngreso || prev.fechaIngreso === '0000-00-00')
+        ? ((employee.fecha_ingreso && employee.fecha_ingreso !== '0000-00-00')
+            ? employee.fecha_ingreso
+            : (employee.fechaIngreso && employee.fechaIngreso !== '0000-00-00')
+              ? employee.fechaIngreso
+              : (prev.fechaIngreso || ''))
+        : prev.fechaIngreso
     }));
   }, [employee]);
 
@@ -147,12 +157,13 @@ function PerformanceEvaluation() {
 
         // Plan de acción (si viene uno)
         if (data.plan_accion) {
+          const fechaPlan = (data.plan_accion.fecha === '0000-00-00') ? '' : (data.plan_accion.fecha || '');
           setPlanesAccion([{ 
             id: 1,
             actividad: data.plan_accion.actividad || '',
             responsable: data.plan_accion.responsable || '',
             seguimiento: data.plan_accion.seguimiento || '',
-            fecha: data.plan_accion.fecha || ''
+            fecha: fechaPlan
           }]);
         }
       } catch (_) {}

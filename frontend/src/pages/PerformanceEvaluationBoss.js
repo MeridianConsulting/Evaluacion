@@ -69,8 +69,18 @@ function PerformanceEvaluationBoss() {
     if (!employee) return;
     setDatosGenerales(prev => ({
       ...prev,
-      fechaEvaluacion: prev.fechaEvaluacion || new Date().toISOString().split('T')[0],
-      area: prev.area || (employee.area || '')
+      fechaEvaluacion: (!prev.fechaEvaluacion || prev.fechaEvaluacion === '0000-00-00') 
+        ? new Date().toISOString().split('T')[0] 
+        : prev.fechaEvaluacion,
+      area: prev.area || (employee.area || ''),
+      // Autocompletar fecha de ingreso con dato del empleado si existe y si está vacía
+      fechaIngreso: (!prev.fechaIngreso || prev.fechaIngreso === '0000-00-00') 
+        ? ((employee.fecha_ingreso && employee.fecha_ingreso !== '0000-00-00') 
+            ? employee.fecha_ingreso 
+            : (employee.fechaIngreso && employee.fechaIngreso !== '0000-00-00') 
+              ? employee.fechaIngreso 
+              : (prev.fechaIngreso || ''))
+        : prev.fechaIngreso
     }));
   }, [employee]);
 
@@ -163,9 +173,10 @@ function PerformanceEvaluationBoss() {
           data?.fechaIngreso ||
           (data?.datos_generales && (data.datos_generales.fecha_ingreso || data.datos_generales.fechaIngreso));
         if (fechaIngresoGuardada) {
+          const fechaIngresoNormalized = (fechaIngresoGuardada === '0000-00-00') ? '' : fechaIngresoGuardada;
           setDatosGenerales(prev => ({
             ...prev,
-            fechaIngreso: fechaIngresoGuardada
+            fechaIngreso: fechaIngresoNormalized
           }));
         }
 
@@ -179,12 +190,13 @@ function PerformanceEvaluationBoss() {
 
         // Plan de acción (si viene uno)
         if (data.plan_accion) {
+          const fechaPlan = (data.plan_accion.fecha === '0000-00-00') ? '' : (data.plan_accion.fecha || '');
           setPlanesAccion([{ 
             id: 1,
             actividad: data.plan_accion.actividad || '',
             responsable: data.plan_accion.responsable || '',
             seguimiento: data.plan_accion.seguimiento || '',
-            fecha: data.plan_accion.fecha || ''
+            fecha: fechaPlan
           }]);
         }
       } catch (_) {}
@@ -626,7 +638,15 @@ function PerformanceEvaluationBoss() {
           setDatosGenerales(prev => ({
             ...prev,
             fechaEvaluacion: new Date().toISOString().split('T')[0], // Fecha actual
-            area: data.area || '' // Área del empleado evaluado
+            area: data.area || '', // Área del empleado evaluado
+            // Autocompletar fecha de ingreso desde el empleado si no está definida / inválida
+            fechaIngreso: (!prev.fechaIngreso || prev.fechaIngreso === '0000-00-00')
+              ? ((data.fecha_ingreso && data.fecha_ingreso !== '0000-00-00')
+                  ? data.fecha_ingreso
+                  : (data.fechaIngreso && data.fechaIngreso !== '0000-00-00')
+                    ? data.fechaIngreso
+                    : (prev.fechaIngreso || ''))
+              : prev.fechaIngreso
           }));
           
           // Cargar datos guardados después de obtener los datos del empleado
@@ -832,7 +852,7 @@ function PerformanceEvaluationBoss() {
     rows.forEach((row, index) => {
       const workerOk = row.worker && String(row.worker) !== '' && String(row.worker) !== '0';
       const bossOk = row.boss && String(row.boss) !== '' && String(row.boss) !== '0';
-      if (!workerOk) {
+      if (!isManagerView && !workerOk) {
         errores[`worker_${index}`] = true;
         isValid = false;
       }
@@ -978,7 +998,7 @@ function PerformanceEvaluationBoss() {
     rows.forEach((row) => {
       const workerOk = row.worker && String(row.worker) !== '' && String(row.worker) !== '0';
       const bossOk = row.boss && String(row.boss) !== '' && String(row.boss) !== '0';
-      if (!workerOk) {
+      if (!isManagerView && !workerOk) {
         errores[`competencia_worker_${row.id}`] = true;
       }
       if (isManagerView && !bossOk) {
@@ -1044,7 +1064,7 @@ function PerformanceEvaluationBoss() {
     if (hayErroresCalif || !formularioValido) {
       window.scrollTo(0, 0);
       const msg = isManagerView
-        ? 'Complete las calificaciones del trabajador y del jefe, y los campos requeridos.'
+        ? 'Complete las calificaciones del jefe y los campos requeridos.'
         : 'Complete las calificaciones del trabajador y los campos requeridos.';
       warning('Campos obligatorios', msg);
       return;
