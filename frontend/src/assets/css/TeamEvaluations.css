@@ -1,0 +1,216 @@
+/* Estilos profesionales para la página de Evaluaciones de Equipo */
+
+:root {
+  --te-brand: #1e3a8a;         /* Indigo-800 */
+  --te-brand-600: #2563eb;      /* Indigo-600 */
+  --te-brand-500: #3b82f6;      /* Indigo-500 */
+  --te-surface: #ffffff;
+  --te-bg: #f6f8fb;
+  --te-text: #1f2937;           /* Gray-800 */
+  --te-text-2: #4b5563;         /* Gray-600 */
+  --te-border: #e5e7eb;         /* Gray-200 */
+  --te-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+
+  --te-success-bg: #ecfdf5;
+  --te-success: #059669;
+  --te-warning-bg: #fffbeb;
+  --te-warning: #b45309;
+  --te-pending-bg: #eff6ff;
+  --te-pending: #1d4ed8;
+}
+
+.team-evaluations-page {
+  background: linear-gradient(180deg, var(--te-bg) 0%, #eef2ff 100%);
+  min-height: 100vh;
+  color: var(--te-text);
+}
+
+.team-evaluations-main {
+  padding: 32px 16px 48px;
+}
+
+.team-evaluations-container {
+  max-width: 1080px;
+  margin: 0 auto;
+  background: var(--te-surface);
+  border: 1px solid var(--te-border);
+  border-radius: 16px;
+  box-shadow: var(--te-shadow);
+  padding: 28px;
+}
+
+.team-evaluations-container h1 {
+  font-size: 28px;
+  line-height: 1.2;
+  margin: 0 0 16px;
+  color: var(--te-brand);
+  letter-spacing: 0.2px;
+}
+
+.team-members-container {
+  overflow: hidden;
+  border: 1px solid var(--te-border);
+  border-radius: 12px;
+}
+
+.team-members-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--te-surface);
+}
+
+.team-members-table thead th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--te-text-2);
+  background: #fafafa;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--te-border);
+}
+
+.team-members-table tbody tr {
+  transition: background 0.2s ease, transform 0.06s ease;
+}
+
+.team-members-table tbody tr:hover {
+  background: #f9fbff;
+}
+
+.team-members-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--te-border);
+}
+
+.team-members-table td:first-child {
+  font-weight: 600;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  border: 1px solid transparent;
+}
+
+.status-badge.evaluado {
+  color: var(--te-success);
+  background: var(--te-success-bg);
+  border-color: rgba(5, 150, 105, 0.18);
+}
+
+.status-badge.borrador {
+  color: var(--te-warning);
+  background: var(--te-warning-bg);
+  border-color: rgba(180, 83, 9, 0.18);
+}
+
+.status-badge.pendiente {
+  color: var(--te-pending);
+  background: var(--te-pending-bg);
+  border-color: rgba(29, 78, 216, 0.18);
+}
+
+.evaluate-button {
+  appearance: none;
+  border: 0;
+  background: var(--te-brand-600);
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.06s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
+}
+
+.evaluate-button:hover {
+  background: var(--te-brand-500);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
+}
+
+.evaluate-button:active {
+  transform: translateY(0);
+}
+
+.loading-container,
+.error-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 240px;
+  background: var(--te-surface);
+  border: 1px dashed var(--te-border);
+  border-radius: 12px;
+  color: var(--te-text-2);
+}
+
+.team-evaluations-info {
+  margin-top: 28px;
+  padding: 20px 18px;
+  background: #f9fafb;
+  border: 1px solid var(--te-border);
+  border-radius: 12px;
+}
+
+.team-evaluations-info h2 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: var(--te-text);
+}
+
+.team-evaluations-info p,
+.team-evaluations-info li {
+  color: var(--te-text-2);
+}
+
+@media (max-width: 768px) {
+  .team-evaluations-container {
+    padding: 18px;
+  }
+
+  .team-members-table thead {
+    display: none;
+  }
+
+  .team-members-table,
+  .team-members-table tbody,
+  .team-members-table tr,
+  .team-members-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .team-members-table tr {
+    border-bottom: 1px solid var(--te-border);
+  }
+
+  .team-members-table td {
+    border: 0;
+    padding: 10px 0;
+  }
+
+  .team-members-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 12px;
+    color: var(--te-text-2);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .evaluate-button {
+    width: 100%;
+    margin-top: 8px;
+  }
+}
+
+
