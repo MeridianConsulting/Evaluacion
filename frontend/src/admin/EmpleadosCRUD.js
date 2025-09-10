@@ -11,6 +11,8 @@ function EmpleadosCRUD({ onLogout, userRole }) {
   const [showForm, setShowForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [empleados, setEmpleados] = useState([]);
+  const [empleadosFiltrados, setEmpleadosFiltrados] = useState([]);
+  const [busqueda, setBusqueda] = useState('');
   const [cargos, setCargos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -47,6 +49,7 @@ function EmpleadosCRUD({ onLogout, userRole }) {
       
       if (result.success) {
         setEmpleados(result.data);
+        setEmpleadosFiltrados(result.data);
       } else {
         throw new Error(result.message || 'Error al cargar empleados');
       }
@@ -58,6 +61,24 @@ function EmpleadosCRUD({ onLogout, userRole }) {
     }
   };
 
+  // Filtrar empleados por cédula, id, nombre, correo o cargo
+  useEffect(() => {
+    const q = (busqueda || '').toString().toLowerCase().trim();
+    if (!q) {
+      setEmpleadosFiltrados(empleados);
+      return;
+    }
+    const filtrados = (empleados || []).filter(e => {
+      const id = (e.id_empleado ?? '').toString().toLowerCase();
+      const cedula = (e.cedula ?? '').toString().toLowerCase();
+      const nombre = (e.nombre ?? '').toString().toLowerCase();
+      const email = (e.email ?? '').toString().toLowerCase();
+      const cargo = (e.cargo ?? '').toString().toLowerCase();
+      return id.includes(q) || cedula.includes(q) || nombre.includes(q) || email.includes(q) || cargo.includes(q);
+    });
+    setEmpleadosFiltrados(filtrados);
+  }, [busqueda, empleados]);
+
   // Función para obtener todos los cargos
   const fetchCargos = async () => {
     try {
@@ -68,16 +89,14 @@ function EmpleadosCRUD({ onLogout, userRole }) {
       }
       
       const result = await response.json();
-      console.log('Respuesta de cargos:', result); // Debug
       
       if (result.success) {
-        console.log('Cargos recibidos:', result.data); // Debug
         setCargos(result.data);
       } else {
         throw new Error(result.message || 'Error al cargar cargos');
       }
     } catch (error) {
-      console.error('Error al cargar cargos:', error);
+      // Silenciado
       // No mostramos error aquí para no interferir con la carga de empleados
     }
   };
@@ -244,6 +263,16 @@ function EmpleadosCRUD({ onLogout, userRole }) {
           </button>
         </div>
 
+        {/* Barra de búsqueda */}
+        <div className="crud-search">
+          <input
+            type="text"
+            placeholder="Buscar por ID, cédula, nombre, correo o cargo..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+          />
+        </div>
+
         {showForm && (
           <div className="crud-form-container">
             <form className="crud-form" onSubmit={handleSubmit}>
@@ -351,7 +380,7 @@ function EmpleadosCRUD({ onLogout, userRole }) {
         )}
 
         <div className="crud-table-container">
-          {empleados.length === 0 ? (
+          {(empleadosFiltrados || []).length === 0 ? (
             <p className="no-data">No hay empleados registrados</p>
           ) : (
             <table className="crud-table">
@@ -368,7 +397,7 @@ function EmpleadosCRUD({ onLogout, userRole }) {
                 </tr>
               </thead>
               <tbody>
-                {empleados.map(empleado => (
+                {empleadosFiltrados.map(empleado => (
                   <tr key={empleado.id_empleado}>
                     <td>{empleado.id_empleado}</td>
                     <td>{empleado.cedula}</td>

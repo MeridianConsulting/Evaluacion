@@ -19,6 +19,8 @@ function CargosCRUD({ onLogout }) {
 
   // Estado para los cargos cargados desde el backend
   const [cargos, setCargos] = useState([]);
+  const [cargosFiltrados, setCargosFiltrados] = useState([]);
+  const [busqueda, setBusqueda] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -44,6 +46,7 @@ function CargosCRUD({ onLogout }) {
       
       if (result.success) {
         setCargos(result.data);
+        setCargosFiltrados(result.data);
       } else {
         throw new Error(result.message || 'Error al cargar cargos');
       }
@@ -54,6 +57,23 @@ function CargosCRUD({ onLogout }) {
       setLoading(false);
     }
   };
+
+  // Filtrar cargos por ID, nombre, objetivo o proceso
+  useEffect(() => {
+    const q = (busqueda || '').toString().toLowerCase().trim();
+    if (!q) {
+      setCargosFiltrados(cargos);
+      return;
+    }
+    const filtrados = (cargos || []).filter(c => {
+      const id = (c.id_cargo ?? '').toString().toLowerCase();
+      const nombre = (c.nombre_cargo ?? '').toString().toLowerCase();
+      const objetivo = (c.objetivo_cargo ?? '').toString().toLowerCase();
+      const proceso = (c.proceso_gestion ?? '').toString().toLowerCase();
+      return id.includes(q) || nombre.includes(q) || objetivo.includes(q) || proceso.includes(q);
+    });
+    setCargosFiltrados(filtrados);
+  }, [busqueda, cargos]);
 
   const handleBackClick = () => {
     navigate('/admin');
@@ -216,6 +236,16 @@ function CargosCRUD({ onLogout }) {
           </button>
         </div>
 
+        {/* Barra de búsqueda */}
+        <div className="crud-search">
+          <input
+            type="text"
+            placeholder="Buscar por ID, nombre, objetivo o proceso..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+          />
+        </div>
+
         {showForm && (
           <div className="crud-form-container">
             <form className="crud-form" onSubmit={handleSubmit}>
@@ -281,7 +311,7 @@ function CargosCRUD({ onLogout }) {
               </tr>
             </thead>
             <tbody>
-              {cargos.map(cargo => (
+              {cargosFiltrados.map(cargo => (
                 <tr key={cargo.id_cargo}>
                   <td>{cargo.id_cargo}</td>
                   <td>{cargo.nombre_cargo}</td>
