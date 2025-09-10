@@ -1152,25 +1152,6 @@ INSERT INTO `evaluacion_promedios` (`id_promedio`, `id_evaluacion`, `promedio_co
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `funciones`
---
-
-CREATE TABLE `funciones` (
-  `id_cargo` int(11) NOT NULL,
-  `titulo_funcion` varchar(100) NOT NULL,
-  `descripcion_funcion` text DEFAULT NULL,
-  `tipo_funcion` varchar(50) DEFAULT NULL,
-  `hoja_funciones` varchar(255) NOT NULL,
-  `fecha_creacion` datetime DEFAULT current_timestamp(),
-  `fecha_actualizacion` datetime DEFAULT NULL,
-  `estado` varchar(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `funciones`
---
-
-INSERT INTO `funciones` (`id_cargo`, `titulo_funcion`, `descripcion_funcion`, `tipo_funcion`, `hoja_funciones`, `fecha_creacion`, `fecha_actualizacion`, `estado`) VALUES
 (178, 'Función', 'Funciones especificas del cargo', 'Específica', '1003934174E_1', '2025-03-20 14:57:19', '2025-03-20 14:57:19', 'ACTIVO'),
 (178, 'Función', 'Generar los análisis asociados a la ejecución de estudios de daño de formación empleando simulación numérica (análisis nodal y single well model, análisis de aguas, análisis de crudos, entre otros)', 'Específica', '1003934174E_10', '2025-03-20 14:57:19', '2025-03-20 14:57:19', 'ACTIVO'),
 (178, 'Función', 'Generar bases de datos de Eventos de pozos', 'Específica', '1003934174E_2', '2025-03-20 14:57:19', '2025-03-20 14:57:19', 'ACTIVO'),
@@ -1184,11 +1165,6 @@ INSERT INTO `funciones` (`id_cargo`, `titulo_funcion`, `descripcion_funcion`, `t
 (170, 'Función', 'Funciones especificas del cargo', 'Específica', '1007555164E_1', '2025-03-20 14:57:19', '2025-03-20 14:57:19', 'ACTIVO'),
 (170, 'Función', 'Procesamiento sísmico en tiempo y/o profundidad', 'Específica', '1007555164E_2', '2025-03-20 14:57:19', '2025-03-20 14:57:19', 'ACTIVO'),
 (121, 'Función', 'Funciones especificas del cargo', 'Específica', '1010056001E_1', '2025-03-20 14:57:16', '2025-03-20 14:57:16', 'ACTIVO'),
-(121, 'Función', 'Generación de oportunidades de intervención a Pozos', 'Específica', '1010056001E_10', '2025-03-20 14:57:16', '2025-03-20 14:57:16', 'ACTIVO'),
-(121, 'Función', 'Estimar restricciones de Presión y tasas para la generación de perfiles de producción', 'Específica', '1010056001E_11', '2025-03-20 14:57:16', '2025-03-20 14:57:16', 'ACTIVO'),
-(121, 'Función', 'Generar modelo de Pozos', 'Específica', '1010056001E_12', '2025-03-20 14:57:16', '2025-03-20 14:57:16', 'ACTIVO'),
-(121, 'Función', 'Adelantar la evaluación e interpretación de datos enfocada a candidatización de actividades de reacondicionamiento y optimización de productividad en los activos', 'Específica', '1010056001E_13', '2025-03-20 14:57:16', '2025-03-20 14:57:16', 'ACTIVO'),
-(121, 'Función', 'Realizar el seguimiento de producción/inyección de pozos intervenidos con base en los comportamientos de producción previo y posterior a la intervención', 'Específica', '1010056001E_14', '2025-03-20 14:57:16', '2025-03-20 14:57:16', 'ACTIVO'),
 (121, 'Función', 'Adelantar en análisis y evaluación de datos enfocada a la ejecución de estudios de daño de formación', 'Específica', '1010056001E_15', '2025-03-20 14:57:16', '2025-03-20 14:57:16', 'ACTIVO'),
 (121, 'Función', 'Generar Modelo analítico del yacimiento integrando la información disponible en un software específico', 'Específica', '1010056001E_2', '2025-03-20 14:57:16', '2025-03-20 14:57:16', 'ACTIVO'),
 (121, 'Función', 'Análisis e interpretación de datos de pruebas de presión-producción (DSTs, PBU, Pruebas Extendidas Producción, Gradientes Estáticos-Dinámicos PT, etc.) o de presión inyección (Inyectividad, SRT, FOT) aplicadas ya sea en tiempo real, memorizadas o con sarta temporal DST. Integración Probador Formación – Registros Open Hole.', 'Específica', '1010056001E_3', '2025-03-20 14:57:16', '2025-03-20 14:57:16', 'ACTIVO'),
@@ -1357,7 +1333,7 @@ INSERT INTO `funciones` (`id_cargo`, `titulo_funcion`, `descripcion_funcion`, `t
 (159, 'Función', 'Construcción de modelos PVT: Caracterización de la fracción Cn+ a través de datos TBP, modelamiento Aceite Negro, Aceite Negro Extendido, Ecuaciones de Estado, modelos de variación de propiedades PVT /Composición con profundidad, modelos de crudo pesado y extra-pesado, modelos de precipitación de asfaltenos, parafinas, hidratos y emulsiones. Manejo de formatos para exportar modelos PVT con fines de cálculo de HIIP, simulación de yacimientos (aceite negro, composicional, crudo pesado y extra-pesado), ingeniería analítica de yacimientos y producción.', 'Específica', '1026267749E_4', '2025-03-20 14:57:19', '2025-03-20 14:57:19', 'ACTIVO'),
 (148, 'Función', 'Funciones especificas del cargo', 'Específica', '1026292916E_1', '2025-03-20 14:57:18', '2025-03-20 14:57:18', 'ACTIVO'),
 (148, 'Función', 'Realizar QAQC de Datos de PVT y generar Base de Datos', 'Específica', '1026292916E_2', '2025-03-20 14:57:18', '2025-03-20 14:57:18', 'ACTIVO');
-INSERT INTO `funciones` (`id_cargo`, `titulo_funcion`, `descripcion_funcion`, `tipo_funcion`, `hoja_funciones`, `fecha_creacion`, `fecha_actualizacion`, `estado`) VALUES
+-- INSERTS de la tabla `funciones` eliminados
 (148, 'Función', 'Construcción de modelos PVT: Caracterización de la fracción Cn+ a través de datos TBP, modelamiento Aceite Negro, Aceite Negro Extendido, Ecuaciones de Estado, modelos de variación de propiedades PVT /Composición con profundidad, modelos de crudo pesado y extra-pesado, modelos de precipitación de asfaltenos, parafinas, hidratos y emulsiones. Manejo de formatos para exportar modelos PVT con fines de cálculo de HIIP, simulación de yacimientos (aceite negro, composicional, crudo pesado y extra-pesado), ingeniería analítica de yacimientos y producción.', 'Específica', '1026292916E_3', '2025-03-20 14:57:18', '2025-03-20 14:57:18', 'ACTIVO'),
 (158, 'Función', 'Funciones especificas del cargo', 'Específica', '10297751E_1', '2025-03-20 14:57:19', '2025-03-20 14:57:19', 'ACTIVO'),
 (158, 'Función', 'Realizar el seguimiento de producción/ inyección de pozos intervenidos con base en los comportamientos de producción previo y posterior a la intervención', 'Específica', '10297751E_10', '2025-03-20 14:57:19', '2025-03-20 14:57:19', 'ACTIVO'),
@@ -5620,8 +5596,7 @@ ALTER TABLE `evaluacion_promedios`
 -- Filtros para la tabla `detalle_evaluacion`
 --
 ALTER TABLE `detalle_evaluacion`
-  ADD CONSTRAINT `fk_detalle_eval_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_detalle_eval_funcion` FOREIGN KEY (`id_funcion`) REFERENCES `funciones` (`hoja_funciones`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_detalle_eval_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `empleados`

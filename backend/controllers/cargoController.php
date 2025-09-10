@@ -522,39 +522,8 @@ class CargoController {
         $idCargo = $cargo['id_cargo'];
         $stmt->close();
         
-        // Buscamos funciones específicas en la tabla funciones
-        $sql = "SELECT * FROM funciones WHERE id_cargo = ?";
-        $stmt = $db->prepare($sql);
-        
-        if (!$stmt) {
-            http_response_code(500);
-            echo json_encode([
-                "success" => false, 
-                "message" => "Error al preparar la consulta", 
-                "detalle" => $db->error
-            ]);
-            return;
-        }
-        
-        $stmt->bind_param("i", $idCargo);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $funciones = [];
-        
-        if ($result->num_rows > 0) {
-            // Si encontramos funciones específicas, las usamos
-            while ($row = $result->fetch_assoc()) {
-                $funciones[] = [
-                    "id" => count($funciones) + 1,
-                    "descripcion" => $row['descripcion_funcion'] ?: $row['titulo_funcion']
-                ];
-            }
-        } else {
-            // Si no hay funciones específicas, generamos desde el objetivo del cargo
-            $funciones = $this->generarFuncionesDesdeCargo($idCargo);
-        }
-        
-        $stmt->close();
+        // Generamos las funciones desde el objetivo del cargo (tabla funciones eliminada)
+        $funciones = $this->generarFuncionesDesdeCargo($idCargo);
         
         // Devolvemos las funciones
         echo json_encode([
@@ -650,74 +619,8 @@ class CargoController {
         $idCargo = $cargo['id_cargo'];
         $stmt->close();
         
-        // Primero, intentamos obtener funciones completas de la tabla "funciones"
-        $sql = "SELECT * FROM funciones WHERE id_cargo = ?";
-        $stmt = $db->prepare($sql);
-        
-        if (!$stmt) {
-            return [];
-        }
-        
-        $stmt->bind_param("i", $idCargo);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $funciones = [];
-        
-        if ($result->num_rows > 0) {
-            // Si encontramos funciones específicas, las usamos
-            while ($row = $result->fetch_assoc()) {
-                if (!empty($row['descripcion_funcion'])) {
-                    $funciones[] = [
-                        "id" => count($funciones) + 1,
-                        "descripcion" => $row['descripcion_funcion']
-                    ];
-                } else if (!empty($row['titulo_funcion'])) {
-                    $funciones[] = [
-                        "id" => count($funciones) + 1,
-                        "descripcion" => $row['titulo_funcion']
-                    ];
-                }
-            }
-        }
-        
-        // Si no encontramos funciones en la tabla, intentamos usar el objetivo del cargo como un todo
-        if (empty($funciones)) {
-            $sql = "SELECT objetivo_cargo FROM cargo WHERE id_cargo = ?";
-            $stmt = $db->prepare($sql);
-            
-            if ($stmt) {
-                $stmt->bind_param("i", $idCargo);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                
-                if ($result->num_rows > 0) {
-                    $datos = $result->fetch_assoc();
-                    $objetivo = $datos['objetivo_cargo'];
-                    
-                    if (!empty($objetivo)) {
-                        // Dividir por puntos, pero manteniendo oraciones completas
-                        $pattern = '/(?<=[.!?])\s+/';
-                        $oraciones = preg_split($pattern, $objetivo, -1, PREG_SPLIT_NO_EMPTY);
-                        
-                        foreach ($oraciones as $index => $oracion) {
-                            if (strlen(trim($oracion)) > 10) {
-                                $funciones[] = [
-                                    "id" => $index + 1,
-                                    "descripcion" => trim($oracion)
-                                ];
-                            }
-                        }
-                    }
-                }
-                $stmt->close();
-            }
-        }
-        
-        // Si aún no tenemos funciones, usamos el método de generación de funciones
-        if (empty($funciones)) {
-            $funciones = $this->generarFuncionesDesdeCargo($idCargo);
-        }
-        
+        // Generar funciones exclusivamente desde el objetivo del cargo (tabla funciones eliminada)
+        $funciones = $this->generarFuncionesDesdeCargo($idCargo);
         return $funciones;
     }
 }

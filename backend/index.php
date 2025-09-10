@@ -10,7 +10,6 @@ require_once __DIR__ . '/controllers/adminController.php';
 require_once __DIR__ . '/controllers/userController.php';
 require_once __DIR__ . '/controllers/cargoController.php';
 require_once __DIR__ . '/controllers/employeeController.php';
-require_once __DIR__ . '/controllers/funcionesController.php';
 require_once __DIR__ . '/controllers/evaluationController.php';
 require_once __DIR__ . '/controllers/evaluationControllerNativo.php';
 
@@ -163,48 +162,7 @@ function handleRequest($method, $path) {
         }
     }
 
-    // Rutas para el controlador de funciones
-    if ($path === "api/funciones" && $method === "GET") {
-        $controller = new FuncionesController();
-        $controller->getAllFunciones();
-        return;
-    } elseif ($path === "api/funciones" && $method === "POST") {
-        $data = json_decode(file_get_contents("php://input"), true);
-        if (!$data) {
-            http_response_code(400);
-            echo json_encode(["success" => false, "message" => "Datos inválidos"]);
-            return;
-        }
-        $controller = new FuncionesController();
-        $controller->createFuncion($data);
-        return;
-    } elseif (preg_match("#^api/funciones/cargo/(\d+)$#", $path, $matches) && $method === "GET") {
-        $idCargo = $matches[1];
-        $controller = new FuncionesController();
-        $controller->getFuncionesByCargo($idCargo);
-        return;
-    } elseif (preg_match("#^api/funciones/hoja/([^/]+)$#", $path, $matches) && $method === "GET") {
-        $hojaFunciones = $matches[1];
-        $controller = new FuncionesController();
-        $controller->getFuncionByHoja($hojaFunciones);
-        return;
-    } elseif (preg_match("#^api/funciones/hoja/([^/]+)$#", $path, $matches) && $method === "PUT") {
-        $hojaFunciones = $matches[1];
-        $data = json_decode(file_get_contents("php://input"), true);
-        if (!$data) {
-            http_response_code(400);
-            echo json_encode(["success" => false, "message" => "Datos inválidos"]);
-            return;
-        }
-        $controller = new FuncionesController();
-        $controller->updateFuncion($hojaFunciones, $data);
-        return;
-    } elseif (preg_match("#^api/funciones/hoja/([^/]+)$#", $path, $matches) && $method === "DELETE") {
-        $hojaFunciones = $matches[1];
-        $controller = new FuncionesController();
-        $controller->deleteFuncion($hojaFunciones);
-        return;
-    }
+    // Rutas para el controlador de funciones - Eliminadas
 
     // Rutas para el controlador de empleados
     if ($path === "api/employees" && $method === "GET") {

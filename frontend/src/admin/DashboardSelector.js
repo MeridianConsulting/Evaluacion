@@ -12,9 +12,7 @@ function DashboardSelector({ onLogout }) {
     navigate('/admin/empleados');
   };
 
-  const handleFuncionesClick = () => {
-    navigate('/admin/funciones');
-  };
+  // Gestión de Funciones eliminada
 
   const handleCargosClick = () => {
     navigate('/admin/cargos');
@@ -40,15 +38,7 @@ function DashboardSelector({ onLogout }) {
               </div>
             </button>
             
-            <button 
-              className="admin-button funciones"
-              onClick={handleFuncionesClick}
-            >
-              <div className="button-content">
-                <i className="button-icon funciones-icon"></i>
-                <span>Gestión de Funciones</span>
-              </div>
-            </button>
+            {/* Botón Gestión de Funciones eliminado */}
             
             <button 
               className="admin-button cargos"

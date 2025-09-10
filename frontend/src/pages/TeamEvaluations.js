@@ -23,14 +23,19 @@ function TeamEvaluations({ onLogout, userRole }) {
           if (resp.ok) {
             const json = await resp.json();
             const rows = (json && (json.data || json.evaluaciones)) || [];
-            const mapped = rows.map(r => ({
-              id: r.id_evaluacion,
-              employeeId: r.id_empleado,
-              evaluationId: r.id_evaluacion,
-              nombre: r.nombre,
-              cargo: r.cargo,
-              evaluacionEstado: r.estado_evaluacion || 'Pendiente'
-            }));
+            const mapped = rows.map(r => {
+              const raw = (r.estado_evaluacion || '').toString().toUpperCase();
+              const display = raw === 'COMPLETADA' ? 'Evaluado' : raw === 'BORRADOR' ? 'Borrador' : (r.estado_evaluacion || 'Pendiente');
+              return {
+                id: r.id_evaluacion,
+                employeeId: r.id_empleado,
+                evaluationId: r.id_evaluacion,
+                nombre: r.nombre,
+                cargo: r.cargo,
+                statusRaw: raw,
+                evaluacionEstado: display
+              };
+            });
             setTeamMembers(mapped);
             setLoading(false);
             return;
@@ -110,7 +115,7 @@ function TeamEvaluations({ onLogout, userRole }) {
                     <td>{member.nombre}</td>
                     <td>{member.cargo || ''}</td>
                     <td>
-                      <span className={`status-badge ${(member.evaluacionEstado||'pendiente').toLowerCase().replace(' ', '-')}`}>
+                      <span className={`status-badge ${(member.evaluacionEstado||'pendiente').toLowerCase().replace(/\s+/g, '-')}`}>
                         {member.evaluacionEstado || 'Pendiente'}
                       </span>
                     </td>
@@ -119,7 +124,7 @@ function TeamEvaluations({ onLogout, userRole }) {
                         className="evaluate-button"
                         onClick={() => handleEvaluate(member)}
                       >
-                        {member.evaluacionEstado === 'Completada' ? 'Ver evaluación' : 'Evaluar'}
+                        {(member.statusRaw === 'COMPLETADA' || (member.evaluacionEstado||'').toLowerCase() === 'evaluado') ? 'Ver evaluación' : 'Evaluar'}
                       </button>
                     </td>
                   </tr>

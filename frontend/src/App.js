@@ -13,7 +13,6 @@ import PerformanceEvaluation from "./pages/PerformanceEvaluation";
 import PerformanceEvaluationBoss from "./pages/PerformanceEvaluationBoss";
 import DashboardSelector from "./admin/DashboardSelector";
 import EmpleadosCRUD from "./admin/EmpleadosCRUD";
-import FuncionesCRUD from "./admin/FuncionesCRUD";
 import CargosCRUD from "./admin/CargosCRUD";
 import TeamEvaluations from "./pages/TeamEvaluations";
 import { NotificationProvider } from "./components/NotificationSystem";
@@ -217,16 +216,7 @@ function App() {
             )
           }
         />
-        <Route
-          path="/admin/funciones"
-          element={
-            isAuthenticated && hasAccess("admin") ? (
-              <FuncionesCRUD onLogout={handleLogout} userRole={userRole} />
-            ) : (
-              <Navigate to={isAuthenticated ? "/LandingPage" : "/"} replace />
-            )
-          }
-        />
+        {/* Ruta /admin/funciones eliminada */}
         <Route
           path="/admin/cargos"
           element={

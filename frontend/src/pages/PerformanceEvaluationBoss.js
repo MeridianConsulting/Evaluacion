@@ -8,6 +8,7 @@ import { useNotification } from '../components/NotificationSystem';
 import CompletionCelebration from '../components/CompletionCelebration';
 import CompetenciasTable from "../components/CompetenciasTable";
 import CompetenciasTableBoss from "../components/CompetenciasTableBoss";
+import ValidationSummaryAlert from "../components/ValidationSummaryAlert";
 
 
 function PerformanceEvaluationBoss() {
@@ -930,7 +931,7 @@ function PerformanceEvaluationBoss() {
     }
 
     setValidationErrors(errores);
-    return isValid;
+    return { isValid, errores };
   };
 
   // Manejar cambio en datos generales
@@ -1055,18 +1056,33 @@ function PerformanceEvaluationBoss() {
     }
 
     // Validar otros campos (datos generales, mejoramiento, plan de acción)
-    const formularioValido = validarFormulario();
+    const { isValid: formularioValido, errores: erroresFormulario } = validarFormulario();
     // Fusionar errores de calificaciones y firmas con los del formulario
-    setValidationErrors(prev => ({ ...prev, ...erroresCalificaciones, ...erroresBasicos }));
+    const mergedErrors = { ...erroresCalificaciones, ...erroresBasicos, ...erroresFormulario };
+    setValidationErrors(prev => ({ ...prev, ...mergedErrors }));
     const hayErroresCalif = Object.keys(erroresCalificaciones).length > 0;
     const hayErroresFirmas = Object.keys(erroresBasicos).length > 0;
 
     if (hayErroresCalif || !formularioValido) {
       window.scrollTo(0, 0);
-      const msg = isManagerView
-        ? 'Complete las calificaciones del jefe y los campos requeridos.'
-        : 'Complete las calificaciones del trabajador y los campos requeridos.';
-      warning('Campos obligatorios', msg);
+      // Construir mensaje más descriptivo (excluyendo calificaciones del jefe y HSEQ)
+      const keys = Object.keys(mergedErrors);
+      const faltantes = [];
+      // Excluir: calificaciones del jefe y HSEQ del resumen visible
+      // if (isManagerView && faltaCalifJefe) faltantes.push('calificaciones del jefe en competencias');
+      // if (isManagerView && faltaJustJefe) faltantes.push('justificaciones del jefe (para 5, 2 o menor)');
+      if (keys.some(k => k.startsWith('competencia_worker_')) && !isManagerView) faltantes.push('calificaciones del trabajador en competencias');
+      if (keys.some(k => k.startsWith('planAccion_'))) faltantes.push('plan de acción');
+      if (keys.includes('employeeSignature')) faltantes.push('firma del Evaluado');
+      if (keys.includes('bossSignature')) faltantes.push('firma del Jefe Directo');
+      if (keys.some(k => k.startsWith('datosGenerales_'))) faltantes.push('datos generales');
+      if (keys.includes('fortalezas')) faltantes.push('Fortalezas');
+      if (keys.includes('aspectosMejorar')) faltantes.push('Aspectos a mejorar');
+
+      const resumen = faltantes.length ? `Faltan: ${faltantes.join(', ')}.` : (isManagerView
+        ? 'Complete los campos requeridos.'
+        : 'Complete las calificaciones del trabajador y los campos requeridos.');
+      warning('Campos obligatorios', resumen);
       return;
     }
 
@@ -1087,7 +1103,7 @@ function PerformanceEvaluationBoss() {
       warning('Firmas requeridas', mensaje);
       return;
     }
-    // Preparar payload para endpoint PUT revision-jefe
+    // Preparar payload para endpoint de actualización nativo (POST)
     try {
       setIsSubmitting(true);
       const apiUrl = process.env.REACT_APP_API_BASE_URL;
@@ -1097,18 +1113,73 @@ function PerformanceEvaluationBoss() {
         return;
       }
       const jefeId = datosGenerales.idEvaluador || localStorage.getItem('employeeId') || '';
-      const firmaJefeB64 = await fileToBase64(bossSignature);
-      const payload = {
-        jefeId: String(jefeId || ''),
-        competencias: rows.map(r => ({ id: r.id, calificacion_jefe: Number(r.boss) || 0, justificacion_jefe: r.justificacionJefe || '' })),
-        firma_jefe: firmaJefeB64 || '',
-        comentarios_jefe: comentariosJefe || '',
-        finalizar: Boolean(finalizar)
-      };
-      const response = await fetch(`${apiUrl}/api/evaluaciones/${existingEvaluationId}/revision-jefe`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+
+      // Construir FormData según API nativa
+      const fd = new FormData();
+      fd.append('evaluationId', String(existingEvaluationId));
+
+      // Competencias según estructura esperada por backend nativo
+      const competenciasData = rows.map(r => ({
+        id: r.id,
+        aspecto: r.aspecto,
+        worker: (r.worker ?? '') === 0 ? '' : String(r.worker ?? ''),
+        boss: (r.boss ?? '') === 0 ? '' : String(r.boss ?? ''),
+        average: String(r.average ?? '')
+      }));
+      fd.append('competenciasData', JSON.stringify(competenciasData));
+
+      // HSEQ (si se habilita en el futuro)
+      if (HSEQ_ENABLED) {
+        const hseqPayload = hseqItems.map(item => ({
+          id: item.id,
+          responsabilidad: item.responsabilidad,
+          calificacion: String(item.calificacion ?? ''),
+          autoevaluacion: String(item.autoevaluacion ?? ''),
+          evaluacionJefe: String(item.evaluacionJefe ?? ''),
+        }));
+        fd.append('hseqData', JSON.stringify(hseqPayload));
+      } else {
+        fd.append('hseqData', JSON.stringify([]));
+      }
+
+      // Mejoramiento
+      fd.append('mejoramiento', JSON.stringify({
+        fortalezas: mejoramiento.fortalezas || '',
+        aspectosMejorar: mejoramiento.aspectosMejorar || ''
+      }));
+
+      // Plan de acción: enviar el primero no vacío (API espera objeto, no arreglo)
+      const firstFilledPlan = (planesAccion.find(p =>
+        [p.actividad, p.responsable, p.seguimiento, p.fecha]
+          .some(v => String(v || '').trim() !== '')
+      ) || planesAccion[0] || { actividad: '', responsable: '', seguimiento: '', fecha: '' });
+      fd.append('planesAccion', JSON.stringify({
+        actividad: firstFilledPlan.actividad || '',
+        responsable: firstFilledPlan.responsable || '',
+        seguimiento: firstFilledPlan.seguimiento || '',
+        fecha: firstFilledPlan.fecha || ''
+      }));
+
+      // Promedios
+      const promedioCompetenciasVal = Number(calcularPromedioCompetencias()) || 0;
+      const promedioHseqVal = Number(HSEQ_ENABLED ? calcularPromedioHseq() : 0) || 0;
+      const partes = [promedioCompetenciasVal, promedioHseqVal].filter(n => n > 0);
+      const promedioGeneralVal = partes.length ? (partes.reduce((a,b)=>a+b,0) / partes.length) : promedioCompetenciasVal;
+      fd.append('promedioCompetencias', String(promedioCompetenciasVal));
+      fd.append('hseqAverage', String(promedioHseqVal));
+      fd.append('generalAverage', String(promedioGeneralVal));
+      fd.append('groupAverages', JSON.stringify(calcularPromediosPorApartado()));
+
+      // Firma del jefe como archivo si existe
+      if (bossSignature instanceof File) {
+        fd.append('bossSignature', bossSignature);
+      }
+
+      // Comentarios del jefe (no hay campo dedicado en API; se podría incluir en mejoramiento si se necesita)
+
+      const response = await fetch(`${apiUrl}/api/evaluations/update-native`, {
+        method: 'POST',
+        body: fd
       });
       const data = await response.json();
 
