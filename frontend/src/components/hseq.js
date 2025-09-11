@@ -8,8 +8,22 @@ function Hseq({
   getHseqErrorStyle
 }) {
   return (
-    <section className="evaluation-section">
-      <table className="hseq-table">
+    <section className="evaluation-section" style={{ overflow: 'hidden' }}>
+      <div style={{ 
+        width: '100%', 
+        overflowX: 'auto',
+        overflowY: 'visible',
+        border: '1px solid #e5e7eb',
+        borderRadius: '8px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      }}>
+        <table className="hseq-table" style={{ 
+          width: '100%', 
+          minWidth: '800px',
+          borderCollapse: 'collapse',
+          margin: 0,
+          tableLayout: 'fixed'
+        }}>
         <thead>
           <tr>
             <th 
@@ -30,7 +44,7 @@ function Hseq({
           </tr>
           <tr>
             <th style={{ 
-              width: "70%", 
+              width: "60%", 
               background: "#1E2A3A", 
               color: "#FFFFFF", 
               textAlign: "center",
@@ -44,7 +58,7 @@ function Hseq({
               borderRight: "1px solid rgba(51,51,51,0.5)"
             }}>RESPONSABILIDAD</th>
             <th style={{ 
-              width: "15%", 
+              width: "20%", 
               background: "#1E2A3A", 
               color: "#FFFFFF",
               textAlign: "center",
@@ -58,7 +72,7 @@ function Hseq({
               borderRight: "1px solid rgba(51,51,51,0.5)"
             }}>CALIFICACIÓN HSEQ</th>
             <th style={{ 
-              width: "15%", 
+              width: "20%", 
               background: "#1E2A3A", 
               color: "#FFFFFF",
               textAlign: "center",
@@ -76,13 +90,34 @@ function Hseq({
         <tbody>
           {hseqItems.map(item => (
             <tr key={item.id}>
-              <td style={{ backgroundColor: "#fff", padding: "0.5rem" }}>{item.responsabilidad}</td>
-              <td className="text-center" style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+              <td style={{ 
+                backgroundColor: "#fff", 
+                padding: "0.8rem", 
+                fontSize: "0.9rem",
+                lineHeight: "1.4",
+                wordWrap: "break-word",
+                verticalAlign: "top"
+              }}>
+                {item.responsabilidad}
+              </td>
+              <td className="text-center" style={{ 
+                backgroundColor: "#fff", 
+                padding: "0.8rem 0.4rem",
+                verticalAlign: "top"
+              }}>
                 <select
                   className="rating-select"
                   value={item.evaluacionJefe}
                   onChange={(e) => handleHseqChange(item.id, "evaluacionJefe", e.target.value)}
-                  style={getHseqErrorStyle(item.id, 'evaluacionJefe')}
+                  style={{
+                    ...getHseqErrorStyle(item.id, 'evaluacionJefe'),
+                    width: "100%",
+                    padding: "0.5rem",
+                    border: "1px solid #d1d5db",
+                    borderRadius: "4px",
+                    fontSize: "0.9rem",
+                    backgroundColor: "#fff"
+                  }}
                 >
                   <option value="">1 - 5</option>
                   <option value="1">1 - No Cumple</option>
@@ -92,27 +127,56 @@ function Hseq({
                   <option value="5">5 - Excelente</option>
                 </select>
               </td>
-              <td style={{ backgroundColor: "#fff", padding: "0.5rem" }}>
+              <td style={{ 
+                backgroundColor: "#fff", 
+                padding: "0.8rem",
+                verticalAlign: "top"
+              }}>
                 <textarea
                   className="hseq-textarea"
-                  rows={1}
+                  rows={2}
                   placeholder="Justificación HSEQ"
                   value={item.justificacionJefe || ''}
                   onChange={(e)=> handleHseqJustificacionChange(item.id, 'justificacionJefe', e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "0.5rem",
+                    border: "1px solid #d1d5db",
+                    borderRadius: "4px",
+                    fontSize: "0.9rem",
+                    resize: "vertical",
+                    minHeight: "60px",
+                    fontFamily: "inherit"
+                  }}
                 />
               </td>
             </tr>
           ))}
           <tr>
-            <td className="hseq-promedio" style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}>
+            <td className="hseq-promedio" style={{ 
+              fontWeight: "bold", 
+              backgroundColor: "#f5f5f5",
+              padding: "0.8rem",
+              fontSize: "1rem",
+              borderTop: "2px solid #1F3B73"
+            }}>
               PROMEDIO CALIFICACIÓN HSEQ:
             </td>
-            <td colSpan={2} className="hseq-promedio-valor" style={{ backgroundColor: "#f5f5f5" }}>
+            <td colSpan={2} className="hseq-promedio-valor" style={{ 
+              backgroundColor: "#f5f5f5",
+              padding: "0.8rem",
+              fontSize: "1.1rem",
+              fontWeight: "bold",
+              color: "#1F3B73",
+              textAlign: "center",
+              borderTop: "2px solid #1F3B73"
+            }}>
               {calcularPromedioHseq()}
             </td>
           </tr>
         </tbody>
-      </table>
+        </table>
+      </div>
     </section>
   );
 }
