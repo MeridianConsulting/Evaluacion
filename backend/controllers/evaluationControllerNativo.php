@@ -129,7 +129,7 @@ class EvaluationControllerNativo {
                     throw new Exception('Error al preparar INSERT evaluacion: ' . $this->db->error);
                 }
                 // Determinar estado según el flujo de trabajo
-                $estado = $this->determinarEstadoEvaluacion($employeeSignaturePath, $bossSignaturePath, false);
+                $estado = $this->determinarEstadoEvaluacion($employeeSignaturePath, $bossSignaturePath, false, null);
                 $stmtEval->bind_param('issi', $employeeId, $periodoEvaluacion, $estado, $bossId);
                 if (!$stmtEval->execute()) {
                     throw new Exception('Error al ejecutar INSERT evaluacion: ' . $stmtEval->error);
@@ -138,6 +138,9 @@ class EvaluationControllerNativo {
                 $stmtEval->close();
 
                 error_log("Evaluación principal creada con ID: $evaluationId");
+
+                // Registrar el estado inicial en el historial
+                $this->registrarCambioEstadoConAnterior($evaluationId, null, $estado, $employeeId);
 
                 // 2. Guardar datos de mejoramiento
                 if ($mejoramiento) {
@@ -251,15 +254,23 @@ class EvaluationControllerNativo {
 
             $this->db->begin_transaction();
             try {
+                // Obtener el estado anterior ANTES de actualizarlo
+                $stmtAnterior = $this->db->prepare("SELECT estado_evaluacion FROM evaluacion WHERE id_evaluacion = ?");
+                $stmtAnterior->bind_param('i', $evaluationId);
+                $stmtAnterior->execute();
+                $resultAnterior = $stmtAnterior->get_result();
+                $estadoAnterior = $resultAnterior->fetch_assoc()['estado_evaluacion'] ?? null;
+                $stmtAnterior->close();
+                
                 // Determinar nuevo estado según el flujo de trabajo
-                $estado = $this->determinarEstadoEvaluacion($employeeSignaturePath, $bossSignaturePath, true);
+                $estado = $this->determinarEstadoEvaluacion($employeeSignaturePath, $bossSignaturePath, true, $evaluationId);
                 $stmt = $this->db->prepare("UPDATE evaluacion SET estado_evaluacion = ?, fecha_actualizacion = NOW() WHERE id_evaluacion = ?");
                 $stmt->bind_param('si', $estado, $evaluationId);
                 $stmt->execute();
                 $stmt->close();
                 
-                // Registrar cambio de estado en el historial
-                $this->registrarCambioEstado($evaluationId, $estado, $employeeId);
+                // Registrar cambio de estado en el historial con el estado anterior correcto
+                $this->registrarCambioEstadoConAnterior($evaluationId, $estadoAnterior, $estado, $employeeId);
 
                 // Limpiar y reinsertar detalles para reflejar la última edición
                 $this->db->query("DELETE FROM evaluacion_competencias WHERE id_evaluacion = " . (int)$evaluationId);
@@ -466,18 +477,20 @@ class EvaluationControllerNativo {
     private function saveMejoramiento($evaluationId, $mejoramiento) {
         $stmt = $this->db->prepare("
             INSERT INTO evaluacion_mejoramiento 
-            (id_evaluacion, fortalezas, aspectos_mejorar) 
-            VALUES (?, ?, ?)
+            (id_evaluacion, fortalezas, aspectos_mejorar, comentarios_jefe) 
+            VALUES (?, ?, ?, ?)
         ");
         if (!$stmt) {
             throw new Exception('Error al preparar INSERT mejoramiento: ' . $this->db->error);
         }
         $fortalezas = $mejoramiento['fortalezas'] ?? '';
         $aspectosMejorar = $mejoramiento['aspectosMejorar'] ?? '';
-        $stmt->bind_param('iss', 
+        $comentariosJefe = $mejoramiento['comentariosJefe'] ?? '';
+        $stmt->bind_param('isss', 
             $evaluationId,
             $fortalezas,
-            $aspectosMejorar
+            $aspectosMejorar,
+            $comentariosJefe
         );
         if (!$stmt->execute()) {
             throw new Exception('Error al ejecutar INSERT mejoramiento: ' . $stmt->error);
@@ -491,19 +504,21 @@ class EvaluationControllerNativo {
     private function savePlanAccion($evaluationId, $planAccion) {
         $stmt = $this->db->prepare("
             INSERT INTO evaluacion_plan_accion 
-            (id_evaluacion, actividad, responsable, seguimiento, fecha) 
-            VALUES (?, ?, ?, ?, ?)
+            (id_evaluacion, actividad, responsable, seguimiento, fecha, comentarios_jefe) 
+            VALUES (?, ?, ?, ?, ?, ?)
         ");
         $actividad = $planAccion['actividad'] ?? '';
         $responsable = $planAccion['responsable'] ?? '';
         $seguimiento = $planAccion['seguimiento'] ?? '';
         $fecha = $planAccion['fecha'] ?? '';
-        $stmt->bind_param('issss', 
+        $comentariosJefe = $planAccion['comentariosJefe'] ?? '';
+        $stmt->bind_param('isssss', 
             $evaluationId,
             $actividad,
             $responsable,
             $seguimiento,
-            $fecha
+            $fecha,
+            $comentariosJefe
         );
         $stmt->execute();
         $stmt->close();
@@ -1694,16 +1709,33 @@ class EvaluationControllerNativo {
      * 2. Evaluación del Líder Inmediato
      * 3. Evaluación HSEQ Institucional
      */
-    private function determinarEstadoEvaluacion($employeeSignaturePath, $bossSignaturePath, $isUpdate = false) {
-        // Si es una actualización, verificar el estado actual
+    private function determinarEstadoEvaluacion($employeeSignaturePath, $bossSignaturePath, $isUpdate = false, $evaluationId = null) {
+        // Si es una actualización, verificar el estado actual de la evaluación
         if ($isUpdate) {
-            // En actualizaciones, el estado depende de qué firmas están presentes
+            // Obtener el estado actual de la evaluación
+            $stmt = $this->db->prepare("SELECT estado_evaluacion FROM evaluacion WHERE id_evaluacion = ?");
+            $stmt->bind_param('i', $evaluationId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $estadoActual = $result->fetch_assoc()['estado_evaluacion'] ?? 'AUTOEVALUACION_PENDIENTE';
+            $stmt->close();
+            
+            // Lógica de progresión de estados basada en las firmas presentes
+            // Si ambas firmas están presentes, debe estar en EVALUACION_JEFE_COMPLETADA
             if ($employeeSignaturePath && $bossSignaturePath) {
-                return 'EVALUACION_JEFE_COMPLETADA'; // Listo para HSEQ
-            } elseif ($employeeSignaturePath) {
-                return 'AUTOEVALUACION_COMPLETADA'; // Pendiente del jefe
-            } else {
-                return 'AUTOEVALUACION_PENDIENTE'; // Pendiente autoevaluación
+                return 'EVALUACION_JEFE_COMPLETADA';
+            }
+            // Si solo la firma del empleado está presente
+            elseif ($employeeSignaturePath) {
+                return 'AUTOEVALUACION_COMPLETADA';
+            }
+            // Si solo la firma del jefe está presente (caso raro, pero posible)
+            elseif ($bossSignaturePath) {
+                return 'AUTOEVALUACION_PENDIENTE';
+            }
+            // Si no hay firmas
+            else {
+                return 'AUTOEVALUACION_PENDIENTE';
             }
         } else {
             // Para nuevas evaluaciones
@@ -1735,6 +1767,27 @@ class EvaluationControllerNativo {
             $stmtHist->bind_param('issi', $evaluationId, $estadoAnterior, $nuevoEstado, $usuarioId);
             $stmtHist->execute();
             $stmtHist->close();
+
+            // Actualizar fechas específicas según el estado
+            $this->actualizarFechasEstado($evaluationId, $nuevoEstado);
+        } catch (Exception $e) {
+            error_log("Error al registrar cambio de estado: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Registra un cambio de estado en el historial con el estado anterior ya conocido
+     */
+    private function registrarCambioEstadoConAnterior($evaluationId, $estadoAnterior, $nuevoEstado, $usuarioId) {
+        try {
+            // Solo registrar si el estado realmente cambió
+            if ($estadoAnterior !== $nuevoEstado) {
+                // Insertar en el historial
+                $stmtHist = $this->db->prepare("INSERT INTO evaluacion_estado_historial (id_evaluacion, estado_anterior, estado_nuevo, id_usuario_cambio) VALUES (?, ?, ?, ?)");
+                $stmtHist->bind_param('issi', $evaluationId, $estadoAnterior, $nuevoEstado, $usuarioId);
+                $stmtHist->execute();
+                $stmtHist->close();
+            }
 
             // Actualizar fechas específicas según el estado
             $this->actualizarFechasEstado($evaluationId, $nuevoEstado);

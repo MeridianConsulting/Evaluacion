@@ -50,7 +50,8 @@ function PerformanceEvaluationBoss() {
       actividad: '',
       responsable: '',
       seguimiento: '',
-      fecha: ''
+      fecha: '',
+      comentariosJefe: ''
     }
   ]);
   const [comentariosJefe, setComentariosJefe] = useState('');
@@ -149,6 +150,10 @@ function PerformanceEvaluationBoss() {
             fortalezas: data.mejoramiento.fortalezas || '',
             aspectosMejorar: data.mejoramiento.aspectos_mejorar || data.mejoramiento.aspectosMejorar || ''
           });
+          // Cargar comentarios del jefe si existen
+          if (data.mejoramiento.comentarios_jefe) {
+            setComentariosJefe(data.mejoramiento.comentarios_jefe);
+          }
         }
 
         // Plan de acción (si viene uno)
@@ -159,7 +164,8 @@ function PerformanceEvaluationBoss() {
             actividad: data.plan_accion.actividad || '',
             responsable: data.plan_accion.responsable || '',
             seguimiento: data.plan_accion.seguimiento || '',
-            fecha: fechaPlan
+            fecha: fechaPlan,
+            comentariosJefe: data.plan_accion.comentarios_jefe || ''
           }]);
         }
 
@@ -893,19 +899,21 @@ function PerformanceEvaluationBoss() {
       // Mejoramiento
       fd.append('mejoramiento', JSON.stringify({
         fortalezas: mejoramiento.fortalezas || '',
-        aspectosMejorar: mejoramiento.aspectosMejorar || ''
+        aspectosMejorar: mejoramiento.aspectosMejorar || '',
+        comentariosJefe: comentariosJefe || ''
       }));
 
       // Plan de acción: enviar el primero no vacío (API espera objeto, no arreglo)
       const firstFilledPlan = (planesAccion.find(p =>
         [p.actividad, p.responsable, p.seguimiento, p.fecha]
           .some(v => String(v || '').trim() !== '')
-      ) || planesAccion[0] || { actividad: '', responsable: '', seguimiento: '', fecha: '' });
+      ) || planesAccion[0] || { actividad: '', responsable: '', seguimiento: '', fecha: '', comentariosJefe: '' });
       fd.append('planesAccion', JSON.stringify({
         actividad: firstFilledPlan.actividad || '',
         responsable: firstFilledPlan.responsable || '',
         seguimiento: firstFilledPlan.seguimiento || '',
-        fecha: firstFilledPlan.fecha || ''
+        fecha: firstFilledPlan.fecha || '',
+        comentariosJefe: firstFilledPlan.comentariosJefe || ''
       }));
 
       // Promedios
@@ -1145,13 +1153,15 @@ function PerformanceEvaluationBoss() {
         ]);
         
         setMejoramiento({ fortalezas: '', aspectosMejorar: '' });
+        setComentariosJefe('');
         setPlanesAccion([
           {
             id: 1,
             actividad: '',
             responsable: '',
             seguimiento: '',
-            fecha: ''
+            fecha: '',
+            comentariosJefe: ''
           }
         ]);
         setEmployeeSignature(null);
@@ -1527,7 +1537,7 @@ function PerformanceEvaluationBoss() {
               {/* Barra de título "PLAN DE ACCIÓN" con un ÚNICO gradiente */}
               <tr>
                 <th
-                  colSpan={4}
+                  colSpan={isManagerView ? 5 : 4}
                   style={{
                     background: "linear-gradient(90deg, #1F3B73 0%, #0A0F1A 100%)",
                     color: "#FFFFFF",
@@ -1556,7 +1566,7 @@ function PerformanceEvaluationBoss() {
                   borderLeft: "1px solid #243447",
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)",
-                  width: "25%"
+                  width: isManagerView ? "20%" : "25%"
                 }}>Actividades</th>
                 <th style={{ 
                   background: "#1E2A3A", 
@@ -1570,7 +1580,7 @@ function PerformanceEvaluationBoss() {
                   borderLeft: "1px solid #243447",
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)",
-                  width: "25%"
+                  width: isManagerView ? "20%" : "25%"
                 }}>Responsable</th>
                 <th style={{ 
                   background: "#1E2A3A", 
@@ -1584,7 +1594,7 @@ function PerformanceEvaluationBoss() {
                   borderLeft: "1px solid #243447",
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)",
-                  width: "25%"
+                  width: isManagerView ? "20%" : "25%"
                 }}>Seguimiento</th>
                 <th style={{ 
                   background: "#1E2A3A", 
@@ -1598,8 +1608,24 @@ function PerformanceEvaluationBoss() {
                   borderLeft: "1px solid #243447",
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)",
-                  width: "25%"
+                  width: isManagerView ? "20%" : "25%"
                 }}>Fecha</th>
+                {isManagerView && (
+                  <th style={{ 
+                    background: "#1E2A3A", 
+                    color: "#FFFFFF",
+                    textAlign: "center",
+                    padding: "0.6rem 0.4rem",
+                    fontWeight: "bold",
+                    fontSize: "0.9rem",
+                    height: "24px",
+                    borderTop: "1px solid #1E2A3A",
+                    borderLeft: "1px solid #243447",
+                    borderBottom: "1px solid #243447",
+                    borderRight: "1px solid rgba(51,51,51,0.5)",
+                    width: "20%"
+                  }}>Comentarios del Jefe</th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -1681,6 +1707,26 @@ function PerformanceEvaluationBoss() {
                       </button>
                     )}
                   </td>
+                  {isManagerView && (
+                    <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                      <textarea 
+                        rows="2"
+                        className="plan-accion-input"
+                        placeholder="Comentarios del jefe"
+                        value={plan.comentariosJefe}
+                        onChange={(e) => handlePlanAccionChange(plan.id, 'comentariosJefe', e.target.value)}
+                        style={{
+                          width: '100%',
+                          minHeight: '40px',
+                          resize: 'vertical',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '4px',
+                          padding: '8px',
+                          fontSize: '14px'
+                        }}
+                      />
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
