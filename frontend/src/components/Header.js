@@ -68,11 +68,16 @@ function Header({ onLogout, userRole: propUserRole }) {
           setHasAssignedAsEvaluator(false);
           return;
         }
-        const resp = await fetch(`${apiUrl}/api/evaluations/assigned/${currentUserId}`);
+        
+        // Verificar si tiene evaluaciones HSEQ asignadas para el período actual
+        const periodo = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+        const resp = await fetch(`${apiUrl}/api/evaluations/hseq-evaluated/${currentUserId}/${periodo}`);
+        
         if (!resp.ok) {
           setHasAssignedAsEvaluator(false);
           return;
         }
+        
         const data = await resp.json();
         const assigned = (data && (data.data || data.evaluaciones || data)) || [];
         setHasAssignedAsEvaluator(Array.isArray(assigned) && assigned.length > 0);
@@ -166,7 +171,7 @@ function Header({ onLogout, userRole: propUserRole }) {
           </div>
         </div>
       </nav>
-        <style jsx>{`
+        <style>{`
           .navbar {
             display: flex;
             align-items: center;

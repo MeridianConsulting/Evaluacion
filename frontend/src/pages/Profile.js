@@ -68,7 +68,7 @@ const Profile = ({ onLogout, userRole }) => {
     <div className="profile-page-unique">
       <Header onLogout={onLogout} userRole={userRole} />
 
-      <style jsx>{`
+      <style>{`
         .profile-wrapper { width: min(1000px, 92vw); margin: 20px auto; display: flex; flex-direction: column; gap: 24px; }
         
         /* ===== HERO ===== */

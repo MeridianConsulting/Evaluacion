@@ -97,7 +97,7 @@ function LandingPage({ onLogout }) {
 
   return (
     <div className="landing-page">
-      <style jsx>{`
+      <style>{`
         :root {
           --bg-1: #0e1a36;
           --bg-2: #1f3b73;
