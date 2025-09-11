@@ -158,12 +158,7 @@ function Header({ onLogout, userRole: propUserRole }) {
               </button>
             )}
             
-            {/* Solo administradores pueden acceder al panel de administración */}
-            {effectiveRole === "admin" && (
-              <button className="menu-item admin" onClick={() => goToPage('/admin')}>
-                Panel de Administración
-              </button>
-            )}
+            {/* Botón de administración solo se muestra como botón rápido superior para evitar duplicados */}
             
             <button className="menu-item logout" onClick={handleLogout}>
               Cerrar Sesión
