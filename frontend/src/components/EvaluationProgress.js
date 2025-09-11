@@ -21,15 +21,15 @@ const EvaluationProgress = ({ estado, isManagerView = false }) => {
   // Función para obtener el porcentaje de progreso
   const getProgresoPorcentaje = (estado) => {
     const progresos = {
-      'AUTOEVALUACION_PENDIENTE': 20,
-      'AUTOEVALUACION_COMPLETADA': 40,
-      'EVALUACION_JEFE_PENDIENTE': 40,
-      'EVALUACION_JEFE_COMPLETADA': 60,
-      'HSEQ_PENDIENTE': 60,
-      'HSEQ_COMPLETADA': 80,
+      'AUTOEVALUACION_PENDIENTE': 0,
+      'AUTOEVALUACION_COMPLETADA': 50,
+      'EVALUACION_JEFE_PENDIENTE': 50,
+      'EVALUACION_JEFE_COMPLETADA': 100,
+      'HSEQ_PENDIENTE': 100,
+      'HSEQ_COMPLETADA': 100,
       'EVALUACION_FINALIZADA': 100,
-      'BORRADOR': 10,
-      'COMPLETADA': 80,
+      'BORRADOR': 0,
+      'COMPLETADA': 100,
       'APROBADA': 100
     };
     return progresos[estado] || 0;
@@ -100,9 +100,9 @@ const EvaluationProgress = ({ estado, isManagerView = false }) => {
             style={{
               height: '100%',
               width: `${progreso}%`,
-              background: progreso < 40 
+              background: progreso < 50 
                 ? 'linear-gradient(90deg, #dc3545, #fd7e14)'
-                : progreso < 80
+                : progreso < 100
                 ? 'linear-gradient(90deg, #ffc107, #fd7e14)'
                 : 'linear-gradient(90deg, #28a745, #20c997)',
               transition: 'width 0.5s ease',
@@ -123,7 +123,7 @@ const EvaluationProgress = ({ estado, isManagerView = false }) => {
             width: '12px',
             height: '12px',
             borderRadius: '50%',
-            backgroundColor: progreso >= 20 ? '#28a745' : '#e9ecef',
+            backgroundColor: progreso >= 50 ? '#28a745' : '#e9ecef',
             margin: '0 auto 4px',
             border: '2px solid white',
             boxShadow: '0 0 0 1px #ddd'
@@ -135,7 +135,7 @@ const EvaluationProgress = ({ estado, isManagerView = false }) => {
             width: '12px',
             height: '12px',
             borderRadius: '50%',
-            backgroundColor: progreso >= 60 ? '#28a745' : '#e9ecef',
+            backgroundColor: progreso >= 100 ? '#28a745' : '#e9ecef',
             margin: '0 auto 4px',
             border: '2px solid white',
             boxShadow: '0 0 0 1px #ddd'
@@ -147,7 +147,7 @@ const EvaluationProgress = ({ estado, isManagerView = false }) => {
             width: '12px',
             height: '12px',
             borderRadius: '50%',
-            backgroundColor: progreso >= 80 ? '#28a745' : '#e9ecef',
+            backgroundColor: progreso >= 100 ? '#28a745' : '#e9ecef',
             margin: '0 auto 4px',
             border: '2px solid white',
             boxShadow: '0 0 0 1px #ddd'

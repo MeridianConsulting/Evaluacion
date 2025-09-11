@@ -262,7 +262,7 @@ class EvaluationControllerNativo {
                 $estadoAnterior = $resultAnterior->fetch_assoc()['estado_evaluacion'] ?? null;
                 $stmtAnterior->close();
                 
-                // Determinar nuevo estado según el flujo de trabajo
+                // Determinar nuevo estado según el flujo de trabajo (basado en firmas existentes o adjuntas)
                 $estado = $this->determinarEstadoEvaluacion($employeeSignaturePath, $bossSignaturePath, true, $evaluationId);
                 $stmt = $this->db->prepare("UPDATE evaluacion SET estado_evaluacion = ?, fecha_actualizacion = NOW() WHERE id_evaluacion = ?");
                 $stmt->bind_param('si', $estado, $evaluationId);
@@ -270,7 +270,8 @@ class EvaluationControllerNativo {
                 $stmt->close();
                 
                 // Registrar cambio de estado en el historial con el estado anterior correcto
-                $this->registrarCambioEstadoConAnterior($evaluationId, $estadoAnterior, $estado, $employeeId);
+                $usuarioCambioId = isset($_POST['usuarioId']) ? (int)$_POST['usuarioId'] : (isset($_POST['bossId']) ? (int)$_POST['bossId'] : null);
+                $this->registrarCambioEstadoConAnterior($evaluationId, $estadoAnterior, $estado, $usuarioCambioId);
 
                 // Limpiar y reinsertar detalles para reflejar la última edición
                 $this->db->query("DELETE FROM evaluacion_competencias WHERE id_evaluacion = " . (int)$evaluationId);
@@ -1719,29 +1720,33 @@ class EvaluationControllerNativo {
             $result = $stmt->get_result();
             $estadoActual = $result->fetch_assoc()['estado_evaluacion'] ?? 'AUTOEVALUACION_PENDIENTE';
             $stmt->close();
-            
-            // Lógica de progresión de estados basada en las firmas presentes
-            // Si ambas firmas están presentes, debe estar en EVALUACION_JEFE_COMPLETADA
-            if ($employeeSignaturePath && $bossSignaturePath) {
-                return 'EVALUACION_JEFE_COMPLETADA';
+
+            // Consultar firmas ya existentes en BD para esta evaluación
+            $stmtF = $this->db->prepare("SELECT firma_empleado, firma_jefe FROM evaluacion_firmas WHERE id_evaluacion = ?");
+            $stmtF->bind_param('i', $evaluationId);
+            $stmtF->execute();
+            $resF = $stmtF->get_result()->fetch_assoc();
+            $stmtF->close();
+
+            $hasEmployeeSignature = !empty($employeeSignaturePath) || (!empty($resF['firma_empleado'] ?? ''));
+            $hasBossSignature     = !empty($bossSignaturePath)      || (!empty($resF['firma_jefe'] ?? ''));
+
+            // Lógica de progresión de estados basada en firmas (no retroceder estados)
+            if ($hasEmployeeSignature && $hasBossSignature) {
+                return 'EVALUACION_JEFE_COMPLETADA'; // 60%
             }
-            // Si solo la firma del empleado está presente
-            elseif ($employeeSignaturePath) {
-                return 'AUTOEVALUACION_COMPLETADA';
+            if ($hasEmployeeSignature && !$hasBossSignature) {
+                // Autoevaluación lista, pendiente jefe
+                return 'EVALUACION_JEFE_PENDIENTE'; // 40%
             }
-            // Si solo la firma del jefe está presente (caso raro, pero posible)
-            elseif ($bossSignaturePath) {
-                return 'AUTOEVALUACION_PENDIENTE';
-            }
-            // Si no hay firmas
-            else {
-                return 'AUTOEVALUACION_PENDIENTE';
-            }
+            // Sin firma de empleado => pendiente autoevaluación
+            return 'AUTOEVALUACION_PENDIENTE'; // 20%
         } else {
             // Para nuevas evaluaciones
             if ($employeeSignaturePath && $bossSignaturePath) {
                 return 'EVALUACION_JEFE_COMPLETADA'; // Listo para HSEQ
             } elseif ($employeeSignaturePath) {
+                // Para nuevas, se permite marcar autoevaluación como completada
                 return 'AUTOEVALUACION_COMPLETADA'; // Pendiente del jefe
             } else {
                 return 'AUTOEVALUACION_PENDIENTE'; // Pendiente autoevaluación

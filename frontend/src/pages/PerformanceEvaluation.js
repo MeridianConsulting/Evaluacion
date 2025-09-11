@@ -586,70 +586,90 @@ function PerformanceEvaluation() {
     const errores = {};
     let isValid = true;
 
+    console.log('=== DEBUG validarFormulario ===');
+    console.log('isManagerView:', isManagerView);
+
     // Validar datos generales (según modo)
     const requiredGeneralFields = isManagerView
       ? ['fechaEvaluacion']
       : ['fechaIngreso','fechaEvaluacion','area'];
+    console.log('requiredGeneralFields:', requiredGeneralFields);
     requiredGeneralFields.forEach(key => {
+      console.log(`Validando ${key}:`, datosGenerales[key]);
       if (!datosGenerales[key]) {
         errores[`datosGenerales_${key}`] = true;
         isValid = false;
+        console.log(`ERROR en ${key}: campo vacío`);
       }
     });
 
     // Validar competencias (condicional por modo)
+    console.log('Validando competencias...');
     rows.forEach((row, index) => {
       const workerOk = row.worker && String(row.worker) !== '' && String(row.worker) !== '0';
       const bossOk = row.boss && String(row.boss) !== '' && String(row.boss) !== '0';
-      if (!workerOk) {
+      
+      console.log(`Row ${index}: worker=${row.worker} (${workerOk}), boss=${row.boss} (${bossOk})`);
+      
+      // Solo validar worker en modo empleado, boss en modo jefe
+      if (!isManagerView && !workerOk) {
         errores[`worker_${index}`] = true;
         isValid = false;
+        console.log(`ERROR en competencia ${index}: worker no válido`);
       }
       if (isManagerView && !bossOk) {
         errores[`boss_${index}`] = true;
         isValid = false;
+        console.log(`ERROR en competencia ${index}: boss no válido`);
       }
     });
-
 
     // HSEQ deshabilitado - no validar
 
     // Validar mejoramiento
+    console.log('Validando mejoramiento...');
+    console.log('fortalezas:', mejoramiento.fortalezas);
+    console.log('aspectosMejorar:', mejoramiento.aspectosMejorar);
+    
     if (!mejoramiento.fortalezas.trim()) {
       errores.fortalezas = true;
       isValid = false;
+      console.log('ERROR: fortalezas vacío');
     }
     if (!mejoramiento.aspectosMejorar.trim()) {
       errores.aspectosMejorar = true;
       isValid = false;
+      console.log('ERROR: aspectosMejorar vacío');
     }
 
-    // Validar planes de acción (opcional): si un plan tiene algún campo diligenciado, exigir todos
-    planesAccion.forEach((plan, index) => {
-      const keys = Object.keys(plan).filter(k => k !== 'id');
-      const hasAny = keys.some(k => plan[k] && String(plan[k]).trim() !== '');
-      if (hasAny) {
-        keys.forEach(k => {
-          if (!plan[k] || String(plan[k]).trim() === '') {
-            errores[`planAccion_${index}_${k}`] = true;
-            isValid = false;
-          }
-        });
-      }
-    });
+    // Validar planes de acción (solo en modo jefe). Para empleado es 100% opcional
+    if (isManagerView) {
+      planesAccion.forEach((plan, index) => {
+        const keys = Object.keys(plan).filter(k => k !== 'id');
+        const hasAny = keys.some(k => plan[k] && String(plan[k]).trim() !== '');
+        if (hasAny) {
+          keys.forEach(k => {
+            if (!plan[k] || String(plan[k]).trim() === '') {
+              errores[`planAccion_${index}_${k}`] = true;
+              isValid = false;
+            }
+          });
+        }
+      });
+    }
 
-    // Validar firmas
-    if (!employeeSignature) {
+    // Validar firmas (condicional por modo)
+    if (!isManagerView && !employeeSignature) {
       errores.employeeSignature = true;
       isValid = false;
     }
-    if (isManagerView) {
-    if (!bossSignature) {
+    if (isManagerView && !bossSignature) {
       errores.bossSignature = true;
       isValid = false;
-      }
     }
 
+    console.log('Errores finales:', errores);
+    console.log('isValid final:', isValid);
     setValidationErrors(errores);
     return isValid;
   };
@@ -719,7 +739,9 @@ function PerformanceEvaluation() {
     rows.forEach((row) => {
       const workerOk = row.worker && String(row.worker) !== '' && String(row.worker) !== '0';
       const bossOk = row.boss && String(row.boss) !== '' && String(row.boss) !== '0';
-      if (!workerOk) {
+      
+      // Solo validar worker en modo empleado, boss en modo jefe
+      if (!isManagerView && !workerOk) {
         errores[`competencia_worker_${row.id}`] = true;
       }
       if (isManagerView && !bossOk) {
@@ -733,12 +755,22 @@ function PerformanceEvaluation() {
   };
 
   const handleSubmitEvaluation = async () => {
+    console.log('=== DEBUG VALIDACIÓN ===');
+    console.log('isManagerView:', isManagerView);
+    console.log('employeeSignature:', !!employeeSignature);
+    console.log('bossSignature:', !!bossSignature);
+    console.log('datosGenerales:', datosGenerales);
+    console.log('mejoramiento:', mejoramiento);
+    console.log('planesAccion:', planesAccion);
+    
     // Validar calificaciones de todas las secciones
     const erroresCalificaciones = validateAllCalifications();
+    console.log('erroresCalificaciones:', erroresCalificaciones);
 
-    // Validar promedio y firmas (ambas requeridas)
+    // Validar promedio y firmas (condicional por modo)
     const promedioCompetencias = calcularPromedioCompetencias();
     const promedioNumber = Number(promedioCompetencias);
+    console.log('promedioCompetencias:', promedioCompetencias, 'promedioNumber:', promedioNumber);
 
     const erroresBasicos = {};
     if (!isManagerView && !employeeSignature) {
@@ -747,13 +779,17 @@ function PerformanceEvaluation() {
     if (isManagerView && !bossSignature) {
       erroresBasicos.bossSignature = true;
     }
+    console.log('erroresBasicos:', erroresBasicos);
 
     // Validar otros campos (datos generales, mejoramiento, plan de acción)
     const formularioValido = validarFormulario();
+    console.log('formularioValido:', formularioValido);
+    
     // Fusionar errores de calificaciones y firmas con los del formulario
     setValidationErrors(prev => ({ ...prev, ...erroresCalificaciones, ...erroresBasicos }));
     const hayErroresCalif = Object.keys(erroresCalificaciones).length > 0;
     const hayErroresFirmas = Object.keys(erroresBasicos).length > 0;
+    console.log('hayErroresCalif:', hayErroresCalif, 'hayErroresFirmas:', hayErroresFirmas);
 
     if (hayErroresCalif || !formularioValido) {
       window.scrollTo(0, 0);
@@ -773,7 +809,7 @@ function PerformanceEvaluation() {
     if (hayErroresFirmas) {
       window.scrollTo(0, 0);
       const faltantes = [];
-      if (!employeeSignature) faltantes.push('Evaluado');
+      if (!isManagerView && !employeeSignature) faltantes.push('Evaluado');
       if (isManagerView && !bossSignature) faltantes.push('Jefe Directo');
       const mensaje = faltantes.length === 2 
         ? 'Las firmas del Evaluado y del Jefe Directo son obligatorias.' 
@@ -1211,10 +1247,18 @@ function PerformanceEvaluation() {
       </div>
 
       {/* Componente de progreso de evaluación */}
-      <EvaluationProgress 
-        estado={currentEvaluationState} 
-        isManagerView={isManagerView} 
-      />
+      {(() => {
+        // En vista de empleado, mostrar 50% (UI) durante la autoevaluación
+        const uiEstado = !isManagerView
+          ? 'AUTOEVALUACION_COMPLETADA'
+          : currentEvaluationState;
+        return (
+          <EvaluationProgress 
+            estado={uiEstado} 
+            isManagerView={isManagerView} 
+          />
+        );
+      })()}
 
       {/* Alerta de campos obligatorios */}
       <div style={alertStyle}>

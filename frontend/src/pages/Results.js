@@ -867,15 +867,15 @@ const generateExcel = async (evaluacion) => {
   // Función para obtener el porcentaje de progreso
   const getProgresoPorcentaje = (estado) => {
     const progresos = {
-      'AUTOEVALUACION_PENDIENTE': 20,
-      'AUTOEVALUACION_COMPLETADA': 40,
-      'EVALUACION_JEFE_PENDIENTE': 40,
-      'EVALUACION_JEFE_COMPLETADA': 60,
-      'HSEQ_PENDIENTE': 60,
-      'HSEQ_COMPLETADA': 80,
+      'AUTOEVALUACION_PENDIENTE': 0,
+      'AUTOEVALUACION_COMPLETADA': 50,
+      'EVALUACION_JEFE_PENDIENTE': 50,
+      'EVALUACION_JEFE_COMPLETADA': 100,
+      'HSEQ_PENDIENTE': 100,
+      'HSEQ_COMPLETADA': 100,
       'EVALUACION_FINALIZADA': 100,
-      'BORRADOR': 10,
-      'COMPLETADA': 80,
+      'BORRADOR': 0,
+      'COMPLETADA': 100,
       'APROBADA': 100
     };
     return progresos[estado] || 0;
