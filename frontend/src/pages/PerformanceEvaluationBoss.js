@@ -146,7 +146,8 @@ function PerformanceEvaluationBoss() {
               ...r,
               worker: found.calificacion_empleado ? Number(found.calificacion_empleado) : '',
               boss: found.calificacion_jefe ? Number(found.calificacion_jefe) : '',
-              average: found.promedio ? String(found.promedio) : ''
+              average: found.promedio ? String(found.promedio) : '',
+              justificacionJefe: found.justificacion_jefe || ''
             };
           }));
         }
@@ -221,6 +222,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 2,
@@ -228,6 +230,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 3,
@@ -235,6 +238,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 4,
@@ -242,6 +246,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 5,
@@ -249,6 +254,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 6,
@@ -256,6 +262,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 7,
@@ -263,6 +270,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 8,
@@ -270,6 +278,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 9,
@@ -277,6 +286,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 10,
@@ -284,6 +294,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 11,
@@ -291,6 +302,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 12,
@@ -298,6 +310,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 13,
@@ -305,6 +318,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 14,
@@ -312,6 +326,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 15,
@@ -319,6 +334,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 16,
@@ -326,6 +342,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 17,
@@ -333,6 +350,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 18,
@@ -340,6 +358,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 19,
@@ -347,6 +366,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 20,
@@ -354,6 +374,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 21,
@@ -361,6 +382,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 22,
@@ -368,6 +390,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
     {
       id: 23,
@@ -375,6 +398,7 @@ function PerformanceEvaluationBoss() {
       worker: "",
       boss: "",
       average: "",
+      justificacionJefe: "",
     },
   ]);
 
@@ -989,6 +1013,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 2,
@@ -996,6 +1021,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 3,
@@ -1003,6 +1029,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 4,
@@ -1010,6 +1037,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 5,
@@ -1017,6 +1045,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 6,
@@ -1024,6 +1053,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 7,
@@ -1031,6 +1061,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 8,
@@ -1038,6 +1069,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 9,
@@ -1045,6 +1077,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 10,
@@ -1052,6 +1085,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 11,
@@ -1059,6 +1093,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 12,
@@ -1066,6 +1101,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 13,
@@ -1073,6 +1109,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 14,
@@ -1080,6 +1117,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 15,
@@ -1087,6 +1125,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 16,
@@ -1094,6 +1133,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 17,
@@ -1101,6 +1141,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 18,
@@ -1108,6 +1149,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 19,
@@ -1115,6 +1157,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 20,
@@ -1122,6 +1165,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 21,
@@ -1129,6 +1173,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 22,
@@ -1136,6 +1181,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
           {
             id: 23,
@@ -1143,6 +1189,7 @@ function PerformanceEvaluationBoss() {
             worker: "",
             boss: "",
             average: "",
+            justificacionJefe: "",
           },
         ]);
         
