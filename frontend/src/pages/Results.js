@@ -342,6 +342,7 @@ function Results({ onLogout, userRole }) {
   const [error, setError] = useState(null);
   const [generatingPDF, setGeneratingPDF] = useState(false);
   const [generatingExcel, setGeneratingExcel] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     const fetchResultados = async () => {
@@ -356,7 +357,9 @@ function Results({ onLogout, userRole }) {
         const response = await fetch(`${apiUrl}/api/evaluations/employee/${employeeId}`);
         if (!response.ok) throw new Error('Error al obtener el historial de evaluaciones');
         const data = await response.json();
-        setEvaluacionesHistoricas(data.success && Array.isArray(data.evaluaciones) ? data.evaluaciones : []);
+        
+        const evaluaciones = data.success && Array.isArray(data.evaluaciones) ? data.evaluaciones : [];
+        setEvaluacionesHistoricas(evaluaciones);
       } catch (err) {
         console.error('Error:', err);
         setError('Error al cargar el historial de evaluaciones');
@@ -366,7 +369,39 @@ function Results({ onLogout, userRole }) {
     };
 
     fetchResultados();
+    
+    // Refrescar cada 30 segundos para capturar cambios desde la base de datos
+    const interval = setInterval(fetchResultados, 30000);
+    
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
+
+  // Función para refrescar manualmente desde la base de datos
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const employeeId = localStorage.getItem('employeeId');
+      if (!employeeId) {
+        setError('No se encontró el ID del empleado.');
+        return;
+      }
+      const apiUrl = process.env.REACT_APP_API_BASE_URL;
+      const response = await fetch(`${apiUrl}/api/evaluations/employee/${employeeId}`);
+      if (!response.ok) throw new Error('Error al obtener el historial de evaluaciones');
+      const data = await response.json();
+      
+      const evaluaciones = data.success && Array.isArray(data.evaluaciones) ? data.evaluaciones : [];
+      setEvaluacionesHistoricas(evaluaciones);
+      success('Datos actualizados', 'El historial de evaluaciones se ha actualizado desde la base de datos.');
+    } catch (err) {
+      console.error('Error:', err);
+      showError('Error al actualizar', 'Error al actualizar el historial de evaluaciones');
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   // UI helpers
   const renderEstrellas = (calificacion) => {
@@ -901,7 +936,58 @@ const generateExcel = async (evaluacion) => {
 
       <main className="results-main">
         <div className="results-container">
-          <h1 className="results-title">Historial de Evaluaciones de Desempeño</h1>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h1 className="results-title">Historial de Evaluaciones de Desempeño</h1>
+            <button 
+              onClick={handleRefresh} 
+              disabled={refreshing}
+              style={{
+                background: refreshing ? '#6c757d' : 'linear-gradient(135deg, #1F3B73, #0A0F1A)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '10px 20px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: refreshing ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                boxShadow: '0 4px 12px rgba(31, 59, 115, 0.3)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                if (!refreshing) {
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 6px 16px rgba(31, 59, 115, 0.4)';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (!refreshing) {
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 4px 12px rgba(31, 59, 115, 0.3)';
+                }
+              }}
+            >
+              {refreshing ? (
+                <>
+                  <div style={{
+                    width: '16px',
+                    height: '16px',
+                    border: '2px solid #ffffff',
+                    borderTop: '2px solid transparent',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite'
+                  }}></div>
+                  Actualizando...
+                </>
+              ) : (
+                <>
+                  🔄 Actualizar
+                </>
+              )}
+            </button>
+          </div>
 
           <div className="results-info-banner">
             <div className="info-icon">ℹ️</div>

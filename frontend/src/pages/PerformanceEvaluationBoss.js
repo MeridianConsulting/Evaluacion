@@ -727,10 +727,14 @@ function PerformanceEvaluationBoss() {
     rows.forEach((row, index) => {
       const workerOk = row.worker && String(row.worker) !== '' && String(row.worker) !== '0';
       const bossOk = row.boss && String(row.boss) !== '' && String(row.boss) !== '0';
-      if (!workerOk) {
+      
+      // Solo validar worker en modo empleado
+      if (!isManagerView && !workerOk) {
         errores[`worker_${index}`] = true;
         isValid = false;
       }
+      
+      // Solo validar boss en modo jefe
       if (isManagerView && !bossOk) {
         errores[`boss_${index}`] = true;
         isValid = false;
@@ -761,20 +765,18 @@ function PerformanceEvaluationBoss() {
       }
     });
 
-    // Validar firmas
-    if (!employeeSignature) {
+    // Validar firmas (condicional por modo)
+    if (!isManagerView && !employeeSignature) {
       errores.employeeSignature = true;
       isValid = false;
     }
-    if (isManagerView) {
-    if (!bossSignature) {
+    if (isManagerView && !bossSignature) {
       errores.bossSignature = true;
       isValid = false;
-      }
     }
 
     setValidationErrors(errores);
-    return isValid;
+    return { isValid, errores };
   };
 
   // Manejar cambio en datos generales
@@ -845,7 +847,7 @@ function PerformanceEvaluationBoss() {
     }
 
     setValidationErrors(prev => ({ ...prev, ...errores }));
-    return { isValid: Object.keys(errores).length === 0, errores };
+    return errores;
   };
 
   const fileToBase64 = (file) => new Promise((resolve) => {
@@ -855,6 +857,7 @@ function PerformanceEvaluationBoss() {
     reader.onload = () => resolve(String(reader.result));
     reader.readAsDataURL(file);
   });
+
 
   const handleSave = async (finalizar = false) => {
     // Validar calificaciones de todas las secciones
@@ -882,11 +885,25 @@ function PerformanceEvaluationBoss() {
 
     if (hayErroresCalif || !formularioValido) {
       window.scrollTo(0, 0);
+      
+      // Debug: mostrar información detallada
+      console.log('=== DEBUG VALIDACIÓN ===');
+      console.log('isManagerView:', isManagerView);
+      console.log('hayErroresCalif:', hayErroresCalif);
+      console.log('formularioValido:', formularioValido);
+      console.log('erroresCalificaciones:', erroresCalificaciones);
+      console.log('erroresFormulario:', erroresFormulario);
+      console.log('erroresBasicos:', erroresBasicos);
+      console.log('mergedErrors:', mergedErrors);
+      console.log('========================');
+      
       // Construir mensaje más descriptivo
       const keys = Object.keys(mergedErrors);
       const faltantes = [];
       // Excluir del resumen visible algunos detalles
       if (keys.some(k => k.startsWith('competencia_worker_')) && !isManagerView) faltantes.push('calificaciones del trabajador en competencias');
+      if (keys.some(k => k.startsWith('competencia_boss_')) && isManagerView) faltantes.push('calificaciones del jefe en competencias');
+      if (keys.some(k => k.startsWith('competencia_boss_justificacion_'))) faltantes.push('justificaciones del jefe');
       if (keys.some(k => k.startsWith('planAccion_'))) faltantes.push('plan de acción');
       if (keys.includes('employeeSignature')) faltantes.push('firma del Evaluado');
       if (keys.includes('bossSignature')) faltantes.push('firma del Jefe Directo');
@@ -984,9 +1001,6 @@ function PerformanceEvaluationBoss() {
       const data = await response.json();
 
       if (response.ok) {
-        // Mostrar mensaje de éxito
-        success('¡Cambios guardados!', finalizar ? 'La evaluación fue finalizada por el jefe.' : 'Se guardó el progreso de la revisión del jefe.');
-        
         // Obtener el ID de la evaluación recién guardada
         const evaluationId = existingEvaluationId || data.id_evaluacion;
         
@@ -995,6 +1009,13 @@ function PerformanceEvaluationBoss() {
         
         // Obtener promedios reales de la base de datos
         await fetchRealAverages(evaluationId);
+        
+        // Mostrar mensaje de éxito con información del estado actualizado
+        const mensajeEstado = finalizar 
+          ? 'La evaluación del jefe fue completada. Estado: Pendiente Evaluación HSEQ'
+          : 'Se guardó el progreso de la revisión del jefe. Estado: Evaluación del Jefe en Progreso';
+        
+        success('¡Cambios guardados!', mensajeEstado);
         
         // Limpiar datos guardados y tokens
         clearFormData();
@@ -1320,6 +1341,26 @@ function PerformanceEvaluationBoss() {
         textAlign: "center", 
         padding: "clamp(1rem, 5vw, 2rem)" 
       }}>
+        {/* Indicador visual de evaluación del jefe */}
+        <div style={{
+          background: 'linear-gradient(135deg, #1F3B73, #0A0F1A)',
+          color: 'white',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          marginBottom: '20px',
+          display: 'inline-block',
+          boxShadow: '0 4px 12px rgba(31, 59, 115, 0.3)',
+          border: '2px solid #2D4A7C'
+        }}>
+          <div style={{
+            fontSize: '1.1rem',
+            fontWeight: '600',
+            textAlign: 'center'
+          }}>
+            EVALUACIÓN DEL JEFE DIRECTO
+          </div>
+        </div>
+        
         <h1 className="evaluacion-desempeno">EVALUACIÓN DE DESEMPEÑO</h1>
         {isSaving && (
           <div style={{
