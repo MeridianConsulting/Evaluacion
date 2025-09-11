@@ -103,11 +103,6 @@ const Login = ({ onLogin }) => {
               </button>
             </div>
           </div>
-          <div className="login-extra-options">
-            <a className="login-forgot-password" href="#">
-              ¿Olvidaste tu contraseña?
-            </a>
-          </div>
           <button type="button" className="login-button" onClick={handleLogin}>
             Iniciar Sesión
           </button>

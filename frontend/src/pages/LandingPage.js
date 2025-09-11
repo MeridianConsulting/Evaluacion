@@ -296,16 +296,18 @@ function LandingPage({ onLogout }) {
           display: grid;
           gap: 16px;
         }
+        /* Por defecto, si existen múltiples columnas, esta sección ocupará todo el ancho */
+        .modal-content .section.section-full {
+          grid-column: 1 / -1;
+        }
         
         @media (min-width: 900px) {
           .modal-content { 
             grid-template-columns: 1fr 1fr;
             gap: 20px;
           }
-          /* Hacer que la sección de Términos y condiciones ocupe ambas columnas */
-          .modal-content .section.section-full {
-            grid-column: 1 / -1;
-          }
+          /* Ya ocupa ambas columnas; mantenemos la regla explícita para claridad */
+          .modal-content .section.section-full { grid-column: 1 / -1; }
         }
 
         .section {
