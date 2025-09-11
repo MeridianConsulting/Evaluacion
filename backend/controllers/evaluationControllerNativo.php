@@ -273,10 +273,24 @@ class EvaluationControllerNativo {
                 if ($competenciasData) { $this->saveCompetencias($evaluationId, $competenciasData); }
                 $this->savePromedios($evaluationId, $promedioCompetencias, $hseqAverage, $generalAverage, $groupAverages);
 
-                if ($employeeSignaturePath || $bossSignaturePath) {
-                    // upsert de firmas
-                    $this->db->query("DELETE FROM evaluacion_firmas WHERE id_evaluacion = " . (int)$evaluationId);
-                    $this->saveFirmas($evaluationId, $employeeSignaturePath, $bossSignaturePath);
+                // Actualizar firmas sin afectar las existentes
+                if ($bossSignaturePath) {
+                    $stmtFirma = $this->db->prepare("INSERT INTO evaluacion_firmas (id_evaluacion, firma_jefe) VALUES (?, ?) ON DUPLICATE KEY UPDATE firma_jefe = VALUES(firma_jefe)");
+                    if (!$stmtFirma) {
+                        throw new Exception('Error al preparar UPSERT de firma del jefe: ' . $this->db->error);
+                    }
+                    $stmtFirma->bind_param('is', $evaluationId, $bossSignaturePath);
+                    $stmtFirma->execute();
+                    $stmtFirma->close();
+                }
+                if ($employeeSignaturePath) {
+                    $stmtFirmaEmp = $this->db->prepare("INSERT INTO evaluacion_firmas (id_evaluacion, firma_empleado) VALUES (?, ?) ON DUPLICATE KEY UPDATE firma_empleado = VALUES(firma_empleado)");
+                    if (!$stmtFirmaEmp) {
+                        throw new Exception('Error al preparar UPSERT de firma del empleado: ' . $this->db->error);
+                    }
+                    $stmtFirmaEmp->bind_param('is', $evaluationId, $employeeSignaturePath);
+                    $stmtFirmaEmp->execute();
+                    $stmtFirmaEmp->close();
                 }
 
                 $this->db->commit();
