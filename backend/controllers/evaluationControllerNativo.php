@@ -274,24 +274,34 @@ class EvaluationControllerNativo {
                 if ($competenciasData) { $this->saveCompetencias($evaluationId, $competenciasData); }
                 $this->savePromedios($evaluationId, $promedioCompetencias, $hseqAverage, $generalAverage, $groupAverages);
 
-                // Actualizar firmas sin afectar las existentes
+                // Actualizar firmas: mantener la firma del empleado existente y actualizar solo la del jefe
                 if ($bossSignaturePath) {
-                    $stmtFirma = $this->db->prepare("INSERT INTO evaluacion_firmas (id_evaluacion, firma_jefe) VALUES (?, ?) ON DUPLICATE KEY UPDATE firma_jefe = VALUES(firma_jefe)");
-                    if (!$stmtFirma) {
-                        throw new Exception('Error al preparar UPSERT de firma del jefe: ' . $this->db->error);
+                    // Primero verificar si ya existe un registro de firmas para esta evaluación
+                    $stmtCheck = $this->db->prepare("SELECT id_firma, firma_empleado FROM evaluacion_firmas WHERE id_evaluacion = ?");
+                    $stmtCheck->bind_param('i', $evaluationId);
+                    $stmtCheck->execute();
+                    $result = $stmtCheck->get_result()->fetch_assoc();
+                    $stmtCheck->close();
+                    
+                    if ($result) {
+                        // Actualizar el registro existente, manteniendo la firma del empleado
+                        $stmtUpdate = $this->db->prepare("UPDATE evaluacion_firmas SET firma_jefe = ? WHERE id_evaluacion = ?");
+                        if (!$stmtUpdate) {
+                            throw new Exception('Error al preparar UPDATE de firma del jefe: ' . $this->db->error);
+                        }
+                        $stmtUpdate->bind_param('si', $bossSignaturePath, $evaluationId);
+                        $stmtUpdate->execute();
+                        $stmtUpdate->close();
+                    } else {
+                        // Insertar nuevo registro con solo la firma del jefe (la del empleado se agregará después)
+                        $stmtInsert = $this->db->prepare("INSERT INTO evaluacion_firmas (id_evaluacion, firma_jefe) VALUES (?, ?)");
+                        if (!$stmtInsert) {
+                            throw new Exception('Error al preparar INSERT de firma del jefe: ' . $this->db->error);
+                        }
+                        $stmtInsert->bind_param('is', $evaluationId, $bossSignaturePath);
+                        $stmtInsert->execute();
+                        $stmtInsert->close();
                     }
-                    $stmtFirma->bind_param('is', $evaluationId, $bossSignaturePath);
-                    $stmtFirma->execute();
-                    $stmtFirma->close();
-                }
-                if ($employeeSignaturePath) {
-                    $stmtFirmaEmp = $this->db->prepare("INSERT INTO evaluacion_firmas (id_evaluacion, firma_empleado) VALUES (?, ?) ON DUPLICATE KEY UPDATE firma_empleado = VALUES(firma_empleado)");
-                    if (!$stmtFirmaEmp) {
-                        throw new Exception('Error al preparar UPSERT de firma del empleado: ' . $this->db->error);
-                    }
-                    $stmtFirmaEmp->bind_param('is', $evaluationId, $employeeSignaturePath);
-                    $stmtFirmaEmp->execute();
-                    $stmtFirmaEmp->close();
                 }
 
                 $this->db->commit();
@@ -986,6 +996,13 @@ class EvaluationControllerNativo {
                     'fecha_evaluacion' => $evaluacion['fecha_evaluacion'],
                     'periodo_evaluacion' => $evaluacion['periodo_evaluacion'],
                     'estado_evaluacion' => $evaluacion['estado_evaluacion']
+                ],
+                'datos_generales' => [
+                    'fecha_ingreso' => $evaluacion['fecha_inicio_contrato'] ?? '',
+                    'nombreEvaluador' => '',
+                    'cargoEvaluador' => '',
+                    'areaEvaluador' => '',
+                    'idEvaluador' => ''
                 ],
                 'mejoramiento' => $this->getMejoramiento($evaluationId),
                 'plan_accion' => $this->getPlanAccion($evaluationId),

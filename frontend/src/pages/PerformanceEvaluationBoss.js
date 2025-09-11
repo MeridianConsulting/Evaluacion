@@ -156,11 +156,30 @@ function PerformanceEvaluationBoss() {
           data?.fecha_ingreso ||
           data?.fechaIngreso ||
           (data?.datos_generales && (data.datos_generales.fecha_ingreso || data.datos_generales.fechaIngreso));
-        if (fechaIngresoGuardada) {
-          const fechaIngresoNormalized = (fechaIngresoGuardada === '0000-00-00') ? '' : fechaIngresoGuardada;
+        
+        if (fechaIngresoGuardada && fechaIngresoGuardada !== '0000-00-00') {
+          // Si hay una fecha guardada válida, usarla
           setDatosGenerales(prev => ({
             ...prev,
-            fechaIngreso: fechaIngresoNormalized
+            fechaIngreso: fechaIngresoGuardada
+          }));
+        } else {
+          // Si no hay fecha guardada, usar la fecha actual
+          const fechaActual = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
+          setDatosGenerales(prev => ({
+            ...prev,
+            fechaIngreso: fechaActual
+          }));
+        }
+
+        // Precargar datos del evaluador desde la evaluación existente
+        if (data?.datos_generales) {
+          setDatosGenerales(prev => ({
+            ...prev,
+            nombreEvaluador: data.datos_generales.nombreEvaluador || prev.nombreEvaluador || '',
+            cargoEvaluador: data.datos_generales.cargoEvaluador || prev.cargoEvaluador || '',
+            areaEvaluador: data.datos_generales.areaEvaluador || prev.areaEvaluador || '',
+            idEvaluador: data.datos_generales.idEvaluador || prev.idEvaluador || ''
           }));
         }
 
@@ -794,6 +813,8 @@ function PerformanceEvaluationBoss() {
       errores.employeeSignature = true;
     }
     if (isManagerView) {
+      // En modo jefe, solo validar que exista la firma del jefe
+      // La firma del empleado debe estar precargada desde la evaluación existente
       if (!bossSignature) {
         errores.bossSignature = true;
       }
@@ -865,7 +886,7 @@ function PerformanceEvaluationBoss() {
     if (hayErroresFirmas) {
       window.scrollTo(0, 0);
       const faltantes = [];
-      if (!employeeSignature) faltantes.push('Evaluado');
+      if (!isManagerView && !employeeSignature) faltantes.push('Evaluado');
       if (isManagerView && !bossSignature) faltantes.push('Jefe Directo');
       const mensaje = faltantes.length === 2 
         ? 'Las firmas del Evaluado y del Jefe Directo son obligatorias.' 
