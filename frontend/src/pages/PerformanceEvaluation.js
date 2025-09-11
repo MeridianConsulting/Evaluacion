@@ -58,9 +58,6 @@ function PerformanceEvaluation() {
     }
   ]);
 
-  // HSEQ deshabilitado temporalmente en la UI
-  const HSEQ_ENABLED = false;
-
   // Asegurar autocompletado de fecha de evaluación y área si faltan
   useEffect(() => {
     if (!employee) return;
@@ -129,20 +126,6 @@ function PerformanceEvaluation() {
               worker: found.calificacion_empleado ? Number(found.calificacion_empleado) : '',
               boss: found.calificacion_jefe ? Number(found.calificacion_jefe) : '',
               average: found.promedio ? String(found.promedio) : ''
-            };
-          }));
-        }
-
-        // Mapear HSEQ
-        if (Array.isArray(data.hseq_data)) {
-          setHseqItems(prev => prev.map(item => {
-            const h = data.hseq_data.find(x => Number(x.id_responsabilidad) === Number(item.id));
-            if (!h) return item;
-            return {
-              ...item,
-              autoevaluacion: h.autoevaluacion || '',
-              evaluacionJefe: h.evaluacion_jefe || '',
-              calificacion: h.calificacion || ''
             };
           }));
         }
@@ -336,170 +319,11 @@ function PerformanceEvaluation() {
     },
   ]);
 
-  // Agregamos el estado para las responsabilidades HSEQ
-  const [hseqItems, setHseqItems] = useState([
-    {
-      id: 1,
-      responsabilidad: "Procurar el cuidado integral de su salud.",
-      autoevaluacion: "",
-      evaluacionJefe: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 2,
-      responsabilidad: "Suministrar información clara, veraz y completa sobre su estado de salud.",
-      autoevaluacion: "",
-      evaluacionJefe: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 3,
-      responsabilidad: "Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.",
-      calificacion: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 4,
-      responsabilidad: "Informar oportunamente al empleador o contratante acerca de los riesgos y/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.",
-      calificacion: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 5,
-      responsabilidad: "Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.",
-      calificacion: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 6,
-      responsabilidad: "Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.",
-      calificacion: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 7,
-      responsabilidad: "Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.",
-      calificacion: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 8,
-      responsabilidad: "Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.",
-      calificacion: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 9,
-      responsabilidad: "Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.",
-      calificacion: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 10,
-      responsabilidad: "Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.",
-      calificacion: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 11,
-      responsabilidad: "Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.",
-      calificacion: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 12,
-      responsabilidad: "Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.",
-      calificacion: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 13,
-      responsabilidad: "Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.",
-      calificacion: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 14,
-      responsabilidad: "Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.",
-      calificacion: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 15,
-      responsabilidad: "Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.",
-      calificacion: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 16,
-      responsabilidad: "Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.",
-      calificacion: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 17,
-      responsabilidad: "Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.",
-      calificacion: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 18,
-      responsabilidad: "Participar en simulacros, elección de COPASST y elección de comité de convivencia.",
-      calificacion: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 19,
-      responsabilidad: "Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y/o comité de emergencias.",
-      calificacion: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    },
-    {
-      id: 20,
-      responsabilidad: "Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.",
-      calificacion: "",
-      justificacionTrabajador: "",
-      justificacionJefe: "",
-    }
-  ]);
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
   // Funciones para guardar y cargar datos del localStorage
   const saveFormData = () => {
     const formData = {
       datosGenerales,
       rows,
-      hseqItems,
       mejoramiento,
       planesAccion,
       employeeSignature,
@@ -522,7 +346,6 @@ function PerformanceEvaluation() {
         if (formData.timestamp && (now - formData.timestamp) < maxAge) {
           setDatosGenerales(formData.datosGenerales || datosGenerales);
           setRows(formData.rows || rows);
-          setHseqItems(formData.hseqItems || hseqItems);
           setMejoramiento(formData.mejoramiento || mejoramiento);
           setPlanesAccion(formData.planesAccion || planesAccion);
           setEmployeeSignature(formData.employeeSignature || null);
@@ -661,7 +484,7 @@ function PerformanceEvaluation() {
         setIsSaving(false);
       }, 500);
     }
-  }, [datosGenerales, rows, hseqItems, mejoramiento, planesAccion, employeeSignature, bossSignature, employee, formTouched]);
+  }, [datosGenerales, rows, mejoramiento, planesAccion, employeeSignature, bossSignature, employee, formTouched]);
 
   // Calcula promedio cada vez que cambie autoevaluación o evaluación
   const handleSelectChange = (rowId, field, value) => {
@@ -683,49 +506,9 @@ function PerformanceEvaluation() {
     setFormTouched(true);
   };
 
-  // Manejador para cambios en la calificación HSEQ
-  const handleHseqChange = (id, field, value) => {
-    setHseqItems(prevItems => 
-      prevItems.map(item => 
-        item.id === id ? { ...item, [field]: value } : item
-      )
-    );
-    setFormTouched(true);
-  };
-
-  // Manejador para cambios en justificaciones HSEQ
-  const handleHseqJustificacionChange = (id, field, value) => {
-    setHseqItems(prevItems => 
-      prevItems.map(item => 
-        item.id === id ? { ...item, [field]: value } : item
-      )
-    );
-    setFormTouched(true);
-  };
-
-  // Calcular promedio de calificaciones HSEQ
+  // Calcular promedio de calificaciones HSEQ (deshabilitado)
   const calcularPromedioHseq = () => {
-    if (!HSEQ_ENABLED) return 0;
-    let sumaTotal = 0;
-    let contadorValidos = 0;
-    
-    hseqItems.forEach(item => {
-      const auto = Number(item.autoevaluacion) || 0;
-      const jefe = Number(item.evaluacionJefe) || 0;
-      if (auto > 0 && jefe > 0) {
-        sumaTotal += (auto + jefe) / 2;
-        contadorValidos++;
-      } else if (auto > 0) {
-        sumaTotal += auto;
-        contadorValidos++;
-      } else if (jefe > 0) {
-        sumaTotal += jefe;
-        contadorValidos++;
-      }
-    });
-    
-    if (contadorValidos === 0) return 0;
-    return (sumaTotal / contadorValidos).toFixed(2);
+    return 0;
   };
 
   // Calcular promedio de calificaciones de competencias
@@ -822,27 +605,7 @@ function PerformanceEvaluation() {
     });
 
 
-    // Validar HSEQ solo si está habilitado
-    if (HSEQ_ENABLED) {
-      hseqItems.forEach((item, index) => {
-        const hasAuto = Object.prototype.hasOwnProperty.call(item, 'autoevaluacion');
-        const hasBoss = Object.prototype.hasOwnProperty.call(item, 'evaluacionJefe');
-        if (hasAuto) {
-          const autoOk = item.autoevaluacion && String(item.autoevaluacion) !== '' && String(item.autoevaluacion) !== '0';
-          if (!autoOk) {
-            errores[`hseq_auto_${index}`] = true;
-            isValid = false;
-          }
-        }
-        if (isManagerView && hasBoss) {
-          const jefeOk = item.evaluacionJefe && String(item.evaluacionJefe) !== '' && String(item.evaluacionJefe) !== '0';
-          if (!jefeOk) {
-            errores[`hseq_jefe_${index}`] = true;
-            isValid = false;
-          }
-        }
-      });
-    }
+    // HSEQ deshabilitado - no validar
 
     // Validar mejoramiento
     if (!mejoramiento.fortalezas.trim()) {
@@ -957,19 +720,7 @@ function PerformanceEvaluation() {
       }
     });
 
-    // Validar HSEQ items solo si está habilitado
-    if (HSEQ_ENABLED) {
-      hseqItems.forEach((item) => {
-        const autoOk = item.autoevaluacion && String(item.autoevaluacion) !== '' && String(item.autoevaluacion) !== '0';
-        const jefeOk = item.evaluacionJefe && String(item.evaluacionJefe) !== '' && String(item.evaluacionJefe) !== '0';
-        if (!autoOk) {
-          errores[`hseq_autoevaluacion_${item.id}`] = true;
-        }
-        if (isManagerView && !jefeOk) {
-          errores[`hseq_evaluacionJefe_${item.id}`] = true;
-        }
-      });
-    }
+    // HSEQ deshabilitado - no validar
 
     return errores;
   };
@@ -1052,7 +803,7 @@ function PerformanceEvaluation() {
 
     // Enviar datos completos para persistencia detallada en las nuevas tablas
     formData.append('competenciasData', JSON.stringify(rows));
-    formData.append('hseqData', JSON.stringify(hseqItems));
+    formData.append('hseqData', JSON.stringify([]));
     formData.append('mejoramiento', JSON.stringify(mejoramiento));
     formData.append('planesAccion', JSON.stringify(planesAccion));
 
@@ -1260,110 +1011,7 @@ function PerformanceEvaluation() {
           },
         ]);
         
-        setHseqItems([
-          {
-            id: 1,
-            responsabilidad: "Procurar el cuidado integral de su salud.",
-            autoevaluacion: "",
-            evaluacionJefe: "",
-          },
-          {
-            id: 2,
-            responsabilidad: "Suministrar información clara, veraz y completa sobre su estado de salud.",
-            autoevaluacion: "",
-            evaluacionJefe: "",
-          },
-          {
-            id: 3,
-            responsabilidad: "Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.",
-            calificacion: "",
-          },
-          {
-            id: 4,
-            responsabilidad: "Informar oportunamente al empleador o contratante acerca de los riesgos y/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.",
-            calificacion: "",
-          },
-          {
-            id: 5,
-            responsabilidad: "Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.",
-            calificacion: "",
-          },
-          {
-            id: 6,
-            responsabilidad: "Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.",
-            calificacion: "",
-          },
-          {
-            id: 7,
-            responsabilidad: "Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.",
-            calificacion: "",
-          },
-          {
-            id: 8,
-            responsabilidad: "Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.",
-            calificacion: "",
-          },
-          {
-            id: 9,
-            responsabilidad: "Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.",
-            calificacion: "",
-          },
-          {
-            id: 10,
-            responsabilidad: "Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.",
-            calificacion: "",
-          },
-          {
-            id: 11,
-            responsabilidad: "Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.",
-            calificacion: "",
-          },
-          {
-            id: 12,
-            responsabilidad: "Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.",
-            calificacion: "",
-          },
-          {
-            id: 13,
-            responsabilidad: "Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.",
-            calificacion: "",
-          },
-          {
-            id: 14,
-            responsabilidad: "Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.",
-            calificacion: "",
-          },
-          {
-            id: 15,
-            responsabilidad: "Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.",
-            calificacion: "",
-          },
-          {
-            id: 16,
-            responsabilidad: "Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.",
-            calificacion: "",
-          },
-          {
-            id: 17,
-            responsabilidad: "Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.",
-            calificacion: "",
-          },
-          {
-            id: 18,
-            responsabilidad: "Participar en simulacros, elección de COPASST y elección de comité de convivencia.",
-            calificacion: "",
-          },
-          {
-            id: 19,
-            responsabilidad: "Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y/o comité de emergencias.",
-            calificacion: "",
-          },
-          {
-            id: 20,
-            responsabilidad: "Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.",
-            calificacion: "",
-          }
-        ]);
+        // HSEQ deshabilitado - no limpiar
         
         setMejoramiento({ fortalezas: '', aspectosMejorar: '' });
         setPlanesAccion([
@@ -1445,12 +1093,9 @@ function PerformanceEvaluation() {
     } : {};
   };
 
-  // Función helper para obtener estilos de error de HSEQ
+  // Función helper para obtener estilos de error de HSEQ (deshabilitado)
   const getHseqErrorStyle = (itemId, field) => {
-    return visibleErrors[`hseq_${field}_${itemId}`] ? {
-      border: '2px solid #ff3860',
-      boxShadow: '0 0 0 1px #ff3860'
-    } : {};
+    return {};
   };
 
 
@@ -2109,7 +1754,7 @@ function PerformanceEvaluation() {
         open={showCompletion}
         employeeName={employee?.nombre || ''}
         compAvg={realAverages.promedioCompetencias}
-        hseqAvg={realAverages.promedioHseq}
+        hseqAvg={0}
         generalAvg={realAverages.promedioGeneral}
         autoCloseMs={15000}
         closeOnBackdrop={false}

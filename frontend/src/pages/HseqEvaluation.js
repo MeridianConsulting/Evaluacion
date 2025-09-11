@@ -3,12 +3,15 @@ import '../assets/css/Styles1.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Hseq from '../components/hseq';
+import { useNotification } from '../components/NotificationSystem';
 
 function HseqEvaluation({ onLogout, userRole }) {
+  const { success, error: showError, warning } = useNotification();
   const [employees, setEmployees] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [hseqItems, setHseqItems] = useState([
     { id: 1,  responsabilidad: 'Procurar el cuidado integral de su salud.', evaluacionJefe: '', justificacionJefe: '' },
     { id: 2,  responsabilidad: 'Suministrar información clara, veraz y completa sobre su estado de salud.', evaluacionJefe: '', justificacionJefe: '' },
@@ -68,6 +71,79 @@ function HseqEvaluation({ onLogout, userRole }) {
   };
 
   const getHseqErrorStyle = () => ({});
+
+  // Función para validar la evaluación HSEQ
+  const validarEvaluacionHseq = () => {
+    if (!selectedEmployee) {
+      warning('Selección requerida', 'Debe seleccionar un empleado para evaluar.');
+      return false;
+    }
+
+    // Validar que todas las calificaciones estén completas
+    const calificacionesFaltantes = hseqItems.filter(item => 
+      !item.evaluacionJefe || item.evaluacionJefe === '' || item.evaluacionJefe === '0'
+    );
+
+    if (calificacionesFaltantes.length > 0) {
+      warning('Calificaciones incompletas', `Debe calificar todas las responsabilidades HSEQ. Faltan ${calificacionesFaltantes.length} calificaciones.`);
+      return false;
+    }
+
+    return true;
+  };
+
+  // Función para enviar la evaluación HSEQ
+  const handleSubmitHseqEvaluation = async () => {
+    if (!validarEvaluacionHseq()) {
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const apiUrl = process.env.REACT_APP_API_BASE_URL;
+      
+      // Preparar datos para enviar
+      const formData = new FormData();
+      formData.append('employeeId', selectedEmployee.id_empleado);
+      formData.append('hseqData', JSON.stringify(hseqItems));
+      formData.append('promedioHseq', calcularPromedioHseq());
+      formData.append('periodoEvaluacion', new Date().getFullYear() + '-' + String(new Date().getMonth() + 1).padStart(2, '0'));
+      
+      // Obtener ID del evaluador (jefe) desde localStorage
+      const evaluadorId = localStorage.getItem('employeeId');
+      if (evaluadorId) {
+        formData.append('bossId', evaluadorId);
+      }
+
+      const response = await fetch(`${apiUrl}/api/evaluations/save-hseq`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        success('¡Evaluación HSEQ completada!', 'La evaluación HSEQ ha sido guardada exitosamente.');
+        
+        // Limpiar formulario después del éxito
+        setHseqItems(prev => prev.map(item => ({
+          ...item,
+          evaluacionJefe: '',
+          justificacionJefe: ''
+        })));
+        setSelectedEmployee(null);
+      } else {
+        const errorMessage = data.error ? 
+          `Error: ${data.error}` : 
+          `Error al guardar: ${data.message || 'Error desconocido'}`;
+        showError('Error al guardar', errorMessage);
+      }
+    } catch (error) {
+      showError('Error de conexión', 'Error al guardar la evaluación HSEQ. Intente nuevamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="hseq-evaluation-page">
@@ -194,6 +270,80 @@ function HseqEvaluation({ onLogout, userRole }) {
                   calcularPromedioHseq={calcularPromedioHseq}
                   getHseqErrorStyle={getHseqErrorStyle}
                 />
+                
+                {/* Botón de envío */}
+                <div style={{ 
+                  textAlign: 'center', 
+                  marginTop: '24px',
+                  padding: '20px',
+                  borderTop: '1px solid #e5e7eb'
+                }}>
+                  <button
+                    onClick={handleSubmitHseqEvaluation}
+                    disabled={isSubmitting}
+                    style={{
+                      background: isSubmitting 
+                        ? '#9ca3af' 
+                        : 'linear-gradient(135deg, #1F3B73, #0A0F1A)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '12px 32px',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      boxShadow: isSubmitting 
+                        ? 'none' 
+                        : '0 4px 12px rgba(31, 59, 115, 0.3)',
+                      transition: 'all 0.3s ease',
+                      opacity: isSubmitting ? 0.7 : 1
+                    }}
+                    onMouseOver={(e) => {
+                      if (!isSubmitting) {
+                        e.target.style.transform = 'translateY(-2px)';
+                        e.target.style.boxShadow = '0 6px 16px rgba(31, 59, 115, 0.4)';
+                      }
+                    }}
+                    onMouseOut={(e) => {
+                      if (!isSubmitting) {
+                        e.target.style.transform = 'translateY(0)';
+                        e.target.style.boxShadow = '0 4px 12px rgba(31, 59, 115, 0.3)';
+                      }
+                    }}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div style={{
+                          width: '16px',
+                          height: '16px',
+                          border: '2px solid #ffffff',
+                          borderTop: '2px solid transparent',
+                          borderRadius: '50%',
+                          animation: 'spin 1s linear infinite'
+                        }}></div>
+                        Guardando...
+                      </>
+                    ) : (
+                      <>
+                        <span>📋</span>
+                        Enviar Evaluación HSEQ
+                      </>
+                    )}
+                  </button>
+                  
+                  {/* Mostrar promedio actual */}
+                  <div style={{ 
+                    marginTop: '12px', 
+                    fontSize: '14px', 
+                    color: '#6b7280',
+                    fontWeight: '500'
+                  }}>
+                    Promedio actual: <strong style={{ color: '#1F3B73' }}>{calcularPromedioHseq()}</strong>
+                  </div>
+                </div>
               </>
             )}
           </div>

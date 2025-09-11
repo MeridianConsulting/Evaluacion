@@ -372,22 +372,20 @@ class EvaluationControllerNativo {
     private function saveHseqData($evaluationId, $hseqData) {
         $stmt = $this->db->prepare("
             INSERT INTO evaluacion_hseq 
-            (id_evaluacion, id_responsabilidad, responsabilidad, calificacion, autoevaluacion, evaluacion_jefe) 
-            VALUES (?, ?, ?, ?, ?, ?)
+            (id_evaluacion, id_responsabilidad, responsabilidad, calificacion, evaluacion_jefe) 
+            VALUES (?, ?, ?, ?, ?)
         ");
         
         foreach ($hseqData as $hseq) {
             $id = $hseq['id'] ?? 0;
             $responsabilidad = $hseq['responsabilidad'] ?? '';
             $calificacion = $hseq['calificacion'] ?? '';
-            $autoevaluacion = $hseq['autoevaluacion'] ?? '';
             $evaluacionJefe = $hseq['evaluacionJefe'] ?? '';
-            $stmt->bind_param('iissss', 
+            $stmt->bind_param('iisss', 
                 $evaluationId,
                 $id,
                 $responsabilidad,
                 $calificacion,
-                $autoevaluacion,
                 $evaluacionJefe
             );
             $stmt->execute();
@@ -1011,14 +1009,13 @@ class EvaluationControllerNativo {
                 // -------- Hoja HSEQ --------
                 $sheet3 = $spreadsheet->createSheet();
                 $sheet3->setTitle('HSEQ');
-                $sheet3->fromArray(['ID Resp.', 'Responsabilidad', 'Calificación', 'Autoevaluación', 'Evaluación Jefe'], NULL, 'A1');
+                $sheet3->fromArray(['ID Resp.', 'Responsabilidad', 'Calificación', 'Evaluación Jefe'], NULL, 'A1');
                 $r = 2;
                 foreach ($hseqData as $h) {
                     $sheet3->setCellValue('A'.$r, (string)($h['id_responsabilidad'] ?? ''));
                     $sheet3->setCellValue('B'.$r, (string)($h['responsabilidad'] ?? ''));
                     $sheet3->setCellValue('C'.$r, (string)($h['calificacion'] ?? ''));
-                    $sheet3->setCellValue('D'.$r, (string)($h['autoevaluacion'] ?? ''));
-                    $sheet3->setCellValue('E'.$r, (string)($h['evaluacion_jefe'] ?? ''));
+                    $sheet3->setCellValue('D'.$r, (string)($h['evaluacion_jefe'] ?? ''));
                     $r++;
                 }
 
@@ -1218,6 +1215,97 @@ class EvaluationControllerNativo {
         </html>';
 
         return $html;
+    }
+
+    /**
+     * Guarda una evaluación HSEQ específica
+     */
+    public function saveHseqEvaluation() {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                http_response_code(405);
+                echo json_encode(["success" => false, "message" => "Método no permitido"]);
+                return;
+            }
+
+            // Obtener los datos de la evaluación HSEQ
+            $employeeId = $_POST['employeeId'] ?? null;
+            $hseqData = json_decode($_POST['hseqData'] ?? '[]', true);
+            $promedioHseq = isset($_POST['promedioHseq']) ? (float)$_POST['promedioHseq'] : 0;
+            $periodoEvaluacion = $_POST['periodoEvaluacion'] ?? null;
+            $bossId = isset($_POST['bossId']) ? (int)$_POST['bossId'] : null;
+
+            if (!$employeeId) {
+                http_response_code(400);
+                echo json_encode(["success" => false, "message" => "ID de empleado no proporcionado"]);
+                return;
+            }
+
+            if (empty($hseqData)) {
+                http_response_code(400);
+                echo json_encode(["success" => false, "message" => "Datos HSEQ no proporcionados"]);
+                return;
+            }
+
+            error_log("Guardando evaluación HSEQ - EmployeeId: $employeeId, Periodo: $periodoEvaluacion, Promedio: $promedioHseq");
+
+            // Guardar evaluación HSEQ usando la nueva estructura nativa
+            $this->db->begin_transaction();
+            try {
+                // 1. Insertar evaluación principal (solo HSEQ)
+                $insertEvalSql = 'INSERT INTO evaluacion (id_empleado, fecha_evaluacion, periodo_evaluacion, estado_evaluacion, id_jefe) VALUES (?, NOW(), ?, ?, ?)';
+                $stmtEval = $this->db->prepare($insertEvalSql);
+                if (!$stmtEval) {
+                    throw new Exception('Error al preparar INSERT evaluacion: ' . $this->db->error);
+                }
+                
+                $estado = 'COMPLETADA'; // Las evaluaciones HSEQ se completan directamente
+                $stmtEval->bind_param('issi', $employeeId, $periodoEvaluacion, $estado, $bossId);
+                if (!$stmtEval->execute()) {
+                    throw new Exception('Error al ejecutar INSERT evaluacion: ' . $stmtEval->error);
+                }
+                $evaluationId = $stmtEval->insert_id;
+                $stmtEval->close();
+
+                error_log("Evaluación HSEQ principal creada con ID: $evaluationId");
+
+                // 2. Guardar datos HSEQ
+                $this->saveHseqData($evaluationId, $hseqData);
+
+                // 3. Guardar promedios (solo HSEQ)
+                $this->savePromedios($evaluationId, 0, $promedioHseq, $promedioHseq, []);
+
+                $this->db->commit();
+
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Evaluación HSEQ guardada exitosamente',
+                    'id_evaluacion' => $evaluationId,
+                ], JSON_UNESCAPED_UNICODE);
+                return;
+
+            } catch (Exception $e) {
+                $this->db->rollback();
+                error_log("Error en transacción HSEQ: " . $e->getMessage());
+                http_response_code(500);
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Error al guardar la evaluación HSEQ',
+                    'error' => $e->getMessage(),
+                ], JSON_UNESCAPED_UNICODE);
+                return;
+            }
+
+        } catch (Exception $e) {
+            error_log("Error general en saveHseqEvaluation: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error general al procesar la evaluación HSEQ',
+                'error' => $e->getMessage(),
+            ], JSON_UNESCAPED_UNICODE);
+            return;
+        }
     }
 
     /**

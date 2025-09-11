@@ -134,6 +134,13 @@ function handleRequest($method, $path) {
         return;
     }
 
+    // Ruta para guardar evaluación HSEQ
+    if ($path === "api/evaluations/save-hseq" && $method === "POST") {
+        $controller = new EvaluationControllerNativo();
+        $controller->saveHseqEvaluation();
+        return;
+    }
+
     // Ruta para servir imágenes de firmas con CORS habilitado
     if (preg_match("#^api/signatures/(.+)$#", $path, $matches) && $method === "GET") {
         $imagePath = $matches[1];
