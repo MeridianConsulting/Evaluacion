@@ -229,13 +229,17 @@ function LandingPage({ onLogout }) {
 
         /* ===== Aviso primera vez ===== */
         .notice-banner {
-          position: relative;
+          position: fixed;
+          top: 72px;
+          left: 0;
+          right: 0;
+          margin: 0 auto;
+          z-index: 10000;
           display: grid;
           grid-template-columns: auto 1fr auto auto; /* última columna para el botón de cierre */
           align-items: center;
           gap: 14px;
-          margin: 12px auto 0;
-          width: min(980px, 92vw);
+          width: clamp(280px, 92vw, 980px);
           padding: 14px 16px;
           border-radius: 14px;
           background: linear-gradient(180deg, rgba(6,12,28,.88), rgba(10,20,40,.88));
@@ -244,6 +248,7 @@ function LandingPage({ onLogout }) {
           box-shadow: 0 10px 30px rgba(0,0,0,.35);
           backdrop-filter: saturate(140%) blur(6px);
           animation: fadeInUp .35s ease both;
+          pointer-events: auto;
         }
         .notice-banner::before {
           content: '';

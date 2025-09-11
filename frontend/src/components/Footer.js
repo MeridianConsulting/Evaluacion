@@ -7,6 +7,7 @@ import linkedinLogo from '../assets/img/linkedin_white.png';
 
 function Footer() {
   return (
+    <>
     <footer>
       {/* Parte superior con 3 columnas */}
       <div className="footer-top">
@@ -63,6 +64,39 @@ function Footer() {
         </div>
       </div>
     </footer>
+    <style jsx>{`
+      footer {
+        background: linear-gradient(135deg, rgba(14,26,54,.96), rgba(31,59,115,.96));
+        color: #e5e7eb;
+        border-top: 1px solid rgba(255,255,255,.08);
+        box-shadow: 0 -10px 30px rgba(2,8,23,.35);
+      }
+      .footer-top {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 24px;
+        padding: 22px 24px 10px;
+        align-items: start;
+      }
+      .footer-branding { display: flex; align-items: center; justify-content: center; }
+      .footer-logo { height: 48px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.35)); transition: transform .2s ease, filter .2s ease; }
+      .footer-logo:hover { transform: translateY(-1px) scale(1.02); filter: drop-shadow(0 8px 18px rgba(0,0,0,.45)); }
+      .footer-contact p { margin: 6px 0; opacity: .9; }
+      .footer-links ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+      .footer-links a { color: #f3f4f6; text-decoration: none; border-bottom: 1px dashed transparent; transition: color .2s ease, border-color .2s ease; }
+      .footer-links a:hover { color: #fff; border-color: rgba(255,255,255,.25); }
+      .footer-divider { border: none; border-top: 1px solid rgba(255,255,255,.08); margin: 8px 0; }
+      .footer-bottom { display: grid; place-items: center; gap: 6px; padding: 10px 16px 18px; text-align: center; font-size: .95rem; }
+      .footer-bottom p { margin: 0; }
+      .footer-social { display: flex; gap: 12px; align-items: center; justify-content: center; margin-top: 6px; }
+      .social-logo { width: 26px; height: 26px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.25)); transition: transform .15s ease, filter .15s ease; }
+      .social-logo:hover { transform: translateY(-1px) scale(1.05); filter: drop-shadow(0 6px 12px rgba(0,0,0,.35)); }
+      @media (max-width: 768px) {
+        .footer-top { grid-template-columns: 1fr; text-align: center; gap: 14px; }
+        .footer-contact p { margin: 4px 0; }
+      }
+    `}</style>
+    </>
   );
 }
 

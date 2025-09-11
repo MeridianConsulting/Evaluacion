@@ -116,16 +116,16 @@ function Header({ onLogout, userRole: propUserRole }) {
       <nav className="navbar">
         <div className="navbar-logo">
           <Link to="/LandingPage">
-            <img src={logoMeridian} alt="Meridian Logo" />
+            <img src={logoMeridian} alt="Meridian Logo" className="navbar-logo-img" />
           </Link>
         </div>
-        {/* Botón rápido visible para ir al Panel de Administración solo si es admin autenticado */}
-        {effectiveRole === 'admin' && (
-          <button className="admin-quick-button" onClick={() => goToPage('/admin')}>
-            Panel de Administración
-          </button>
-        )}
         <div className="menu-container">
+          {/* Botón rápido visible para ir al Panel de Administración solo si es admin autenticado */}
+          {effectiveRole === 'admin' && (
+            <button className="admin-quick-button" onClick={() => goToPage('/admin')}>
+              Panel de Administración
+            </button>
+          )}
           <div className="navbar-menu" onClick={handleToggleMenu}>
             <img src={burgerMenu} alt="Menú" className="burger-icon" />
           </div>
@@ -166,6 +166,80 @@ function Header({ onLogout, userRole: propUserRole }) {
           </div>
         </div>
       </nav>
+        <style jsx>{`
+          .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 18px;
+            background: linear-gradient(135deg, rgba(14,26,54,.92), rgba(31,59,115,.92));
+            border-bottom: 1px solid rgba(255,255,255,.10);
+            box-shadow: 0 6px 24px rgba(2,8,23,.25);
+            backdrop-filter: saturate(120%) blur(6px);
+            position: sticky; top: 0; z-index: 1000;
+          }
+          .navbar-logo-img {
+            height: 42px;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
+            transition: transform .2s ease, filter .2s ease;
+          }
+          .navbar-logo-img:hover {
+            transform: translateY(-1px) scale(1.02);
+            filter: drop-shadow(0 6px 14px rgba(0,0,0,.35));
+          }
+          .menu-container {
+            display: flex; align-items: center; gap: 10px;
+          }
+          .burger-icon {
+            width: 28px; height: 28px; cursor: pointer; transition: transform .15s ease;
+          }
+          .navbar-menu:hover .burger-icon {
+            transform: scale(1.05);
+          }
+
+          /* ===== BOTONES UNIFICADOS ===== */
+          .header-btn {
+            margin-right: 8px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,.12);
+            background: rgba(255,255,255,.06);
+            color: #e5e7eb;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+            text-align: left;
+            width: 100%;
+          }
+          .header-btn:hover {
+            background: rgba(255,255,255,.10);
+            box-shadow: 0 6px 16px rgba(0,0,0,.25);
+            transform: translateY(-1px);
+          }
+
+          /* Variantes */
+          .header-btn.logout { color: #f87171; }
+          .header-btn.evaluation { color: #facc15; }
+
+          /* Menú lateral */
+          .side-menu {
+            position: fixed; top: 64px; right: 0; bottom: 0; width: min(320px, 86vw);
+            background: linear-gradient(180deg, rgba(14,26,54,.98), rgba(31,59,115,.98));
+            border-left: 1px solid rgba(255,255,255,.10);
+            box-shadow: -16px 0 30px rgba(2,8,23,.35);
+            transform: translateX(100%);
+            transition: transform .25s ease;
+            padding: 16px; display: flex; flex-direction: column; gap: 12px;
+          }
+          .side-menu.open { transform: translateX(0); }
+
+          @media (max-width: 640px) {
+            .navbar { padding: 10px 12px; }
+            .navbar-logo-img { height: 38px; }
+            .admin-quick-button { display: none; }
+          }
+    `}</style>
+
     </header>
   );
 }
