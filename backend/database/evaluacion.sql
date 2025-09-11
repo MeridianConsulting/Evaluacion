@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-09-2025 a las 19:59:01
+-- Tiempo de generación: 11-09-2025 a las 22:13:01
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -603,8 +603,7 @@ CREATE TABLE `evaluacion` (
 --
 
 INSERT INTO `evaluacion` (`id_evaluacion`, `id_empleado`, `fecha_evaluacion`, `periodo_evaluacion`, `observaciones_generales`, `estado_evaluacion`, `id_jefe`, `fecha_creacion`, `fecha_actualizacion`, `fecha_autoevaluacion`, `fecha_evaluacion_jefe`, `fecha_evaluacion_hseq`, `id_evaluador_hseq`, `comentarios_hseq`) VALUES
-(1, 586, '2025-09-11 12:41:44', '2025-09', NULL, 'BORRADOR', 589, '2025-09-11 12:41:44', '2025-09-11 12:41:44', NULL, NULL, NULL, NULL, NULL),
-(2, 794, '2025-09-11 12:57:17', '2025-09', NULL, 'AUTOEVALUACION_COMPLETADA', 589, '2025-09-11 12:57:17', '2025-09-11 12:57:17', NULL, NULL, NULL, NULL, NULL);
+(1, 794, '2025-09-11 14:54:49', '2025-09', NULL, 'AUTOEVALUACION_PENDIENTE', 589, '2025-09-11 14:54:49', '2025-09-11 15:05:51', NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -629,52 +628,29 @@ CREATE TABLE `evaluacion_competencias` (
 --
 
 INSERT INTO `evaluacion_competencias` (`id_competencia`, `id_evaluacion`, `id_aspecto`, `aspecto`, `calificacion_empleado`, `calificacion_jefe`, `promedio`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 1, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '2', '3', 2.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(2, 1, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '2', '1', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(3, 1, 3, 'Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.', '2', '2', 2.00, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(4, 1, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '2', '1', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(5, 1, 5, 'Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia', '4', '2', 3.00, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(6, 1, 6, 'Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.', '3', '2', 2.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(7, 1, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '1', '2', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(8, 1, 8, 'Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.', '2', '2', 2.00, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(9, 1, 9, 'Anticipa problemas y posibles que advierten su carácter de especialista.', '3', '2', 2.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(10, 1, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.', '2', '1', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(11, 1, 11, 'Articula sus actuaciones con las de los demás', '2', '2', 2.00, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(12, 1, 12, 'Cumple los compromisos adquiridos', '2', '2', 2.00, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(13, 1, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '3', '2', 2.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(14, 1, 14, 'Escucha con interés y capta las necesidades de los demás.', '1', '1', 1.00, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(15, 1, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '1', '2', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(16, 1, 16, 'Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.', '4', '1', 2.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(17, 1, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '2', '1', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(18, 1, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '1', '2', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(19, 1, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '1', '2', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(20, 1, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '3', '2', 2.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(21, 1, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '3', '2', 2.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(22, 1, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '2', '1', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(23, 1, 23, 'Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.', '2', '2', 2.00, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(24, 2, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '4', '', 2.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(25, 2, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '3', '', 1.50, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(26, 2, 3, 'Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.', '4', '', 2.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(27, 2, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '4', '', 2.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(28, 2, 5, 'Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(29, 2, 6, 'Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.', '3', '', 1.50, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(30, 2, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(31, 2, 8, 'Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.', '4', '', 2.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(32, 2, 9, 'Anticipa problemas y posibles que advierten su carácter de especialista.', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(33, 2, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.', '1', '', 0.50, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(34, 2, 11, 'Articula sus actuaciones con las de los demás', '3', '', 1.50, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(35, 2, 12, 'Cumple los compromisos adquiridos', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(36, 2, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '4', '', 2.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(37, 2, 14, 'Escucha con interés y capta las necesidades de los demás.', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(38, 2, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '3', '', 1.50, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(39, 2, 16, 'Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(40, 2, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '4', '', 2.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(41, 2, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(42, 2, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(43, 2, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(44, 2, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(45, 2, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '3', '', 1.50, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
-(46, 2, 23, 'Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17');
+(24, 1, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '3', '5', 4.00, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(25, 1, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '4', '4', 4.00, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(26, 1, 3, 'Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.', '5', '3', 4.00, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(27, 1, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '3', '3', 3.00, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(28, 1, 5, 'Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia', '3', '4', 3.50, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(29, 1, 6, 'Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.', '3', '5', 4.00, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(30, 1, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '3', '1', 2.00, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(31, 1, 8, 'Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.', '2', '2', 2.00, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(32, 1, 9, 'Anticipa problemas y posibles que advierten su carácter de especialista.', '2', '3', 2.50, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(33, 1, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.', '3', '2', 2.50, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(34, 1, 11, 'Articula sus actuaciones con las de los demás', '3', '3', 3.00, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(35, 1, 12, 'Cumple los compromisos adquiridos', '4', '2', 3.00, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(36, 1, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '2', '5', 3.50, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(37, 1, 14, 'Escucha con interés y capta las necesidades de los demás.', '3', '3', 3.00, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(38, 1, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '3', '2', 2.50, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(39, 1, 16, 'Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.', '2', '3', 2.50, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(40, 1, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '3', '2', 2.50, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(41, 1, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '3', '2', 2.50, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(42, 1, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '3', '2', 2.50, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(43, 1, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '4', '2', 3.00, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(44, 1, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '4', '2', 3.00, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(45, 1, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '4', '2', 3.00, '2025-09-11 15:05:51', '2025-09-11 15:05:51'),
+(46, 1, 23, 'Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.', '4', '2', 3.00, '2025-09-11 15:05:51', '2025-09-11 15:05:51');
 
 -- --------------------------------------------------------
 
@@ -697,7 +673,7 @@ CREATE TABLE `evaluacion_estado_historial` (
 --
 
 INSERT INTO `evaluacion_estado_historial` (`id_historial`, `id_evaluacion`, `estado_anterior`, `estado_nuevo`, `fecha_cambio`, `id_usuario_cambio`, `comentario`) VALUES
-(1, 1, 'LEGACY', 'BORRADOR', '2025-09-11 12:41:44', NULL, NULL);
+(1, 1, 'AUTOEVALUACION_PENDIENTE', 'AUTOEVALUACION_PENDIENTE', '2025-09-11 15:05:51', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -719,7 +695,7 @@ CREATE TABLE `evaluacion_firmas` (
 --
 
 INSERT INTO `evaluacion_firmas` (`id_firma`, `id_evaluacion`, `firma_empleado`, `firma_jefe`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 2, 'uploads/signatures/employee_794_1757613437.png', '', '2025-09-11 12:57:17', '2025-09-11 12:57:17');
+(1, 1, 'uploads/signatures/employee_794_1757620489.png', 'uploads/signatures/boss_upd_1_1757621151.png', '2025-09-11 14:54:49', '2025-09-11 15:05:51');
 
 -- --------------------------------------------------------
 
@@ -760,8 +736,7 @@ CREATE TABLE `evaluacion_mejoramiento` (
 --
 
 INSERT INTO `evaluacion_mejoramiento` (`id_mejoramiento`, `id_evaluacion`, `fortalezas`, `aspectos_mejorar`, `comentarios_jefe`, `fecha_revision_jefe`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 1, 'q', 'q', NULL, NULL, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(2, 2, 'q', 'q', NULL, NULL, '2025-09-11 12:57:17', '2025-09-11 12:57:17');
+(2, 1, 'qq', 'qq', NULL, NULL, '2025-09-11 15:05:51', '2025-09-11 15:05:51');
 
 -- --------------------------------------------------------
 
@@ -788,8 +763,7 @@ CREATE TABLE `evaluacion_plan_accion` (
 --
 
 INSERT INTO `evaluacion_plan_accion` (`id_plan_accion`, `id_evaluacion`, `actividad`, `responsable`, `seguimiento`, `comentarios_jefe`, `aprobado_jefe`, `fecha_revision_jefe`, `fecha`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 1, '', '', '', NULL, 'PENDIENTE', NULL, '0000-00-00', '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(2, 2, '', '', '', NULL, 'PENDIENTE', NULL, '0000-00-00', '2025-09-11 12:57:17', '2025-09-11 12:57:17');
+(2, 1, 'q', 'q', 'q', NULL, 'PENDIENTE', NULL, '2025-09-11', '2025-09-11 15:05:51', '2025-09-11 15:05:51');
 
 -- --------------------------------------------------------
 
@@ -819,8 +793,7 @@ CREATE TABLE `evaluacion_promedios` (
 --
 
 INSERT INTO `evaluacion_promedios` (`id_promedio`, `id_evaluacion`, `promedio_competencias`, `promedio_hseq`, `promedio_general`, `promedio_comunicacion_efectiva`, `promedio_instrumentalidad_decisiones`, `promedio_aporte_profesional`, `promedio_colaboracion`, `promedio_relaciones_interpersonales`, `promedio_gestion_procedimientos`, `promedio_cumplimiento_funciones`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 1, 1.96, 0.00, 1.96, 1.88, 2.75, 1.88, 2.17, 1.67, 1.50, 2.13, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(2, 2, 2.70, 0.00, 2.70, 3.75, 2.50, 2.25, 3.00, 2.33, 2.67, 2.25, '2025-09-11 12:57:17', '2025-09-11 12:57:17');
+(2, 1, 2.98, NULL, 2.98, 3.75, 3.75, 2.25, 3.17, 2.67, 2.50, 3.00, '2025-09-11 15:05:51', '2025-09-11 15:05:51');
 
 -- --------------------------------------------------------
 
@@ -840,13 +813,6 @@ CREATE TABLE `hseq_evaluacion` (
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `hseq_evaluacion`
---
-
-INSERT INTO `hseq_evaluacion` (`id_hseq_evaluacion`, `id_empleado`, `periodo_evaluacion`, `promedio_hseq`, `estado`, `id_evaluador`, `fecha_evaluacion`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 794, '2025-09', 1.50, 'COMPLETADA', 586, '2025-09-11 12:28:05', '2025-09-11 12:28:05', '2025-09-11 12:28:05');
-
 -- --------------------------------------------------------
 
 --
@@ -863,32 +829,6 @@ CREATE TABLE `hseq_evaluacion_items` (
   `fecha_creacion` datetime DEFAULT current_timestamp(),
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `hseq_evaluacion_items`
---
-
-INSERT INTO `hseq_evaluacion_items` (`id_item`, `id_hseq_evaluacion`, `id_responsabilidad`, `responsabilidad`, `calificacion`, `justificacion`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 1, 1, 'Procurar el cuidado integral de su salud.', 3.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(2, 1, 2, 'Suministrar información clara, veraz y completa sobre su estado de salud.', 4.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(3, 1, 3, 'Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(4, 1, 4, 'Informar oportunamente al empleador o contratante acerca de los riesgos y/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(5, 1, 5, 'Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(6, 1, 6, 'Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.', 2.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(7, 1, 7, 'Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.', 2.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(8, 1, 8, 'Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.', 2.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(9, 1, 9, 'Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.', 2.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(10, 1, 10, 'Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(11, 1, 11, 'Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.', 2.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(12, 1, 12, 'Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(13, 1, 13, 'Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(14, 1, 14, 'Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(15, 1, 15, 'Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(16, 1, 16, 'Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(17, 1, 17, 'Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(18, 1, 18, 'Participar en simulacros, elección de COPASST y elección de comité de convivencia.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(19, 1, 19, 'Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y/o comité de emergencias.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
-(20, 1, 20, 'Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05');
 
 -- --------------------------------------------------------
 
@@ -1055,7 +995,7 @@ ALTER TABLE `empleados`
 -- AUTO_INCREMENT de la tabla `evaluacion`
 --
 ALTER TABLE `evaluacion`
-  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_competencias`
@@ -1103,13 +1043,13 @@ ALTER TABLE `evaluacion_promedios`
 -- AUTO_INCREMENT de la tabla `hseq_evaluacion`
 --
 ALTER TABLE `hseq_evaluacion`
-  MODIFY `id_hseq_evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_hseq_evaluacion` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `hseq_evaluacion_items`
 --
 ALTER TABLE `hseq_evaluacion_items`
-  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Restricciones para tablas volcadas

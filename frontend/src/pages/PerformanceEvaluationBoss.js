@@ -35,14 +35,7 @@ function PerformanceEvaluationBoss() {
     fechaIngreso: '',
     fechaEvaluacion: '',
     area: '',
-    nombreEvaluador: '',
-    cargoEvaluador: '',
-    areaEvaluador: '',
-    idEvaluador: '',
   });
-  const [empleados, setEmpleados] = useState([]);
-  const [empleadosFiltrados, setEmpleadosFiltrados] = useState([]);
-  const [busquedaEvaluador, setBusquedaEvaluador] = useState('');
   // Modo de evaluación: autoevaluación (empleado) o revisión de jefe
   // Por defecto: desactivar gating por rol para evitar conflictos
   const [isManagerView, setIsManagerView] = useState(false);
@@ -89,30 +82,6 @@ function PerformanceEvaluationBoss() {
     setIsManagerView(!!empleadoId);
   }, [empleadoId]);
 
-  // Precargar datos del Jefe Inmediato en modo jefe
-  useEffect(() => {
-    const preloadBossInfo = async () => {
-      if (!isManagerView) return;
-      try {
-        const bossId = localStorage.getItem('employeeId');
-        const apiUrl = process.env.REACT_APP_API_BASE_URL;
-        if (!bossId || !apiUrl) return;
-        const resp = await fetch(`${apiUrl}/employees/${bossId}`);
-        const data = await resp.json();
-        if (!resp.ok) return;
-        setDatosGenerales(prev => ({
-          ...prev,
-          nombreEvaluador: data?.data?.nombre || data?.nombre || prev.nombreEvaluador || '',
-          cargoEvaluador: data?.data?.cargo || data?.cargo || prev.cargoEvaluador || '',
-          areaEvaluador: data?.data?.area || data?.area || prev.areaEvaluador || '',
-          idEvaluador: data?.data?.id_empleado || data?.id_empleado || prev.idEvaluador || ''
-        }));
-      } catch (_) {
-        // no-op
-      }
-    };
-    preloadBossInfo();
-  }, [isManagerView]);
 
   // Evaluación existente (para modo jefe o continuar edición)
   const [existingEvaluationId, setExistingEvaluationId] = useState(null);
@@ -173,16 +142,6 @@ function PerformanceEvaluationBoss() {
           }));
         }
 
-        // Precargar datos del evaluador desde la evaluación existente
-        if (data?.datos_generales) {
-          setDatosGenerales(prev => ({
-            ...prev,
-            nombreEvaluador: data.datos_generales.nombreEvaluador || prev.nombreEvaluador || '',
-            cargoEvaluador: data.datos_generales.cargoEvaluador || prev.cargoEvaluador || '',
-            areaEvaluador: data.datos_generales.areaEvaluador || prev.areaEvaluador || '',
-            idEvaluador: data.datos_generales.idEvaluador || prev.idEvaluador || ''
-          }));
-        }
 
         // Mejoramiento
         if (data.mejoramiento) {
@@ -527,38 +486,9 @@ function PerformanceEvaluationBoss() {
       setLoading(false);
     };
 
-    const fetchEmpleados = async () => {
-      try {
-        const apiUrl = process.env.REACT_APP_API_BASE_URL;
-        const response = await fetch(`${apiUrl}/api/employees`);
-        const data = await response.json();
-        
-        if (response.ok) {
-          setEmpleados(data && (data.data || data) || []);
-        } else {
-          console.error('Error al cargar empleados:', data);
-        }
-      } catch (err) {
-        console.error('Error al cargar empleados:', err);
-      }
-    };
-
     fetchEmployee();
-    fetchEmpleados();
   }, [empleadoId]);
 
-  // Filtrar empleados cuando cambie la búsqueda
-  useEffect(() => {
-    if (busquedaEvaluador.trim() === '') {
-      setEmpleadosFiltrados(empleados);
-    } else {
-      const filtrados = empleados.filter(empleado => 
-        empleado.nombre.toLowerCase().includes(busquedaEvaluador.toLowerCase()) ||
-        empleado.cargo.toLowerCase().includes(busquedaEvaluador.toLowerCase())
-      );
-      setEmpleadosFiltrados(filtrados);
-    }
-  }, [empleados, busquedaEvaluador]);
 
   // Guardar datos automáticamente cuando cambien
   useEffect(() => {
@@ -1230,9 +1160,6 @@ function PerformanceEvaluationBoss() {
           fechaIngreso: '',
           fechaEvaluacion: '',
           area: '',
-          nombreEvaluador: '',
-          cargoEvaluador: '',
-          areaEvaluador: '',
         });
         
         // Redirigir al inicio de la página web (comentado para permitir el modal de celebración)
@@ -1502,140 +1429,6 @@ function PerformanceEvaluationBoss() {
               </div>
             </div>
 
-            {/* Fila 3 */}
-            <div className="evaluation-row">
-              <div className="evaluation-field" style={{ position: 'relative', zIndex: 9999 }}>
-                <label>Nombre del evaluador:</label>
-                <div style={{ position: 'relative', zIndex: 10000 }}>
-                <input 
-                  type="text" 
-                    placeholder="Buscar evaluador..."
-                    value={busquedaEvaluador || datosGenerales.nombreEvaluador || ''}
-                    onChange={(e) => {
-                      setBusquedaEvaluador(e.target.value);
-                      if (e.target.value === '') {
-                        setDatosGenerales(prev => ({ 
-                          ...prev, 
-                          nombreEvaluador: '',
-                          cargoEvaluador: '',
-                          areaEvaluador: ''
-                        }));
-                      }
-                    }}
-                    onFocus={() => setBusquedaEvaluador('')}
-                  style={getErrorStyle('datosGenerales_nombreEvaluador')}
-                />
-                  {busquedaEvaluador && empleadosFiltrados.length > 0 && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '100%',
-                      left: 0,
-                      right: 0,
-                      backgroundColor: 'white',
-                      border: '1px solid #ccc',
-                      borderTop: 'none',
-                      maxHeight: '200px',
-                      overflowY: 'auto',
-                      zIndex: 10001,
-                      boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
-                    }}>
-                      {empleadosFiltrados.map((empleado) => (
-                        <div
-                          key={empleado.id_empleado}
-                          style={{
-                            padding: '8px 12px',
-                            cursor: 'pointer',
-                            borderBottom: '1px solid #eee'
-                          }}
-                          onClick={() => {
-                            setDatosGenerales(prev => ({ 
-                              ...prev, 
-                              nombreEvaluador: empleado.nombre,
-                              cargoEvaluador: empleado.cargo || '',
-                              areaEvaluador: empleado.area || '',
-                              idEvaluador: empleado.id_empleado || ''
-                            }));
-                            // Guardar asignación local para TeamEvaluations (en el perfil del JEFE)
-                            try {
-                              const evaluationId = localStorage.getItem('lastEvaluationId');
-                              const bossId = empleado.id_empleado;
-                              const storageKey = `bossAssignmentsByBossId:${bossId}`;
-                              const currentAssignments = JSON.parse(localStorage.getItem(storageKey) || '[]');
-                              const newAssignment = {
-                                id: `${employee?.id_empleado || ''}-${empleado.id_empleado}-${Date.now()}`,
-                                employeeId: employee?.id_empleado || null,
-                                evaluationId: existingEvaluationId || evaluationId || null,
-                                nombre: employee?.nombre || '',
-                                cargo: employee?.cargo || '',
-                                evaluacionEstado: 'Pendiente'
-                              };
-                              const updated = [newAssignment, ...currentAssignments.filter(a => !(a.employeeId === newAssignment.employeeId && a.evaluationId === newAssignment.evaluationId))];
-                              localStorage.setItem(storageKey, JSON.stringify(updated));
-                            } catch(_){}
-                            setBusquedaEvaluador('');
-                          }}
-                          onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'}
-                          onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
-                        >
-                          {empleado.nombre}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                {datosGenerales.nombreEvaluador && (
-                  <div style={{ 
-                    marginTop: '5px', 
-                    padding: '5px 10px', 
-                    backgroundColor: '#e8f4fd', 
-                    borderRadius: '4px',
-                    fontSize: '14px',
-                    color: '#0066cc'
-                  }}>
-                    Seleccionado: {datosGenerales.nombreEvaluador}
-                  </div>
-                )}
-                {visibleErrors.datosGenerales_nombreEvaluador && (
-                  <span className="error-message">Este campo es obligatorio</span>
-                )}
-              </div>
-              <div className="evaluation-field">
-                <label>Cargo de Evaluador:</label>
-                <input 
-                  type="text" 
-                  placeholder="Se llena automáticamente al seleccionar evaluador" 
-                  name="cargoEvaluador"
-                  value={datosGenerales.cargoEvaluador || ''}
-                  readOnly
-                  style={{
-                    ...getErrorStyle('datosGenerales_cargoEvaluador'),
-                    backgroundColor: '#f5f5f5',
-                    cursor: 'not-allowed'
-                  }}
-                />
-                {visibleErrors.datosGenerales_cargoEvaluador && (
-                  <span className="error-message">Este campo es obligatorio</span>
-                )}
-              </div>
-              <div className="evaluation-field">
-                <label>Área:</label>
-                <input 
-                  type="text" 
-                  placeholder="Se llena automáticamente al seleccionar evaluador" 
-                  name="areaEvaluador"
-                  value={datosGenerales.areaEvaluador || ''}
-                  readOnly
-                  style={{
-                    ...getErrorStyle('datosGenerales_areaEvaluador'),
-                    backgroundColor: '#f5f5f5',
-                    cursor: 'not-allowed'
-                  }}
-                />
-                {visibleErrors.datosGenerales_areaEvaluador && (
-                  <span className="error-message">Este campo es obligatorio</span>
-                )}
-              </div>
-            </div>
         </section>
 
         <hr className="evaluation-hr"/>

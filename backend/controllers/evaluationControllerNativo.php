@@ -954,6 +954,20 @@ class EvaluationControllerNativo {
                 return;
             }
 
+            // Obtener datos del jefe inmediato
+            $jefeData = null;
+            if ($evaluacion['id_jefe']) {
+                $stmtJefe = $this->db->prepare("
+                    SELECT id_empleado, nombre, cargo, area 
+                    FROM empleados 
+                    WHERE id_empleado = ?
+                ");
+                $stmtJefe->bind_param('i', $evaluacion['id_jefe']);
+                $stmtJefe->execute();
+                $jefeData = $stmtJefe->get_result()->fetch_assoc();
+                $stmtJefe->close();
+            }
+
             // Obtener firmas y convertirlas a base64
             $firmas = $this->getFirmas($evaluationId);
             $firmasBase64 = [];
@@ -999,10 +1013,10 @@ class EvaluationControllerNativo {
                 ],
                 'datos_generales' => [
                     'fecha_ingreso' => $evaluacion['fecha_inicio_contrato'] ?? '',
-                    'nombreEvaluador' => '',
-                    'cargoEvaluador' => '',
-                    'areaEvaluador' => '',
-                    'idEvaluador' => ''
+                    'nombreEvaluador' => $jefeData ? $jefeData['nombre'] : '',
+                    'cargoEvaluador' => $jefeData ? $jefeData['cargo'] : '',
+                    'areaEvaluador' => $jefeData ? $jefeData['area'] : '',
+                    'idEvaluador' => $jefeData ? $jefeData['id_empleado'] : ''
                 ],
                 'mejoramiento' => $this->getMejoramiento($evaluationId),
                 'plan_accion' => $this->getPlanAccion($evaluationId),
