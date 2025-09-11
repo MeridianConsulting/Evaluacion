@@ -43,29 +43,33 @@ function HseqEvaluation({ onLogout, userRole }) {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const apiUrl = process.env.REACT_APP_API_BASE_URL;
+        const envBase = process.env.REACT_APP_API_BASE_URL && process.env.REACT_APP_API_BASE_URL.trim();
+        const fallbackBase = `${window.location.protocol}//${window.location.hostname}/Evaluacion/backend`;
+        const apiBase = envBase || fallbackBase;
         const periodo = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
 
-        const bossId = localStorage.getItem('employeeId');
-
-        const [empRes, evalRes, globalRes] = await Promise.all([
-          fetch(`${apiUrl}/api/employees`),
-          bossId ? fetch(`${apiUrl}/api/evaluations/hseq-evaluated/${bossId}/${periodo}`) : Promise.resolve({ ok: true, json: async () => ({ data: [] }) }),
-          fetch(`${apiUrl}/api/evaluations/hseq-evaluated/${periodo}`)
+        const [empRes, globalRes] = await Promise.all([
+          fetch(`${apiBase}/api/employees`),
+          fetch(`${apiBase}/api/evaluations/hseq-evaluated/${periodo}`)
         ]);
 
+        const empCt = (empRes.headers.get('content-type') || '').toLowerCase();
+        if (!empRes.ok || !empCt.includes('application/json')) {
+          const txt = await empRes.text();
+          console.error('Respuesta empleados no JSON/status:', empRes.status, txt.slice(0,500));
+          throw new Error(`Empleados HTTP ${empRes.status}`);
+        }
         const empJson = await empRes.json();
         const empList = (empJson && (empJson.data || empJson)) || [];
         setEmployees(Array.isArray(empList) ? empList : []);
 
-        if (evalRes) {
-          const evalJson = await evalRes.json();
-          const evalList = (evalJson && (evalJson.data || [])) || [];
-          const ids = new Set(evalList.map(it => Number(it.id_empleado)));
-          setEvaluatedSet(ids);
-        }
-
         if (globalRes) {
+          const globalCt = (globalRes.headers.get('content-type') || '').toLowerCase();
+          if (!globalRes.ok || !globalCt.includes('application/json')) {
+            const txt = await globalRes.text();
+            console.error('Respuesta hseq-evaluated no JSON/status:', globalRes.status, txt.slice(0,500));
+            throw new Error(`HSEQ HTTP ${globalRes.status}`);
+          }
           const globalJson = await globalRes.json();
           const rows = (globalJson && (globalJson.data || [])) || [];
           const map = {};
@@ -74,8 +78,10 @@ function HseqEvaluation({ onLogout, userRole }) {
             map[key] = r;
           });
           setHseqGlobalMap(map);
+          setEvaluatedSet(new Set(rows.map(r => Number(r.id_empleado))));
         }
       } catch (e) {
+        console.error('Error cargando datos HSEQ:', e);
         setError('No se pudo cargar empleados');
       } finally {
         setLoading(false);
@@ -161,7 +167,9 @@ function HseqEvaluation({ onLogout, userRole }) {
 
     try {
       setIsSubmitting(true);
-      const apiUrl = process.env.REACT_APP_API_BASE_URL;
+      const envBase = process.env.REACT_APP_API_BASE_URL && process.env.REACT_APP_API_BASE_URL.trim();
+      const fallbackBase = `${window.location.protocol}//${window.location.hostname}/Evaluacion/backend`;
+      const apiBase = envBase || fallbackBase;
       
       // Preparar datos para enviar
       const formData = new FormData();
@@ -170,13 +178,13 @@ function HseqEvaluation({ onLogout, userRole }) {
       formData.append('promedioHseq', calcularPromedioHseq());
       formData.append('periodoEvaluacion', new Date().getFullYear() + '-' + String(new Date().getMonth() + 1).padStart(2, '0'));
       
-      // Obtener ID del evaluador (jefe) desde localStorage
+      // Obtener ID del evaluador HSEQ desde localStorage
       const evaluadorId = localStorage.getItem('employeeId');
       if (evaluadorId) {
-        formData.append('bossId', evaluadorId);
+        formData.append('evaluatorId', evaluadorId);
       }
 
-      const response = await fetch(`${apiUrl}/api/evaluations/save-hseq`, {
+      const response = await fetch(`${apiBase}/api/evaluations/save-hseq`, {
         method: 'POST',
         body: formData,
       });

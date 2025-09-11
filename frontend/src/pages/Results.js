@@ -797,7 +797,7 @@ const generateExcel = async (evaluacion) => {
 
   return (
     <div className="results-page">
-      <style jsx="true">{`
+      <style>{`
         .estado-badge { padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
         .estado-completada { background-color: #d4edda; color: #155724; }
         .estado-borrador { background-color: #fff3cd; color: #856404; }

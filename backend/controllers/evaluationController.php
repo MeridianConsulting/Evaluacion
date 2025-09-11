@@ -18,7 +18,6 @@ class EvaluationController {
     // Obtener los datos de la evaluación
     $employeeId = $_POST['employeeId'] ?? null;
     $competenciasData = json_decode($_POST['competenciasData'] ?? '[]', true);
-    $hseqData = json_decode($_POST['hseqData'] ?? '[]', true);
     $mejoramiento = json_decode($_POST['mejoramiento'] ?? 'null', true);
     $planAccion = json_decode($_POST['planAccion'] ?? 'null', true);
     $promedioCompetencias = isset($_POST['promedioCompetencias']) ? (float)$_POST['promedioCompetencias'] : null;
@@ -71,7 +70,6 @@ class EvaluationController {
       $observaciones = [
         'mejoramiento' => $mejoramiento,
         'planAccion' => $planAccion,
-        'hseqData' => $hseqData,
         'competenciasData' => $competenciasData,
         'promedios' => [
           'competencias' => $promedioCompetencias,

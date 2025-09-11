@@ -1,11 +1,13 @@
 <?php
 // Limpiar cualquier salida previa
-if (ob_get_length()) ob_clean();
+if (ob_get_length()) { @ob_clean(); }
 
-// Configurar las cabeceras CORS
-header('Access-Control-Allow-Origin: http://localhost:3000');
-header('Access-Control-Allow-Methods: *');
-header('Access-Control-Allow-Headers: *');
+// Permitir cualquier origen en desarrollo (ajustar en prod si es necesario)
+$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '*';
+header('Access-Control-Allow-Origin: ' . $origin);
+header('Vary: Origin');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 header('Access-Control-Allow-Credentials: true');
 
 // Si es una solicitud OPTIONS, terminar aquí

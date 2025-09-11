@@ -6,7 +6,7 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 
 // Configurar manejo de errores
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
 // Capturar errores fatales
@@ -150,9 +150,7 @@ class EvaluationControllerNativo {
                 }
 
                 // 4. Guardar datos HSEQ
-                if ($hseqData) {
-                    $this->saveHseqData($evaluationId, $hseqData);
-                }
+                // HSEQ se gestiona en tablas independientes, no guardar aquí
 
                 // 5. Guardar competencias
                 if ($competenciasData) {
@@ -269,7 +267,7 @@ class EvaluationControllerNativo {
 
                 if ($mejoramiento) { $this->saveMejoramiento($evaluationId, $mejoramiento); }
                 if ($planAccion)   { $this->savePlanAccion($evaluationId, $planAccion); }
-                if ($hseqData)     { $this->saveHseqData($evaluationId, $hseqData); }
+                // HSEQ se gestiona en tablas independientes, no guardar aquí
                 if ($competenciasData) { $this->saveCompetencias($evaluationId, $competenciasData); }
                 $this->savePromedios($evaluationId, $promedioCompetencias, $hseqAverage, $generalAverage, $groupAverages);
 
@@ -337,22 +335,21 @@ class EvaluationControllerNativo {
     public function getHseqEvaluatedForBossAndPeriod($bossId, $periodo) {
         try {
             $sql = "
-                SELECT e.id_empleado,
+                SELECT he.id_empleado,
                        emp.nombre AS empleado_nombre,
-                       e.id_evaluacion,
-                       e.estado_evaluacion,
-                       e.fecha_evaluacion,
-                       e.id_jefe AS evaluador_id,
+                       he.id_hseq_evaluacion AS id_evaluacion,
+                       he.estado AS estado_evaluacion,
+                       he.fecha_evaluacion,
+                       he.id_evaluador AS evaluador_id,
                        ev.nombre AS evaluador_nombre
-                FROM evaluacion e
-                INNER JOIN evaluacion_hseq h ON h.id_evaluacion = e.id_evaluacion
-                INNER JOIN empleados emp ON emp.id_empleado = e.id_empleado
-                LEFT JOIN empleados ev ON ev.id_empleado = e.id_jefe
-                WHERE e.id_jefe = ? AND e.periodo_evaluacion = ?
-                AND e.id_evaluacion = (
-                    SELECT MAX(e2.id_evaluacion) FROM evaluacion e2
-                    INNER JOIN evaluacion_hseq h2 ON h2.id_evaluacion = e2.id_evaluacion
-                    WHERE e2.id_empleado = e.id_empleado AND e2.periodo_evaluacion = ? AND e2.id_jefe = e.id_jefe
+                FROM hseq_evaluacion he
+                INNER JOIN empleados emp ON emp.id_empleado = he.id_empleado
+                LEFT JOIN empleados ev ON ev.id_empleado = he.id_evaluador
+                WHERE he.id_evaluador = ? AND he.periodo_evaluacion = ?
+                AND he.id_hseq_evaluacion = (
+                    SELECT MAX(he2.id_hseq_evaluacion)
+                    FROM hseq_evaluacion he2
+                    WHERE he2.id_empleado = he.id_empleado AND he2.periodo_evaluacion = ? AND he2.id_evaluador = he.id_evaluador
                 )
                 ORDER BY emp.nombre ASC
             ";
@@ -378,27 +375,22 @@ class EvaluationControllerNativo {
     public function getHseqEvaluatedForPeriod($periodo) {
         try {
             $sql = "
-                SELECT t.id_empleado,
+                SELECT he.id_empleado,
                        emp.nombre AS empleado_nombre,
-                       t.id_evaluacion,
-                       t.estado_evaluacion,
-                       t.fecha_evaluacion,
-                       t.id_jefe AS evaluador_id,
+                       he.id_hseq_evaluacion AS id_evaluacion,
+                       he.estado AS estado_evaluacion,
+                       he.fecha_evaluacion,
+                       he.id_evaluador AS evaluador_id,
                        ev.nombre AS evaluador_nombre
-                FROM (
-                    SELECT e1.*
-                    FROM evaluacion e1
-                    INNER JOIN evaluacion_hseq h1 ON h1.id_evaluacion = e1.id_evaluacion
-                    WHERE e1.periodo_evaluacion = ?
-                    AND e1.id_evaluacion = (
-                        SELECT MAX(e2.id_evaluacion)
-                        FROM evaluacion e2
-                        INNER JOIN evaluacion_hseq h2 ON h2.id_evaluacion = e2.id_evaluacion
-                        WHERE e2.id_empleado = e1.id_empleado AND e2.periodo_evaluacion = ?
-                    )
-                ) AS t
-                INNER JOIN empleados emp ON emp.id_empleado = t.id_empleado
-                LEFT JOIN empleados ev ON ev.id_empleado = t.id_jefe
+                FROM hseq_evaluacion he
+                INNER JOIN empleados emp ON emp.id_empleado = he.id_empleado
+                LEFT JOIN empleados ev ON ev.id_empleado = he.id_evaluador
+                WHERE he.periodo_evaluacion = ?
+                AND he.id_hseq_evaluacion = (
+                    SELECT MAX(he2.id_hseq_evaluacion)
+                    FROM hseq_evaluacion he2
+                    WHERE he2.id_empleado = he.id_empleado AND he2.periodo_evaluacion = ?
+                )
                 ORDER BY emp.nombre ASC
             ";
             $stmt = $this->db->prepare($sql);
@@ -579,6 +571,164 @@ class EvaluationControllerNativo {
         $stmt->close();
     }
 
+    /**
+     * Genera y descarga un PDF de una evaluación HSEQ independiente
+     */
+    public function downloadHseqPDF($hseqEvalId) {
+        try {
+            // Traer maestro HSEQ
+            $stmt = $this->db->prepare("SELECT he.*, emp.nombre AS empleado_nombre, emp.cargo AS empleado_cargo, emp.area AS empleado_area, ev.nombre AS evaluador_nombre FROM hseq_evaluacion he INNER JOIN empleados emp ON emp.id_empleado = he.id_empleado LEFT JOIN empleados ev ON ev.id_empleado = he.id_evaluador WHERE he.id_hseq_evaluacion = ?");
+            $stmt->bind_param('i', $hseqEvalId);
+            $stmt->execute();
+            $hseq = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            if (!$hseq) {
+                http_response_code(404);
+                echo json_encode(["success" => false, "message" => "HSEQ no encontrada"]);
+                return;
+            }
+
+            // Traer items
+            $stmt2 = $this->db->prepare("SELECT * FROM hseq_evaluacion_items WHERE id_hseq_evaluacion = ? ORDER BY id_responsabilidad");
+            $stmt2->bind_param('i', $hseqEvalId);
+            $stmt2->execute();
+            $items = $stmt2->get_result()->fetch_all(MYSQLI_ASSOC);
+            $stmt2->close();
+
+            $html = $this->generateHseqHTML($hseq, $items);
+
+            $this->generatePDF($html);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Error al generar PDF HSEQ", "error" => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Genera y descarga un Excel/CSV de una evaluación HSEQ independiente
+     */
+    public function downloadHseqExcel($hseqEvalId) {
+        try {
+            $stmt = $this->db->prepare("SELECT he.*, emp.nombre AS empleado_nombre, emp.cargo AS empleado_cargo, emp.area AS empleado_area, ev.nombre AS evaluador_nombre FROM hseq_evaluacion he INNER JOIN empleados emp ON emp.id_empleado = he.id_empleado LEFT JOIN empleados ev ON ev.id_empleado = he.id_evaluador WHERE he.id_hseq_evaluacion = ?");
+            $stmt->bind_param('i', $hseqEvalId);
+            $stmt->execute();
+            $hseq = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            if (!$hseq) {
+                http_response_code(404);
+                echo json_encode(["success" => false, "message" => "HSEQ no encontrada"]);
+                return;
+            }
+
+            $stmt2 = $this->db->prepare("SELECT * FROM hseq_evaluacion_items WHERE id_hseq_evaluacion = ? ORDER BY id_responsabilidad");
+            $stmt2->bind_param('i', $hseqEvalId);
+            $stmt2->execute();
+            $items = $stmt2->get_result()->fetch_all(MYSQLI_ASSOC);
+            $stmt2->close();
+
+            // XLSX si está PhpSpreadsheet
+            if (class_exists('\\PhpOffice\\PhpSpreadsheet\\Spreadsheet')) {
+                $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+                $sheet = $spreadsheet->getActiveSheet();
+                $sheet->setTitle('HSEQ');
+
+                $row = 1;
+                $sheet->setCellValue('A'.$row, 'EVALUACIÓN HSEQ'); $row += 2;
+                $sheet->setCellValue('A'.$row, 'Empleado'); $sheet->setCellValue('B'.$row, (string)($hseq['empleado_nombre'] ?? '')); $row++;
+                $sheet->setCellValue('A'.$row, 'Cargo'); $sheet->setCellValue('B'.$row, (string)($hseq['empleado_cargo'] ?? '')); $row++;
+                $sheet->setCellValue('A'.$row, 'Área'); $sheet->setCellValue('B'.$row, (string)($hseq['empleado_area'] ?? '')); $row++;
+                $sheet->setCellValue('A'.$row, 'Período'); $sheet->setCellValue('B'.$row, (string)($hseq['periodo_evaluacion'] ?? '')); $row++;
+                $sheet->setCellValue('A'.$row, 'Evaluador HSEQ'); $sheet->setCellValue('B'.$row, (string)($hseq['evaluador_nombre'] ?? '')); $row++;
+                $sheet->setCellValue('A'.$row, 'Promedio HSEQ'); $sheet->setCellValue('B'.$row, (string)($hseq['promedio_hseq'] ?? '0')); $row += 2;
+
+                $sheet->fromArray(['ID Resp.', 'Responsabilidad', 'Calificación', 'Justificación'], NULL, 'A'.$row);
+                $row++;
+                foreach ($items as $it) {
+                    $sheet->setCellValue('A'.$row, (string)($it['id_responsabilidad'] ?? ''));
+                    $sheet->setCellValue('B'.$row, (string)($it['responsabilidad'] ?? ''));
+                    $sheet->setCellValue('C'.$row, (string)($it['calificacion'] ?? ''));
+                    $sheet->setCellValue('D'.$row, (string)($it['justificacion'] ?? ''));
+                    $row++;
+                }
+
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header('Content-Disposition: attachment; filename="hseq_'.$hseqEvalId.'.xlsx"');
+                header('Cache-Control: max-age=0');
+                $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+                $writer->save('php://output');
+                return;
+            }
+
+            // CSV fallback
+            $filename = 'hseq_'.$hseqEvalId.'.csv';
+            header('Content-Type: text/csv; charset=UTF-8');
+            header('Content-Disposition: attachment; filename="'.$filename.'"');
+            $out = fopen('php://output', 'w');
+            fprintf($out, chr(0xEF).chr(0xBB).chr(0xBF));
+            fputcsv($out, ['EVALUACIÓN HSEQ']);
+            fputcsv($out, []);
+            fputcsv($out, ['Empleado', (string)($hseq['empleado_nombre'] ?? '')]);
+            fputcsv($out, ['Cargo', (string)($hseq['empleado_cargo'] ?? '')]);
+            fputcsv($out, ['Área', (string)($hseq['empleado_area'] ?? '')]);
+            fputcsv($out, ['Período', (string)($hseq['periodo_evaluacion'] ?? '')]);
+            fputcsv($out, ['Evaluador HSEQ', (string)($hseq['evaluador_nombre'] ?? '')]);
+            fputcsv($out, ['Promedio HSEQ', (string)($hseq['promedio_hseq'] ?? '0')]);
+            fputcsv($out, []);
+            fputcsv($out, ['ID Resp.', 'Responsabilidad', 'Calificación', 'Justificación']);
+            foreach ($items as $it) {
+                fputcsv($out, [
+                    (string)($it['id_responsabilidad'] ?? ''),
+                    (string)($it['responsabilidad'] ?? ''),
+                    (string)($it['calificacion'] ?? ''),
+                    (string)($it['justificacion'] ?? ''),
+                ]);
+            }
+            fclose($out);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Error al generar Excel HSEQ", "error" => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Genera HTML para HSEQ independiente
+     */
+    private function generateHseqHTML($hseq, $items) {
+        $empleado = $hseq['empleado_nombre'] ?? '';
+        $cargo = $hseq['empleado_cargo'] ?? '';
+        $area = $hseq['empleado_area'] ?? '';
+        $periodo = $hseq['periodo_evaluacion'] ?? '';
+        $evaluador = $hseq['evaluador_nombre'] ?? '';
+        $promedio = $hseq['promedio_hseq'] ?? 0;
+
+        $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Evaluación HSEQ</title>
+        <style>body{font-family:Arial,sans-serif;margin:20px}.header{text-align:center;margin-bottom:20px}.section{margin-bottom:18px}.section h3{background:#f0f0f0;padding:8px;margin:0}.section-content{padding:12px;border:1px solid #ddd}table{width:100%;border-collapse:collapse;margin:10px 0}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#f2f2f2}.prom{font-weight:700;color:#1F3B73}</style>
+        </head><body>';
+        $html .= '<div class="header"><h1>EVALUACIÓN HSEQ</h1></div>';
+        $html .= '<div class="section"><h3>DATOS</h3><div class="section-content">'
+               . '<p><strong>Empleado:</strong> '.htmlspecialchars($empleado).'</p>'
+               . '<p><strong>Cargo:</strong> '.htmlspecialchars($cargo).'</p>'
+               . '<p><strong>Área:</strong> '.htmlspecialchars($area).'</p>'
+               . '<p><strong>Período:</strong> '.htmlspecialchars($periodo).'</p>'
+               . '<p><strong>Evaluador HSEQ:</strong> '.htmlspecialchars($evaluador).'</p>'
+               . '<p><strong>Promedio HSEQ:</strong> <span class="prom">'.htmlspecialchars((string)$promedio).'</span></p>'
+               . '</div></div>';
+
+        $html .= '<div class="section"><h3>RESPONSABILIDADES</h3><div class="section-content"><table><tr><th>ID</th><th>Responsabilidad</th><th>Calificación</th><th>Justificación</th></tr>';
+        foreach ($items as $it) {
+            $html .= '<tr>'
+                  . '<td>'.htmlspecialchars((string)($it['id_responsabilidad'] ?? '')).'</td>'
+                  . '<td>'.htmlspecialchars($it['responsabilidad'] ?? '').'</td>'
+                  . '<td>'.htmlspecialchars((string)($it['calificacion'] ?? '')).'</td>'
+                  . '<td>'.htmlspecialchars($it['justificacion'] ?? '').'</td>'
+                  . '</tr>';
+        }
+        $html .= '</table></div></div>';
+        $html .= '</body></html>';
+        return $html;
+    }
     /**
      * Obtiene una evaluación completa con todos sus datos
      */
@@ -1333,7 +1483,7 @@ class EvaluationControllerNativo {
             $hseqData = json_decode($_POST['hseqData'] ?? '[]', true);
             $promedioHseq = isset($_POST['promedioHseq']) ? (float)$_POST['promedioHseq'] : 0;
             $periodoEvaluacion = $_POST['periodoEvaluacion'] ?? null;
-            $bossId = isset($_POST['bossId']) ? (int)$_POST['bossId'] : null;
+            $evaluatorId = isset($_POST['evaluatorId']) ? (int)$_POST['evaluatorId'] : (isset($_POST['bossId']) ? (int)$_POST['bossId'] : null);
 
             if (!$employeeId) {
                 http_response_code(400);
@@ -1347,46 +1497,53 @@ class EvaluationControllerNativo {
                 return;
             }
 
-            error_log("Guardando evaluación HSEQ - EmployeeId: $employeeId, Periodo: $periodoEvaluacion, Promedio: $promedioHseq");
+            error_log("Guardando evaluación HSEQ (independiente) - EmployeeId: $employeeId, Periodo: $periodoEvaluacion, Promedio: $promedioHseq");
 
-            // Guardar evaluación HSEQ usando la nueva estructura nativa
+            // Guardar evaluación HSEQ en tablas dedicadas
             $this->db->begin_transaction();
             try {
-                // 1. Insertar evaluación principal (solo HSEQ)
-                $insertEvalSql = 'INSERT INTO evaluacion (id_empleado, fecha_evaluacion, periodo_evaluacion, estado_evaluacion, id_jefe) VALUES (?, NOW(), ?, ?, ?)';
-                $stmtEval = $this->db->prepare($insertEvalSql);
-                if (!$stmtEval) {
-                    throw new Exception('Error al preparar INSERT evaluacion: ' . $this->db->error);
+                // 1. Insertar maestro HSEQ
+                $stmt = $this->db->prepare('INSERT INTO hseq_evaluacion (id_empleado, periodo_evaluacion, promedio_hseq, estado, id_evaluador, fecha_evaluacion) VALUES (?, ?, ?, ?, ?, NOW())');
+                if (!$stmt) {
+                    throw new Exception('Error al preparar INSERT hseq_evaluacion: ' . $this->db->error);
                 }
-                
-                $estado = 'COMPLETADA'; // Las evaluaciones HSEQ se completan directamente
-                $stmtEval->bind_param('issi', $employeeId, $periodoEvaluacion, $estado, $bossId);
-                if (!$stmtEval->execute()) {
-                    throw new Exception('Error al ejecutar INSERT evaluacion: ' . $stmtEval->error);
+                $estado = 'COMPLETADA';
+                $stmt->bind_param('isdsi', $employeeId, $periodoEvaluacion, $promedioHseq, $estado, $evaluatorId);
+                if (!$stmt->execute()) {
+                    throw new Exception('Error al ejecutar INSERT hseq_evaluacion: ' . $stmt->error);
                 }
-                $evaluationId = $stmtEval->insert_id;
-                $stmtEval->close();
+                $hseqEvalId = $stmt->insert_id;
+                $stmt->close();
 
-                error_log("Evaluación HSEQ principal creada con ID: $evaluationId");
-
-                // 2. Guardar datos HSEQ
-                $this->saveHseqData($evaluationId, $hseqData);
-
-                // 3. Guardar promedios (solo HSEQ)
-                $this->savePromedios($evaluationId, 0, $promedioHseq, $promedioHseq, []);
+                // 2. Insertar items HSEQ
+                $stmtItem = $this->db->prepare('INSERT INTO hseq_evaluacion_items (id_hseq_evaluacion, id_responsabilidad, responsabilidad, calificacion, justificacion) VALUES (?, ?, ?, ?, ?)');
+                if (!$stmtItem) {
+                    throw new Exception('Error al preparar INSERT hseq_evaluacion_items: ' . $this->db->error);
+                }
+                foreach ($hseqData as $h) {
+                    $idResp = isset($h['id']) ? (int)$h['id'] : 0;
+                    $resp = $h['responsabilidad'] ?? '';
+                    $calif = isset($h['calificacion']) ? (float)$h['calificacion'] : (isset($h['evaluacionJefe']) ? (float)$h['evaluacionJefe'] : null);
+                    $just = $h['justificacion'] ?? ($h['justificacionJefe'] ?? null);
+                    $stmtItem->bind_param('iisds', $hseqEvalId, $idResp, $resp, $calif, $just);
+                    if (!$stmtItem->execute()) {
+                        throw new Exception('Error al ejecutar INSERT hseq_evaluacion_items: ' . $stmtItem->error);
+                    }
+                }
+                $stmtItem->close();
 
                 $this->db->commit();
 
                 echo json_encode([
                     'success' => true,
                     'message' => 'Evaluación HSEQ guardada exitosamente',
-                    'id_evaluacion' => $evaluationId,
+                    'id_evaluacion' => $hseqEvalId,
                 ], JSON_UNESCAPED_UNICODE);
                 return;
 
             } catch (Exception $e) {
                 $this->db->rollback();
-                error_log("Error en transacción HSEQ: " . $e->getMessage());
+                error_log('Error en transacción HSEQ (independiente): ' . $e->getMessage());
                 http_response_code(500);
                 echo json_encode([
                     'success' => false,

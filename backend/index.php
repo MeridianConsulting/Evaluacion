@@ -99,15 +99,14 @@ function handleRequest($method, $path) {
         return;
     }
 
-    // Ruta para obtener evaluaciones asignadas a un jefe inmediato
+    // (OBSOLETO) Asignaciones por jefe: nuevo modelo HSEQ no usa jefes
     if (preg_match("#^api/evaluations/assigned/(\d+)$#", $path, $matches) && $method === "GET") {
-        $bossId = $matches[1];
-        $controller = new EvaluationControllerNativo();
-        $controller->getAssignedToBoss($bossId);
+        http_response_code(410);
+        echo json_encode(["success" => false, "message" => "Endpoint obsoleto. Use los endpoints de HSEQ o evaluación general por separado."]);
         return;
     }
 
-    // Ruta para obtener empleados evaluados HSEQ por jefe y periodo
+    // Ruta para obtener empleados evaluados HSEQ por evaluador y periodo (compat)
     if (preg_match("#^api/evaluations/hseq-evaluated/(\d+)/(\d{4}-\d{2})$#", $path, $matches) && $method === "GET") {
         $bossId = (int)$matches[1];
         $periodo = $matches[2];
@@ -121,6 +120,20 @@ function handleRequest($method, $path) {
         $periodo = $matches[1];
         $controller = new EvaluationControllerNativo();
         $controller->getHseqEvaluatedForPeriod($periodo);
+        return;
+    }
+
+    // Reportes HSEQ independientes
+    if (preg_match("#^api/hseq/evaluations/(\d+)/pdf$#", $path, $matches) && $method === "GET") {
+        $hseqEvalId = (int)$matches[1];
+        $controller = new EvaluationControllerNativo();
+        $controller->downloadHseqPDF($hseqEvalId);
+        return;
+    }
+    if (preg_match("#^api/hseq/evaluations/(\d+)/excel$#", $path, $matches) && $method === "GET") {
+        $hseqEvalId = (int)$matches[1];
+        $controller = new EvaluationControllerNativo();
+        $controller->downloadHseqExcel($hseqEvalId);
         return;
     }
 
@@ -271,7 +284,7 @@ function handleRequest($method, $path) {
         $controller = new AdminController();
         $controller->searchEmployeesByName($queryParams);
 
-    } elseif (preg_match("#^admin/employees/(\d+)$#", $path, $matches) && $method === "PUT") {
+    } elseif (preg_match('#^admin/employees/(\d+)$#', $path, $matches) && $method === "PUT") {
         $id = $matches[1];
         $data = json_decode(file_get_contents("php://input"), true);
         if (!$data) {
@@ -282,7 +295,7 @@ function handleRequest($method, $path) {
         $controller = new AdminController();
         $controller->updateEmployee($id, $data);
 
-    } elseif (preg_match("#^admin/employees/(\d+)$#", $path, $matches) && $method === "DELETE") {
+    } elseif (preg_match('#^admin/employees/(\d+)$#', $path, $matches) && $method === "DELETE") {
         $id = $matches[1];
         $controller = new AdminController();
         $controller->deleteEmployee($id);

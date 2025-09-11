@@ -907,3 +907,40 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- -----------------------------------------------
+-- NUEVAS TABLAS PARA HSEQ INDEPENDIENTE DE EVALUACION GENERAL
+-- -----------------------------------------------
+
+-- Tabla maestro de evaluaciones HSEQ
+CREATE TABLE IF NOT EXISTS `hseq_evaluacion` (
+  `id_hseq_evaluacion` int(11) NOT NULL AUTO_INCREMENT,
+  `id_empleado` int(11) NOT NULL,
+  `periodo_evaluacion` varchar(50) DEFAULT NULL,
+  `promedio_hseq` decimal(5,2) DEFAULT NULL,
+  `estado` enum('BORRADOR','COMPLETADA') DEFAULT 'COMPLETADA',
+  `id_evaluador` int(11) DEFAULT NULL,
+  `fecha_evaluacion` datetime DEFAULT current_timestamp(),
+  `fecha_creacion` datetime DEFAULT current_timestamp(),
+  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id_hseq_evaluacion`),
+  KEY `idx_hseq_empleado_periodo` (`id_empleado`,`periodo_evaluacion`),
+  KEY `idx_hseq_evaluador` (`id_evaluador`),
+  CONSTRAINT `fk_hseq_eval_empleado` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_hseq_eval_evaluador` FOREIGN KEY (`id_evaluador`) REFERENCES `empleados` (`id_empleado`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Tabla de items por evaluación HSEQ
+CREATE TABLE IF NOT EXISTS `hseq_evaluacion_items` (
+  `id_item` int(11) NOT NULL AUTO_INCREMENT,
+  `id_hseq_evaluacion` int(11) NOT NULL,
+  `id_responsabilidad` int(11) NOT NULL,
+  `responsabilidad` text NOT NULL,
+  `calificacion` decimal(5,2) DEFAULT NULL,
+  `justificacion` text DEFAULT NULL,
+  `fecha_creacion` datetime DEFAULT current_timestamp(),
+  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id_item`),
+  KEY `fk_hseq_item_eval` (`id_hseq_evaluacion`),
+  CONSTRAINT `fk_hseq_item_eval` FOREIGN KEY (`id_hseq_evaluacion`) REFERENCES `hseq_evaluacion` (`id_hseq_evaluacion`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
