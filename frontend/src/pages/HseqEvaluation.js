@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import '../assets/css/Styles1.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -15,6 +15,8 @@ function HseqEvaluation({ onLogout, userRole }) {
   const [evaluatedSet, setEvaluatedSet] = useState(new Set());
   const [hseqGlobalMap, setHseqGlobalMap] = useState({});
   const [searchText, setSearchText] = useState('');
+  const [isDashboardCollapsed, setIsDashboardCollapsed] = useState(false);
+  const evaluationRef = useRef(null);
   const [hseqItems, setHseqItems] = useState([
     { id: 1,  responsabilidad: 'Procurar el cuidado integral de su salud.', evaluacionJefe: '', justificacionJefe: '' },
     { id: 2,  responsabilidad: 'Suministrar información clara, veraz y completa sobre su estado de salud.', evaluacionJefe: '', justificacionJefe: '' },
@@ -120,6 +122,16 @@ function HseqEvaluation({ onLogout, userRole }) {
     if (!q) return employees;
     return employees.filter(emp => String(emp.nombre || '').toLowerCase().includes(q) || String(emp.cedula || '').includes(q));
   }, [employees, searchText]);
+
+  const goToEvaluate = (emp) => {
+    setSelectedEmployee(emp || null);
+    setIsDashboardCollapsed(true);
+    setTimeout(() => {
+      if (evaluationRef.current) {
+        evaluationRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 50);
+  };
 
   // Función para validar la evaluación HSEQ
   const validarEvaluacionHseq = () => {
@@ -283,7 +295,13 @@ function HseqEvaluation({ onLogout, userRole }) {
           .badge { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; border:1px solid transparent; font-size:12px; font-weight:700; }
           .badge-ok { background:#ecfdf5; color:#065f46; border-color:rgba(16,185,129,.25); }
           .badge-pend { background:#fefce8; color:#92400e; border-color:rgba(245,158,11,.25); }
-          .search-input { width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; background:#fff; }
+          .dash-header { display:flex; flex-direction: column; align-items:center; gap: 10px; }
+          .search-wrap { position: relative; width: min(520px, 100%); margin: 0 auto; }
+          .search-input { width:100%; height:40px; padding:0 12px 0 38px; border:1px solid #e5e7eb; border-radius:999px; background:#fff; outline:none; transition: box-shadow .2s ease, border-color .2s ease; }
+          .search-input::placeholder { color:#94a3b8; }
+          .search-input:focus { border-color:#1F3B73; box-shadow:0 0 0 4px rgba(31,59,115,.12); }
+          .search-icon { position:absolute; left:12px; top:50%; transform: translateY(-50%); width:18px; height:18px; opacity:.7; }
+          .dash-toggle { background:none; border:none; color:#1F3B73; font-weight:700; cursor:pointer; }
           @media (min-width: 900px) { .hseq-stats { grid-template-columns: repeat(4, 1fr); } }
         `}</style>
 
@@ -330,11 +348,14 @@ function HseqEvaluation({ onLogout, userRole }) {
             )}
 
             {/* Dashboard HSEQ */}
-            {!loading && !error && (
+            {!loading && !error && !isDashboardCollapsed && (
               <div style={{ marginTop: '10px' }}>
-                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'8px' }}>
+                <div className="dash-header" style={{ marginBottom:'8px' }}>
                   <h2 style={{ fontSize:'1rem', margin:0, color:'#111827' }}>Dashboard HSEQ</h2>
-                  <div style={{ width:'260px' }}>
+                  <div className="search-wrap">
+                    <svg className="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="#1F3B73" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                     <input
                       className="search-input"
                       placeholder="Buscar por nombre o cédula"
@@ -396,7 +417,7 @@ function HseqEvaluation({ onLogout, userRole }) {
                             <td>{fecha ? fecha.toLocaleDateString() : '-'}</td>
                             <td style={{ textAlign:'right' }}>
                               <button
-                                onClick={()=> setSelectedEmployee(emp)}
+                                onClick={()=> goToEvaluate(emp)}
                                 style={{
                                   background: 'linear-gradient(135deg, #1F3B73, #0A0F1A)',
                                   color: '#fff', border:'none', borderRadius:'6px', padding:'8px 12px', cursor:'pointer'
@@ -416,12 +437,20 @@ function HseqEvaluation({ onLogout, userRole }) {
                     </tbody>
                   </table>
                 </div>
+                <div style={{ textAlign:'right', marginTop:'8px' }}>
+                  <button className="dash-toggle" onClick={()=> setIsDashboardCollapsed(true)}>Ocultar dashboard</button>
+                </div>
+              </div>
+            )}
+            {!loading && !error && isDashboardCollapsed && (
+              <div style={{ marginTop:'8px', textAlign:'right' }}>
+                <button className="dash-toggle" onClick={()=> setIsDashboardCollapsed(false)}>Mostrar dashboard</button>
               </div>
             )}
 
             {selectedEmployee && (
               <>
-                <div className="hseq-employee-info">
+                <div ref={evaluationRef} className="hseq-employee-info">
                   <span className="hseq-badge">
                     <span>Empleado:</span> {selectedEmployee.nombre}
                   </span>
