@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-09-2025 a las 16:14:06
+-- Tiempo de generación: 11-09-2025 a las 18:23:28
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -573,7 +573,7 @@ INSERT INTO `empleados` (`id_empleado`, `cedula`, `nombre`, `tipo_documento`, `c
 (790, 1015449004, 'RICARDO ANDRES VARGAS CORREDOR', 'Cédula de Ciudadanía', 'Ingeniero(a) Asistente de Company Man para operaciones de Perforación Completamiento y Workover D1', 'FRONTERA', '2024-07-02', 'ricardoanvaco@gmail.com', '1015449004', 'FRONTERA', '', 'empleado'),
 (791, 1019152161, 'DIEGO ALEJANDRO ACUÑA QUINTERO', 'Cédula de Ciudadanía', 'Ingeniero(a) Asistente de Company Man para operaciones de Perforación Completamiento y Workover D3', 'FRONTERA', '2024-07-12', 'dacua8@gmail.com', '1019152161', 'FRONTERA', '', 'empleado'),
 (792, 1032446831, 'ELIANA IVETH ALARCON RONDON', 'Cédula de Ciudadanía', 'Profesional de Proyectos B1', 'PETROSERVICIOS', '2024-08-22', 'nana.alarcon08@hotmail.com', '1032446831', 'PETROSERVICIOS', '', 'jefe'),
-(794, 1011202252, 'JOSE MATEO LOPEZ CIFUENTES', 'Cédula de Ciudadanía', 'Aprendiz Programacion', 'Administrativa ', '2024-12-23', 'josemateolopezcifuentes@gmail.com', '1011202252', NULL, NULL, 'admin');
+(794, 1011202252, 'JOSE MATEO LOPEZ CIFUENTES', 'Cédula de Ciudadanía', 'Aprendiz Programacion', 'Administrativa ', '2024-12-23', 'josemateolopezcifuentes@gmail.com', '123123', NULL, NULL, 'admin');
 
 -- --------------------------------------------------------
 

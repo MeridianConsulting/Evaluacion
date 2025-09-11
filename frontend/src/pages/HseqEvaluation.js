@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import '../assets/css/Styles1.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -12,6 +12,9 @@ function HseqEvaluation({ onLogout, userRole }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [evaluatedSet, setEvaluatedSet] = useState(new Set());
+  const [hseqGlobalMap, setHseqGlobalMap] = useState({});
+  const [searchText, setSearchText] = useState('');
   const [hseqItems, setHseqItems] = useState([
     { id: 1,  responsabilidad: 'Procurar el cuidado integral de su salud.', evaluacionJefe: '', justificacionJefe: '' },
     { id: 2,  responsabilidad: 'Suministrar información clara, veraz y completa sobre su estado de salud.', evaluacionJefe: '', justificacionJefe: '' },
@@ -36,20 +39,47 @@ function HseqEvaluation({ onLogout, userRole }) {
   ]);
 
   useEffect(() => {
-    const loadEmployees = async () => {
+    const loadData = async () => {
       try {
         const apiUrl = process.env.REACT_APP_API_BASE_URL;
-        const resp = await fetch(`${apiUrl}/api/employees`);
-        const json = await resp.json();
-        const list = (json && (json.data || json)) || [];
-        setEmployees(Array.isArray(list) ? list : []);
+        const periodo = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+
+        const bossId = localStorage.getItem('employeeId');
+
+        const [empRes, evalRes, globalRes] = await Promise.all([
+          fetch(`${apiUrl}/api/employees`),
+          bossId ? fetch(`${apiUrl}/api/evaluations/hseq-evaluated/${bossId}/${periodo}`) : Promise.resolve({ ok: true, json: async () => ({ data: [] }) }),
+          fetch(`${apiUrl}/api/evaluations/hseq-evaluated/${periodo}`)
+        ]);
+
+        const empJson = await empRes.json();
+        const empList = (empJson && (empJson.data || empJson)) || [];
+        setEmployees(Array.isArray(empList) ? empList : []);
+
+        if (evalRes) {
+          const evalJson = await evalRes.json();
+          const evalList = (evalJson && (evalJson.data || [])) || [];
+          const ids = new Set(evalList.map(it => Number(it.id_empleado)));
+          setEvaluatedSet(ids);
+        }
+
+        if (globalRes) {
+          const globalJson = await globalRes.json();
+          const rows = (globalJson && (globalJson.data || [])) || [];
+          const map = {};
+          rows.forEach(r => {
+            const key = Number(r.id_empleado);
+            map[key] = r;
+          });
+          setHseqGlobalMap(map);
+        }
       } catch (e) {
         setError('No se pudo cargar empleados');
       } finally {
         setLoading(false);
       }
     };
-    loadEmployees();
+    loadData();
   }, []);
 
   const handleHseqChange = (id, field, value) => {
@@ -71,6 +101,25 @@ function HseqEvaluation({ onLogout, userRole }) {
   };
 
   const getHseqErrorStyle = () => ({});
+
+  const periodoActual = useMemo(() => (
+    `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`
+  ), []);
+
+  const pendientes = useMemo(() => employees.filter(emp => !evaluatedSet.has(Number(emp.id_empleado))), [employees, evaluatedSet]);
+  const evaluados = useMemo(() => employees.filter(emp => evaluatedSet.has(Number(emp.id_empleado))), [employees, evaluatedSet]);
+
+  const totalEmpleados = employees.length;
+  const evaluadosGlobal = useMemo(() => Object.keys(hseqGlobalMap).length, [hseqGlobalMap]);
+  const pendientesGlobal = Math.max(0, totalEmpleados - evaluadosGlobal);
+  const porcentajeCompletado = totalEmpleados ? Math.round((evaluadosGlobal / totalEmpleados) * 100) : 0;
+  const porcentajePendiente = 100 - porcentajeCompletado;
+
+  const empleadosFiltrados = useMemo(() => {
+    const q = searchText.trim().toLowerCase();
+    if (!q) return employees;
+    return employees.filter(emp => String(emp.nombre || '').toLowerCase().includes(q) || String(emp.cedula || '').includes(q));
+  }, [employees, searchText]);
 
   // Función para validar la evaluación HSEQ
   const validarEvaluacionHseq = () => {
@@ -148,7 +197,7 @@ function HseqEvaluation({ onLogout, userRole }) {
   return (
     <div className="hseq-evaluation-page">
       <Header onLogout={onLogout} userRole={userRole} />
-      <main className="evaluation-container-unique" style={{ padding: 'clamp(1rem, 5vw, 2rem)' }}>
+      <main className="evaluation-container-unique" style={{ padding: 'clamp(1rem, 5vw, 2rem)', flex: 1 }}>
         <style>{`
           .hseq-card { 
             max-width: 1100px; 
@@ -219,6 +268,23 @@ function HseqEvaluation({ onLogout, userRole }) {
           @media (min-width: 720px) { 
             .hseq-toolbar { grid-template-columns: 1fr 1fr; }
           }
+          /* Asegurar footer pegado al fondo */
+          .hseq-evaluation-page { min-height: 100vh; display: flex; flex-direction: column; }
+          /* Dashboard */
+          .hseq-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 14px 0; }
+          .hseq-stat { background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; }
+          .hseq-stat-title { color: #6b7280; font-size: 12px; font-weight: 600; }
+          .hseq-stat-value { color: #111827; font-size: 20px; font-weight: 800; }
+          .hseq-progress { height: 8px; background: #eef2ff; border-radius: 999px; overflow: hidden; }
+          .hseq-progress-bar { height: 100%; background: linear-gradient(90deg, #1F3B73, #0A0F1A); }
+          .hseq-dash-table { width: 100%; border-collapse: collapse; }
+          .hseq-dash-table th { text-align: left; font-size: 12px; color: #374151; background: #f3f4f6; padding: 10px; }
+          .hseq-dash-table td { font-size: 14px; padding: 10px; border-bottom: 1px solid #f1f5f9; }
+          .badge { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; border:1px solid transparent; font-size:12px; font-weight:700; }
+          .badge-ok { background:#ecfdf5; color:#065f46; border-color:rgba(16,185,129,.25); }
+          .badge-pend { background:#fefce8; color:#92400e; border-color:rgba(245,158,11,.25); }
+          .search-input { width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; background:#fff; }
+          @media (min-width: 900px) { .hseq-stats { grid-template-columns: repeat(4, 1fr); } }
         `}</style>
 
         <div className="hseq-card">
@@ -243,12 +309,112 @@ function HseqEvaluation({ onLogout, userRole }) {
                     }}
                   >
                     <option value="">-- Seleccione --</option>
-                    {employees.map(emp => (
-                      <option key={emp.id_empleado} value={emp.id_empleado}>
-                        {emp.nombre} - {emp.cargo || ''}
-                      </option>
-                    ))}
+                    {pendientes.length > 0 && (
+                      <optgroup label="Pendientes">
+                        {pendientes.map(emp => (
+                          <option key={`p-${emp.id_empleado}`} value={emp.id_empleado}>{emp.nombre}</option>
+                        ))}
+                      </optgroup>
+                    )}
+                    {evaluados.length > 0 && (
+                      <optgroup label="Evaluados HSEQ">
+                        {evaluados.map(emp => (
+                          <option key={`e-${emp.id_empleado}`} value={emp.id_empleado}>✅ {emp.nombre}</option>
+                        ))}
+                      </optgroup>
+                    )}
                   </select>
+                  <span style={{ fontSize: '12px', color: '#6b7280' }}>Período: {periodoActual}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Dashboard HSEQ */}
+            {!loading && !error && (
+              <div style={{ marginTop: '10px' }}>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'8px' }}>
+                  <h2 style={{ fontSize:'1rem', margin:0, color:'#111827' }}>Dashboard HSEQ</h2>
+                  <div style={{ width:'260px' }}>
+                    <input
+                      className="search-input"
+                      placeholder="Buscar por nombre o cédula"
+                      value={searchText}
+                      onChange={(e)=>setSearchText(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="hseq-stats">
+                  <div className="hseq-stat">
+                    <div className="hseq-stat-title">Total empleados</div>
+                    <div className="hseq-stat-value">{totalEmpleados}</div>
+                  </div>
+                  <div className="hseq-stat">
+                    <div className="hseq-stat-title">Evaluados HSEQ</div>
+                    <div className="hseq-stat-value">{evaluadosGlobal}</div>
+                  </div>
+                  <div className="hseq-stat">
+                    <div className="hseq-stat-title">Pendientes HSEQ</div>
+                    <div className="hseq-stat-value">{pendientesGlobal}</div>
+                  </div>
+                  <div className="hseq-stat">
+                    <div className="hseq-stat-title">Avance del período</div>
+                    <div className="hseq-progress" aria-label={`Avance ${porcentajeCompletado}%`}>
+                      <div className="hseq-progress-bar" style={{ width: `${porcentajeCompletado}%` }} />
+                    </div>
+                    <div style={{ display:'flex', justifyContent:'space-between', fontSize:'12px', color:'#6b7280', marginTop:'6px' }}>
+                      <span>Completado: {porcentajeCompletado}%</span>
+                      <span>Pendiente: {porcentajePendiente}%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ width:'100%', overflowX:'auto', border:'1px solid #e5e7eb', borderRadius:'10px' }}>
+                  <table className="hseq-dash-table">
+                    <thead>
+                      <tr>
+                        <th>Empleado</th>
+                        <th>Estado</th>
+                        <th>Evaluador HSEQ</th>
+                        <th>Fecha</th>
+                        <th style={{ textAlign:'right' }}>Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {empleadosFiltrados.map(emp => {
+                        const info = hseqGlobalMap[Number(emp.id_empleado)];
+                        const estadoOk = Boolean(info && String(info.estado_evaluacion).toUpperCase() === 'COMPLETADA');
+                        const fecha = info && info.fecha_evaluacion ? new Date(info.fecha_evaluacion) : null;
+                        return (
+                          <tr key={`row-${emp.id_empleado}`}>
+                            <td style={{ whiteSpace:'nowrap' }}>{emp.nombre}</td>
+                            <td>
+                              <span className={`badge ${estadoOk ? 'badge-ok' : 'badge-pend'}`}>
+                                {estadoOk ? 'Completada' : 'Pendiente'}
+                              </span>
+                            </td>
+                            <td>{info?.evaluador_nombre || '-'}</td>
+                            <td>{fecha ? fecha.toLocaleDateString() : '-'}</td>
+                            <td style={{ textAlign:'right' }}>
+                              <button
+                                onClick={()=> setSelectedEmployee(emp)}
+                                style={{
+                                  background: 'linear-gradient(135deg, #1F3B73, #0A0F1A)',
+                                  color: '#fff', border:'none', borderRadius:'6px', padding:'8px 12px', cursor:'pointer'
+                                }}
+                              >
+                                Evaluar
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      {empleadosFiltrados.length === 0 && (
+                        <tr>
+                          <td colSpan={5} style={{ textAlign:'center', color:'#6b7280', padding:'16px' }}>Sin resultados</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             )}
@@ -259,8 +425,8 @@ function HseqEvaluation({ onLogout, userRole }) {
                   <span className="hseq-badge">
                     <span>Empleado:</span> {selectedEmployee.nombre}
                   </span>
-                  <span className="hseq-badge">
-                    <span>Cargo:</span> {selectedEmployee.cargo || ''}
+                  <span className="hseq-badge" style={{ background: evaluatedSet.has(Number(selectedEmployee.id_empleado)) ? '#ecfdf5' : '#fefce8', color: evaluatedSet.has(Number(selectedEmployee.id_empleado)) ? '#065f46' : '#92400e', borderColor: evaluatedSet.has(Number(selectedEmployee.id_empleado)) ? 'rgba(16,185,129,.25)' : 'rgba(245,158,11,.25)'}}>
+                    {evaluatedSet.has(Number(selectedEmployee.id_empleado)) ? 'HSEQ: Completada' : 'HSEQ: Pendiente'}
                   </span>
                 </div>
                 <Hseq

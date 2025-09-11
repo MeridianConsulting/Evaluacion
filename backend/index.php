@@ -107,6 +107,23 @@ function handleRequest($method, $path) {
         return;
     }
 
+    // Ruta para obtener empleados evaluados HSEQ por jefe y periodo
+    if (preg_match("#^api/evaluations/hseq-evaluated/(\d+)/(\d{4}-\d{2})$#", $path, $matches) && $method === "GET") {
+        $bossId = (int)$matches[1];
+        $periodo = $matches[2];
+        $controller = new EvaluationControllerNativo();
+        $controller->getHseqEvaluatedForBossAndPeriod($bossId, $periodo);
+        return;
+    }
+
+    // Ruta para obtener estado HSEQ del período (última por empleado)
+    if (preg_match("#^api/evaluations/hseq-evaluated/(\d{4}-\d{2})$#", $path, $matches) && $method === "GET") {
+        $periodo = $matches[1];
+        $controller = new EvaluationControllerNativo();
+        $controller->getHseqEvaluatedForPeriod($periodo);
+        return;
+    }
+
     // Ruta para obtener evaluación completa con firmas
     if (preg_match("#^api/evaluations/(\d+)/complete/(\d+)$#", $path, $matches) && $method === "GET") {
         $evaluationId = $matches[1];

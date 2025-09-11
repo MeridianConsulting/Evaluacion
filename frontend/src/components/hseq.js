@@ -9,6 +9,11 @@ function Hseq({
 }) {
   return (
     <section className="evaluation-section" style={{ overflow: 'hidden' }}>
+      <style>{`
+        .hseq-table tr:nth-child(even) td { background-color: #fafafa; }
+        .hseq-table tr:hover td { background-color: #f3f6fb; }
+        .hseq-table th, .hseq-table td { border-bottom: 1px solid #eef2f7; }
+      `}</style>
       <div style={{ 
         width: '100%', 
         overflowX: 'auto',
@@ -36,7 +41,10 @@ function Hseq({
                 fontSize: "1.1rem",
                 fontWeight: "bold",
                 height: "28px",
-                borderBottom: "1px solid rgba(0,0,0,0.25)"
+                borderBottom: "1px solid rgba(0,0,0,0.25)",
+                position: 'sticky',
+                top: 0,
+                zIndex: 1
               }}
             >
               CALIFICACIÓN GENERAL POR RESPONSABILIDADES HSEQ

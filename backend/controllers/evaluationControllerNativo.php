@@ -332,6 +332,92 @@ class EvaluationControllerNativo {
     }
 
     /**
+     * Lista empleados que tienen evaluación HSEQ en un período dado para un jefe
+     */
+    public function getHseqEvaluatedForBossAndPeriod($bossId, $periodo) {
+        try {
+            $sql = "
+                SELECT e.id_empleado,
+                       emp.nombre AS empleado_nombre,
+                       e.id_evaluacion,
+                       e.estado_evaluacion,
+                       e.fecha_evaluacion,
+                       e.id_jefe AS evaluador_id,
+                       ev.nombre AS evaluador_nombre
+                FROM evaluacion e
+                INNER JOIN evaluacion_hseq h ON h.id_evaluacion = e.id_evaluacion
+                INNER JOIN empleados emp ON emp.id_empleado = e.id_empleado
+                LEFT JOIN empleados ev ON ev.id_empleado = e.id_jefe
+                WHERE e.id_jefe = ? AND e.periodo_evaluacion = ?
+                AND e.id_evaluacion = (
+                    SELECT MAX(e2.id_evaluacion) FROM evaluacion e2
+                    INNER JOIN evaluacion_hseq h2 ON h2.id_evaluacion = e2.id_evaluacion
+                    WHERE e2.id_empleado = e.id_empleado AND e2.periodo_evaluacion = ? AND e2.id_jefe = e.id_jefe
+                )
+                ORDER BY emp.nombre ASC
+            ";
+            $stmt = $this->db->prepare($sql);
+            if (!$stmt) {
+                throw new Exception('Error al preparar consulta: ' . $this->db->error);
+            }
+            $stmt->bind_param('iss', $bossId, $periodo, $periodo);
+            $stmt->execute();
+            $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+
+            echo json_encode(["success" => true, "data" => $rows]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Error al obtener evaluados HSEQ", "error" => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Lista empleados evaluados HSEQ del período (última evaluación por empleado) con evaluador
+     */
+    public function getHseqEvaluatedForPeriod($periodo) {
+        try {
+            $sql = "
+                SELECT t.id_empleado,
+                       emp.nombre AS empleado_nombre,
+                       t.id_evaluacion,
+                       t.estado_evaluacion,
+                       t.fecha_evaluacion,
+                       t.id_jefe AS evaluador_id,
+                       ev.nombre AS evaluador_nombre
+                FROM (
+                    SELECT e1.*
+                    FROM evaluacion e1
+                    INNER JOIN evaluacion_hseq h1 ON h1.id_evaluacion = e1.id_evaluacion
+                    WHERE e1.periodo_evaluacion = ?
+                    AND e1.id_evaluacion = (
+                        SELECT MAX(e2.id_evaluacion)
+                        FROM evaluacion e2
+                        INNER JOIN evaluacion_hseq h2 ON h2.id_evaluacion = e2.id_evaluacion
+                        WHERE e2.id_empleado = e1.id_empleado AND e2.periodo_evaluacion = ?
+                    )
+                ) AS t
+                INNER JOIN empleados emp ON emp.id_empleado = t.id_empleado
+                LEFT JOIN empleados ev ON ev.id_empleado = t.id_jefe
+                ORDER BY emp.nombre ASC
+            ";
+            $stmt = $this->db->prepare($sql);
+            if (!$stmt) {
+                throw new Exception('Error al preparar consulta: ' . $this->db->error);
+            }
+            $stmt->bind_param('ss', $periodo, $periodo);
+            $stmt->execute();
+            $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+
+            echo json_encode(["success" => true, "data" => $rows]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Error al obtener estado HSEQ del período", "error" => $e->getMessage()]);
+        }
+    }
+
+    /**
      * Guarda datos de mejoramiento
      */
     private function saveMejoramiento($evaluationId, $mejoramiento) {
