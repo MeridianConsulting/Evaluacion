@@ -128,8 +128,8 @@ class EvaluationControllerNativo {
                 if (!$stmtEval) {
                     throw new Exception('Error al preparar INSERT evaluacion: ' . $this->db->error);
                 }
-                // Si no hay firma de jefe aún, dejar en BORRADOR (pendiente del jefe)
-                $estado = $bossSignaturePath ? 'COMPLETADA' : 'BORRADOR';
+                // Determinar estado según el flujo de trabajo
+                $estado = $this->determinarEstadoEvaluacion($employeeSignaturePath, $bossSignaturePath, false);
                 $stmtEval->bind_param('issi', $employeeId, $periodoEvaluacion, $estado, $bossId);
                 if (!$stmtEval->execute()) {
                     throw new Exception('Error al ejecutar INSERT evaluacion: ' . $stmtEval->error);
@@ -251,12 +251,15 @@ class EvaluationControllerNativo {
 
             $this->db->begin_transaction();
             try {
-                // Actualizar evaluación a COMPLETADA si llega firma del jefe; de lo contrario, BORRADOR
-                $estado = $bossSignaturePath ? 'COMPLETADA' : 'BORRADOR';
+                // Determinar nuevo estado según el flujo de trabajo
+                $estado = $this->determinarEstadoEvaluacion($employeeSignaturePath, $bossSignaturePath, true);
                 $stmt = $this->db->prepare("UPDATE evaluacion SET estado_evaluacion = ?, fecha_actualizacion = NOW() WHERE id_evaluacion = ?");
                 $stmt->bind_param('si', $estado, $evaluationId);
                 $stmt->execute();
                 $stmt->close();
+                
+                // Registrar cambio de estado en el historial
+                $this->registrarCambioEstado($evaluationId, $estado, $employeeId);
 
                 // Limpiar y reinsertar detalles para reflejar la última edición
                 $this->db->query("DELETE FROM evaluacion_competencias WHERE id_evaluacion = " . (int)$evaluationId);
@@ -1613,6 +1616,208 @@ class EvaluationControllerNativo {
             // En caso de error, devolver HTML
             header('Content-Type: text/html; charset=UTF-8');
             echo $html;
+        }
+    }
+
+    /**
+     * Determina el estado de la evaluación según el flujo de trabajo
+     * 1. Autoevaluación del Colaborador
+     * 2. Evaluación del Líder Inmediato
+     * 3. Evaluación HSEQ Institucional
+     */
+    private function determinarEstadoEvaluacion($employeeSignaturePath, $bossSignaturePath, $isUpdate = false) {
+        // Si es una actualización, verificar el estado actual
+        if ($isUpdate) {
+            // En actualizaciones, el estado depende de qué firmas están presentes
+            if ($employeeSignaturePath && $bossSignaturePath) {
+                return 'EVALUACION_JEFE_COMPLETADA'; // Listo para HSEQ
+            } elseif ($employeeSignaturePath) {
+                return 'AUTOEVALUACION_COMPLETADA'; // Pendiente del jefe
+            } else {
+                return 'AUTOEVALUACION_PENDIENTE'; // Pendiente autoevaluación
+            }
+        } else {
+            // Para nuevas evaluaciones
+            if ($employeeSignaturePath && $bossSignaturePath) {
+                return 'EVALUACION_JEFE_COMPLETADA'; // Listo para HSEQ
+            } elseif ($employeeSignaturePath) {
+                return 'AUTOEVALUACION_COMPLETADA'; // Pendiente del jefe
+            } else {
+                return 'AUTOEVALUACION_PENDIENTE'; // Pendiente autoevaluación
+            }
+        }
+    }
+
+    /**
+     * Registra un cambio de estado en el historial
+     */
+    private function registrarCambioEstado($evaluationId, $nuevoEstado, $usuarioId) {
+        try {
+            // Obtener el estado anterior
+            $stmt = $this->db->prepare("SELECT estado_evaluacion FROM evaluacion WHERE id_evaluacion = ?");
+            $stmt->bind_param('i', $evaluationId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $estadoAnterior = $result->fetch_assoc()['estado_evaluacion'] ?? null;
+            $stmt->close();
+
+            // Insertar en el historial
+            $stmtHist = $this->db->prepare("INSERT INTO evaluacion_estado_historial (id_evaluacion, estado_anterior, estado_nuevo, id_usuario_cambio) VALUES (?, ?, ?, ?)");
+            $stmtHist->bind_param('issi', $evaluationId, $estadoAnterior, $nuevoEstado, $usuarioId);
+            $stmtHist->execute();
+            $stmtHist->close();
+
+            // Actualizar fechas específicas según el estado
+            $this->actualizarFechasEstado($evaluationId, $nuevoEstado);
+        } catch (Exception $e) {
+            error_log("Error al registrar cambio de estado: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Actualiza las fechas específicas según el estado de la evaluación
+     */
+    private function actualizarFechasEstado($evaluationId, $estado) {
+        try {
+            $campoFecha = null;
+            switch ($estado) {
+                case 'AUTOEVALUACION_COMPLETADA':
+                    $campoFecha = 'fecha_autoevaluacion';
+                    break;
+                case 'EVALUACION_JEFE_COMPLETADA':
+                    $campoFecha = 'fecha_evaluacion_jefe';
+                    break;
+                case 'HSEQ_COMPLETADA':
+                    $campoFecha = 'fecha_evaluacion_hseq';
+                    break;
+            }
+
+            if ($campoFecha) {
+                $stmt = $this->db->prepare("UPDATE evaluacion SET {$campoFecha} = NOW() WHERE id_evaluacion = ?");
+                $stmt->bind_param('i', $evaluationId);
+                $stmt->execute();
+                $stmt->close();
+            }
+        } catch (Exception $e) {
+            error_log("Error al actualizar fechas de estado: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Marca una evaluación como completada en HSEQ
+     */
+    public function completarEvaluacionHseq() {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                http_response_code(405);
+                echo json_encode(["success" => false, "message" => "Método no permitido"]);
+                return;
+            }
+
+            $evaluationId = isset($_POST['evaluationId']) ? (int)$_POST['evaluationId'] : 0;
+            $evaluadorHseqId = isset($_POST['evaluadorHseqId']) ? (int)$_POST['evaluadorHseqId'] : 0;
+            $comentariosHseq = $_POST['comentariosHseq'] ?? '';
+
+            if (!$evaluationId || !$evaluadorHseqId) {
+                http_response_code(400);
+                echo json_encode(["success" => false, "message" => "ID de evaluación y evaluador HSEQ son requeridos"]);
+                return;
+            }
+
+            $this->db->begin_transaction();
+            try {
+                // Actualizar estado a HSEQ_COMPLETADA
+                $stmt = $this->db->prepare("UPDATE evaluacion SET estado_evaluacion = 'HSEQ_COMPLETADA', id_evaluador_hseq = ?, comentarios_hseq = ?, fecha_evaluacion_hseq = NOW() WHERE id_evaluacion = ?");
+                $stmt->bind_param('isi', $evaluadorHseqId, $comentariosHseq, $evaluationId);
+                $stmt->execute();
+                $stmt->close();
+
+                // Registrar en el historial
+                $this->registrarCambioEstado($evaluationId, 'HSEQ_COMPLETADA', $evaluadorHseqId);
+
+                $this->db->commit();
+                echo json_encode(["success" => true, "message" => "Evaluación HSEQ completada"]);
+            } catch (Exception $e) {
+                $this->db->rollback();
+                throw $e;
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Error al completar evaluación HSEQ", "error" => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Finaliza completamente una evaluación (marca como EVALUACION_FINALIZADA)
+     */
+    public function finalizarEvaluacion() {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                http_response_code(405);
+                echo json_encode(["success" => false, "message" => "Método no permitido"]);
+                return;
+            }
+
+            $evaluationId = isset($_POST['evaluationId']) ? (int)$_POST['evaluationId'] : 0;
+            $usuarioId = isset($_POST['usuarioId']) ? (int)$_POST['usuarioId'] : 0;
+
+            if (!$evaluationId) {
+                http_response_code(400);
+                echo json_encode(["success" => false, "message" => "ID de evaluación es requerido"]);
+                return;
+            }
+
+            $this->db->begin_transaction();
+            try {
+                // Actualizar estado a EVALUACION_FINALIZADA
+                $stmt = $this->db->prepare("UPDATE evaluacion SET estado_evaluacion = 'EVALUACION_FINALIZADA' WHERE id_evaluacion = ?");
+                $stmt->bind_param('i', $evaluationId);
+                $stmt->execute();
+                $stmt->close();
+
+                // Registrar en el historial
+                $this->registrarCambioEstado($evaluationId, 'EVALUACION_FINALIZADA', $usuarioId);
+
+                $this->db->commit();
+                echo json_encode(["success" => true, "message" => "Evaluación finalizada completamente"]);
+            } catch (Exception $e) {
+                $this->db->rollback();
+                throw $e;
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Error al finalizar evaluación", "error" => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Obtiene el historial de estados de una evaluación
+     */
+    public function getHistorialEstados($evaluationId) {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT 
+                    h.*,
+                    u.nombre as nombre_usuario,
+                    u.cargo as cargo_usuario
+                FROM evaluacion_estado_historial h
+                LEFT JOIN empleados u ON h.id_usuario_cambio = u.id_empleado
+                WHERE h.id_evaluacion = ?
+                ORDER BY h.fecha_cambio ASC
+            ");
+            $stmt->bind_param('i', $evaluationId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $historial = [];
+            while ($row = $result->fetch_assoc()) {
+                $historial[] = $row;
+            }
+            $stmt->close();
+
+            echo json_encode(["success" => true, "historial" => $historial]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Error al obtener historial", "error" => $e->getMessage()]);
         }
     }
 }

@@ -795,6 +795,57 @@ const generateExcel = async (evaluacion) => {
     return 'INSUFICIENTE';
   };
 
+  // Función para obtener la descripción del estado de evaluación
+  const getDescripcionEstado = (estado) => {
+    const estados = {
+      'AUTOEVALUACION_PENDIENTE': 'Pendiente Autoevaluación',
+      'AUTOEVALUACION_COMPLETADA': 'Pendiente Evaluación Jefe',
+      'EVALUACION_JEFE_PENDIENTE': 'Pendiente Evaluación Jefe',
+      'EVALUACION_JEFE_COMPLETADA': 'Pendiente Evaluación HSEQ',
+      'HSEQ_PENDIENTE': 'Pendiente Evaluación HSEQ',
+      'HSEQ_COMPLETADA': 'Evaluación HSEQ Completada',
+      'EVALUACION_FINALIZADA': 'Evaluación Finalizada',
+      'BORRADOR': 'Borrador',
+      'COMPLETADA': 'Completada',
+      'APROBADA': 'Aprobada'
+    };
+    return estados[estado] || estado;
+  };
+
+  // Función para obtener la clase CSS del estado
+  const getClaseEstado = (estado) => {
+    const clases = {
+      'AUTOEVALUACION_PENDIENTE': 'estado-pendiente',
+      'AUTOEVALUACION_COMPLETADA': 'estado-progreso',
+      'EVALUACION_JEFE_PENDIENTE': 'estado-progreso',
+      'EVALUACION_JEFE_COMPLETADA': 'estado-progreso',
+      'HSEQ_PENDIENTE': 'estado-progreso',
+      'HSEQ_COMPLETADA': 'estado-completada',
+      'EVALUACION_FINALIZADA': 'estado-finalizada',
+      'BORRADOR': 'estado-borrador',
+      'COMPLETADA': 'estado-completada',
+      'APROBADA': 'estado-aprobada'
+    };
+    return clases[estado] || 'estado-desconocido';
+  };
+
+  // Función para obtener el porcentaje de progreso
+  const getProgresoPorcentaje = (estado) => {
+    const progresos = {
+      'AUTOEVALUACION_PENDIENTE': 20,
+      'AUTOEVALUACION_COMPLETADA': 40,
+      'EVALUACION_JEFE_PENDIENTE': 40,
+      'EVALUACION_JEFE_COMPLETADA': 60,
+      'HSEQ_PENDIENTE': 60,
+      'HSEQ_COMPLETADA': 80,
+      'EVALUACION_FINALIZADA': 100,
+      'BORRADOR': 10,
+      'COMPLETADA': 80,
+      'APROBADA': 100
+    };
+    return progresos[estado] || 0;
+  };
+
   return (
     <div className="results-page">
       <style>{`
@@ -802,6 +853,34 @@ const generateExcel = async (evaluacion) => {
         .estado-completada { background-color: #d4edda; color: #155724; }
         .estado-borrador { background-color: #fff3cd; color: #856404; }
         .estado-aprobada { background-color: #cce5ff; color: #004085; }
+        
+        /* Nuevos estados del flujo de trabajo */
+        .estado-pendiente { background-color: #f8d7da; color: #721c24; }
+        .estado-progreso { background-color: #fff3cd; color: #856404; }
+        .estado-finalizada { background-color: #d1ecf1; color: #0c5460; }
+        .estado-desconocido { background-color: #e2e3e5; color: #383d41; }
+        
+        /* Barra de progreso */
+        .progreso-evaluacion {
+          width: 100%;
+          height: 8px;
+          background-color: #e9ecef;
+          border-radius: 4px;
+          overflow: hidden;
+          margin-top: 4px;
+        }
+        
+        .progreso-evaluacion-fill {
+          height: 100%;
+          background: linear-gradient(90deg, #28a745, #20c997);
+          transition: width 0.3s ease;
+          border-radius: 4px;
+        }
+        
+        .progreso-evaluacion-fill.pendiente { background: linear-gradient(90deg, #dc3545, #fd7e14); }
+        .progreso-evaluacion-fill.progreso { background: linear-gradient(90deg, #ffc107, #fd7e14); }
+        .progreso-evaluacion-fill.completada { background: linear-gradient(90deg, #17a2b8, #20c997); }
+        .progreso-evaluacion-fill.finalizada { background: linear-gradient(90deg, #28a745, #20c997); }
         .download-btn { background-color: #007bff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; transition: background-color 0.3s; }
         .download-btn:hover { background-color: #0056b3; }
         .download-btn:active { transform: translateY(1px); }
@@ -827,12 +906,14 @@ const generateExcel = async (evaluacion) => {
           <div className="results-info-banner">
             <div className="info-icon">ℹ️</div>
             <div className="info-content">
-              <h3>Reportes Disponibles</h3>
-              <p>Genera reportes en <strong>PDF</strong> y <strong>Excel</strong>. El Excel ahora incluye <strong>paleta corporativa AA</strong>, <strong>chips de estado con icono</strong>, <strong>zebra</strong> y <strong>mapa de calor</strong> solo en Promedio.</p>
+              <h3>Flujo de Evaluación de Desempeño</h3>
+              <p>El sistema ahora maneja un <strong>flujo de trabajo estructurado</strong> con 3 etapas principales:</p>
               <ul>
-                <li><strong>📄 PDF:</strong> Reporte visual con firmas integradas</li>
-                <li><strong>📊 Excel:</strong> Tablas con Observaciones, accesible y legible</li>
+                <li><strong>1️⃣ Autoevaluación del Colaborador:</strong> El empleado completa su autoevaluación</li>
+                <li><strong>2️⃣ Evaluación del Líder Inmediato:</strong> El jefe directo revisa y evalúa</li>
+                <li><strong>3️⃣ Evaluación HSEQ Institucional:</strong> Evaluación final por parte de HSEQ</li>
               </ul>
+              <p>Los <strong>reportes PDF y Excel</strong> están disponibles para evaluaciones completadas.</p>
             </div>
           </div>
 
@@ -898,7 +979,22 @@ const generateExcel = async (evaluacion) => {
                         <tr key={evaluacion.id_evaluacion}>
                           <td>{formatDate(evaluacion.fecha_evaluacion)}</td>
                           <td>{evaluacion.periodo_evaluacion || 'N/A'}</td>
-                          <td><span className={`estado-badge estado-${evaluacion.estado_evaluacion?.toLowerCase()}`}>{evaluacion.estado_evaluacion}</span></td>
+                          <td>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                              <span className={`estado-badge ${getClaseEstado(evaluacion.estado_evaluacion)}`}>
+                                {getDescripcionEstado(evaluacion.estado_evaluacion)}
+                              </span>
+                              <div className="progreso-evaluacion">
+                                <div 
+                                  className={`progreso-evaluacion-fill ${getClaseEstado(evaluacion.estado_evaluacion).replace('estado-', '')}`}
+                                  style={{ width: `${getProgresoPorcentaje(evaluacion.estado_evaluacion)}%` }}
+                                ></div>
+                              </div>
+                              <small style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
+                                {getProgresoPorcentaje(evaluacion.estado_evaluacion)}% completado
+                              </small>
+                            </div>
+                          </td>
                           <td className={getColorClase(promedioGeneral)}>{promedioGeneral > 0 ? renderEstrellas(promedioGeneral) : 'N/A'}</td>
                           <td className={getColorClase(promedioCompetencias)}>{promedioCompetencias > 0 ? promedioCompetencias.toFixed(2) : 'N/A'}</td>
                           <td className={getColorClase(promedioHseq)}>{promedioHseq > 0 ? promedioHseq.toFixed(2) : 'N/A'}</td>

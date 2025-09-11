@@ -6,6 +6,7 @@ import SignatureUploader from '../components/SignatureUploader';
 import { useNotification } from '../components/NotificationSystem';
 import CompletionCelebration from '../components/CompletionCelebration';
 import CompetenciasTable from "../components/CompetenciasTable";
+import EvaluationProgress from '../components/EvaluationProgress';
 
 
 function PerformanceEvaluation() {
@@ -28,6 +29,7 @@ function PerformanceEvaluation() {
     promedioHseq: 0,
     promedioGeneral: 0
   });
+  const [currentEvaluationState, setCurrentEvaluationState] = useState('AUTOEVALUACION_PENDIENTE');
   const [datosGenerales, setDatosGenerales] = useState({
     fechaIngreso: '',
     fechaEvaluacion: '',
@@ -115,6 +117,11 @@ function PerformanceEvaluation() {
         if (!resp.ok) return;
         const payload = await resp.json();
         const data = payload?.data || {};
+
+        // Actualizar estado de la evaluación
+        if (data.evaluacion?.estado_evaluacion) {
+          setCurrentEvaluationState(data.evaluacion.estado_evaluacion);
+        }
 
         // Mapear competencias
         if (Array.isArray(data.competencias)) {
@@ -825,8 +832,12 @@ function PerformanceEvaluation() {
       const data = await response.json();
 
       if (response.ok) {
-        // Mostrar mensaje de éxito
-        success('¡Evaluación completada!', 'La evaluación ha sido diligenciada exitosamente.');
+        // Mostrar mensaje de éxito según el modo
+        if (isManagerView) {
+          success('¡Evaluación del Jefe Completada!', 'La evaluación del líder inmediato ha sido completada. Ahora está pendiente la evaluación HSEQ institucional.');
+        } else {
+          success('¡Autoevaluación Completada!', 'Su autoevaluación ha sido completada. Ahora está pendiente la evaluación del líder inmediato.');
+        }
         
         // Obtener el ID de la evaluación recién guardada
         const evaluationId = data.id_evaluacion;
@@ -1146,6 +1157,35 @@ function PerformanceEvaluation() {
         padding: "clamp(1rem, 5vw, 2rem)" 
       }}>
         <h1 className="evaluacion-desempeno">EVALUACIÓN DE DESEMPEÑO</h1>
+        {isManagerView ? (
+          <div style={{
+            background: 'linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)',
+            border: '1px solid #bbdefb',
+            borderRadius: '12px',
+            padding: '15px',
+            margin: '15px auto',
+            maxWidth: '600px',
+            fontSize: '14px',
+            color: '#1976d2'
+          }}>
+            <strong>📋 Modo: Evaluación del Líder Inmediato</strong><br/>
+            Está completando la evaluación del jefe directo. Esta es la etapa 2 del proceso de evaluación.
+          </div>
+        ) : (
+          <div style={{
+            background: 'linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%)',
+            border: '1px solid #c8e6c9',
+            borderRadius: '12px',
+            padding: '15px',
+            margin: '15px auto',
+            maxWidth: '600px',
+            fontSize: '14px',
+            color: '#2e7d32'
+          }}>
+            <strong>👤 Modo: Autoevaluación del Colaborador</strong><br/>
+            Está completando su autoevaluación. Esta es la etapa 1 del proceso de evaluación.
+          </div>
+        )}
         {isSaving && (
           <div style={{
             display: 'flex',
@@ -1169,6 +1209,12 @@ function PerformanceEvaluation() {
           </div>
         )}
       </div>
+
+      {/* Componente de progreso de evaluación */}
+      <EvaluationProgress 
+        estado={currentEvaluationState} 
+        isManagerView={isManagerView} 
+      />
 
       {/* Alerta de campos obligatorios */}
       <div style={alertStyle}>

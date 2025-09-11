@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-09-2025 a las 18:23:28
+-- Tiempo de generación: 11-09-2025 a las 19:50:09
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -587,11 +587,23 @@ CREATE TABLE `evaluacion` (
   `fecha_evaluacion` datetime NOT NULL,
   `periodo_evaluacion` varchar(50) DEFAULT NULL,
   `observaciones_generales` longtext DEFAULT NULL,
-  `estado_evaluacion` enum('BORRADOR','COMPLETADA','APROBADA') DEFAULT 'BORRADOR',
+  `estado_evaluacion` enum('AUTOEVALUACION_PENDIENTE','AUTOEVALUACION_COMPLETADA','EVALUACION_JEFE_PENDIENTE','EVALUACION_JEFE_COMPLETADA','HSEQ_PENDIENTE','HSEQ_COMPLETADA','EVALUACION_FINALIZADA','BORRADOR','COMPLETADA','APROBADA') DEFAULT 'AUTOEVALUACION_PENDIENTE',
   `id_jefe` int(11) DEFAULT NULL,
   `fecha_creacion` datetime DEFAULT current_timestamp(),
-  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `fecha_autoevaluacion` datetime DEFAULT NULL COMMENT 'Fecha cuando el empleado completó su autoevaluación',
+  `fecha_evaluacion_jefe` datetime DEFAULT NULL COMMENT 'Fecha cuando el jefe completó su evaluación',
+  `fecha_evaluacion_hseq` datetime DEFAULT NULL COMMENT 'Fecha cuando se completó la evaluación HSEQ',
+  `id_evaluador_hseq` int(11) DEFAULT NULL COMMENT 'ID del evaluador HSEQ institucional',
+  `comentarios_hseq` text DEFAULT NULL COMMENT 'Comentarios de la evaluación HSEQ institucional'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `evaluacion`
+--
+
+INSERT INTO `evaluacion` (`id_evaluacion`, `id_empleado`, `fecha_evaluacion`, `periodo_evaluacion`, `observaciones_generales`, `estado_evaluacion`, `id_jefe`, `fecha_creacion`, `fecha_actualizacion`, `fecha_autoevaluacion`, `fecha_evaluacion_jefe`, `fecha_evaluacion_hseq`, `id_evaluador_hseq`, `comentarios_hseq`) VALUES
+(1, 586, '2025-09-11 12:41:44', '2025-09', NULL, 'BORRADOR', 589, '2025-09-11 12:41:44', '2025-09-11 12:41:44', NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -610,6 +622,58 @@ CREATE TABLE `evaluacion_competencias` (
   `fecha_creacion` datetime DEFAULT current_timestamp(),
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `evaluacion_competencias`
+--
+
+INSERT INTO `evaluacion_competencias` (`id_competencia`, `id_evaluacion`, `id_aspecto`, `aspecto`, `calificacion_empleado`, `calificacion_jefe`, `promedio`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 1, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '2', '3', 2.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(2, 1, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '2', '1', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(3, 1, 3, 'Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.', '2', '2', 2.00, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(4, 1, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '2', '1', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(5, 1, 5, 'Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia', '4', '2', 3.00, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(6, 1, 6, 'Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.', '3', '2', 2.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(7, 1, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '1', '2', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(8, 1, 8, 'Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.', '2', '2', 2.00, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(9, 1, 9, 'Anticipa problemas y posibles que advierten su carácter de especialista.', '3', '2', 2.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(10, 1, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.', '2', '1', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(11, 1, 11, 'Articula sus actuaciones con las de los demás', '2', '2', 2.00, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(12, 1, 12, 'Cumple los compromisos adquiridos', '2', '2', 2.00, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(13, 1, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '3', '2', 2.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(14, 1, 14, 'Escucha con interés y capta las necesidades de los demás.', '1', '1', 1.00, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(15, 1, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '1', '2', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(16, 1, 16, 'Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.', '4', '1', 2.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(17, 1, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '2', '1', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(18, 1, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '1', '2', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(19, 1, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '1', '2', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(20, 1, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '3', '2', 2.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(21, 1, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '3', '2', 2.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(22, 1, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '2', '1', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(23, 1, 23, 'Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.', '2', '2', 2.00, '2025-09-11 12:41:44', '2025-09-11 12:41:44');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `evaluacion_estado_historial`
+--
+
+CREATE TABLE `evaluacion_estado_historial` (
+  `id_historial` int(11) NOT NULL,
+  `id_evaluacion` int(11) NOT NULL,
+  `estado_anterior` varchar(50) DEFAULT NULL,
+  `estado_nuevo` varchar(50) NOT NULL,
+  `fecha_cambio` datetime DEFAULT current_timestamp(),
+  `id_usuario_cambio` int(11) DEFAULT NULL,
+  `comentario` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `evaluacion_estado_historial`
+--
+
+INSERT INTO `evaluacion_estado_historial` (`id_historial`, `id_evaluacion`, `estado_anterior`, `estado_nuevo`, `fecha_cambio`, `id_usuario_cambio`, `comentario`) VALUES
+(1, 1, 'LEGACY', 'BORRADOR', '2025-09-11 12:41:44', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -660,6 +724,13 @@ CREATE TABLE `evaluacion_mejoramiento` (
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `evaluacion_mejoramiento`
+--
+
+INSERT INTO `evaluacion_mejoramiento` (`id_mejoramiento`, `id_evaluacion`, `fortalezas`, `aspectos_mejorar`, `comentarios_jefe`, `fecha_revision_jefe`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 1, 'q', 'q', NULL, NULL, '2025-09-11 12:41:44', '2025-09-11 12:41:44');
+
 -- --------------------------------------------------------
 
 --
@@ -679,6 +750,13 @@ CREATE TABLE `evaluacion_plan_accion` (
   `fecha_creacion` datetime DEFAULT current_timestamp(),
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `evaluacion_plan_accion`
+--
+
+INSERT INTO `evaluacion_plan_accion` (`id_plan_accion`, `id_evaluacion`, `actividad`, `responsable`, `seguimiento`, `comentarios_jefe`, `aprobado_jefe`, `fecha_revision_jefe`, `fecha`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 1, '', '', '', NULL, 'PENDIENTE', NULL, '0000-00-00', '2025-09-11 12:41:44', '2025-09-11 12:41:44');
 
 -- --------------------------------------------------------
 
@@ -702,6 +780,118 @@ CREATE TABLE `evaluacion_promedios` (
   `fecha_creacion` datetime DEFAULT current_timestamp(),
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `evaluacion_promedios`
+--
+
+INSERT INTO `evaluacion_promedios` (`id_promedio`, `id_evaluacion`, `promedio_competencias`, `promedio_hseq`, `promedio_general`, `promedio_comunicacion_efectiva`, `promedio_instrumentalidad_decisiones`, `promedio_aporte_profesional`, `promedio_colaboracion`, `promedio_relaciones_interpersonales`, `promedio_gestion_procedimientos`, `promedio_cumplimiento_funciones`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 1, 1.96, 0.00, 1.96, 1.88, 2.75, 1.88, 2.17, 1.67, 1.50, 2.13, '2025-09-11 12:41:44', '2025-09-11 12:41:44');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `hseq_evaluacion`
+--
+
+CREATE TABLE `hseq_evaluacion` (
+  `id_hseq_evaluacion` int(11) NOT NULL,
+  `id_empleado` int(11) NOT NULL,
+  `periodo_evaluacion` varchar(50) DEFAULT NULL,
+  `promedio_hseq` decimal(5,2) DEFAULT NULL,
+  `estado` enum('BORRADOR','COMPLETADA') DEFAULT 'COMPLETADA',
+  `id_evaluador` int(11) DEFAULT NULL,
+  `fecha_evaluacion` datetime DEFAULT current_timestamp(),
+  `fecha_creacion` datetime DEFAULT current_timestamp(),
+  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `hseq_evaluacion`
+--
+
+INSERT INTO `hseq_evaluacion` (`id_hseq_evaluacion`, `id_empleado`, `periodo_evaluacion`, `promedio_hseq`, `estado`, `id_evaluador`, `fecha_evaluacion`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 794, '2025-09', 1.50, 'COMPLETADA', 586, '2025-09-11 12:28:05', '2025-09-11 12:28:05', '2025-09-11 12:28:05');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `hseq_evaluacion_items`
+--
+
+CREATE TABLE `hseq_evaluacion_items` (
+  `id_item` int(11) NOT NULL,
+  `id_hseq_evaluacion` int(11) NOT NULL,
+  `id_responsabilidad` int(11) NOT NULL,
+  `responsabilidad` text NOT NULL,
+  `calificacion` decimal(5,2) DEFAULT NULL,
+  `justificacion` text DEFAULT NULL,
+  `fecha_creacion` datetime DEFAULT current_timestamp(),
+  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `hseq_evaluacion_items`
+--
+
+INSERT INTO `hseq_evaluacion_items` (`id_item`, `id_hseq_evaluacion`, `id_responsabilidad`, `responsabilidad`, `calificacion`, `justificacion`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 1, 1, 'Procurar el cuidado integral de su salud.', 3.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(2, 1, 2, 'Suministrar información clara, veraz y completa sobre su estado de salud.', 4.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(3, 1, 3, 'Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(4, 1, 4, 'Informar oportunamente al empleador o contratante acerca de los riesgos y/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(5, 1, 5, 'Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(6, 1, 6, 'Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.', 2.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(7, 1, 7, 'Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.', 2.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(8, 1, 8, 'Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.', 2.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(9, 1, 9, 'Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.', 2.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(10, 1, 10, 'Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(11, 1, 11, 'Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.', 2.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(12, 1, 12, 'Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(13, 1, 13, 'Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(14, 1, 14, 'Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(15, 1, 15, 'Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(16, 1, 16, 'Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(17, 1, 17, 'Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(18, 1, 18, 'Participar en simulacros, elección de COPASST y elección de comité de convivencia.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(19, 1, 19, 'Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y/o comité de emergencias.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05'),
+(20, 1, 20, 'Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.', 1.00, '', '2025-09-11 12:28:05', '2025-09-11 12:28:05');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura Stand-in para la vista `v_evaluaciones_estado`
+-- (Véase abajo para la vista actual)
+--
+CREATE TABLE `v_evaluaciones_estado` (
+`id_evaluacion` int(11)
+,`id_empleado` int(11)
+,`nombre_empleado` varchar(100)
+,`cargo_empleado` varchar(100)
+,`area_empleado` varchar(100)
+,`estado_evaluacion` enum('AUTOEVALUACION_PENDIENTE','AUTOEVALUACION_COMPLETADA','EVALUACION_JEFE_PENDIENTE','EVALUACION_JEFE_COMPLETADA','HSEQ_PENDIENTE','HSEQ_COMPLETADA','EVALUACION_FINALIZADA','BORRADOR','COMPLETADA','APROBADA')
+,`fecha_autoevaluacion` datetime
+,`fecha_evaluacion_jefe` datetime
+,`fecha_evaluacion_hseq` datetime
+,`periodo_evaluacion` varchar(50)
+,`fecha_evaluacion` datetime
+,`fecha_creacion` datetime
+,`fecha_actualizacion` datetime
+,`nombre_jefe` varchar(100)
+,`cargo_jefe` varchar(100)
+,`nombre_evaluador_hseq` varchar(100)
+,`cargo_evaluador_hseq` varchar(100)
+,`estado_descripcion` varchar(26)
+,`progreso_porcentaje` int(1)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura para la vista `v_evaluaciones_estado`
+--
+DROP TABLE IF EXISTS `v_evaluaciones_estado`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_evaluaciones_estado`  AS SELECT `e`.`id_evaluacion` AS `id_evaluacion`, `e`.`id_empleado` AS `id_empleado`, `emp`.`nombre` AS `nombre_empleado`, `emp`.`cargo` AS `cargo_empleado`, `emp`.`area` AS `area_empleado`, `e`.`estado_evaluacion` AS `estado_evaluacion`, `e`.`fecha_autoevaluacion` AS `fecha_autoevaluacion`, `e`.`fecha_evaluacion_jefe` AS `fecha_evaluacion_jefe`, `e`.`fecha_evaluacion_hseq` AS `fecha_evaluacion_hseq`, `e`.`periodo_evaluacion` AS `periodo_evaluacion`, `e`.`fecha_evaluacion` AS `fecha_evaluacion`, `e`.`fecha_creacion` AS `fecha_creacion`, `e`.`fecha_actualizacion` AS `fecha_actualizacion`, `jefe`.`nombre` AS `nombre_jefe`, `jefe`.`cargo` AS `cargo_jefe`, `hseq_eval`.`nombre` AS `nombre_evaluador_hseq`, `hseq_eval`.`cargo` AS `cargo_evaluador_hseq`, CASE WHEN `e`.`estado_evaluacion` = 'AUTOEVALUACION_PENDIENTE' THEN 'Pendiente Autoevaluación' WHEN `e`.`estado_evaluacion` = 'AUTOEVALUACION_COMPLETADA' THEN 'Pendiente Evaluación Jefe' WHEN `e`.`estado_evaluacion` = 'EVALUACION_JEFE_PENDIENTE' THEN 'Pendiente Evaluación Jefe' WHEN `e`.`estado_evaluacion` = 'EVALUACION_JEFE_COMPLETADA' THEN 'Pendiente Evaluación HSEQ' WHEN `e`.`estado_evaluacion` = 'HSEQ_PENDIENTE' THEN 'Pendiente Evaluación HSEQ' WHEN `e`.`estado_evaluacion` = 'HSEQ_COMPLETADA' THEN 'Evaluación HSEQ Completada' WHEN `e`.`estado_evaluacion` = 'EVALUACION_FINALIZADA' THEN 'Evaluación Finalizada' ELSE `e`.`estado_evaluacion` END AS `estado_descripcion`, CASE WHEN `e`.`estado_evaluacion` = 'AUTOEVALUACION_PENDIENTE' THEN 1 WHEN `e`.`estado_evaluacion` = 'AUTOEVALUACION_COMPLETADA' THEN 2 WHEN `e`.`estado_evaluacion` = 'EVALUACION_JEFE_PENDIENTE' THEN 2 WHEN `e`.`estado_evaluacion` = 'EVALUACION_JEFE_COMPLETADA' THEN 3 WHEN `e`.`estado_evaluacion` = 'HSEQ_PENDIENTE' THEN 3 WHEN `e`.`estado_evaluacion` = 'HSEQ_COMPLETADA' THEN 4 WHEN `e`.`estado_evaluacion` = 'EVALUACION_FINALIZADA' THEN 5 ELSE 0 END AS `progreso_porcentaje` FROM (((`evaluacion` `e` left join `empleados` `emp` on(`e`.`id_empleado` = `emp`.`id_empleado`)) left join `empleados` `jefe` on(`e`.`id_jefe` = `jefe`.`id_empleado`)) left join `empleados` `hseq_eval` on(`e`.`id_evaluador_hseq` = `hseq_eval`.`id_empleado`)) ;
 
 --
 -- Índices para tablas volcadas
@@ -737,7 +927,8 @@ ALTER TABLE `evaluacion`
   ADD KEY `fk_evaluacion_empleado` (`id_empleado`),
   ADD KEY `idx_evaluacion_empleado_fecha` (`id_empleado`,`fecha_evaluacion`),
   ADD KEY `idx_evaluacion_estado` (`estado_evaluacion`),
-  ADD KEY `idx_evaluacion_id_jefe` (`id_jefe`);
+  ADD KEY `idx_evaluacion_id_jefe` (`id_jefe`),
+  ADD KEY `idx_evaluacion_hseq_evaluador` (`id_evaluador_hseq`);
 
 --
 -- Indices de la tabla `evaluacion_competencias`
@@ -745,6 +936,14 @@ ALTER TABLE `evaluacion`
 ALTER TABLE `evaluacion_competencias`
   ADD PRIMARY KEY (`id_competencia`),
   ADD KEY `fk_competencias_evaluacion` (`id_evaluacion`);
+
+--
+-- Indices de la tabla `evaluacion_estado_historial`
+--
+ALTER TABLE `evaluacion_estado_historial`
+  ADD PRIMARY KEY (`id_historial`),
+  ADD KEY `fk_historial_evaluacion` (`id_evaluacion`),
+  ADD KEY `fk_historial_usuario` (`id_usuario_cambio`);
 
 --
 -- Indices de la tabla `evaluacion_firmas`
@@ -782,6 +981,21 @@ ALTER TABLE `evaluacion_promedios`
   ADD KEY `fk_promedios_evaluacion` (`id_evaluacion`);
 
 --
+-- Indices de la tabla `hseq_evaluacion`
+--
+ALTER TABLE `hseq_evaluacion`
+  ADD PRIMARY KEY (`id_hseq_evaluacion`),
+  ADD KEY `idx_hseq_empleado_periodo` (`id_empleado`,`periodo_evaluacion`),
+  ADD KEY `idx_hseq_evaluador` (`id_evaluador`);
+
+--
+-- Indices de la tabla `hseq_evaluacion_items`
+--
+ALTER TABLE `hseq_evaluacion_items`
+  ADD PRIMARY KEY (`id_item`),
+  ADD KEY `fk_hseq_item_eval` (`id_hseq_evaluacion`);
+
+--
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
@@ -807,13 +1021,19 @@ ALTER TABLE `empleados`
 -- AUTO_INCREMENT de la tabla `evaluacion`
 --
 ALTER TABLE `evaluacion`
-  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_competencias`
 --
 ALTER TABLE `evaluacion_competencias`
-  MODIFY `id_competencia` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_competencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+
+--
+-- AUTO_INCREMENT de la tabla `evaluacion_estado_historial`
+--
+ALTER TABLE `evaluacion_estado_historial`
+  MODIFY `id_historial` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_firmas`
@@ -831,19 +1051,31 @@ ALTER TABLE `evaluacion_hseq`
 -- AUTO_INCREMENT de la tabla `evaluacion_mejoramiento`
 --
 ALTER TABLE `evaluacion_mejoramiento`
-  MODIFY `id_mejoramiento` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_mejoramiento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_plan_accion`
 --
 ALTER TABLE `evaluacion_plan_accion`
-  MODIFY `id_plan_accion` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_plan_accion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_promedios`
 --
 ALTER TABLE `evaluacion_promedios`
-  MODIFY `id_promedio` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_promedio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `hseq_evaluacion`
+--
+ALTER TABLE `hseq_evaluacion`
+  MODIFY `id_hseq_evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `hseq_evaluacion_items`
+--
+ALTER TABLE `hseq_evaluacion_items`
+  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- Restricciones para tablas volcadas
@@ -865,13 +1097,21 @@ ALTER TABLE `empleados`
 -- Filtros para la tabla `evaluacion`
 --
 ALTER TABLE `evaluacion`
-  ADD CONSTRAINT `fk_evaluacion_empleado` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_evaluacion_empleado` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_evaluacion_hseq_evaluador` FOREIGN KEY (`id_evaluador_hseq`) REFERENCES `empleados` (`id_empleado`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `evaluacion_competencias`
 --
 ALTER TABLE `evaluacion_competencias`
   ADD CONSTRAINT `fk_competencias_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `evaluacion_estado_historial`
+--
+ALTER TABLE `evaluacion_estado_historial`
+  ADD CONSTRAINT `fk_historial_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_historial_usuario` FOREIGN KEY (`id_usuario_cambio`) REFERENCES `empleados` (`id_empleado`) ON DELETE SET NULL;
 
 --
 -- Filtros para la tabla `evaluacion_firmas`
@@ -902,45 +1142,21 @@ ALTER TABLE `evaluacion_plan_accion`
 --
 ALTER TABLE `evaluacion_promedios`
   ADD CONSTRAINT `fk_promedios_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `hseq_evaluacion`
+--
+ALTER TABLE `hseq_evaluacion`
+  ADD CONSTRAINT `fk_hseq_eval_empleado` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_hseq_eval_evaluador` FOREIGN KEY (`id_evaluador`) REFERENCES `empleados` (`id_empleado`);
+
+--
+-- Filtros para la tabla `hseq_evaluacion_items`
+--
+ALTER TABLE `hseq_evaluacion_items`
+  ADD CONSTRAINT `fk_hseq_item_eval` FOREIGN KEY (`id_hseq_evaluacion`) REFERENCES `hseq_evaluacion` (`id_hseq_evaluacion`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-
--- -----------------------------------------------
--- NUEVAS TABLAS PARA HSEQ INDEPENDIENTE DE EVALUACION GENERAL
--- -----------------------------------------------
-
--- Tabla maestro de evaluaciones HSEQ
-CREATE TABLE IF NOT EXISTS `hseq_evaluacion` (
-  `id_hseq_evaluacion` int(11) NOT NULL AUTO_INCREMENT,
-  `id_empleado` int(11) NOT NULL,
-  `periodo_evaluacion` varchar(50) DEFAULT NULL,
-  `promedio_hseq` decimal(5,2) DEFAULT NULL,
-  `estado` enum('BORRADOR','COMPLETADA') DEFAULT 'COMPLETADA',
-  `id_evaluador` int(11) DEFAULT NULL,
-  `fecha_evaluacion` datetime DEFAULT current_timestamp(),
-  `fecha_creacion` datetime DEFAULT current_timestamp(),
-  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  PRIMARY KEY (`id_hseq_evaluacion`),
-  KEY `idx_hseq_empleado_periodo` (`id_empleado`,`periodo_evaluacion`),
-  KEY `idx_hseq_evaluador` (`id_evaluador`),
-  CONSTRAINT `fk_hseq_eval_empleado` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_hseq_eval_evaluador` FOREIGN KEY (`id_evaluador`) REFERENCES `empleados` (`id_empleado`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- Tabla de items por evaluación HSEQ
-CREATE TABLE IF NOT EXISTS `hseq_evaluacion_items` (
-  `id_item` int(11) NOT NULL AUTO_INCREMENT,
-  `id_hseq_evaluacion` int(11) NOT NULL,
-  `id_responsabilidad` int(11) NOT NULL,
-  `responsabilidad` text NOT NULL,
-  `calificacion` decimal(5,2) DEFAULT NULL,
-  `justificacion` text DEFAULT NULL,
-  `fecha_creacion` datetime DEFAULT current_timestamp(),
-  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  PRIMARY KEY (`id_item`),
-  KEY `fk_hseq_item_eval` (`id_hseq_evaluacion`),
-  CONSTRAINT `fk_hseq_item_eval` FOREIGN KEY (`id_hseq_evaluacion`) REFERENCES `hseq_evaluacion` (`id_hseq_evaluacion`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

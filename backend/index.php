@@ -322,6 +322,19 @@ function handleRequest($method, $path) {
         $cargoController->obtenerFuncionesPorEmpleadoId($idEmpleado);
         exit;
 
+    } elseif ($path === "api/evaluations/completar-hseq" && $method === "POST") {
+        $controller = new EvaluationControllerNativo();
+        $controller->completarEvaluacionHseq();
+
+    } elseif ($path === "api/evaluations/finalizar" && $method === "POST") {
+        $controller = new EvaluationControllerNativo();
+        $controller->finalizarEvaluacion();
+
+    } elseif (preg_match('#^api/evaluations/historial-estados/(\d+)$#', $path, $matches) && $method === 'GET') {
+        $evaluationId = $matches[1];
+        $controller = new EvaluationControllerNativo();
+        $controller->getHistorialEstados($evaluationId);
+
     } else {
         http_response_code(404);
         echo json_encode(["success" => false, "message" => "Ruta no encontrada"]);
