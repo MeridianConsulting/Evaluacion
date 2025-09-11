@@ -10,6 +10,7 @@ function LandingPage({ onLogout }) {
   const [countdown, setCountdown] = useState(15);
   const [canAccept, setCanAccept] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showFirstLoginNotice, setShowFirstLoginNotice] = useState(true);
   const navigate = useNavigate();
 
   // Elevar a admin por cédula específica
@@ -225,6 +226,72 @@ function LandingPage({ onLogout }) {
           align-items: start;
           padding-top: 10vh;
         }
+
+        /* ===== Aviso primera vez ===== */
+        .notice-banner {
+          position: relative;
+          display: grid;
+          grid-template-columns: auto 1fr auto auto; /* última columna para el botón de cierre */
+          align-items: center;
+          gap: 14px;
+          margin: 12px auto 0;
+          width: min(980px, 92vw);
+          padding: 14px 16px;
+          border-radius: 14px;
+          background: linear-gradient(180deg, rgba(6,12,28,.88), rgba(10,20,40,.88));
+          border: 1px solid rgba(255,255,255,.12);
+          color: var(--text);
+          box-shadow: 0 10px 30px rgba(0,0,0,.35);
+          backdrop-filter: saturate(140%) blur(6px);
+          animation: fadeInUp .35s ease both;
+        }
+        .notice-banner::before {
+          content: '';
+          position: absolute; inset: 0 0 0 0;
+          border-radius: 14px;
+          pointer-events: none;
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+        }
+        .notice-banner strong { color: #ffffff; }
+        .notice-icon {
+          display: grid; place-items: center;
+          width: 28px; height: 28px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, var(--accent), #fbbf24);
+          color: #1F3B73;
+          box-shadow: 0 4px 12px rgba(244,211,94,.35);
+        }
+        .notice-text { line-height: 1.4; }
+        .notice-text .notice-inline-link {
+          background: none; border: none; padding: 0; margin: 0 0 0 6px; /* espacio extra tras "recomendamos" */
+          color: #93c5fd; font-weight: 700; cursor: pointer; text-decoration: underline;
+        }
+        .notice-link {
+          border: 2px solid rgba(255,255,255,.12);
+          background: linear-gradient(135deg, var(--accent), #fbbf24);
+          color: #1F3B73;
+          font-weight: 700;
+          padding: 10px 14px;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: all .2s ease;
+          box-shadow: 0 6px 16px rgba(0,0,0,.25);
+        }
+        .notice-link:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 10px 24px rgba(0,0,0,.35);
+        }
+        .notice-close {
+          justify-self: end; /* ubicar al extremo derecho de la grilla */
+          background: rgba(255,255,255,.08);
+          border: 1px solid rgba(255,255,255,.12);
+          color: #e5e7eb;
+          font-size: 16px; line-height: 1;
+          cursor: pointer;
+          padding: 6px 10px;
+          border-radius: 12px;
+        }
+        .notice-close:hover { background: rgba(255,255,255,.16); }
         .modal {
           width: min(90vw, 900px);
           max-height: 85vh;
@@ -735,6 +802,26 @@ function LandingPage({ onLogout }) {
         }
       `}</style>
       <Header onLogout={onLogout} />
+
+      {showFirstLoginNotice && (
+        <div className="notice-banner" role="alert" aria-live="polite">
+          <div className="notice-icon" aria-hidden="true">!</div>
+          <div className="notice-text">
+            Si es primera vez que inicias sesión, recomendamos
+            <button className="notice-inline-link" onClick={() => navigate('/profile')}> cambiar tu contraseña</button>.
+          </div>
+          <button className="notice-link" onClick={() => navigate('/profile')}>
+            Ir a Perfil
+          </button>
+          <button
+            className="notice-close"
+            aria-label="Cerrar aviso"
+            onClick={() => setShowFirstLoginNotice(false)}
+          >
+            ×
+          </button>
+        </div>
+      )}
       
       {/* Animación de transición profesional */}
       {isTransitioning && (
