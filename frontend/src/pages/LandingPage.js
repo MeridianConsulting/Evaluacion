@@ -302,6 +302,10 @@ function LandingPage({ onLogout }) {
             grid-template-columns: 1fr 1fr;
             gap: 20px;
           }
+          /* Hacer que la sección de Términos y condiciones ocupe ambas columnas */
+          .modal-content .section.section-full {
+            grid-column: 1 / -1;
+          }
         }
 
         .section {
@@ -767,7 +771,6 @@ function LandingPage({ onLogout }) {
                 <ol className="steps">
                   <li><span className="step-text">Complete los datos generales y fechas requeridas.</span></li>
                   <li><span className="step-text">Evalúe cada competencia con calificaciones del 1 al 5.</span></li>
-                  <li><span className="step-text">Complete las responsabilidades HSEQ.</span></li>
                   <li><span className="step-text">Registre fortalezas y aspectos a mejorar.</span></li>
                   <li><span className="step-text">Suba las firmas digitales requeridas.</span></li>
                   <li>
@@ -779,6 +782,18 @@ function LandingPage({ onLogout }) {
               </div>
 
               <div className="section">
+                <h3>Flujo de evaluación</h3>
+                <p style={{ margin: '0 0 8px' }}>
+                  Está realizando la <strong>Autoevaluación del Colaborador (Fase 1)</strong>. Al finalizar esta fase,
+                  el estado quedará <strong>Autoevaluado</strong>. Luego, la evaluación continuará con:
+                </p>
+                <ol className="steps">
+                  <li><span className="step-text">Evaluación del Líder Inmediato (Fase 2)</span></li>
+                  <li><span className="step-text">Evaluación HSEQ Institucional (Fase 3)</span></li>
+                </ol>
+              </div>
+
+              <div className="section section-full">
                 <h3>Términos y condiciones</h3>
                 <div className="terms-box">
                   <p><strong>Meridian Consulting Ltda.</strong> resguardará electrónicamente esta evaluación. Al proceder, acepta el tratamiento de datos y la validez de la firma electrónica.</p>
