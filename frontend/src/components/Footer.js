@@ -45,6 +45,7 @@ function Footer() {
 
       {/* Parte inferior con texto legal y redes sociales */}
       <div className="footer-bottom">
+        <p style={{ margin: '6px 0', fontWeight: 600 }}>Desarrollado por José Mateo López Cifuentes</p>
         <p>© 2025 Meridian Consulting LTDA. Todos los derechos reservados.</p>
         <p>
           <Link to="/privacy">Política de Privacidad</Link> | <Link to="/terms">Términos de Uso</Link>
