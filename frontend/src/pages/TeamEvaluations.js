@@ -26,28 +26,72 @@ function TeamEvaluations({ onLogout, userRole }) {
             const rows = (json && (json.data || json.evaluaciones)) || [];
             const mapped = rows.map(r => {
               const raw = (r.estado_evaluacion || '').toString().toUpperCase();
-              const display = raw === 'COMPLETADA' ? 'Evaluado' : raw === 'BORRADOR' ? 'Borrador' : (r.estado_evaluacion || 'Pendiente');
+              let display = 'Pendiente';
+              
+              // Mapear estados a texto más legible
+              switch (raw) {
+                case 'AUTOEVALUACION_PENDIENTE':
+                  display = 'Pendiente Autoevaluación';
+                  break;
+                case 'AUTOEVALUACION_COMPLETADA':
+                  display = 'Pendiente Evaluación Jefe';
+                  break;
+                case 'EVALUACION_JEFE_PENDIENTE':
+                  display = 'Pendiente Evaluación Jefe';
+                  break;
+                case 'EVALUACION_JEFE_COMPLETADA':
+                  display = 'Pendiente Evaluación HSEQ';
+                  break;
+                case 'HSEQ_PENDIENTE':
+                  display = 'Pendiente Evaluación HSEQ';
+                  break;
+                case 'HSEQ_COMPLETADA':
+                  display = 'Evaluación HSEQ Completada';
+                  break;
+                case 'EVALUACION_FINALIZADA':
+                  display = 'Evaluación Finalizada';
+                  break;
+                case 'BORRADOR':
+                  display = 'Borrador';
+                  break;
+                case 'COMPLETADA':
+                  display = 'Completada';
+                  break;
+                case 'APROBADA':
+                  display = 'Aprobada';
+                  break;
+                default:
+                  display = raw || 'Pendiente';
+              }
+              
               return {
                 id: r.id_evaluacion,
                 employeeId: r.id_empleado,
                 evaluationId: r.id_evaluacion,
                 nombre: r.nombre,
                 cargo: r.cargo,
+                area: r.area,
                 statusRaw: raw,
-                evaluacionEstado: display
+                evaluacionEstado: display,
+                periodoEvaluacion: r.periodo_evaluacion,
+                fechaCreacion: r.fecha_creacion
               };
             });
             setTeamMembers(mapped);
             setLoading(false);
             return;
+          } else {
+            console.error('Error al cargar evaluaciones asignadas:', resp.status, resp.statusText);
           }
         }
         // Fallback a localStorage si la API no está disponible
         const raw = currentUserId ? localStorage.getItem(`bossAssignmentsByBossId:${currentUserId}`) : null;
         const list = raw ? JSON.parse(raw) : [];
         setTeamMembers(Array.isArray(list) ? list : []);
-      } catch (_) {
+      } catch (error) {
+        console.error('Error al cargar asignaciones:', error);
         setTeamMembers([]);
+        setError('Error al cargar las evaluaciones asignadas');
       } finally {
         setLoading(false);
       }
@@ -101,37 +145,56 @@ function TeamEvaluations({ onLogout, userRole }) {
           <h1>Evaluaciones de Mi Equipo</h1>
           
           <div className="team-members-container">
-            <table className="team-members-table">
-              <thead>
-                <tr>
-                  <th>Empleado</th>
-                  <th>Cargo</th>
-                  <th>Estado</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {teamMembers.map(member => (
-                  <tr key={member.id}>
-                    <td>{member.nombre}</td>
-                    <td>{member.cargo || ''}</td>
-                    <td>
-                      <span className={`status-badge ${(member.evaluacionEstado||'pendiente').toLowerCase().replace(/\s+/g, '-')}`}>
-                        {member.evaluacionEstado || 'Pendiente'}
-                      </span>
-                    </td>
-                    <td>
-                      <button 
-                        className="evaluate-button"
-                        onClick={() => handleEvaluate(member)}
-                      >
-                        {(member.statusRaw === 'COMPLETADA' || (member.evaluacionEstado||'').toLowerCase() === 'evaluado') ? 'Ver evaluación' : 'Evaluar'}
-                      </button>
-                    </td>
+            {teamMembers.length === 0 ? (
+              <div className="no-members-message">
+                <p>No tienes evaluaciones asignadas como jefe en este momento.</p>
+              </div>
+            ) : (
+              <table className="team-members-table">
+                <thead>
+                  <tr>
+                    <th>Empleado</th>
+                    <th>Cargo</th>
+                    <th>Área</th>
+                    <th>Período</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {teamMembers.map(member => (
+                    <tr key={member.id}>
+                      <td>{member.nombre}</td>
+                      <td>{member.cargo || ''}</td>
+                      <td>{member.area || ''}</td>
+                      <td>{member.periodoEvaluacion || ''}</td>
+                      <td>
+                        <span className={`status-badge ${(member.evaluacionEstado||'pendiente').toLowerCase().replace(/\s+/g, '-')}`}>
+                          {member.evaluacionEstado || 'Pendiente'}
+                        </span>
+                      </td>
+                      <td>
+                        <button 
+                          className="evaluate-button"
+                          onClick={() => handleEvaluate(member)}
+                        >
+                          {(() => {
+                            const status = member.statusRaw || '';
+                            if (status === 'EVALUACION_FINALIZADA' || status === 'COMPLETADA' || status === 'APROBADA') {
+                              return 'Ver evaluación';
+                            } else if (status === 'AUTOEVALUACION_COMPLETADA' || status === 'EVALUACION_JEFE_PENDIENTE') {
+                              return 'Evaluar';
+                            } else {
+                              return 'Ver estado';
+                            }
+                          })()}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
           
           <div className="team-evaluations-info">

@@ -373,6 +373,44 @@ class EvaluationControllerNativo {
     }
 
     /**
+     * Lista evaluaciones asignadas a un jefe (donde el usuario es jefe inmediato)
+     */
+    public function getEvaluationsAssignedToBoss($bossId) {
+        try {
+            $sql = "
+                SELECT e.id_evaluacion,
+                       e.id_empleado,
+                       emp.nombre,
+                       emp.cargo,
+                       emp.area,
+                       e.estado_evaluacion,
+                       e.periodo_evaluacion,
+                       e.fecha_creacion,
+                       e.fecha_autoevaluacion,
+                       e.fecha_evaluacion_jefe,
+                       e.fecha_evaluacion_hseq
+                FROM evaluacion e
+                INNER JOIN empleados emp ON emp.id_empleado = e.id_empleado
+                WHERE e.id_jefe = ?
+                ORDER BY e.fecha_creacion DESC, emp.nombre ASC
+            ";
+            $stmt = $this->db->prepare($sql);
+            if (!$stmt) {
+                throw new Exception('Error al preparar consulta: ' . $this->db->error);
+            }
+            $stmt->bind_param('i', $bossId);
+            $stmt->execute();
+            $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+
+            echo json_encode(["success" => true, "data" => $rows]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Error al obtener evaluaciones asignadas", "error" => $e->getMessage()]);
+        }
+    }
+
+    /**
      * Lista empleados evaluados HSEQ del período (última evaluación por empleado) con evaluador
      */
     public function getHseqEvaluatedForPeriod($periodo) {

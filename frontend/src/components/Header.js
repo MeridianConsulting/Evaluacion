@@ -9,6 +9,7 @@ function Header({ onLogout, userRole: propUserRole }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [hasEvaluationToken, setHasEvaluationToken] = useState(false);
   const [hasAssignedAsEvaluator, setHasAssignedAsEvaluator] = useState(false);
+  const [hasAssignedAsBoss, setHasAssignedAsBoss] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -58,7 +59,7 @@ function Header({ onLogout, userRole: propUserRole }) {
     }
   }, [menuOpen]);
 
-  // Consultar si el usuario actual tiene evaluaciones asignadas como evaluador (en DB)
+  // Consultar si el usuario actual tiene evaluaciones asignadas como evaluador HSEQ (en DB)
   useEffect(() => {
     const checkAssignedEvaluations = async () => {
       try {
@@ -92,6 +93,39 @@ function Header({ onLogout, userRole: propUserRole }) {
     }
   }, [menuOpen]);
 
+  // Consultar si el usuario actual tiene evaluaciones asignadas como jefe inmediato
+  useEffect(() => {
+    const checkAssignedAsBoss = async () => {
+      try {
+        const currentUserId = localStorage.getItem('employeeId');
+        const apiUrl = process.env.REACT_APP_API_BASE_URL;
+        if (!currentUserId || !apiUrl) {
+          setHasAssignedAsBoss(false);
+          return;
+        }
+        
+        // Verificar si tiene evaluaciones asignadas como jefe
+        const resp = await fetch(`${apiUrl}/api/evaluations/assigned/${currentUserId}`);
+        
+        if (!resp.ok) {
+          setHasAssignedAsBoss(false);
+          return;
+        }
+        
+        const data = await resp.json();
+        const assigned = (data && (data.data || data.evaluaciones || data)) || [];
+        setHasAssignedAsBoss(Array.isArray(assigned) && assigned.length > 0);
+      } catch (_) {
+        setHasAssignedAsBoss(false);
+      }
+    };
+
+    checkAssignedAsBoss();
+    if (menuOpen) {
+      checkAssignedAsBoss();
+    }
+  }, [menuOpen]);
+
   const handleToggleMenu = () => {
     setMenuOpen(prev => !prev);
   };
@@ -109,8 +143,8 @@ function Header({ onLogout, userRole: propUserRole }) {
     setMenuOpen(false);
   };
 
-  // Mostrar Evaluar Equipo solo si el usuario tiene evaluaciones asignadas en la base de datos
-  const canSeeTeamEvaluations = hasAssignedAsEvaluator;
+  // Mostrar Evaluar Equipo si el usuario tiene evaluaciones asignadas como jefe o como evaluador HSEQ
+  const canSeeTeamEvaluations = hasAssignedAsBoss || hasAssignedAsEvaluator;
 
   // Rol efectivo: prioriza prop; si falta, usa localStorage
   const effectiveRole = (propUserRole && String(propUserRole)) || localStorage.getItem('userRole') || userRole || 'empleado';

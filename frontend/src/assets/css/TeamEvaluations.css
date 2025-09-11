@@ -110,10 +110,22 @@
   border-color: rgba(180, 83, 9, 0.18);
 }
 
-.status-badge.pendiente {
+.status-badge.pendiente,
+.status-badge.pendiente-autoevaluación,
+.status-badge.pendiente-evaluación-jefe,
+.status-badge.pendiente-evaluación-hseq {
   color: var(--te-pending);
   background: var(--te-pending-bg);
   border-color: rgba(29, 78, 216, 0.18);
+}
+
+.status-badge.evaluación-hseq-completada,
+.status-badge.evaluación-finalizada,
+.status-badge.completada,
+.status-badge.aprobada {
+  color: var(--te-success);
+  background: var(--te-success-bg);
+  border-color: rgba(5, 150, 105, 0.18);
 }
 
 .evaluate-button {
@@ -141,7 +153,8 @@
 }
 
 .loading-container,
-.error-container {
+.error-container,
+.no-members-message {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -149,6 +162,13 @@
   background: var(--te-surface);
   border: 1px dashed var(--te-border);
   border-radius: 12px;
+  color: var(--te-text-2);
+}
+
+.no-members-message p {
+  text-align: center;
+  font-size: 16px;
+  margin: 0;
   color: var(--te-text-2);
 }
 

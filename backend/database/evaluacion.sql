@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-09-2025 a las 19:50:09
+-- Tiempo de generación: 11-09-2025 a las 19:59:01
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -603,7 +603,8 @@ CREATE TABLE `evaluacion` (
 --
 
 INSERT INTO `evaluacion` (`id_evaluacion`, `id_empleado`, `fecha_evaluacion`, `periodo_evaluacion`, `observaciones_generales`, `estado_evaluacion`, `id_jefe`, `fecha_creacion`, `fecha_actualizacion`, `fecha_autoevaluacion`, `fecha_evaluacion_jefe`, `fecha_evaluacion_hseq`, `id_evaluador_hseq`, `comentarios_hseq`) VALUES
-(1, 586, '2025-09-11 12:41:44', '2025-09', NULL, 'BORRADOR', 589, '2025-09-11 12:41:44', '2025-09-11 12:41:44', NULL, NULL, NULL, NULL, NULL);
+(1, 586, '2025-09-11 12:41:44', '2025-09', NULL, 'BORRADOR', 589, '2025-09-11 12:41:44', '2025-09-11 12:41:44', NULL, NULL, NULL, NULL, NULL),
+(2, 794, '2025-09-11 12:57:17', '2025-09', NULL, 'AUTOEVALUACION_COMPLETADA', 589, '2025-09-11 12:57:17', '2025-09-11 12:57:17', NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -650,7 +651,30 @@ INSERT INTO `evaluacion_competencias` (`id_competencia`, `id_evaluacion`, `id_as
 (20, 1, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '3', '2', 2.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
 (21, 1, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '3', '2', 2.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
 (22, 1, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '2', '1', 1.50, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
-(23, 1, 23, 'Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.', '2', '2', 2.00, '2025-09-11 12:41:44', '2025-09-11 12:41:44');
+(23, 1, 23, 'Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.', '2', '2', 2.00, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(24, 2, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '4', '', 2.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(25, 2, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '3', '', 1.50, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(26, 2, 3, 'Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.', '4', '', 2.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(27, 2, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '4', '', 2.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(28, 2, 5, 'Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(29, 2, 6, 'Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.', '3', '', 1.50, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(30, 2, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(31, 2, 8, 'Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.', '4', '', 2.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(32, 2, 9, 'Anticipa problemas y posibles que advierten su carácter de especialista.', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(33, 2, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.', '1', '', 0.50, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(34, 2, 11, 'Articula sus actuaciones con las de los demás', '3', '', 1.50, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(35, 2, 12, 'Cumple los compromisos adquiridos', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(36, 2, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '4', '', 2.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(37, 2, 14, 'Escucha con interés y capta las necesidades de los demás.', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(38, 2, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '3', '', 1.50, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(39, 2, 16, 'Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(40, 2, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '4', '', 2.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(41, 2, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(42, 2, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(43, 2, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(44, 2, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(45, 2, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '3', '', 1.50, '2025-09-11 12:57:17', '2025-09-11 12:57:17'),
+(46, 2, 23, 'Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.', '2', '', 1.00, '2025-09-11 12:57:17', '2025-09-11 12:57:17');
 
 -- --------------------------------------------------------
 
@@ -689,6 +713,13 @@ CREATE TABLE `evaluacion_firmas` (
   `fecha_creacion` datetime DEFAULT current_timestamp(),
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `evaluacion_firmas`
+--
+
+INSERT INTO `evaluacion_firmas` (`id_firma`, `id_evaluacion`, `firma_empleado`, `firma_jefe`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 2, 'uploads/signatures/employee_794_1757613437.png', '', '2025-09-11 12:57:17', '2025-09-11 12:57:17');
 
 -- --------------------------------------------------------
 
@@ -729,7 +760,8 @@ CREATE TABLE `evaluacion_mejoramiento` (
 --
 
 INSERT INTO `evaluacion_mejoramiento` (`id_mejoramiento`, `id_evaluacion`, `fortalezas`, `aspectos_mejorar`, `comentarios_jefe`, `fecha_revision_jefe`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 1, 'q', 'q', NULL, NULL, '2025-09-11 12:41:44', '2025-09-11 12:41:44');
+(1, 1, 'q', 'q', NULL, NULL, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(2, 2, 'q', 'q', NULL, NULL, '2025-09-11 12:57:17', '2025-09-11 12:57:17');
 
 -- --------------------------------------------------------
 
@@ -756,7 +788,8 @@ CREATE TABLE `evaluacion_plan_accion` (
 --
 
 INSERT INTO `evaluacion_plan_accion` (`id_plan_accion`, `id_evaluacion`, `actividad`, `responsable`, `seguimiento`, `comentarios_jefe`, `aprobado_jefe`, `fecha_revision_jefe`, `fecha`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 1, '', '', '', NULL, 'PENDIENTE', NULL, '0000-00-00', '2025-09-11 12:41:44', '2025-09-11 12:41:44');
+(1, 1, '', '', '', NULL, 'PENDIENTE', NULL, '0000-00-00', '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(2, 2, '', '', '', NULL, 'PENDIENTE', NULL, '0000-00-00', '2025-09-11 12:57:17', '2025-09-11 12:57:17');
 
 -- --------------------------------------------------------
 
@@ -786,7 +819,8 @@ CREATE TABLE `evaluacion_promedios` (
 --
 
 INSERT INTO `evaluacion_promedios` (`id_promedio`, `id_evaluacion`, `promedio_competencias`, `promedio_hseq`, `promedio_general`, `promedio_comunicacion_efectiva`, `promedio_instrumentalidad_decisiones`, `promedio_aporte_profesional`, `promedio_colaboracion`, `promedio_relaciones_interpersonales`, `promedio_gestion_procedimientos`, `promedio_cumplimiento_funciones`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 1, 1.96, 0.00, 1.96, 1.88, 2.75, 1.88, 2.17, 1.67, 1.50, 2.13, '2025-09-11 12:41:44', '2025-09-11 12:41:44');
+(1, 1, 1.96, 0.00, 1.96, 1.88, 2.75, 1.88, 2.17, 1.67, 1.50, 2.13, '2025-09-11 12:41:44', '2025-09-11 12:41:44'),
+(2, 2, 2.70, 0.00, 2.70, 3.75, 2.50, 2.25, 3.00, 2.33, 2.67, 2.25, '2025-09-11 12:57:17', '2025-09-11 12:57:17');
 
 -- --------------------------------------------------------
 
@@ -1021,13 +1055,13 @@ ALTER TABLE `empleados`
 -- AUTO_INCREMENT de la tabla `evaluacion`
 --
 ALTER TABLE `evaluacion`
-  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_competencias`
 --
 ALTER TABLE `evaluacion_competencias`
-  MODIFY `id_competencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id_competencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_estado_historial`
@@ -1039,7 +1073,7 @@ ALTER TABLE `evaluacion_estado_historial`
 -- AUTO_INCREMENT de la tabla `evaluacion_firmas`
 --
 ALTER TABLE `evaluacion_firmas`
-  MODIFY `id_firma` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_firma` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_hseq`
@@ -1051,19 +1085,19 @@ ALTER TABLE `evaluacion_hseq`
 -- AUTO_INCREMENT de la tabla `evaluacion_mejoramiento`
 --
 ALTER TABLE `evaluacion_mejoramiento`
-  MODIFY `id_mejoramiento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_mejoramiento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_plan_accion`
 --
 ALTER TABLE `evaluacion_plan_accion`
-  MODIFY `id_plan_accion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_plan_accion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_promedios`
 --
 ALTER TABLE `evaluacion_promedios`
-  MODIFY `id_promedio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_promedio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `hseq_evaluacion`

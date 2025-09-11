@@ -99,10 +99,11 @@ function handleRequest($method, $path) {
         return;
     }
 
-    // (OBSOLETO) Asignaciones por jefe: nuevo modelo HSEQ no usa jefes
+    // Obtener evaluaciones asignadas a un jefe (donde el usuario es jefe inmediato)
     if (preg_match("#^api/evaluations/assigned/(\d+)$#", $path, $matches) && $method === "GET") {
-        http_response_code(410);
-        echo json_encode(["success" => false, "message" => "Endpoint obsoleto. Use los endpoints de HSEQ o evaluación general por separado."]);
+        $bossId = (int)$matches[1];
+        $controller = new EvaluationControllerNativo();
+        $controller->getEvaluationsAssignedToBoss($bossId);
         return;
     }
 
