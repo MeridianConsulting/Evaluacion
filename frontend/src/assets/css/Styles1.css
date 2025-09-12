@@ -3309,3 +3309,83 @@ input[type="date"]:focus {
     opacity: 0.8;
   }
 }
+
+/* ---------------------
+   ESTILOS PARA MEJORAMIENTO Y DESARROLLO
+---------------------- */
+.mejora-bloque {
+  margin-bottom: 1.5rem;
+}
+
+.mejora-subtitulo {
+  background: #f2f2f2;
+  padding: 6px 10px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  border: 1px solid #ccc;
+  margin: 0;
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+}
+
+.mejora-ayuda {
+  font-size: 0.8rem;
+  color: #555;
+  margin: 0.2rem 0 0.6rem 0;
+  font-style: italic;
+}
+
+.compromiso-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+
+.compromiso-table th,
+.compromiso-table td {
+  border: 1px solid #999;
+  padding: 8px;
+}
+
+.compromiso-table th {
+  background-color: #e5e5e5;
+  font-weight: bold;
+  text-align: center;
+}
+
+.compromiso-table input {
+  width: 100%;
+  border: none;
+  padding: 4px;
+  font-size: 0.9rem;
+}
+
+.compromiso-table input:focus {
+  outline: 2px solid #33619D;
+  outline-offset: -2px;
+}
+
+/* --- Mejoramiento y Desarrollo: forzar bloque full width --- */
+.mejora-bloque--full{
+  width: 100%;
+  max-width: none;
+  /* Si el contenedor usa flex */
+  flex: 0 0 100%;
+  /* Si usa grid, que ocupe todas las columnas */
+  grid-column: 1 / -1;
+}
+
+.mejora-bloque--full .campo-textarea{
+  width: 100%;
+  min-width: 100%;
+  display: block;
+  box-sizing: border-box;
+}
+
+/* (opcional) si algún estilo previo limita el ancho, refuérzalo */
+#necesidadesCapacitacion{
+  width: 100% !important;
+  min-width: 100% !important;
+  box-sizing: border-box;
+}

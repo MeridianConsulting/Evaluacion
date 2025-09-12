@@ -1560,11 +1560,16 @@ function PerformanceEvaluation() {
         <hr className="evaluation-hr"/>
         <section className="evaluation-section">
           <h2 className="seccion-titulo">MEJORAMIENTO Y DESARROLLO</h2>
-          <div style={{ marginBottom: "1.5rem" }}>
-            <label htmlFor="fortalezas" className="campo-label">Fortalezas</label>
-            <textarea 
-              id="fortalezas" 
-              rows="3" 
+
+          {/* Fortalezas */}
+          <div className="mejora-bloque">
+            <h3 className="mejora-subtitulo">FORTALEZAS</h3>
+            <p className="mejora-ayuda">
+              (Describa brevemente cuáles son las actividades del trabajo que mejor realiza y sus cualidades personales)
+            </p>
+            <textarea
+              id="fortalezas"
+              rows="3"
               className="campo-textarea"
               value={mejoramiento.fortalezas}
               onChange={handleMejoramientoChange}
@@ -1574,11 +1579,16 @@ function PerformanceEvaluation() {
               <span className="error-message">Este campo es obligatorio</span>
             )}
           </div>
-          <div>
-            <label htmlFor="aspectosMejorar" className="campo-label">Aspectos a mejorar</label>
-            <textarea 
-              id="aspectosMejorar" 
-              rows="3" 
+
+          {/* Factores a mejorar */}
+          <div className="mejora-bloque">
+            <h3 className="mejora-subtitulo">FACTORES A MEJORAR</h3>
+            <p className="mejora-ayuda">
+              (Concreta en qué aspectos debe mejorar el colaborador)
+            </p>
+            <textarea
+              id="aspectosMejorar"
+              rows="3"
               className="campo-textarea"
               value={mejoramiento.aspectosMejorar}
               onChange={handleMejoramientoChange}
@@ -1587,6 +1597,56 @@ function PerformanceEvaluation() {
             {visibleErrors.aspectosMejorar && (
               <span className="error-message">Este campo es obligatorio</span>
             )}
+          </div>
+
+          {/* Necesidades de capacitación */}
+          <div className="mejora-bloque mejora-bloque--full">
+            <h3 className="mejora-subtitulo">NECESIDADES DE CAPACITACIÓN</h3>
+            <textarea
+              id="necesidadesCapacitacion"
+              rows="3"
+              className="campo-textarea"
+              value={mejoramiento.necesidadesCapacitacion || ''}
+              onChange={(e) => setMejoramiento(prev => ({
+                ...prev,
+                necesidadesCapacitacion: e.target.value
+              }))}
+            />
+          </div>
+
+          {/* Acta de compromiso */}
+          <div className="mejora-bloque">
+            <h3 className="mejora-subtitulo">ACTA DE COMPROMISO</h3>
+            <table className="compromiso-table">
+              <thead>
+                <tr>
+                  <th>CRITERIO</th>
+                  <th>COMPROMISO</th>
+                </tr>
+              </thead>
+              <tbody>
+                {planesAccion.map((plan, index) => (
+                  <tr key={plan.id}>
+                    <td>
+                      <input
+                        type="text"
+                        placeholder="Aspecto a mejorar"
+                        value={plan.actividad}
+                        onChange={(e) => handlePlanAccionChange(plan.id, 'actividad', e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        placeholder="Compromiso"
+                        value={plan.responsable}
+                        onChange={(e) => handlePlanAccionChange(plan.id, 'responsable', e.target.value)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </section>
 
