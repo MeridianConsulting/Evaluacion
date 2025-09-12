@@ -5,7 +5,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import SignatureUploader from '../components/SignatureUploader';
 import { useNotification } from '../components/NotificationSystem';
-import CompletionCelebration from '../components/CompletionCelebration';
+import CompletionCelebrationBoss from '../components/CompletionCelebrationBoss';
 import CompetenciasTable from "../components/CompetenciasTable";
 import CompetenciasTableBoss from "../components/CompetenciasTableBoss";
 import ValidationSummaryAlert from "../components/ValidationSummaryAlert";
@@ -14,6 +14,7 @@ import ValidationSummaryAlert from "../components/ValidationSummaryAlert";
 function PerformanceEvaluationBoss() {
   const { success, error: showError, warning } = useNotification();
   const [employee, setEmployee] = useState(null);
+  const [boss, setBoss] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [employeeSignature, setEmployeeSignature] = useState(null);
@@ -494,6 +495,22 @@ function PerformanceEvaluationBoss() {
 
     fetchEmployee();
   }, [empleadoId]);
+
+  // Cargar datos del jefe (usuario logueado) para mostrar su nombre en la celebración
+  useEffect(() => {
+    const loadBoss = async () => {
+      try {
+        const myId = localStorage.getItem('employeeId');
+        if (!myId) return;
+        const apiUrl = process.env.REACT_APP_API_BASE_URL;
+        const resp = await fetch(`${apiUrl}/employees/${myId}`);
+        if (!resp.ok) return;
+        const data = await resp.json();
+        setBoss(data && (data.data || data));
+      } catch (_) {}
+    };
+    loadBoss();
+  }, []);
 
 
   // Guardar datos automáticamente cuando cambien
@@ -1804,12 +1821,11 @@ function PerformanceEvaluationBoss() {
       <Footer />
       
       {/* Componente de celebración épica */}
-      <CompletionCelebration
+      <CompletionCelebrationBoss
         open={showCompletion}
         employeeName={employee?.nombre || ''}
+        bossName={boss?.nombre || ''}
         compAvg={realAverages.promedioCompetencias}
-        hseqAvg={0}
-        generalAvg={realAverages.promedioGeneral}
         autoCloseMs={15000}
         closeOnBackdrop={false}
         onClose={() => { setShowCompletion(false); window.location.href = '/'; }}

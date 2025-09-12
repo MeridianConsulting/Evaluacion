@@ -59,12 +59,25 @@
   animation: cc-pop 820ms cubic-bezier(.25,.46,.45,.94) forwards;
 }
 
+/* Variante de éxito para la fase final (competencias completadas) */
+.cc-card.cc-card--success{
+  background: linear-gradient(180deg, rgba(14,21,36,.96), rgba(10,15,26,.94));
+  border-color: rgba(34,197,94,.28);
+  box-shadow: 0 24px 80px rgba(0,0,0,.55), 0 8px 28px rgba(0,0,0,.35), 0 0 0 1px rgba(34,197,94,.14) inset, 0 14px 34px rgba(34,197,94,.10);
+}
+
 /* Ribbon/barra superior azul institucional */
 .cc-card::before{
   content:"";
   position:absolute; left:0; top:0; right:0; height:6px;
   background: linear-gradient(90deg, var(--cc-primary1), var(--cc-primary2));
   box-shadow: 0 0 18px rgba(31,59,115,.45), 0 4px 10px rgba(0,0,0,.25) inset;
+}
+
+/* Ribbon en modo éxito */
+.cc-card.cc-card--success::before{
+  background: linear-gradient(90deg, var(--cc-success-1), var(--cc-success-2));
+  box-shadow: 0 0 18px rgba(34,197,94,.45), 0 4px 10px rgba(0,0,0,.25) inset;
 }
 
 /* Botón cerrar */
