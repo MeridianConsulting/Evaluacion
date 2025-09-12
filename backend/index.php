@@ -190,6 +190,20 @@ function handleRequest($method, $path) {
         return;
     }
 
+    // Ruta para exportar todas las evaluaciones normales a Excel
+    if ($path === "api/evaluations/export-all-excel" && $method === "GET") {
+        $controller = new EvaluationControllerNativo();
+        $controller->exportAllEvaluationsToExcel();
+        return;
+    }
+
+    // Ruta para listar todas las evaluaciones normales (JSON)
+    if ($path === "api/evaluations/all" && $method === "GET") {
+        $controller = new EvaluationControllerNativo();
+        $controller->getAllEvaluations();
+        return;
+    }
+
     // Ruta para guardar evaluación HSEQ
     if ($path === "api/evaluations/save-hseq" && $method === "POST") {
         $controller = new EvaluationControllerNativo();

@@ -31,6 +31,7 @@ if (file_exists(__DIR__ . '/../vendor/tcpdf/tcpdf.php')) {
 
 class EvaluationControllerNativo {
     private $db;
+    private $sharedStrings = [];
 
     public function __construct() {
         try {
@@ -2129,6 +2130,425 @@ class EvaluationControllerNativo {
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode(["success" => false, "message" => "Error al obtener historial", "error" => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Exporta todas las evaluaciones normales (no HSEQ) a Excel
+     */
+    public function exportAllEvaluationsToExcel() {
+        try {
+            // Obtener todas las evaluaciones normales con datos completos
+            $stmt = $this->db->prepare("
+                SELECT 
+                    e.id_evaluacion,
+                    e.id_empleado,
+                    e.fecha_evaluacion,
+                    e.periodo_evaluacion,
+                    e.observaciones_generales,
+                    e.estado_evaluacion,
+                    e.fecha_creacion,
+                    e.fecha_autoevaluacion,
+                    e.fecha_evaluacion_jefe,
+                    e.fecha_evaluacion_hseq,
+                    emp.cedula as empleado_cedula,
+                    emp.nombre as empleado_nombre,
+                    emp.cargo as empleado_cargo,
+                    emp.area as empleado_area,
+                    emp.email as empleado_email,
+                    jefe.nombre as jefe_nombre,
+                    jefe.cargo as jefe_cargo,
+                    hseq_eval.nombre as evaluador_hseq_nombre,
+                    hseq_eval.cargo as evaluador_hseq_cargo,
+                    e.comentarios_hseq
+                FROM evaluacion e
+                JOIN empleados emp ON e.id_empleado = emp.id_empleado
+                LEFT JOIN empleados jefe ON e.id_jefe = jefe.id_empleado
+                LEFT JOIN empleados hseq_eval ON e.id_evaluador_hseq = hseq_eval.id_empleado
+                ORDER BY e.fecha_evaluacion DESC, emp.nombre ASC
+            ");
+            $stmt->execute();
+            $evaluaciones = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+
+            if (empty($evaluaciones)) {
+                http_response_code(404);
+                echo json_encode(["success" => false, "message" => "No se encontraron evaluaciones para exportar"]);
+                return;
+            }
+
+            // Generar archivo Excel usando una solución más simple y robusta
+            $this->generateSimpleExcel($evaluaciones);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error al exportar las evaluaciones',
+                'error' => $e->getMessage()
+            ], JSON_UNESCAPED_UNICODE);
+        }
+    }
+
+    /**
+     * Genera un archivo Excel simple y válido
+     */
+    private function generateSimpleExcel($evaluaciones) {
+        // Crear archivo temporal
+        $filename = 'evaluaciones_todas_' . date('Y-m-d_H-i-s') . '.xlsx';
+        $tempFile = tempnam(sys_get_temp_dir(), 'excel_') . '.xlsx';
+        
+        try {
+            // Crear estructura básica de Excel
+            $this->createBasicExcel($tempFile, $evaluaciones);
+            
+            // Enviar archivo
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+            header('Cache-Control: max-age=0');
+            header('Content-Length: ' . filesize($tempFile));
+
+            readfile($tempFile);
+            
+            // Limpiar archivo temporal
+            unlink($tempFile);
+
+        } catch (Exception $e) {
+            // Limpiar en caso de error
+            if (file_exists($tempFile)) unlink($tempFile);
+            throw $e;
+        }
+    }
+
+    /**
+     * Crea un archivo Excel básico y válido
+     */
+    private function createBasicExcel($filePath, $evaluaciones) {
+        // Crear directorio temporal
+        $tempDir = dirname($filePath) . '/excel_' . uniqid();
+        mkdir($tempDir, 0777, true);
+        
+        try {
+            // Crear estructura mínima de Excel
+            $this->createMinimalExcelStructure($tempDir, $evaluaciones);
+            
+            // Crear archivo ZIP
+            $zip = new ZipArchive();
+            if ($zip->open($filePath, ZipArchive::CREATE) !== TRUE) {
+                throw new Exception('No se pudo crear archivo ZIP');
+            }
+            
+            // Agregar archivos al ZIP
+            $this->addFilesToZip($zip, $tempDir);
+            $zip->close();
+            
+            // Limpiar directorio temporal
+            $this->deleteDirectory($tempDir);
+            
+        } catch (Exception $e) {
+            $this->deleteDirectory($tempDir);
+            throw $e;
+        }
+    }
+
+    /**
+     * Crea el archivo sharedStrings.xml
+     */
+    private function createSharedStrings($filePath, $evaluaciones) {
+        $strings = [];
+        $stringIndex = 0;
+        
+        // Título principal
+        $strings['REPORTE DE EVALUACIONES - MERIDIAN CONSULTING LTDA'] = $stringIndex++;
+        $strings['Fecha de generación:'] = $stringIndex++;
+        $strings[date('Y-m-d H:i:s')] = $stringIndex++;
+        $strings['Total de evaluaciones:'] = $stringIndex++;
+        $strings[(string)count($evaluaciones)] = $stringIndex++;
+        
+        // Encabezados
+        $headers = [
+            'ID Evaluación', 'ID Empleado', 'Cédula Empleado', 'Nombre Empleado',
+            'Cargo Empleado', 'Área Empleado', 'Email Empleado', 'Fecha Evaluación',
+            'Período Evaluación', 'Estado Evaluación', 'Fecha Creación',
+            'Fecha Autoevaluación', 'Fecha Evaluación Jefe', 'Fecha Evaluación HSEQ',
+            'Nombre Jefe', 'Cargo Jefe', 'Evaluador HSEQ', 'Cargo Evaluador HSEQ',
+            'Observaciones Generales', 'Comentarios HSEQ'
+        ];
+        
+        foreach ($headers as $header) {
+            if (!isset($strings[$header])) {
+                $strings[$header] = $stringIndex++;
+            }
+        }
+        
+        // Datos de evaluaciones
+        foreach ($evaluaciones as $evaluacion) {
+            $data = [
+                $evaluacion['id_evaluacion'],
+                $evaluacion['id_empleado'],
+                $evaluacion['empleado_cedula'],
+                $evaluacion['empleado_nombre'],
+                $evaluacion['empleado_cargo'],
+                $evaluacion['empleado_area'],
+                $evaluacion['empleado_email'],
+                $evaluacion['fecha_evaluacion'],
+                $evaluacion['periodo_evaluacion'],
+                $evaluacion['estado_evaluacion'],
+                $evaluacion['fecha_creacion'],
+                $evaluacion['fecha_autoevaluacion'],
+                $evaluacion['fecha_evaluacion_jefe'],
+                $evaluacion['fecha_evaluacion_hseq'],
+                $evaluacion['jefe_nombre'],
+                $evaluacion['jefe_cargo'],
+                $evaluacion['evaluador_hseq_nombre'],
+                $evaluacion['evaluador_hseq_cargo'],
+                $evaluacion['observaciones_generales'],
+                $evaluacion['comentarios_hseq']
+            ];
+            
+            foreach ($data as $value) {
+                $strValue = (string)$value;
+                if (!isset($strings[$strValue])) {
+                    $strings[$strValue] = $stringIndex++;
+                }
+            }
+        }
+        
+        // Crear XML
+        $xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="' . count($strings) . '" uniqueCount="' . count($strings) . '">';
+        
+        // Ordenar strings por índice
+        asort($strings);
+        foreach ($strings as $string => $index) {
+            $xml .= '<si><t>' . htmlspecialchars($string) . '</t></si>';
+        }
+        
+        $xml .= '</sst>';
+        
+        file_put_contents($filePath, $xml);
+        
+        // Guardar strings para uso en worksheet
+        $this->sharedStrings = $strings;
+    }
+
+    /**
+     * Crea el archivo styles.xml
+     */
+    private function createStyles($filePath) {
+        $xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+    <numFmts count="0"/>
+    <fonts count="2">
+        <font>
+            <sz val="11"/>
+            <color theme="1"/>
+            <name val="Calibri"/>
+            <family val="2"/>
+            <scheme val="minor"/>
+        </font>
+        <font>
+            <b/>
+            <sz val="11"/>
+            <color theme="1"/>
+            <name val="Calibri"/>
+            <family val="2"/>
+            <scheme val="minor"/>
+        </font>
+    </fonts>
+    <fills count="2">
+        <fill>
+            <patternFill patternType="none"/>
+        </fill>
+        <fill>
+            <patternFill patternType="gray125"/>
+        </fill>
+    </fills>
+    <borders count="1">
+        <border>
+            <left/>
+            <right/>
+            <top/>
+            <bottom/>
+            <diagonal/>
+        </border>
+    </borders>
+    <cellStyleXfs count="1">
+        <xf numFmtId="0" fontId="0" fillId="0" borderId="0"/>
+    </cellStyleXfs>
+    <cellXfs count="2">
+        <xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
+        <xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0"/>
+    </cellXfs>
+    <cellStyles count="1">
+        <cellStyle name="Normal" xfId="0" builtinId="0"/>
+    </cellStyles>
+</styleSheet>';
+        
+        file_put_contents($filePath, $xml);
+    }
+
+    /**
+     * Crea el archivo de la hoja de cálculo
+     */
+    private function createWorksheet($filePath, $evaluaciones) {
+        $xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+    <sheetData>';
+
+        // Título principal
+        $xml .= '<row r="1">';
+        $xml .= '<c r="A1" t="s" s="1"><v>' . $this->sharedStrings['REPORTE DE EVALUACIONES - MERIDIAN CONSULTING LTDA'] . '</v></c>';
+        $xml .= '</row>';
+
+        // Información del reporte
+        $xml .= '<row r="3">';
+        $xml .= '<c r="A3" t="s" s="1"><v>' . $this->sharedStrings['Fecha de generación:'] . '</v></c>';
+        $xml .= '<c r="B3" t="s"><v>' . $this->sharedStrings[date('Y-m-d H:i:s')] . '</v></c>';
+        $xml .= '</row>';
+
+        $xml .= '<row r="4">';
+        $xml .= '<c r="A4" t="s" s="1"><v>' . $this->sharedStrings['Total de evaluaciones:'] . '</v></c>';
+        $xml .= '<c r="B4" t="s"><v>' . $this->sharedStrings[(string)count($evaluaciones)] . '</v></c>';
+        $xml .= '</row>';
+
+        // Encabezados
+        $headers = [
+            'ID Evaluación', 'ID Empleado', 'Cédula Empleado', 'Nombre Empleado',
+            'Cargo Empleado', 'Área Empleado', 'Email Empleado', 'Fecha Evaluación',
+            'Período Evaluación', 'Estado Evaluación', 'Fecha Creación',
+            'Fecha Autoevaluación', 'Fecha Evaluación Jefe', 'Fecha Evaluación HSEQ',
+            'Nombre Jefe', 'Cargo Jefe', 'Evaluador HSEQ', 'Cargo Evaluador HSEQ',
+            'Observaciones Generales', 'Comentarios HSEQ'
+        ];
+
+        $xml .= '<row r="6">';
+        $col = 'A';
+        foreach ($headers as $header) {
+            $xml .= '<c r="' . $col . '6" t="s" s="1"><v>' . $this->sharedStrings[$header] . '</v></c>';
+            $col++;
+        }
+        $xml .= '</row>';
+
+        // Datos
+        $rowNum = 7;
+        foreach ($evaluaciones as $evaluacion) {
+            $xml .= '<row r="' . $rowNum . '">';
+            $col = 'A';
+            $data = [
+                $evaluacion['id_evaluacion'],
+                $evaluacion['id_empleado'],
+                $evaluacion['empleado_cedula'],
+                $evaluacion['empleado_nombre'],
+                $evaluacion['empleado_cargo'],
+                $evaluacion['empleado_area'],
+                $evaluacion['empleado_email'],
+                $evaluacion['fecha_evaluacion'],
+                $evaluacion['periodo_evaluacion'],
+                $evaluacion['estado_evaluacion'],
+                $evaluacion['fecha_creacion'],
+                $evaluacion['fecha_autoevaluacion'],
+                $evaluacion['fecha_evaluacion_jefe'],
+                $evaluacion['fecha_evaluacion_hseq'],
+                $evaluacion['jefe_nombre'],
+                $evaluacion['jefe_cargo'],
+                $evaluacion['evaluador_hseq_nombre'],
+                $evaluacion['evaluador_hseq_cargo'],
+                $evaluacion['observaciones_generales'],
+                $evaluacion['comentarios_hseq']
+            ];
+
+            foreach ($data as $value) {
+                $strValue = (string)$value;
+                $xml .= '<c r="' . $col . $rowNum . '" t="s"><v>' . $this->sharedStrings[$strValue] . '</v></c>';
+                $col++;
+            }
+            $xml .= '</row>';
+            $rowNum++;
+        }
+
+        $xml .= '</sheetData>
+</worksheet>';
+
+        file_put_contents($filePath, $xml);
+    }
+
+    /**
+     * Agrega archivos al ZIP
+     */
+    private function addFilesToZip($zip, $tempDir) {
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($tempDir));
+        foreach ($iterator as $file) {
+            if ($file->isFile()) {
+                $relativePath = str_replace($tempDir . '/', '', $file->getPathname());
+                $zip->addFile($file->getPathname(), $relativePath);
+            }
+        }
+    }
+
+    /**
+     * Elimina directorio recursivamente
+     */
+    private function deleteDirectory($dir) {
+        if (!is_dir($dir)) return;
+        
+        $files = array_diff(scandir($dir), array('.', '..'));
+        foreach ($files as $file) {
+            $path = $dir . '/' . $file;
+            is_dir($path) ? $this->deleteDirectory($path) : unlink($path);
+        }
+        rmdir($dir);
+    }
+
+    /**
+     * Devuelve todas las evaluaciones normales (no HSEQ independiente) en JSON
+     */
+    public function getAllEvaluations() {
+        try {
+            $sql = "
+                SELECT 
+                    e.id_evaluacion,
+                    e.id_empleado,
+                    emp.cedula AS empleado_cedula,
+                    emp.nombre AS empleado_nombre,
+                    emp.cargo  AS empleado_cargo,
+                    emp.area   AS empleado_area,
+                    emp.email  AS empleado_email,
+                    e.fecha_evaluacion,
+                    e.periodo_evaluacion,
+                    e.estado_evaluacion,
+                    e.fecha_creacion,
+                    e.fecha_autoevaluacion,
+                    e.fecha_evaluacion_jefe,
+                    e.fecha_evaluacion_hseq,
+                    jefe.nombre AS jefe_nombre,
+                    jefe.cargo  AS jefe_cargo,
+                    hseq_eval.nombre AS evaluador_hseq_nombre,
+                    hseq_eval.cargo  AS evaluador_hseq_cargo,
+                    e.observaciones_generales,
+                    e.comentarios_hseq,
+                    ep.promedio_competencias,
+                    ep.promedio_hseq,
+                    ep.promedio_general
+                FROM evaluacion e
+                INNER JOIN empleados emp ON emp.id_empleado = e.id_empleado
+                LEFT JOIN empleados jefe ON jefe.id_empleado = e.id_jefe
+                LEFT JOIN empleados hseq_eval ON hseq_eval.id_empleado = e.id_evaluador_hseq
+                LEFT JOIN evaluacion_promedios ep ON ep.id_evaluacion = e.id_evaluacion
+                ORDER BY e.fecha_evaluacion DESC, emp.nombre ASC
+            ";
+            $stmt = $this->db->prepare($sql);
+            if (!$stmt) {
+                throw new Exception('Error al preparar consulta: ' . $this->db->error);
+            }
+            $stmt->execute();
+            $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+
+            echo json_encode(["success" => true, "data" => $rows], JSON_UNESCAPED_UNICODE);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Error al obtener evaluaciones", "error" => $e->getMessage()], JSON_UNESCAPED_UNICODE);
         }
     }
 }

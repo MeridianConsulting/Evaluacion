@@ -9,6 +9,7 @@
   --color-empleados: #3498db;
   --color-funciones: #2ecc71;
   --color-cargos: #e74c3c;
+  --color-reportes: #9b59b6;
 }
 
 .admin-dashboard {
@@ -94,6 +95,12 @@
   background-image: linear-gradient(135deg, #e74c3c, #c0392b);
 }
 
+.admin-button.reportes {
+  background-color: var(--color-reportes);
+  color: white;
+  background-image: linear-gradient(135deg, #9b59b6, #8e44ad);
+}
+
 .button-content {
   display: flex;
   flex-direction: column;
@@ -124,6 +131,10 @@
 
 .cargos-icon {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z'/%3E%3C/svg%3E");
+}
+
+.reportes-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z'/%3E%3C/svg%3E");
 }
 
 .admin-info {

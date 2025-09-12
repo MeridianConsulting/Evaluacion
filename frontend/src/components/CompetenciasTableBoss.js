@@ -159,13 +159,22 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[0].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[0].boss === 0 ? "" : rows[0].boss}
                     onChange={(e) => handleSelectChange(rows[0].id, "boss", e.target.value)}
-                    style={getCalificationErrorStyle(rows[0].id, 'boss')}
-                    
+                    style={{
+                      ...getCalificationErrorStyle(rows[0].id, 'boss'),
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -200,13 +209,22 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[1].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[1].boss === 0 ? "" : rows[1].boss}
                     onChange={(e) => handleSelectChange(rows[1].id, "boss", e.target.value)}
-                    style={getCalificationErrorStyle(rows[1].id, 'boss')}
-                    
+                    style={{
+                      ...getCalificationErrorStyle(rows[1].id, 'boss'),
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -240,12 +258,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[2].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[2].boss === 0 ? "" : rows[2].boss}
                     onChange={(e) => handleSelectChange(rows[2].id, "boss", e.target.value)}
-                    
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -279,12 +306,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[3].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[3].boss === 0 ? "" : rows[3].boss}
                     onChange={(e) => handleSelectChange(rows[3].id, "boss", e.target.value)}
-                    
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -349,12 +385,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[4].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[4].boss === 0 ? "" : rows[4].boss}
                     onChange={(e) => handleSelectChange(rows[4].id, "boss", e.target.value)}
-                    
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -388,12 +433,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[5].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[5].boss === 0 ? "" : rows[5].boss}
                     onChange={(e) => handleSelectChange(rows[5].id, "boss", e.target.value)}
-                    
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -458,12 +512,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[6].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[6].boss === 0 ? "" : rows[6].boss}
                     onChange={(e) => handleSelectChange(rows[6].id, "boss", e.target.value)}
-                    
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -497,12 +560,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[7].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[7].boss === 0 ? "" : rows[7].boss}
                     onChange={(e) => handleSelectChange(rows[7].id, "boss", e.target.value)}
-                    
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -536,12 +608,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[8].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[8].boss === 0 ? "" : rows[8].boss}
                     onChange={(e) => handleSelectChange(rows[8].id, "boss", e.target.value)}
-                    
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -575,12 +656,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[9].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[9].boss === 0 ? "" : rows[9].boss}
                     onChange={(e) => handleSelectChange(rows[9].id, "boss", e.target.value)}
-                    
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -644,12 +734,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[10].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[10].boss === 0 ? "" : rows[10].boss}
                     onChange={(e) => handleSelectChange(rows[10].id, "boss", e.target.value)}
-                    
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -683,12 +782,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[11].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[11].boss === 0 ? "" : rows[11].boss}
                     onChange={(e) => handleSelectChange(rows[11].id, "boss", e.target.value)}
-                    
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -722,12 +830,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[12].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[12].boss === 0 ? "" : rows[12].boss}
                     onChange={(e) => handleSelectChange(rows[12].id, "boss", e.target.value)}
-                    
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -792,12 +909,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[13].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[13].boss === 0 ? "" : rows[13].boss}
                     onChange={(e) => handleSelectChange(rows[13].id, "boss", e.target.value)}
-                    
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -831,12 +957,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[14].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[14].boss === 0 ? "" : rows[14].boss}
                     onChange={(e) => handleSelectChange(rows[14].id, "boss", e.target.value)}
-                    
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -870,12 +1005,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[15].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[15].boss === 0 ? "" : rows[15].boss}
                     onChange={(e) => handleSelectChange(rows[15].id, "boss", e.target.value)}
-                    
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -941,12 +1085,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[16].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[16].boss === 0 ? "" : rows[16].boss}
                     onChange={(e) => handleSelectChange(rows[16].id, "boss", e.target.value)}
-                    
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -980,12 +1133,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[17].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[17].boss === 0 ? "" : rows[17].boss}
                     onChange={(e) => handleSelectChange(rows[17].id, "boss", e.target.value)}
-                    
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1019,12 +1181,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[18].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[18].boss === 0 ? "" : rows[18].boss}
                     onChange={(e) => handleSelectChange(rows[18].id, "boss", e.target.value)}
-                    
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1081,12 +1252,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[19].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
                     value={rows[19].boss === 0 ? "" : rows[19].boss}
                     onChange={(e) => handleSelectChange(rows[19].id, "boss", e.target.value)}
-                    
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                   >
                     <option value="">1 - 5</option>
                     <option value="1">1 - No Cumple</option>
@@ -1118,11 +1298,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[20].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                     <select
                       className="rating-select"
                     value={rows[20].boss === 0 ? "" : rows[20].boss}
                     onChange={(e) => handleSelectChange(rows[20].id, "boss", e.target.value)}
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#ffffff",
+                      textAlign: "center"
+                    }}
                     >
                       <option value="">1 - 5</option>
                       <option value="1">1 - No Cumple</option>
@@ -1155,11 +1345,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[21].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                     <select
                       className="rating-select"
                       value={rows[21].boss === 0 ? "" : rows[21].boss}
                       onChange={(e) => handleSelectChange(rows[21].id, "boss", e.target.value)}
+                      style={{
+                        width: "100%",
+                        minWidth: "120px",
+                        padding: "8px 12px",
+                        fontSize: "14px",
+                        border: "1px solid #d1d5db",
+                        borderRadius: "4px",
+                        backgroundColor: "#ffffff",
+                        textAlign: "center"
+                      }}
                     >
                       <option value="">1 - 5</option>
                       <option value="1">1 - No Cumple</option>
@@ -1192,11 +1392,21 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[22].worker || '-'}
                 </td>
-                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
+                <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                     <select
                       className="rating-select"
                       value={rows[22].boss === 0 ? "" : rows[22].boss}
                       onChange={(e) => handleSelectChange(rows[22].id, "boss", e.target.value)}
+                      style={{
+                        width: "100%",
+                        minWidth: "120px",
+                        padding: "8px 12px",
+                        fontSize: "14px",
+                        border: "1px solid #d1d5db",
+                        borderRadius: "4px",
+                        backgroundColor: "#ffffff",
+                        textAlign: "center"
+                      }}
                     >
                       <option value="">1 - 5</option>
                       <option value="1">1 - No Cumple</option>
