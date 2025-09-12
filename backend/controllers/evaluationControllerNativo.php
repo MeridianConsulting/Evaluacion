@@ -1022,6 +1022,8 @@ class EvaluationControllerNativo {
         $stmt->execute();
         $result = $stmt->get_result()->fetch_assoc();
         $stmt->close();
+        
+        
         return $result;
     }
 
@@ -1034,6 +1036,8 @@ class EvaluationControllerNativo {
         $stmt->execute();
         $result = $stmt->get_result()->fetch_assoc();
         $stmt->close();
+        
+        
         return $result;
     }
 
@@ -1167,7 +1171,10 @@ class EvaluationControllerNativo {
                 if (!empty($firmas['firma_empleado'])) {
                     $firmaPath = __DIR__ . '/../' . $firmas['firma_empleado'];
                     if (file_exists($firmaPath)) {
-                        $firmasBase64['firma_empleado'] = 'data:image/png;base64,' . base64_encode(file_get_contents($firmaPath));
+                        // Detectar automáticamente el tipo de imagen
+                        $imageInfo = getimagesize($firmaPath);
+                        $mimeType = $imageInfo ? $imageInfo['mime'] : 'image/png';
+                        $firmasBase64['firma_empleado'] = 'data:' . $mimeType . ';base64,' . base64_encode(file_get_contents($firmaPath));
                     }
                 }
                 
@@ -1175,7 +1182,10 @@ class EvaluationControllerNativo {
                 if (!empty($firmas['firma_jefe'])) {
                     $firmaPath = __DIR__ . '/../' . $firmas['firma_jefe'];
                     if (file_exists($firmaPath)) {
-                        $firmasBase64['firma_jefe'] = 'data:image/png;base64,' . base64_encode(file_get_contents($firmaPath));
+                        // Detectar automáticamente el tipo de imagen
+                        $imageInfo = getimagesize($firmaPath);
+                        $mimeType = $imageInfo ? $imageInfo['mime'] : 'image/png';
+                        $firmasBase64['firma_jefe'] = 'data:' . $mimeType . ';base64,' . base64_encode(file_get_contents($firmaPath));
                     }
                 }
             }

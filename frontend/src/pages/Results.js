@@ -171,6 +171,10 @@ const MyDocument = ({ evaluationData }) => (
             <Text style={pdfStyles.label}>Período:</Text>
             <Text style={pdfStyles.value}>{evaluationData.evaluacion?.periodo_evaluacion || 'N/A'}</Text>
           </View>
+          <View style={pdfStyles.row}>
+            <Text style={pdfStyles.label}>Observaciones Generales:</Text>
+            <Text style={pdfStyles.value}>{evaluationData.evaluacion?.observaciones_generales || 'N/A'}</Text>
+          </View>
         </View>
       </View>
 
@@ -208,7 +212,6 @@ const MyDocument = ({ evaluationData }) => (
                 <Text style={pdfStyles.tableCellSm}>Trabajador</Text>
                 <Text style={pdfStyles.tableCellSm}>Jefe</Text>
                 <Text style={pdfStyles.tableCellSm}>Promedio</Text>
-                <Text style={pdfStyles.tableCellObs}>Observaciones</Text>
               </View>
               {evaluationData.competencias.map((c, idx) => (
                 <View key={idx} style={pdfStyles.tableRow}>
@@ -216,7 +219,6 @@ const MyDocument = ({ evaluationData }) => (
                   <Text style={pdfStyles.tableCellSm}>{c.calificacion_empleado ?? 'N/A'}</Text>
                   <Text style={pdfStyles.tableCellSm}>{c.calificacion_jefe ?? 'N/A'}</Text>
                   <Text style={pdfStyles.tableCellSm}>{c.promedio ?? 'N/A'}</Text>
-                  <Text style={pdfStyles.tableCellObs}>{getObs(c)}</Text>
                 </View>
               ))}
             </View>
@@ -266,6 +268,10 @@ const MyDocument = ({ evaluationData }) => (
               <Text style={pdfStyles.label}>Aspectos a Mejorar:</Text>
               <Text style={pdfStyles.value}>{evaluationData.mejoramiento.aspectos_mejorar || 'N/A'}</Text>
             </View>
+            <View style={pdfStyles.row}>
+              <Text style={pdfStyles.label}>Comentarios del Jefe:</Text>
+              <Text style={pdfStyles.value}>{evaluationData.mejoramiento.comentarios_jefe || 'N/A'}</Text>
+            </View>
           </View>
         </View>
       )}
@@ -292,6 +298,14 @@ const MyDocument = ({ evaluationData }) => (
               <Text style={pdfStyles.label}>Fecha:</Text>
               <Text style={pdfStyles.value}>{evaluationData.plan_accion.fecha || 'N/A'}</Text>
             </View>
+            <View style={pdfStyles.row}>
+              <Text style={pdfStyles.label}>Comentarios del Jefe:</Text>
+              <Text style={pdfStyles.value}>{evaluationData.plan_accion.comentarios_jefe || 'N/A'}</Text>
+            </View>
+            <View style={pdfStyles.row}>
+              <Text style={pdfStyles.label}>Estado:</Text>
+              <Text style={pdfStyles.value}>{evaluationData.plan_accion.aprobado_jefe || 'N/A'}</Text>
+            </View>
           </View>
         </View>
       )}
@@ -303,18 +317,26 @@ const MyDocument = ({ evaluationData }) => (
         <View style={pdfStyles.signatureRow}>
           <View style={pdfStyles.signatureBox}>
             <Text style={pdfStyles.signatureLabel}>Evaluado</Text>
-            {evaluationData.firmas?.firma_empleado ? (
-              <Image src={evaluationData.firmas.firma_empleado} style={pdfStyles.signatureImage} />
+            {evaluationData.firmas?.firma_empleado && evaluationData.firmas.firma_empleado.length > 100 ? (
+              <Image 
+                src={evaluationData.firmas.firma_empleado} 
+                style={pdfStyles.signatureImage}
+                onError={() => console.log('Error cargando firma empleado')}
+              />
             ) : (
-              <Text style={pdfStyles.signatureLabel}>_________________________</Text>
+              <Text style={pdfStyles.signatureLabel}>Firma no registrada</Text>
             )}
           </View>
           <View style={pdfStyles.signatureBox}>
             <Text style={pdfStyles.signatureLabel}>Jefe Directo</Text>
-            {evaluationData.firmas?.firma_jefe ? (
-              <Image src={evaluationData.firmas.firma_jefe} style={pdfStyles.signatureImage} />
+            {evaluationData.firmas?.firma_jefe && evaluationData.firmas.firma_jefe.length > 100 ? (
+              <Image 
+                src={evaluationData.firmas.firma_jefe} 
+                style={pdfStyles.signatureImage}
+                onError={() => console.log('Error cargando firma jefe')}
+              />
             ) : (
-              <Text style={pdfStyles.signatureLabel}>_________________________</Text>
+              <Text style={pdfStyles.signatureLabel}>Firma no registrada</Text>
             )}
           </View>
         </View>
@@ -466,6 +488,18 @@ function Results({ onLogout, userRole }) {
       const response = await fetch(`${apiUrl}/api/evaluations/${evaluacion.id_evaluacion}/complete/${employeeId}`);
       if (!response.ok) throw new Error('Error al obtener datos completos de la evaluación');
       const { data: evaluationData } = await response.json();
+      
+      // Limpiar y validar las firmas antes de generar el PDF
+      if (evaluationData.firmas) {
+        // Asegurar que las firmas tengan el formato correcto
+        if (evaluationData.firmas.firma_empleado && !evaluationData.firmas.firma_empleado.startsWith('data:image')) {
+          evaluationData.firmas.firma_empleado = `data:image/png;base64,${evaluationData.firmas.firma_empleado}`;
+        }
+        if (evaluationData.firmas.firma_jefe && !evaluationData.firmas.firma_jefe.startsWith('data:image')) {
+          evaluationData.firmas.firma_jefe = `data:image/png;base64,${evaluationData.firmas.firma_jefe}`;
+        }
+      }
+      
       const blob = await pdf(<MyDocument evaluationData={evaluationData} />).toBlob();
 
       const fileName = `evaluacion_${evaluacion.id_evaluacion}_${new Date().toISOString().split('T')[0]}.pdf`;
