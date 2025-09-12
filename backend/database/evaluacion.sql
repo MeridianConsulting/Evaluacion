@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-09-2025 a las 16:01:37
+-- Tiempo de generación: 12-09-2025 a las 16:36:13
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -814,6 +814,13 @@ CREATE TABLE `hseq_evaluacion` (
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `hseq_evaluacion`
+--
+
+INSERT INTO `hseq_evaluacion` (`id_hseq_evaluacion`, `id_empleado`, `periodo_evaluacion`, `promedio_hseq`, `estado`, `id_evaluador`, `fecha_evaluacion`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 794, '2025-09', 3.20, 'COMPLETADA', 586, '2025-09-12 09:25:07', '2025-09-12 09:25:07', '2025-09-12 09:25:07');
+
 -- --------------------------------------------------------
 
 --
@@ -830,6 +837,32 @@ CREATE TABLE `hseq_evaluacion_items` (
   `fecha_creacion` datetime DEFAULT current_timestamp(),
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `hseq_evaluacion_items`
+--
+
+INSERT INTO `hseq_evaluacion_items` (`id_item`, `id_hseq_evaluacion`, `id_responsabilidad`, `responsabilidad`, `calificacion`, `justificacion`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 1, 1, 'Procurar el cuidado integral de su salud.', 5.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(2, 1, 2, 'Suministrar información clara, veraz y completa sobre su estado de salud.', 1.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(3, 1, 3, 'Cumplir las normas, reglamentos e instrucciones del Sistema de Gestión Integral de la empresa.', 2.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(4, 1, 4, 'Informar oportunamente al empleador o contratante acerca de los riesgos y/o peligros latentes en el desempeño de sus funciones y en su sitio de trabajo, colaborando en los planes de acción para sus posibles tratamientos.', 4.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(5, 1, 5, 'Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.', 4.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(6, 1, 6, 'Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.', 5.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(7, 1, 7, 'Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.', 3.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(8, 1, 8, 'Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.', 3.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(9, 1, 9, 'Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.', 3.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(10, 1, 10, 'Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.', 4.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(11, 1, 11, 'Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.', 4.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(12, 1, 12, 'Portar y utilizar los elementos de protección personal requeridos, velando por su cuidado y la utilización adecuada y permanente de sus colaboradores y reportar cualquier daño en los mismos.', 3.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(13, 1, 13, 'Participar y colaborar con las auditorias (internas y externas) del Sistema Integrado de Gestión de MERIDIAN CONSULTING.', 1.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(14, 1, 14, 'Reducir el consumo de papel en las actividades cotidianas inherentes a su cargo y hacer uso moderado del recurso hídrico y eléctrico, y en general cualquier recurso ambiental demostrando su compromiso con el SGA de MERIDIAN CONSULTING.', 5.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(15, 1, 15, 'Realizar la disposición adecuada de los residuos sólidos y peligrosos generados por su labor de acuerdo con lo establecido por MERIDIAN CONSULTING LTDA. o por el cliente.', 3.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(16, 1, 16, 'Solicitar los recursos económicos, técnicos y humanos para garantizar condiciones óptimas de trabajo, logrando así la protección integral del trabajador y el medio que lo rodea.', 3.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(17, 1, 17, 'Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.', 3.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(18, 1, 18, 'Participar en simulacros, elección de COPASST y elección de comité de convivencia.', 3.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(19, 1, 19, 'Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y/o comité de emergencias.', 3.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07'),
+(20, 1, 20, 'Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.', 2.00, '', '2025-09-12 09:25:07', '2025-09-12 09:25:07');
 
 -- --------------------------------------------------------
 
@@ -1044,13 +1077,13 @@ ALTER TABLE `evaluacion_promedios`
 -- AUTO_INCREMENT de la tabla `hseq_evaluacion`
 --
 ALTER TABLE `hseq_evaluacion`
-  MODIFY `id_hseq_evaluacion` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_hseq_evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `hseq_evaluacion_items`
 --
 ALTER TABLE `hseq_evaluacion_items`
-  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- Restricciones para tablas volcadas

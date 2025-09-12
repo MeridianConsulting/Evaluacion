@@ -124,6 +124,22 @@ function handleRequest($method, $path) {
         return;
     }
 
+    // Ruta para obtener todas las evaluaciones HSEQ de un empleado específico
+    if (preg_match("#^api/evaluations/hseq/employee/(\d+)$#", $path, $matches) && $method === "GET") {
+        $employeeId = (int)$matches[1];
+        $controller = new EvaluationControllerNativo();
+        $controller->getHseqEvaluationsByEmployee($employeeId);
+        return;
+    }
+
+    // Ruta para obtener detalles de una evaluación HSEQ específica
+    if (preg_match("#^api/evaluations/hseq/(\d+)$#", $path, $matches) && $method === "GET") {
+        $hseqEvaluationId = (int)$matches[1];
+        $controller = new EvaluationControllerNativo();
+        $controller->getHseqEvaluationDetails($hseqEvaluationId);
+        return;
+    }
+
     // Reportes HSEQ independientes
     if (preg_match("#^api/hseq/evaluations/(\d+)/pdf$#", $path, $matches) && $method === "GET") {
         $hseqEvalId = (int)$matches[1];

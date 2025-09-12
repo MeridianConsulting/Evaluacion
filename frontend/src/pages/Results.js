@@ -338,6 +338,7 @@ const toDataUrl = (b64) => {
 function Results({ onLogout, userRole }) {
   const { success, error: showError } = useNotification();
   const [evaluacionesHistoricas, setEvaluacionesHistoricas] = useState([]);
+  const [evaluacionesHseq, setEvaluacionesHseq] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [generatingPDF, setGeneratingPDF] = useState(false);
@@ -354,14 +355,28 @@ function Results({ onLogout, userRole }) {
           return;
         }
         const apiUrl = process.env.REACT_APP_API_BASE_URL;
+        
+        // Obtener evaluaciones de competencias
         const response = await fetch(`${apiUrl}/api/evaluations/employee/${employeeId}`);
         if (!response.ok) throw new Error('Error al obtener el historial de evaluaciones');
         const data = await response.json();
         
         const evaluaciones = data.success && Array.isArray(data.evaluaciones) ? data.evaluaciones : [];
         setEvaluacionesHistoricas(evaluaciones);
+
+        // Obtener todas las evaluaciones HSEQ del empleado
+        try {
+          const hseqResponse = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
+          if (hseqResponse.ok) {
+            const hseqData = await hseqResponse.json();
+            if (hseqData.success && Array.isArray(hseqData.data)) {
+              setEvaluacionesHseq(hseqData.data);
+            }
+          }
+        } catch (hseqErr) {
+          // No es crítico si falla la consulta HSEQ
+        }
       } catch (err) {
-        console.error('Error:', err);
         setError('Error al cargar el historial de evaluaciones');
       } finally {
         setLoading(false);
@@ -388,15 +403,30 @@ function Results({ onLogout, userRole }) {
         return;
       }
       const apiUrl = process.env.REACT_APP_API_BASE_URL;
+      
+      // Obtener evaluaciones de competencias
       const response = await fetch(`${apiUrl}/api/evaluations/employee/${employeeId}`);
       if (!response.ok) throw new Error('Error al obtener el historial de evaluaciones');
       const data = await response.json();
       
       const evaluaciones = data.success && Array.isArray(data.evaluaciones) ? data.evaluaciones : [];
       setEvaluacionesHistoricas(evaluaciones);
+
+      // Obtener todas las evaluaciones HSEQ del empleado
+      try {
+        const hseqResponse = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
+        if (hseqResponse.ok) {
+          const hseqData = await hseqResponse.json();
+          if (hseqData.success && Array.isArray(hseqData.data)) {
+            setEvaluacionesHseq(hseqData.data);
+          }
+        }
+      } catch (hseqErr) {
+        // No es crítico si falla la consulta HSEQ
+      }
+      
       success('Datos actualizados', 'El historial de evaluaciones se ha actualizado desde la base de datos.');
     } catch (err) {
-      console.error('Error:', err);
       showError('Error al actualizar', 'Error al actualizar el historial de evaluaciones');
     } finally {
       setRefreshing(false);
@@ -450,7 +480,6 @@ function Results({ onLogout, userRole }) {
 
       success('PDF generado', `Archivo PDF generado exitosamente: ${fileName}`);
     } catch (error) {
-      console.error('Error al generar PDF:', error);
       showError('Error al generar PDF', 'Error al generar el PDF. Intente nuevamente.');
     } finally {
       setGeneratingPDF(false);
@@ -773,7 +802,6 @@ const generateExcel = async (evaluacion) => {
     saveAs(blob, fileName);
     success('Excel generado', `Reporte Excel mejorado generado: ${fileName}`);
   } catch (e) {
-    console.error('Error al generar Excel:', e);
     showError('Error al generar Excel', 'Error al generar el archivo Excel. Intente nuevamente.');
   } finally {
     setGeneratingExcel(false);
@@ -789,7 +817,6 @@ const generateExcel = async (evaluacion) => {
       const downloadUrl = `${apiUrl}/api/evaluations/${evaluationId}/pdf/${employeeId}`;
       window.open(downloadUrl, '_blank');
     } catch (error) {
-      console.error('Error al descargar PDF:', error);
       showError('Error al descargar', 'Error al descargar el reporte. Intente nuevamente.');
     }
   };
@@ -799,12 +826,197 @@ const generateExcel = async (evaluacion) => {
     try {
       const employeeId = localStorage.getItem('employeeId');
       const apiUrl = process.env.REACT_APP_API_BASE_URL;
-      const downloadUrl = `${apiUrl}/api/hseq/employee/${employeeId}/pdf/${periodo}`;
+      
+      // Limpiar el período para asegurar formato correcto
+      const periodoLimpio = periodo ? periodo.toString().trim() : null;
+      
+      const downloadUrl = `${apiUrl}/api/hseq/employee/${employeeId}/pdf/${periodoLimpio}`;
+      
       window.open(downloadUrl, '_blank');
       success('PDF HSEQ generado', 'El reporte PDF de evaluación HSEQ se está descargando.');
     } catch (error) {
-      console.error('Error al descargar PDF HSEQ:', error);
       showError('Error al descargar', 'Error al descargar el reporte HSEQ. Intente nuevamente.');
+    }
+  };
+
+  // Descarga Excel de evaluación HSEQ
+  const downloadHseqExcel = async (hseqEval) => {
+    try {
+      const employeeId = localStorage.getItem('employeeId');
+      const apiUrl = process.env.REACT_APP_API_BASE_URL;
+      
+      // Obtener los datos detallados de la evaluación HSEQ
+      const response = await fetch(`${apiUrl}/api/evaluations/hseq/${hseqEval.id_evaluacion}`);
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.message || 'Error al obtener datos de la evaluación HSEQ');
+      }
+      
+      const evaluacion = data.data;
+      
+      // Crear workbook de Excel
+      const wb = new ExcelJS.Workbook();
+      wb.created = new Date();
+      wb.properties.title = `Evaluación HSEQ ${hseqEval.periodo_evaluacion}`;
+      wb.properties.company = 'Meridian Consulting LTDA';
+      
+      // Crear hoja principal
+      const ws = wb.addWorksheet('Evaluación HSEQ');
+      
+      // Configurar columnas
+      ws.columns = [
+        { key: 'A', width: 50 },
+        { key: 'B', width: 15 },
+        { key: 'C', width: 60 }
+      ];
+      
+      // Definir estilos básicos
+      const titleStyle = {
+        font: { name: 'Calibri', bold: true, size: 14 },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9E2F3' } },
+        alignment: { horizontal: 'center', vertical: 'middle' }
+      };
+      
+      const headerStyle = {
+        font: { name: 'Calibri', bold: true, size: 11, color: { argb: 'FFFFFFFF' } },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF366092' } },
+        alignment: { horizontal: 'center', vertical: 'middle' },
+        border: {
+          top: { style: 'thin', color: { argb: 'FF000000' } },
+          left: { style: 'thin', color: { argb: 'FF000000' } },
+          bottom: { style: 'thin', color: { argb: 'FF000000' } },
+          right: { style: 'thin', color: { argb: 'FF000000' } }
+        }
+      };
+      
+      const dataStyle = {
+        font: { name: 'Calibri', size: 11 },
+        alignment: { vertical: 'middle' },
+        border: {
+          top: { style: 'thin', color: { argb: 'FF000000' } },
+          left: { style: 'thin', color: { argb: 'FF000000' } },
+          bottom: { style: 'thin', color: { argb: 'FF000000' } },
+          right: { style: 'thin', color: { argb: 'FF000000' } }
+        }
+      };
+      
+      const summaryStyle = {
+        font: { name: 'Calibri', bold: true, size: 12 },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9E2F3' } },
+        alignment: { horizontal: 'center', vertical: 'middle' }
+      };
+      
+      // Agregar información del empleado
+      ws.getCell('A1').value = 'INFORMACIÓN DEL EMPLEADO';
+      ws.getCell('A1').font = titleStyle.font;
+      ws.getCell('A1').fill = titleStyle.fill;
+      ws.getCell('A1').alignment = titleStyle.alignment;
+      ws.mergeCells('A1:C1');
+      
+      ws.getCell('A2').value = 'Nombre:';
+      ws.getCell('B2').value = evaluacion.empleado_nombre || 'N/A';
+      
+      ws.getCell('A3').value = 'Período:';
+      ws.getCell('B3').value = hseqEval.periodo_evaluacion || 'N/A';
+      
+      ws.getCell('A4').value = 'Fecha de Evaluación:';
+      ws.getCell('B4').value = hseqEval.fecha_evaluacion || 'N/A';
+      
+      ws.getCell('A5').value = 'Evaluador:';
+      ws.getCell('B5').value = evaluacion.evaluador_nombre || 'No asignado';
+      
+      ws.getCell('A6').value = 'Estado:';
+      ws.getCell('B6').value = hseqEval.estado_evaluacion || 'N/A';
+      
+      ws.getCell('A7').value = 'Promedio HSEQ:';
+      ws.getCell('B7').value = hseqEval.promedio_hseq || 'N/A';
+      
+      // Agregar sección de responsabilidades HSEQ
+      ws.getCell('A9').value = 'RESPONSABILIDADES HSEQ';
+      ws.getCell('A9').font = summaryStyle.font;
+      ws.getCell('A9').fill = summaryStyle.fill;
+      ws.getCell('A9').alignment = summaryStyle.alignment;
+      ws.mergeCells('A9:C9');
+      
+      // Encabezados de tabla
+      ws.getCell('A10').value = 'Responsabilidad';
+      ws.getCell('A10').font = headerStyle.font;
+      ws.getCell('A10').fill = headerStyle.fill;
+      ws.getCell('A10').alignment = headerStyle.alignment;
+      ws.getCell('A10').border = headerStyle.border;
+      
+      ws.getCell('B10').value = 'Calificación';
+      ws.getCell('B10').font = headerStyle.font;
+      ws.getCell('B10').fill = headerStyle.fill;
+      ws.getCell('B10').alignment = headerStyle.alignment;
+      ws.getCell('B10').border = headerStyle.border;
+      
+      ws.getCell('C10').value = 'Observaciones';
+      ws.getCell('C10').font = headerStyle.font;
+      ws.getCell('C10').fill = headerStyle.fill;
+      ws.getCell('C10').alignment = headerStyle.alignment;
+      ws.getCell('C10').border = headerStyle.border;
+      
+      // Agregar datos de responsabilidades HSEQ
+      let rowIndex = 11;
+      if (evaluacion.criterios && Array.isArray(evaluacion.criterios)) {
+        evaluacion.criterios.forEach(criterio => {
+          ws.getCell(`A${rowIndex}`).value = criterio.responsabilidad || criterio.nombre_criterio || criterio.criterio || 'N/A';
+          ws.getCell(`A${rowIndex}`).font = dataStyle.font;
+          ws.getCell(`A${rowIndex}`).alignment = dataStyle.alignment;
+          ws.getCell(`A${rowIndex}`).border = dataStyle.border;
+          
+          ws.getCell(`B${rowIndex}`).value = criterio.calificacion || 0;
+          ws.getCell(`B${rowIndex}`).font = dataStyle.font;
+          ws.getCell(`B${rowIndex}`).alignment = dataStyle.alignment;
+          ws.getCell(`B${rowIndex}`).border = dataStyle.border;
+          
+          ws.getCell(`C${rowIndex}`).value = criterio.observaciones || criterio.justificacion || '';
+          ws.getCell(`C${rowIndex}`).font = dataStyle.font;
+          ws.getCell(`C${rowIndex}`).alignment = dataStyle.alignment;
+          ws.getCell(`C${rowIndex}`).border = dataStyle.border;
+          
+          rowIndex++;
+        });
+      }
+      
+      // Agregar resumen
+      ws.getCell(`A${rowIndex + 1}`).value = 'RESUMEN';
+      ws.getCell(`A${rowIndex + 1}`).font = summaryStyle.font;
+      ws.getCell(`A${rowIndex + 1}`).fill = summaryStyle.fill;
+      ws.getCell(`A${rowIndex + 1}`).alignment = summaryStyle.alignment;
+      ws.mergeCells(`A${rowIndex + 1}:C${rowIndex + 1}`);
+      
+      ws.getCell(`A${rowIndex + 2}`).value = 'Promedio Final:';
+      ws.getCell(`A${rowIndex + 2}`).font = { name: 'Calibri', bold: true };
+      ws.getCell(`B${rowIndex + 2}`).value = evaluacion.promedio_final || hseqEval.promedio_hseq || 0;
+      ws.getCell(`B${rowIndex + 2}`).font = { name: 'Calibri', bold: true };
+      
+      ws.getCell(`A${rowIndex + 3}`).value = 'Estado:';
+      ws.getCell(`A${rowIndex + 3}`).font = { name: 'Calibri', bold: true };
+      ws.getCell(`B${rowIndex + 3}`).value = hseqEval.estado_evaluacion || 'N/A';
+      ws.getCell(`B${rowIndex + 3}`).font = { name: 'Calibri', bold: true };
+      
+      // Configurar área de impresión
+      ws.pageSetup.printArea = `A1:C${rowIndex + 3}`;
+      ws.pageSetup.orientation = 'landscape';
+      ws.pageSetup.fitToPage = true;
+      ws.pageSetup.fitToWidth = 1;
+      ws.pageSetup.fitToHeight = 0;
+      
+      // Guardar archivo
+      const buf = await wb.xlsx.writeBuffer({ useStyles: true, useSharedStrings: true });
+      const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const fileName = `evaluacion_hseq_${employeeId}_${hseqEval.periodo_evaluacion}_${new Date().toISOString().split('T')[0]}.xlsx`;
+      saveAs(blob, fileName);
+      
+      success('Excel generado', `Reporte HSEQ Excel generado: ${fileName}`);
+    } catch (error) {
+      showError('Error al generar Excel', 'Error al generar el reporte Excel HSEQ. Intente nuevamente.');
     }
   };
 
@@ -848,13 +1060,22 @@ const generateExcel = async (evaluacion) => {
                 <span className="status-icon">✅</span>
                 <span>Evaluación HSEQ completada</span>
               </div>
-              <button 
-                className="download-btn hseq-btn" 
-                onClick={() => downloadHseqPDF(periodo)}
-                title="Descargar PDF HSEQ"
-              >
-                🛡️ Descargar PDF HSEQ
-              </button>
+              <div className="hseq-download-buttons">
+                <button 
+                  className="download-btn hseq-btn" 
+                  onClick={() => downloadHseqPDF(periodo)}
+                  title="Descargar PDF HSEQ"
+                >
+                  📄 PDF HSEQ
+                </button>
+                <button 
+                  className="download-btn hseq-btn excel-btn" 
+                  onClick={() => downloadHseqExcel({periodo_evaluacion: periodo, id_evaluacion: null})}
+                  title="Descargar Excel HSEQ"
+                >
+                  📊 Excel HSEQ
+                </button>
+              </div>
             </div>
           ) : (
             <div className="hseq-not-available">
@@ -1076,6 +1297,124 @@ const generateExcel = async (evaluacion) => {
         }
         .hseq-available { display: flex; flex-direction: column; gap: 10px; }
         
+        /* Estilos para las nuevas tarjetas HSEQ */
+        .hseq-evaluation-card {
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          border: 1px solid #dee2e6;
+          border-radius: 12px;
+          padding: 20px;
+          margin-bottom: 16px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .hseq-card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 16px;
+          padding-bottom: 12px;
+          border-bottom: 1px solid #dee2e6;
+        }
+        .hseq-card-title {
+          margin: 0;
+          color: #1F3B73;
+          font-size: 18px;
+          font-weight: 600;
+        }
+        .hseq-status-badge {
+          padding: 6px 12px;
+          border-radius: 20px;
+          font-size: 12px;
+          font-weight: 600;
+          text-transform: uppercase;
+        }
+        .hseq-status-badge.completed {
+          background: #d4edda;
+          color: #155724;
+          border: 1px solid #c3e6cb;
+        }
+        .hseq-card-content {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+        .hseq-info-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 12px;
+        }
+        .hseq-info-item {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+        .hseq-info-label {
+          font-size: 12px;
+          color: #6c757d;
+          font-weight: 600;
+          text-transform: uppercase;
+        }
+        .hseq-info-value {
+          font-size: 14px;
+          color: #212529;
+          font-weight: 500;
+        }
+        .hseq-actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 10px;
+        }
+        .hseq-download-buttons {
+          display: flex;
+          gap: 10px;
+          margin-top: 15px;
+        }
+        .hseq-download-btn {
+          background: linear-gradient(135deg, #17a2b8, #138496);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          padding: 10px 20px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          transition: all 0.3s ease;
+        }
+        .hseq-download-btn:hover {
+          background: linear-gradient(135deg, #138496, #117a8b);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+        }
+        .hseq-download-btn.excel-btn {
+          background: linear-gradient(135deg, #28a745, #1e7e34);
+        }
+        .hseq-download-btn.excel-btn:hover {
+          background: linear-gradient(135deg, #1e7e34, #155724);
+          box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+        .hseq-no-evaluations {
+          text-align: center;
+          padding: 40px 20px;
+          color: #6c757d;
+        }
+        .hseq-no-evaluations-icon {
+          font-size: 48px;
+          margin-bottom: 16px;
+          opacity: 0.5;
+        }
+        .hseq-no-evaluations h3 {
+          margin: 0 0 8px 0;
+          color: #495057;
+          font-size: 18px;
+        }
+        .hseq-no-evaluations p {
+          margin: 0;
+          font-size: 14px;
+          line-height: 1.5;
+        }
+        
         .results-info-banner { background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border: 1px solid #bbdefb; border-radius: 12px; padding: 20px; margin-bottom: 30px; display: flex; align-items: flex-start; gap: 15px; }
         .info-icon { font-size: 24px; flex-shrink: 0; }
         .info-content h3 { margin: 0 0 10px 0; color: #1976d2; font-size: 18px; }
@@ -1257,15 +1596,58 @@ const generateExcel = async (evaluacion) => {
               <div className="results-hseq-section">
                 <h2 className="results-section-title">Evaluaciones HSEQ</h2>
                 <div className="results-hseq-container">
-                  {evaluacionesHistoricas.map(evaluacion => {
-                    const periodo = evaluacion.periodo_evaluacion || new Date().toISOString().slice(0, 7);
-                    return (
-                      <HseqEvaluationCard 
-                        key={`hseq-${periodo}`} 
-                        periodo={periodo} 
-                      />
-                    );
-                  })}
+                  {evaluacionesHseq.length > 0 ? (
+                    evaluacionesHseq.map(hseqEval => (
+                      <div key={`hseq-${hseqEval.id_hseq_evaluacion}`} className="hseq-evaluation-card">
+                        <div className="hseq-card-header">
+                          <h3 className="hseq-card-title">
+                            🛡️ Evaluación HSEQ - {hseqEval.periodo_evaluacion}
+                          </h3>
+                          <span className="hseq-status-badge completed">
+                            ✅ Completada
+                          </span>
+                        </div>
+                        <div className="hseq-card-content">
+                          <div className="hseq-info-grid">
+                            <div className="hseq-info-item">
+                              <span className="hseq-info-label">Evaluador:</span>
+                              <span className="hseq-info-value">{hseqEval.evaluador_nombre || 'N/A'}</span>
+                            </div>
+                            <div className="hseq-info-item">
+                              <span className="hseq-info-label">Fecha:</span>
+                              <span className="hseq-info-value">{formatDate(hseqEval.fecha_evaluacion)}</span>
+                            </div>
+                            <div className="hseq-info-item">
+                              <span className="hseq-info-label">Estado:</span>
+                              <span className="hseq-info-value">{hseqEval.estado_evaluacion}</span>
+                            </div>
+                          </div>
+                          <div className="hseq-actions">
+                            <button 
+                              className="hseq-download-btn"
+                              onClick={() => downloadHseqPDF(hseqEval.periodo_evaluacion)}
+                              title="Descargar PDF HSEQ"
+                            >
+                              📄 PDF HSEQ
+                            </button>
+                            <button 
+                              className="hseq-download-btn excel-btn"
+                              onClick={() => downloadHseqExcel(hseqEval)}
+                              title="Descargar Excel HSEQ"
+                            >
+                              📊 Excel HSEQ
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="hseq-no-evaluations">
+                      <div className="hseq-no-evaluations-icon">🛡️</div>
+                      <h3>No hay evaluaciones HSEQ disponibles</h3>
+                      <p>Las evaluaciones HSEQ aparecerán aquí una vez que sean completadas por el equipo HSEQ.</p>
+                    </div>
+                  )}
                 </div>
               </div>
 

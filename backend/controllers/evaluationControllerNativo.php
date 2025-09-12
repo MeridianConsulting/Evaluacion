@@ -473,6 +473,131 @@ class EvaluationControllerNativo {
     }
 
     /**
+     * Obtiene todas las evaluaciones HSEQ de un empleado específico
+     */
+    public function getHseqEvaluationsByEmployee($employeeId) {
+        try {
+            $sql = "
+                SELECT he.id_empleado,
+                       emp.nombre AS empleado_nombre,
+                       he.id_hseq_evaluacion AS id_evaluacion,
+                       he.periodo_evaluacion,
+                       he.estado AS estado_evaluacion,
+                       he.fecha_evaluacion,
+                       he.id_evaluador AS evaluador_id,
+                       ev.nombre AS evaluador_nombre,
+                       he.promedio_hseq
+                FROM hseq_evaluacion he
+                INNER JOIN empleados emp ON emp.id_empleado = he.id_empleado
+                LEFT JOIN empleados ev ON ev.id_empleado = he.id_evaluador
+                WHERE he.id_empleado = ?
+                ORDER BY he.fecha_evaluacion DESC
+            ";
+            $stmt = $this->db->prepare($sql);
+            if (!$stmt) {
+                throw new Exception('Error al preparar consulta: ' . $this->db->error);
+            }
+            $stmt->bind_param('i', $employeeId);
+            $stmt->execute();
+            $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+
+            echo json_encode(["success" => true, "data" => $rows]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Error al obtener evaluaciones HSEQ del empleado", "error" => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Obtiene los datos detallados de una evaluación HSEQ específica
+     */
+    public function getHseqEvaluationDetails($hseqEvaluationId) {
+        try {
+            // Obtener información básica de la evaluación
+            $sql = "
+                SELECT he.id_hseq_evaluacion,
+                       he.id_empleado,
+                       emp.nombre AS empleado_nombre,
+                       he.periodo_evaluacion,
+                       he.estado AS estado_evaluacion,
+                       he.fecha_evaluacion,
+                       he.id_evaluador AS evaluador_id,
+                       ev.nombre AS evaluador_nombre,
+                       he.promedio_hseq
+                FROM hseq_evaluacion he
+                INNER JOIN empleados emp ON emp.id_empleado = he.id_empleado
+                LEFT JOIN empleados ev ON ev.id_empleado = he.id_evaluador
+                WHERE he.id_hseq_evaluacion = ?
+            ";
+            $stmt = $this->db->prepare($sql);
+            if (!$stmt) {
+                throw new Exception('Error al preparar consulta: ' . $this->db->error);
+            }
+            $stmt->bind_param('i', $hseqEvaluationId);
+            $stmt->execute();
+            $evaluacion = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            if (!$evaluacion) {
+                throw new Exception('Evaluación HSEQ no encontrada');
+            }
+
+            // Obtener criterios de la evaluación
+            $sqlCriterios = "
+                SELECT hei.id_item,
+                       hei.id_responsabilidad,
+                       hei.responsabilidad,
+                       1 AS peso,
+                       hei.calificacion,
+                       hei.justificacion AS observaciones,
+                       hei.calificacion AS puntuacion
+                FROM hseq_evaluacion_items hei
+                WHERE hei.id_hseq_evaluacion = ?
+                ORDER BY hei.id_item
+            ";
+            $stmtCriterios = $this->db->prepare($sqlCriterios);
+            if (!$stmtCriterios) {
+                throw new Exception('Error al preparar consulta de criterios: ' . $this->db->error);
+            }
+            $stmtCriterios->bind_param('i', $hseqEvaluationId);
+            $stmtCriterios->execute();
+            $criterios = $stmtCriterios->get_result()->fetch_all(MYSQLI_ASSOC);
+            $stmtCriterios->close();
+
+            // Calcular totales
+            $totalPuntos = 0;
+            $totalPeso = 0;
+            foreach ($criterios as $criterio) {
+                $totalPuntos += $criterio['calificacion'];
+                $totalPeso += $criterio['peso'];
+            }
+            $promedioFinal = $totalPeso > 0 ? ($totalPuntos / $totalPeso) : 0;
+
+            $resultado = [
+                'id_hseq_evaluacion' => $evaluacion['id_hseq_evaluacion'],
+                'id_empleado' => $evaluacion['id_empleado'],
+                'empleado_nombre' => $evaluacion['empleado_nombre'],
+                'periodo_evaluacion' => $evaluacion['periodo_evaluacion'],
+                'estado_evaluacion' => $evaluacion['estado_evaluacion'],
+                'fecha_evaluacion' => $evaluacion['fecha_evaluacion'],
+                'evaluador_id' => $evaluacion['evaluador_id'],
+                'evaluador_nombre' => $evaluacion['evaluador_nombre'],
+                'promedio_hseq' => $evaluacion['promedio_hseq'],
+                'criterios' => $criterios,
+                'total_puntos' => round($totalPuntos, 2),
+                'total_peso' => $totalPeso,
+                'promedio_final' => round($promedioFinal, 2)
+            ];
+
+            echo json_encode(["success" => true, "data" => $resultado]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Error al obtener detalles de la evaluación HSEQ", "error" => $e->getMessage()]);
+        }
+    }
+
+    /**
      * Guarda datos de mejoramiento
      */
     private function saveMejoramiento($evaluationId, $mejoramiento) {
