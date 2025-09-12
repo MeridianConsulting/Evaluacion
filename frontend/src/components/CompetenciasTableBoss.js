@@ -18,7 +18,7 @@ const CompetenciasTableBoss = ({
               {/* Barra de título "COMPETENCIAS" con un ÚNICO gradiente */}
               <tr>
                 <th
-                  colSpan={5}
+                  colSpan={6}
                   style={{
                     background: "linear-gradient(90deg, #1F3B73 0%, #0A0F1A 100%)",
                     color: "#FFFFFF",
@@ -48,7 +48,7 @@ const CompetenciasTableBoss = ({
                   borderLeft: "1px solid #243447",
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)",
-                  width: "20%"
+                  width: "15%"
                 }}>COMPETENCIA</th>
                 <th style={{ 
                   background: "#1E2A3A", 
@@ -62,7 +62,7 @@ const CompetenciasTableBoss = ({
                   borderLeft: "1px solid #243447",
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)",
-                  width: "25%"
+                  width: "20%"
                 }}>DEFINICIÓN DE LA COMPETENCIA</th>
                 <th style={{ 
                   background: "#1E2A3A", 
@@ -76,7 +76,7 @@ const CompetenciasTableBoss = ({
                   borderLeft: "1px solid #243447",
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)",
-                  width: "28%"
+                  width: "25%"
                 }}>ASPECTO A EVALUAR</th>
                 <th style={{ 
                   background: "#1E2A3A", 
@@ -90,7 +90,21 @@ const CompetenciasTableBoss = ({
                   borderLeft: "1px solid #243447",
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)",
-                  width: "14%"
+                  width: "12%"
+                }}>AUTOEVALUACIÓN</th>
+                <th style={{ 
+                  background: "#1E2A3A", 
+                  color: "#FFFFFF", 
+                  padding: "0.6rem 0.4rem",
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  fontSize: "0.9rem",
+                  height: "24px",
+                  borderTop: "1px solid #1E2A3A",
+                  borderLeft: "1px solid #243447",
+                  borderBottom: "1px solid #243447",
+                  borderRight: "1px solid rgba(51,51,51,0.5)",
+                  width: "12%"
                 }}>JEFE</th>
                 <th style={{ 
                   background: "#1E2A3A", 
@@ -104,7 +118,7 @@ const CompetenciasTableBoss = ({
                   borderLeft: "1px solid #243447",
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)",
-                  width: "11%"
+                  width: "16%"
                 }}>JUSTIFICACIÓN JEFE</th>
                 
               </tr>
@@ -141,6 +155,9 @@ const CompetenciasTableBoss = ({
                 {/* Aspecto 1 */}
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[0].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[0].worker || '-'}
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
@@ -180,6 +197,9 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[1].aspecto}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[1].worker || '-'}
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
@@ -217,6 +237,9 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[2].aspecto}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[2].worker || '-'}
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
@@ -253,6 +276,9 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[3].aspecto}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[3].worker || '-'}
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
@@ -284,7 +310,7 @@ const CompetenciasTableBoss = ({
                 
               </tr>
             <tr>
-              <td colSpan={5} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
+              <td colSpan={6} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
             </tr>
 
             {/* Nueva Competencia: Instrumentalidad de decisiones */}
@@ -319,6 +345,9 @@ const CompetenciasTableBoss = ({
                 {/* Aspecto 1 */}
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[4].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[4].worker || '-'}
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
@@ -356,6 +385,9 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[5].aspecto}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[5].worker || '-'}
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
@@ -387,7 +419,7 @@ const CompetenciasTableBoss = ({
                 
               </tr>
               <tr>
-              <td colSpan={5} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
+              <td colSpan={6} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
             </tr>
 
               {/* Nueva Competencia: Aporte profesional */}
@@ -422,6 +454,9 @@ const CompetenciasTableBoss = ({
                 {/* Aspecto 1 */}
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[6].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[6].worker || '-'}
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
@@ -459,6 +494,9 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[7].aspecto}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[7].worker || '-'}
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
@@ -494,6 +532,9 @@ const CompetenciasTableBoss = ({
               <tr>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[8].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[8].worker || '-'}
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
@@ -531,6 +572,9 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[9].aspecto}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[9].worker || '-'}
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
@@ -562,7 +606,7 @@ const CompetenciasTableBoss = ({
                 
               </tr>
               <tr>
-              <td colSpan={5} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
+              <td colSpan={6} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
             </tr>
 
               {/* Nueva Competencia: Colaboración */}
@@ -596,6 +640,9 @@ const CompetenciasTableBoss = ({
                 {/* Aspecto 1 */}
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[10].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[10].worker || '-'}
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
@@ -633,6 +680,9 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[11].aspecto}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[11].worker || '-'}
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
@@ -669,6 +719,9 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[12].aspecto}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[12].worker || '-'}
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
@@ -700,7 +753,7 @@ const CompetenciasTableBoss = ({
                 
               </tr>
               <tr>
-              <td colSpan={5} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
+              <td colSpan={6} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
             </tr>
 
               {/* Nueva Competencia: Relaciones interpersonales */}
@@ -735,6 +788,9 @@ const CompetenciasTableBoss = ({
                 {/* Aspecto 1 */}
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[13].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[13].worker || '-'}
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
@@ -772,6 +828,9 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[14].aspecto}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[14].worker || '-'}
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
@@ -808,6 +867,9 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[15].aspecto}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[15].worker || '-'}
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
@@ -839,7 +901,7 @@ const CompetenciasTableBoss = ({
                 
               </tr>
               <tr>
-              <td colSpan={5} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
+              <td colSpan={6} style={{ borderBottom: "1px solid #ccc", margin: 0, padding: 0 }}></td>
             </tr>
 
               {/* Nueva Competencia: Gestión de procedimientos */}
@@ -875,6 +937,9 @@ const CompetenciasTableBoss = ({
                 {/* Aspecto 1 */}
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[16].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[16].worker || '-'}
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
@@ -912,6 +977,9 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[17].aspecto}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[17].worker || '-'}
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
@@ -947,6 +1015,9 @@ const CompetenciasTableBoss = ({
               <tr>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[18].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[18].worker || '-'}
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
@@ -1007,6 +1078,9 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[19].aspecto}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[19].worker || '-'}
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   <select
                     className="rating-select"
@@ -1040,6 +1114,9 @@ const CompetenciasTableBoss = ({
               <tr>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[20].aspecto}
+                </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[20].worker || '-'}
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                     <select
@@ -1075,6 +1152,9 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[21].aspecto}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[21].worker || '-'}
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                     <select
                       className="rating-select"
@@ -1109,6 +1189,9 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                   {rows[22].aspecto}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
+                  {rows[22].worker || '-'}
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem" }}>
                     <select
                       className="rating-select"
@@ -1138,7 +1221,7 @@ const CompetenciasTableBoss = ({
                   </td>
               </tr>
               <tr className="avg-row">
-                <td colSpan={5}>
+                <td colSpan={6}>
                   <div className="avg-wrap">
                     <span className="avg-label">PROMEDIO CALIFICACIÓN COMPETENCIAS:</span>
                     <span className="avg-value">{calcularPromedioCompetencias()}</span>
