@@ -1135,10 +1135,10 @@ const generateExcel = async (evaluacion) => {
       'AUTOEVALUACION_PENDIENTE': 'Pendiente Autoevaluación',
       'AUTOEVALUACION_COMPLETADA': 'Pendiente Evaluación Jefe',
       'EVALUACION_JEFE_PENDIENTE': 'Pendiente Evaluación Jefe',
-      'EVALUACION_JEFE_COMPLETADA': 'Pendiente Evaluación HSEQ',
-      'HSEQ_PENDIENTE': 'Pendiente Evaluación HSEQ',
-      'HSEQ_COMPLETADA': 'Evaluación HSEQ Completada',
-      'EVALUACION_FINALIZADA': 'Evaluación Finalizada',
+      'EVALUACION_JEFE_COMPLETADA': 'Evaluación Completada',
+      'HSEQ_PENDIENTE': 'Evaluación Completada',
+      'HSEQ_COMPLETADA': 'Evaluación Completada',
+      'EVALUACION_FINALIZADA': 'Evaluación Completada',
       'BORRADOR': 'Borrador',
       'COMPLETADA': 'Completada',
       'APROBADA': 'Aprobada'
@@ -1152,10 +1152,10 @@ const generateExcel = async (evaluacion) => {
       'AUTOEVALUACION_PENDIENTE': 'estado-pendiente',
       'AUTOEVALUACION_COMPLETADA': 'estado-progreso',
       'EVALUACION_JEFE_PENDIENTE': 'estado-progreso',
-      'EVALUACION_JEFE_COMPLETADA': 'estado-progreso',
-      'HSEQ_PENDIENTE': 'estado-progreso',
+      'EVALUACION_JEFE_COMPLETADA': 'estado-completada',
+      'HSEQ_PENDIENTE': 'estado-completada',
       'HSEQ_COMPLETADA': 'estado-completada',
-      'EVALUACION_FINALIZADA': 'estado-finalizada',
+      'EVALUACION_FINALIZADA': 'estado-completada',
       'BORRADOR': 'estado-borrador',
       'COMPLETADA': 'estado-completada',
       'APROBADA': 'estado-aprobada'
@@ -1542,7 +1542,6 @@ const generateExcel = async (evaluacion) => {
                       <th>Estado</th>
                       <th>Promedio General</th>
                       <th>Promedio Competencias</th>
-                      <th>Promedio HSEQ</th>
                       <th>Acciones</th>
                     </tr>
                   </thead>
@@ -1574,7 +1573,6 @@ const generateExcel = async (evaluacion) => {
                           </td>
                           <td className={getColorClase(promedioGeneral)}>{promedioGeneral > 0 ? renderEstrellas(promedioGeneral) : 'N/A'}</td>
                           <td className={getColorClase(promedioCompetencias)}>{promedioCompetencias > 0 ? promedioCompetencias.toFixed(2) : 'N/A'}</td>
-                          <td className={getColorClase(promedioHseq)}>{promedioHseq > 0 ? promedioHseq.toFixed(2) : 'N/A'}</td>
                           <td>
                             <div className="action-buttons">
                               <button className="download-btn pdf-btn" onClick={() => generatePDF(evaluacion)} disabled={generatingPDF} title="Generar PDF">
