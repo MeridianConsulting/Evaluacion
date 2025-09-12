@@ -948,12 +948,15 @@ function PerformanceEvaluationBoss() {
         // Obtener promedios reales de la base de datos
         await fetchRealAverages(evaluationId);
         
-        // Mostrar mensaje de éxito con información del estado actualizado
-        const mensajeEstado = finalizar 
-          ? 'La evaluación del jefe fue completada. Estado: Pendiente Evaluación HSEQ'
-          : 'Se guardó el progreso de la revisión del jefe. Estado: Evaluación del Jefe en Progreso';
-        
-        success('¡Cambios guardados!', mensajeEstado);
+        // Mensaje de éxito acorde al 100% al terminar
+        const tituloOk = finalizar
+          ? '¡Evaluación del jefe completada (100%)!'
+          : 'Cambios guardados';
+        const mensajeEstado = finalizar
+          ? 'El expediente quedó al 100% y pasó a "Pendiente HSEQ". Puede consultar o descargar el reporte desde Resultados.'
+          : 'Se guardó el progreso de la evaluación del jefe.';
+
+        success(tituloOk, mensajeEstado);
         
         // Limpiar datos guardados y tokens
         clearFormData();
@@ -1321,33 +1324,6 @@ function PerformanceEvaluationBoss() {
             Guardando progreso...
           </div>
         )}
-      </div>
-
-      {/* Alerta de campos obligatorios */}
-      <div style={alertStyle}>
-        <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style={{ marginRight: '8px' }}>
-            <path fill="#ff3860" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-          </svg>
-          ¡ATENCIÓN! Todos los campos de esta evaluación son obligatorios.
-        </span>
-        <button 
-          onClick={() => setShowAlert(false)} 
-          style={{ 
-            background: 'none', 
-            border: 'none', 
-            color: '#ff3860', 
-            cursor: 'pointer',
-            position: 'absolute',
-            right: '15px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            fontSize: '20px',
-            fontWeight: 'bold'
-          }}
-        >
-          ✕
-        </button>
       </div>
 
 
