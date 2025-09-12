@@ -20,9 +20,14 @@ function EmpleadosCRUD({ onLogout, userRole }) {
     id_empleado: '',
     cedula: '',
     nombre: '',
+    tipo_documento: 'Cédula de Ciudadanía',
     cargo: '',
-    area: '',
+    area: 'Administracion',
+    fecha_inicio_contrato: '',
     email: '',
+    contrasena: '',
+    proyecto: '',
+    ods: '',
     rol: 'empleado'
   });
 
@@ -61,7 +66,7 @@ function EmpleadosCRUD({ onLogout, userRole }) {
     }
   };
 
-  // Filtrar empleados por cédula, id, nombre, correo o cargo
+  // Filtrar empleados por cédula, id, nombre, correo, cargo, proyecto o área
   useEffect(() => {
     const q = (busqueda || '').toString().toLowerCase().trim();
     if (!q) {
@@ -74,7 +79,12 @@ function EmpleadosCRUD({ onLogout, userRole }) {
       const nombre = (e.nombre ?? '').toString().toLowerCase();
       const email = (e.email ?? '').toString().toLowerCase();
       const cargo = (e.cargo ?? '').toString().toLowerCase();
-      return id.includes(q) || cedula.includes(q) || nombre.includes(q) || email.includes(q) || cargo.includes(q);
+      const area = (e.area ?? '').toString().toLowerCase();
+      const proyecto = (e.proyecto ?? '').toString().toLowerCase();
+      const ods = (e.ods ?? '').toString().toLowerCase();
+      return id.includes(q) || cedula.includes(q) || nombre.includes(q) || 
+             email.includes(q) || cargo.includes(q) || area.includes(q) || 
+             proyecto.includes(q) || ods.includes(q);
     });
     setEmpleadosFiltrados(filtrados);
   }, [busqueda, empleados]);
@@ -111,9 +121,14 @@ function EmpleadosCRUD({ onLogout, userRole }) {
       id_empleado: '',
       cedula: '',
       nombre: '',
+      tipo_documento: 'Cédula de Ciudadanía',
       cargo: '',
       area: 'Administracion',
+      fecha_inicio_contrato: '',
       email: '',
+      contrasena: '',
+      proyecto: '',
+      ods: '',
       rol: 'empleado'
     });
     setShowForm(true);
@@ -267,7 +282,7 @@ function EmpleadosCRUD({ onLogout, userRole }) {
         <div className="crud-search">
           <input
             type="text"
-            placeholder="Buscar por ID, cédula, nombre, correo o cargo..."
+            placeholder="Buscar por ID, cédula, nombre, correo, cargo, área, proyecto u ODS..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
           />
@@ -288,6 +303,21 @@ function EmpleadosCRUD({ onLogout, userRole }) {
                   onChange={handleInputChange} 
                   required 
                 />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="tipo_documento">Tipo de Documento:</label>
+                <select 
+                  id="tipo_documento" 
+                  name="tipo_documento" 
+                  value={currentEmpleado.tipo_documento} 
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="Cédula de Ciudadanía">Cédula de Ciudadanía</option>
+                  <option value="Cédula de extranjeria">Cédula de extranjería</option>
+                  <option value="PPT">Permiso por Protección Temporal</option>
+                </select>
               </div>
               
               <div className="form-group">
@@ -331,15 +361,28 @@ function EmpleadosCRUD({ onLogout, userRole }) {
                   name="area" 
                   value={currentEmpleado.area} 
                   onChange={handleInputChange}
+                  required
                 >
                   <option value="Administracion">Administración</option>
                   <option value="Gestión de Proyectos">Gestión de Proyectos</option>
                   <option value="COMPANY MAN">COMPANY MAN</option>
                   <option value="PROYECTO PETROSERVICIOS">PROYECTO PETROSERVICIOS</option>
+                  <option value="FRONTERA">FRONTERA</option>
+                  <option value="PETROSERVICIOS">PETROSERVICIOS</option>
                 </select>
               </div>
               
-              {/* Campo teléfono eliminado */}
+              <div className="form-group">
+                <label htmlFor="fecha_inicio_contrato">Fecha de Inicio de Contrato:</label>
+                <input 
+                  type="date" 
+                  id="fecha_inicio_contrato" 
+                  name="fecha_inicio_contrato" 
+                  value={currentEmpleado.fecha_inicio_contrato} 
+                  onChange={handleInputChange} 
+                  required 
+                />
+              </div>
               
               <div className="form-group">
                 <label htmlFor="email">Correo electrónico:</label>
@@ -354,6 +397,42 @@ function EmpleadosCRUD({ onLogout, userRole }) {
               </div>
               
               <div className="form-group">
+                <label htmlFor="contrasena">Contraseña:</label>
+                <input 
+                  type="password" 
+                  id="contrasena" 
+                  name="contrasena" 
+                  value={currentEmpleado.contrasena} 
+                  onChange={handleInputChange} 
+                  required 
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="proyecto">Proyecto:</label>
+                <input 
+                  type="text" 
+                  id="proyecto" 
+                  name="proyecto" 
+                  value={currentEmpleado.proyecto} 
+                  onChange={handleInputChange} 
+                  placeholder="Ej: ADMINISTRACION, COMPANY MAN, etc."
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="ods">ODS:</label>
+                <input 
+                  type="text" 
+                  id="ods" 
+                  name="ods" 
+                  value={currentEmpleado.ods} 
+                  onChange={handleInputChange} 
+                  placeholder="Número de ODS si aplica"
+                />
+              </div>
+              
+              <div className="form-group">
                 <label htmlFor="rol">Rol:</label>
                 <select 
                   id="rol" 
@@ -362,7 +441,7 @@ function EmpleadosCRUD({ onLogout, userRole }) {
                   onChange={handleInputChange}
                 >
                   <option value="empleado">Empleado</option>
-                  <option value="jefe">Jefe</option>
+                  <option value="HSEQ">HSEQ</option>
                   <option value="admin">Administrador</option>
                 </select>
               </div>
@@ -391,6 +470,7 @@ function EmpleadosCRUD({ onLogout, userRole }) {
                   <th>Nombre</th>
                   <th>Cargo</th>
                   <th>Área</th>
+                  <th>Proyecto</th>
                   <th>Correo</th>
                   <th>Rol</th>
                   <th>Acciones</th>
@@ -404,11 +484,12 @@ function EmpleadosCRUD({ onLogout, userRole }) {
                     <td>{empleado.nombre}</td>
                     <td>{empleado.cargo}</td>
                     <td>{empleado.area}</td>
+                    <td>{empleado.proyecto || 'N/A'}</td>
                     <td>{empleado.email}</td>
                     <td>
                       <span className={`role-badge ${empleado.rol}`}>
                         {empleado.rol === 'admin' ? 'Administrador' : 
-                         empleado.rol === 'jefe' ? 'Jefe' : 'Empleado'}
+                         empleado.rol === 'HSEQ' ? 'HSEQ' : 'Empleado'}
                       </span>
                     </td>
                     <td className="acciones">

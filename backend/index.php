@@ -138,6 +138,15 @@ function handleRequest($method, $path) {
         return;
     }
 
+    // Ruta para descargar PDF de evaluación HSEQ por empleado y período
+    if (preg_match("#^api/hseq/employee/(\d+)/pdf(?:/(\d{4}-\d{2}))?$#", $path, $matches) && $method === "GET") {
+        $employeeId = (int)$matches[1];
+        $periodo = isset($matches[2]) ? $matches[2] : null;
+        $controller = new EvaluationControllerNativo();
+        $controller->downloadHseqPDFByEmployee($employeeId, $periodo);
+        return;
+    }
+
     // Ruta para obtener evaluación completa con firmas
     if (preg_match("#^api/evaluations/(\d+)/complete/(\d+)$#", $path, $matches) && $method === "GET") {
         $evaluationId = $matches[1];

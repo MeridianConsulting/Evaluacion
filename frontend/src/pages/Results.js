@@ -794,6 +794,84 @@ const generateExcel = async (evaluacion) => {
     }
   };
 
+  // Descarga PDF de evaluación HSEQ
+  const downloadHseqPDF = async (periodo) => {
+    try {
+      const employeeId = localStorage.getItem('employeeId');
+      const apiUrl = process.env.REACT_APP_API_BASE_URL;
+      const downloadUrl = `${apiUrl}/api/hseq/employee/${employeeId}/pdf/${periodo}`;
+      window.open(downloadUrl, '_blank');
+      success('PDF HSEQ generado', 'El reporte PDF de evaluación HSEQ se está descargando.');
+    } catch (error) {
+      console.error('Error al descargar PDF HSEQ:', error);
+      showError('Error al descargar', 'Error al descargar el reporte HSEQ. Intente nuevamente.');
+    }
+  };
+
+  // Verificar si existe evaluación HSEQ para un período
+  const checkHseqEvaluation = async (periodo) => {
+    try {
+      const employeeId = localStorage.getItem('employeeId');
+      const apiUrl = process.env.REACT_APP_API_BASE_URL;
+      const response = await fetch(`${apiUrl}/api/hseq/employee/${employeeId}/pdf/${periodo}`, {
+        method: 'HEAD' // Solo verificar si existe sin descargar
+      });
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  // Componente para cada evaluación HSEQ
+  const HseqEvaluationCard = ({ periodo }) => {
+    const [hasHseq, setHasHseq] = useState(null);
+    
+    useEffect(() => {
+      checkHseqEvaluation(periodo).then(setHasHseq);
+    }, [periodo]);
+
+    return (
+      <div className="hseq-evaluation-card">
+        <div className="hseq-card-header">
+          <h3>Evaluación HSEQ - {periodo}</h3>
+          <span className="hseq-period-badge">{periodo}</span>
+        </div>
+        <div className="hseq-card-content">
+          {hasHseq === null ? (
+            <div className="hseq-loading">
+              <div className="loading-spinner"></div>
+              <span>Verificando evaluación HSEQ...</span>
+            </div>
+          ) : hasHseq ? (
+            <div className="hseq-available">
+              <div className="hseq-status success">
+                <span className="status-icon">✅</span>
+                <span>Evaluación HSEQ completada</span>
+              </div>
+              <button 
+                className="download-btn hseq-btn" 
+                onClick={() => downloadHseqPDF(periodo)}
+                title="Descargar PDF HSEQ"
+              >
+                🛡️ Descargar PDF HSEQ
+              </button>
+            </div>
+          ) : (
+            <div className="hseq-not-available">
+              <div className="hseq-status pending">
+                <span className="status-icon">⏳</span>
+                <span>Evaluación HSEQ no realizada aún</span>
+              </div>
+              <p className="hseq-message">
+                La evaluación HSEQ para este período aún no ha sido completada por el área de HSEQ.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
@@ -924,6 +1002,80 @@ const generateExcel = async (evaluacion) => {
         .pdf-btn:hover { background-color: #c82333; }
         .excel-btn { background-color: #28a745; }
         .excel-btn:hover { background-color: #218838; }
+        .hseq-btn { background-color: #17a2b8; }
+        .hseq-btn:hover { background-color: #138496; }
+        
+        /* Estilos para la sección HSEQ */
+        .results-hseq-section { margin-top: 40px; }
+        .results-section-title { color: #2c5aa0; font-size: 24px; margin-bottom: 20px; text-align: center; }
+        .results-hseq-container { display: grid; gap: 20px; }
+        .hseq-evaluation-card { 
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); 
+          border: 1px solid #dee2e6; 
+          border-radius: 12px; 
+          padding: 20px; 
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .hseq-card-header { 
+          display: flex; 
+          justify-content: space-between; 
+          align-items: center; 
+          margin-bottom: 15px; 
+          padding-bottom: 10px; 
+          border-bottom: 2px solid #17a2b8;
+        }
+        .hseq-card-header h3 { margin: 0; color: #2c5aa0; font-size: 18px; }
+        .hseq-period-badge { 
+          background: #17a2b8; 
+          color: white; 
+          padding: 4px 12px; 
+          border-radius: 20px; 
+          font-size: 12px; 
+          font-weight: bold;
+        }
+        .hseq-card-content { display: flex; flex-direction: column; gap: 15px; }
+        .hseq-loading { 
+          display: flex; 
+          align-items: center; 
+          gap: 10px; 
+          color: #6c757d; 
+          font-style: italic;
+        }
+        .loading-spinner { 
+          width: 16px; 
+          height: 16px; 
+          border: 2px solid #f3f3f3; 
+          border-top: 2px solid #17a2b8; 
+          border-radius: 50%; 
+          animation: spin 1s linear infinite;
+        }
+        .hseq-status { 
+          display: flex; 
+          align-items: center; 
+          gap: 8px; 
+          font-weight: 600; 
+          padding: 8px 12px; 
+          border-radius: 8px;
+        }
+        .hseq-status.success { 
+          background: #d4edda; 
+          color: #155724; 
+          border: 1px solid #c3e6cb;
+        }
+        .hseq-status.pending { 
+          background: #fff3cd; 
+          color: #856404; 
+          border: 1px solid #ffeaa7;
+        }
+        .status-icon { font-size: 16px; }
+        .hseq-message { 
+          margin: 0; 
+          color: #6c757d; 
+          font-size: 14px; 
+          line-height: 1.5;
+        }
+        .hseq-available { display: flex; flex-direction: column; gap: 10px; }
+        
         .results-info-banner { background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border: 1px solid #bbdefb; border-radius: 12px; padding: 20px; margin-bottom: 30px; display: flex; align-items: flex-start; gap: 15px; }
         .info-icon { font-size: 24px; flex-shrink: 0; }
         .info-content h3 { margin: 0 0 10px 0; color: #1976d2; font-size: 18px; }
@@ -1099,6 +1251,22 @@ const generateExcel = async (evaluacion) => {
                     })}
                   </tbody>
                 </table>
+              </div>
+
+              {/* Sección de Evaluaciones HSEQ */}
+              <div className="results-hseq-section">
+                <h2 className="results-section-title">Evaluaciones HSEQ</h2>
+                <div className="results-hseq-container">
+                  {evaluacionesHistoricas.map(evaluacion => {
+                    const periodo = evaluacion.periodo_evaluacion || new Date().toISOString().slice(0, 7);
+                    return (
+                      <HseqEvaluationCard 
+                        key={`hseq-${periodo}`} 
+                        periodo={periodo} 
+                      />
+                    );
+                  })}
+                </div>
               </div>
 
               <div className="results-info">

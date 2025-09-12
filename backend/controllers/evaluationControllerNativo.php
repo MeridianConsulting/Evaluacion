@@ -673,6 +673,55 @@ class EvaluationControllerNativo {
     }
 
     /**
+     * Genera y descarga un PDF de evaluación HSEQ por empleado y período
+     */
+    public function downloadHseqPDFByEmployee($employeeId, $periodo = null) {
+        try {
+            // Si no se proporciona período, usar el actual
+            if (!$periodo) {
+                $periodo = date('Y-m');
+            }
+
+            // Buscar evaluación HSEQ del empleado para el período
+            $stmt = $this->db->prepare("
+                SELECT he.*, emp.nombre AS empleado_nombre, emp.cargo AS empleado_cargo, 
+                       emp.area AS empleado_area, emp.cedula AS empleado_cedula,
+                       ev.nombre AS evaluador_nombre, ev.cargo AS evaluador_cargo
+                FROM hseq_evaluacion he 
+                INNER JOIN empleados emp ON emp.id_empleado = he.id_empleado 
+                LEFT JOIN empleados ev ON ev.id_empleado = he.id_evaluador 
+                WHERE he.id_empleado = ? AND he.periodo_evaluacion = ?
+                ORDER BY he.fecha_evaluacion DESC 
+                LIMIT 1
+            ");
+            $stmt->bind_param('is', $employeeId, $periodo);
+            $stmt->execute();
+            $hseq = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            if (!$hseq) {
+                http_response_code(404);
+                echo json_encode(["success" => false, "message" => "No se encontró evaluación HSEQ para el empleado en el período especificado"]);
+                return;
+            }
+
+            // Traer items HSEQ
+            $stmt2 = $this->db->prepare("SELECT * FROM hseq_evaluacion_items WHERE id_hseq_evaluacion = ? ORDER BY id_responsabilidad");
+            $stmt2->bind_param('i', $hseq['id_hseq_evaluacion']);
+            $stmt2->execute();
+            $items = $stmt2->get_result()->fetch_all(MYSQLI_ASSOC);
+            $stmt2->close();
+
+            $html = $this->generateHseqHTML($hseq, $items);
+
+            $this->generatePDF($html);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Error al generar PDF HSEQ", "error" => $e->getMessage()]);
+        }
+    }
+
+    /**
      * Genera y descarga un Excel/CSV de una evaluación HSEQ independiente
      */
     public function downloadHseqExcel($hseqEvalId) {
