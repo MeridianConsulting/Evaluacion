@@ -35,8 +35,7 @@ const Login = ({ onLogin }) => {
       const data = await response.json();
       if (data.success) {
         const cedulaValue = data.empleado?.cedula;
-        const roleFromServer = data.empleado?.rol || 'empleado';
-        const finalRole = cedulaValue === '1011202252' ? 'admin' : roleFromServer;
+        const finalRole = data.empleado?.rol || 'empleado';
 
         localStorage.setItem('employeeId', data.empleado.id_empleado);
         if (cedulaValue) {

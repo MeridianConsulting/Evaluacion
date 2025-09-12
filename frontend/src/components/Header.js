@@ -3,9 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import logoMeridian from '../assets/img/logo_meridian_blanco.png';
 import burgerMenu from '../assets/img/burger.png';
 
-function Header({ onLogout, userRole: propUserRole }) {
-  // Usar SIEMPRE el rol que viene por props (estado global de autenticación)
-  const [userRole, setUserRole] = useState(propUserRole || 'empleado');
+function Header({ onLogout }) {
+  // Rol exclusivamente desde backend
+  const [backendRole, setBackendRole] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [hasEvaluationToken, setHasEvaluationToken] = useState(false);
   const [hasAssignedAsEvaluator, setHasAssignedAsEvaluator] = useState(false);
@@ -18,15 +18,22 @@ function Header({ onLogout, userRole: propUserRole }) {
     }
   }, []);
 
-  // Actualizamos el userRole si cambia la prop
+  // Cargar rol real del backend
   useEffect(() => {
-    if (propUserRole) {
-      setUserRole(propUserRole);
-    }
-  }, [propUserRole]);
-
-  // IMPORTANTE: No sincronizar el rol desde localStorage dinámicamente para evitar
-  // contaminar el rol del usuario autenticado con el rol del empleado evaluado
+    const loadRoleFromBackend = async () => {
+      try {
+        const currentUserId = localStorage.getItem('employeeId');
+        const apiUrl = process.env.REACT_APP_API_BASE_URL;
+        if (!currentUserId || !apiUrl) return;
+        const resp = await fetch(`${apiUrl}/employees/${currentUserId}`);
+        if (!resp.ok) return;
+        const data = await resp.json();
+        const role = (data && (data.data?.rol || data.rol)) || '';
+        if (role) setBackendRole(String(role));
+      } catch (_) { /* noop */ }
+    };
+    loadRoleFromBackend();
+  }, []);
 
   // Verificar si existe un token de evaluación válido
   useEffect(() => {
@@ -146,9 +153,9 @@ function Header({ onLogout, userRole: propUserRole }) {
   // Mostrar Evaluar Equipo si el usuario tiene evaluaciones asignadas como jefe o como evaluador HSEQ
   const canSeeTeamEvaluations = hasAssignedAsBoss || hasAssignedAsEvaluator;
 
-  // Rol efectivo: prioriza prop; si falta, usa localStorage
-  const effectiveRole = (propUserRole && String(propUserRole)) || localStorage.getItem('userRole') || userRole || 'empleado';
-  const isHseqRole = String(effectiveRole || '').toLowerCase() === 'hseq';
+  // Rol efectivo exclusivamente desde backend
+  const effectiveRole = String(backendRole || '');
+  const isHseqRole = effectiveRole.toLowerCase() === 'hseq';
 
   return (
     <header>
@@ -159,8 +166,8 @@ function Header({ onLogout, userRole: propUserRole }) {
           </Link>
         </div>
         <div className="menu-container">
-          {/* Botón rápido visible para ir al Panel de Administración solo si es admin autenticado */}
-          {effectiveRole === 'admin' && (
+          {/* Botón rápido visible para ir al Panel de Administración solo si rol=admin */}
+          {String(effectiveRole).toLowerCase() === 'admin' && (
             <button className="admin-quick-button" onClick={() => goToPage('/admin')}>
               Panel de Administración
             </button>
