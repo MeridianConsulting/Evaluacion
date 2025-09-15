@@ -2551,5 +2551,119 @@ class EvaluationControllerNativo {
             echo json_encode(["success" => false, "message" => "Error al obtener evaluaciones", "error" => $e->getMessage()], JSON_UNESCAPED_UNICODE);
         }
     }
+
+    /**
+     * Obtiene todas las evaluaciones con calificaciones detalladas para reportes
+     */
+    public function getAllEvaluationsWithDetails() {
+        try {
+            $sql = "
+                SELECT 
+                    e.id_evaluacion,
+                    e.id_empleado,
+                    emp.cedula AS empleado_cedula,
+                    emp.nombre AS empleado_nombre,
+                    emp.cargo  AS empleado_cargo,
+                    emp.area   AS empleado_area,
+                    emp.email  AS empleado_email,
+                    e.fecha_evaluacion,
+                    e.periodo_evaluacion,
+                    e.estado_evaluacion,
+                    e.fecha_creacion,
+                    e.fecha_autoevaluacion,
+                    e.fecha_evaluacion_jefe,
+                    e.fecha_evaluacion_hseq,
+                    jefe.nombre AS jefe_nombre,
+                    jefe.cargo  AS jefe_cargo,
+                    hseq_eval.nombre AS evaluador_hseq_nombre,
+                    hseq_eval.cargo  AS evaluador_hseq_cargo,
+                    e.observaciones_generales,
+                    e.comentarios_hseq,
+                    ep.promedio_competencias,
+                    ep.promedio_hseq,
+                    ep.promedio_general
+                FROM evaluacion e
+                INNER JOIN empleados emp ON emp.id_empleado = e.id_empleado
+                LEFT JOIN empleados jefe ON jefe.id_empleado = e.id_jefe
+                LEFT JOIN empleados hseq_eval ON hseq_eval.id_empleado = e.id_evaluador_hseq
+                LEFT JOIN evaluacion_promedios ep ON ep.id_evaluacion = e.id_evaluacion
+                ORDER BY e.fecha_evaluacion DESC, emp.nombre ASC
+            ";
+            $stmt = $this->db->prepare($sql);
+            if (!$stmt) {
+                throw new Exception('Error al preparar consulta: ' . $this->db->error);
+            }
+            $stmt->execute();
+            $evaluaciones = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+
+            // Para cada evaluación, obtener las calificaciones detalladas
+            foreach ($evaluaciones as &$evaluacion) {
+                $evaluationId = $evaluacion['id_evaluacion'];
+                
+                // Obtener competencias con calificaciones
+                $competencias = $this->getCompetencias($evaluationId);
+                $evaluacion['competencias_detalle'] = $competencias;
+                
+                // Obtener datos HSEQ
+                $hseqData = $this->getHseqData($evaluationId);
+                $evaluacion['hseq_detalle'] = $hseqData;
+                
+                // Calcular promedios de competencias
+                $promedioEmpleado = 0;
+                $promedioJefe = 0;
+                $totalCompetencias = count($competencias);
+                
+                if ($totalCompetencias > 0) {
+                    $sumaEmpleado = 0;
+                    $sumaJefe = 0;
+                    $countEmpleado = 0;
+                    $countJefe = 0;
+                    
+                    foreach ($competencias as $comp) {
+                        if (!empty($comp['calificacion_empleado']) && is_numeric($comp['calificacion_empleado'])) {
+                            $sumaEmpleado += floatval($comp['calificacion_empleado']);
+                            $countEmpleado++;
+                        }
+                        if (!empty($comp['calificacion_jefe']) && is_numeric($comp['calificacion_jefe'])) {
+                            $sumaJefe += floatval($comp['calificacion_jefe']);
+                            $countJefe++;
+                        }
+                    }
+                    
+                    $promedioEmpleado = $countEmpleado > 0 ? round($sumaEmpleado / $countEmpleado, 2) : 0;
+                    $promedioJefe = $countJefe > 0 ? round($sumaJefe / $countJefe, 2) : 0;
+                }
+                
+                $evaluacion['promedio_autoevaluacion'] = $promedioEmpleado;
+                $evaluacion['promedio_evaluacion_jefe'] = $promedioJefe;
+                
+                // Calcular promedio HSEQ
+                $promedioHseq = 0;
+                $totalHseq = count($hseqData);
+                
+                if ($totalHseq > 0) {
+                    $sumaHseq = 0;
+                    $countHseq = 0;
+                    
+                    foreach ($hseqData as $hseq) {
+                        if (!empty($hseq['calificacion']) && is_numeric($hseq['calificacion'])) {
+                            $sumaHseq += floatval($hseq['calificacion']);
+                            $countHseq++;
+                        }
+                    }
+                    
+                    $promedioHseq = $countHseq > 0 ? round($sumaHseq / $countHseq, 2) : 0;
+                }
+                
+                $evaluacion['promedio_hseq_detalle'] = $promedioHseq;
+            }
+
+            echo json_encode(["success" => true, "data" => $evaluaciones], JSON_UNESCAPED_UNICODE);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Error al obtener evaluaciones con detalles", "error" => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+        }
+    }
 }
 // Fin del archivo sin etiqueta de cierre PHP para evitar salida accidental

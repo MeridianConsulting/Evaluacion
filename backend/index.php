@@ -204,6 +204,13 @@ function handleRequest($method, $path) {
         return;
     }
 
+    // Ruta para listar todas las evaluaciones con calificaciones detalladas (JSON)
+    if ($path === "api/evaluations/all-with-details" && $method === "GET") {
+        $controller = new EvaluationControllerNativo();
+        $controller->getAllEvaluationsWithDetails();
+        return;
+    }
+
     // Ruta para guardar evaluación HSEQ
     if ($path === "api/evaluations/save-hseq" && $method === "POST") {
         $controller = new EvaluationControllerNativo();
