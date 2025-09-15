@@ -7,6 +7,58 @@ import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { useNotification } from '../components/NotificationSystem';
 
+// ==== Helpers UI (KPI, Collapsible, Timeline) ====
+const KPI = ({ label, value, chip }) => (
+  <div className="kpi-card">
+    <div className="kpi-value">{value ?? '—'}</div>
+    <div className="kpi-footer">
+      <span className="kpi-label">{label}</span>
+      {chip ? <span className={`chip chip-${chip.toLowerCase()}`}>{chip}</span> : null}
+    </div>
+  </div>
+);
+
+const Collapsible = ({ title, children, defaultOpen=false }) => {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="card-collapsible">
+      <button className="collapsible-head" onClick={() => setOpen(v=>!v)} aria-expanded={open}>
+        <span>{title}</span>
+        <span className={`caret ${open ? 'up' : 'down'}`} />
+      </button>
+      {open && <div className="collapsible-body">{children}</div>}
+    </div>
+  );
+};
+
+const Timeline3Steps = ({ estado }) => {
+  // Estados: pendiente / en_progreso / completada (derivados de tu map existente)
+  const mapa = {
+    pendiente: 0, en_progreso: 1, completada: 2, finalizada: 2,
+    'estado-pendiente': 0, 'estado-progreso': 1, 'estado-completada': 2, 'estado-finalizada': 2
+  };
+  const step = mapa[estado] ?? 0;
+  const items = [
+    { t:'Autoevaluación', w:'20%' },
+    { t:'Evaluación Jefe', w:'40%' },
+    { t:'Evaluación HSEQ', w:'40%' },
+  ];
+  return (
+    <div className="timeline3">
+      {items.map((it, i) => (
+        <div key={it.t} className={`tl-item ${i<=step?'done':''}`}>
+          <div className="tl-dot" />
+          <div className="tl-meta">
+            <div className="tl-title">{it.t}</div>
+            <div className="tl-weight">{it.w}</div>
+          </div>
+          {i<items.length-1 && <div className={`tl-line ${i<step?'done':''}`} />}
+        </div>
+      ))}
+    </div>
+  );
+};
+
 // ===================== Estilos PDF (SIN CAMBIOS) =====================
 const pdfStyles = StyleSheet.create({
   page: {
@@ -386,6 +438,26 @@ function Results({ onLogout, userRole }) {
   const [generatingPDF, setGeneratingPDF] = useState(false);
   const [generatingExcel, setGeneratingExcel] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+
+  // ==== Filtros ====
+  const [filterPeriodo, setFilterPeriodo] = useState('');
+  const [filterEstado, setFilterEstado] = useState('');
+  const [filterQuery, setFilterQuery] = useState('');
+
+  // Catálogos a partir de datos
+  const periodos = Array.from(new Set(evaluacionesHistoricas.map(e => e?.periodo_evaluacion).filter(Boolean)));
+  const estados = Array.from(new Set(evaluacionesHistoricas.map(e => e?.estado_evaluacion).filter(Boolean)));
+
+  // Normalizador para búsqueda simple
+  const includes = (txt, q) => String(txt||'').toLowerCase().includes(String(q||'').toLowerCase());
+
+  // Lista filtrada
+  const evaluacionesFiltradas = evaluacionesHistoricas.filter(e => {
+    if (filterPeriodo && e?.periodo_evaluacion !== filterPeriodo) return false;
+    if (filterEstado && e?.estado_evaluacion !== filterEstado) return false;
+    if (filterQuery && !(includes(e?.periodo_evaluacion, filterQuery) || includes(e?.fecha_evaluacion, filterQuery))) return false;
+    return true;
+  });
 
   useEffect(() => {
     const fetchResultados = async () => {
@@ -1575,6 +1647,64 @@ const generateExcel = async (evaluacion) => {
         .info-content p { margin: 0 0 15px 0; color: #424242; line-height: 1.5; }
         .info-content ul { margin: 0; padding-left: 20px; }
         .info-content li { margin-bottom: 5px; color: #616161; }
+        
+        /* === Grid base === */
+        .results-container { max-width: 1200px; margin: 0 auto; }
+        .kpi-grid { display:grid; grid-template-columns: repeat(4, minmax(180px,1fr)); gap: 16px; margin: 16px 0 8px; }
+
+        /* === KPI cards === */
+        .kpi-card{ background:#fff; border:1px solid #dee2e6; border-radius:12px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,.05); display:flex; flex-direction:column; gap:6px }
+        .kpi-value{ font-size:40px; line-height:1; font-weight:800; color:#1F3B73; letter-spacing:-.5px; text-align:center }
+        .kpi-footer{ display:flex; justify-content:space-between; align-items:center }
+        .kpi-label{ font-size:12px; color:#6b7280; font-weight:600; text-transform:uppercase; letter-spacing:.3px }
+        .chip{ padding:2px 8px; border-radius:999px; font-size:11px; font-weight:700; border:1px solid rgba(0,0,0,.08) }
+        .chip-excelente,.chip-superior{ background:#e7f5ee; color:#1e7e34 }
+        .chip-satisfactorio{ background:#e8f1fb; color:#1d4ed8 }
+        .chip-regular{ background:#fff7e6; color:#b45309 }
+        .chip-insuficiente{ background:#fde7e9; color:#b91c1c }
+
+        /* === Collapsible cards === */
+        .card-collapsible{ background:#fff; border:1px solid #e5e7eb; border-radius:12px; margin:14px 0; overflow:hidden }
+        .collapsible-head{ width:100%; display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:linear-gradient(135deg,#f8fafc,#eef2ff); color:#1F3B73; font-weight:700; border:none; cursor:pointer }
+        .caret{ width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent }
+        .caret.down{ border-top:6px solid #1F3B73 } .caret.up{ border-bottom:6px solid #1F3B73 }
+        .collapsible-body{ padding:16px }
+
+        /* === Timeline 3 pasos === */
+        .timeline3{ display:flex; align-items:center; gap:8px; margin-bottom:8px }
+        .tl-item{ display:flex; align-items:center; position:relative }
+        .tl-dot{ width:14px; height:14px; border-radius:50%; background:#cbd5e1; border:2px solid #64748b }
+        .tl-item.done .tl-dot{ background:#2c5aa0; border-color:#2c5aa0 }
+        .tl-line{ width:56px; height:2px; background:#cbd5e1; margin:0 8px } .tl-line.done{ background:#2c5aa0 }
+        .tl-meta{ margin-left:8px } .tl-title{ font-weight:700; font-size:12px } .tl-weight{ font-size:11px; color:#6b7280 }
+
+        /* === Filtros === */
+        .filters-bar{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px; background:#fff; border:1px solid #e5e7eb; border-radius:12px; margin:12px 0 }
+        .filters-left{ display:flex; gap:12px; flex-wrap:wrap; align-items:end }
+        .filters-left label{ display:flex; flex-direction:column; gap:4px; font-size:12px; color:#6b7280; font-weight:600; text-transform:uppercase }
+        .filters-left select,.filters-left input{ min-width:180px; height:36px; padding:6px 10px; border:1px solid #cbd5e1; border-radius:8px; outline:0 }
+        .filters-search input{ width:220px }
+
+        /* === Tabla (alineaciones limpias) === */
+        .results-table th{ position:sticky; top:0; background:#f8fafc; z-index:1 }
+        .results-table td:nth-child(4),
+        .results-table td:nth-child(5),
+        .results-table td:nth-child(6),
+        .results-table td:nth-child(7){ text-align:center }
+        .results-table tbody tr:nth-child(odd){ background:#fafbfc }
+
+        /* === Bloque cálculo === */
+        .calc-block{ border:1px dashed #cbd5e1; padding:12px; border-radius:10px; background:#f8fafc }
+        .calc-row{ display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #edf2f7 }
+        .calc-row:last-child{ border-bottom:none }
+        .calc-note{ font-size:12px; color:#6b7280; margin-top:8px }
+
+        /* === Listas compactas === */
+        .list-compact{ margin:0; padding-left:18px }
+        .list-compact li{ margin:2px 0 }
+
+        /* Small tweaks existentes */
+        .action-buttons{ gap:6px }
       `}</style>
 
       <Header onLogout={onLogout} userRole={userRole} />
@@ -1634,34 +1764,26 @@ const generateExcel = async (evaluacion) => {
             </button>
           </div>
 
-          <div className="results-info-banner">
-            <div className="info-icon">ℹ️</div>
-            <div className="info-content">
-              <h3>Flujo de Evaluación de Desempeño</h3>
-              <p>El sistema ahora maneja un <strong>flujo de trabajo estructurado</strong> con 3 etapas principales:</p>
-              <ul>
-                <li><strong>1️⃣ Autoevaluación del Colaborador:</strong> El empleado completa su autoevaluación</li>
-                <li><strong>2️⃣ Evaluación del Líder Inmediato:</strong> El jefe directo revisa y evalúa</li>
-                <li><strong>3️⃣ Evaluación HSEQ Institucional:</strong> Evaluación final por parte de HSEQ</li>
-              </ul>
-              <p>Los <strong>reportes PDF y Excel</strong> están disponibles para evaluaciones completadas.</p>
-            </div>
-          </div>
+              <Collapsible title="Flujo de evaluación (3 etapas)" defaultOpen={false}>
+                {/* El timeline usa el estado de la última evaluación como referencia visual */}
+                {evaluacionesHistoricas[0] && (
+                  <Timeline3Steps estado={getClaseEstado(evaluacionesHistoricas[0].estado_evaluacion)} />
+                )}
+                <ul className="list-compact">
+                  <li><strong>Autoevaluación:</strong> 20%</li>
+                  <li><strong>Evaluación del Jefe:</strong> 40%</li>
+                  <li><strong>Evaluación HSEQ:</strong> 40%</li>
+                </ul>
+              </Collapsible>
 
-          <div className="results-info-banner" style={{ background: 'linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%)', border: '1px solid #c3e6cb' }}>
-            <div className="info-icon">📊</div>
-            <div className="info-content">
-              <h3>Cálculo de Calificación Final</h3>
-              <p>La <strong>calificación final</strong> se calcula mediante un promedio ponderado de las tres evaluaciones:</p>
-              <ul>
-                <li><strong>Autoevaluación:</strong> 20% del peso total</li>
-                <li><strong>Evaluación del Jefe:</strong> 40% del peso total</li>
-                <li><strong>Evaluación HSEQ:</strong> 40% del peso total</li>
-              </ul>
-              <p><strong>Fórmula:</strong> Calificación Final = (Autoeval × 0.20) + (Jefe × 0.40) + (HSEQ × 0.40)</p>
-              <p>Si alguna evaluación no está disponible, el sistema ajusta automáticamente los pesos proporcionalmente.</p>
-            </div>
-          </div>
+              <Collapsible title="Cálculo de calificación final (ponderado)" defaultOpen={false}>
+                <div className="calc-block">
+                  <div className="calc-row"><span>Autoevaluación</span><span>20%</span></div>
+                  <div className="calc-row"><span>Jefe</span><span>40%</span></div>
+                  <div className="calc-row"><span>HSEQ</span><span>40%</span></div>
+                  <div className="calc-note">Final = Auto (0.20) + Jefe (0.40) + HSEQ (0.40). Si falta alguna evaluación, se repondera automáticamente.</div>
+                </div>
+              </Collapsible>
 
           {loading ? (
             <div className="results-loading"><p>Cargando historial de evaluaciones...</p></div>
@@ -1675,56 +1797,82 @@ const generateExcel = async (evaluacion) => {
             </div>
           ) : (
             <div className="results-historico">
-              <div className="results-summary">
-                <div className="results-summary-item">
-                  <span className="summary-label">Evaluaciones totales:</span>
-                  <span className="summary-value">{evaluacionesHistoricas.length}</span>
+              {/* KPIs */}
+              <div className="kpi-grid">
+                <KPI label="Evaluaciones totales" value={evaluacionesHistoricas.length} />
+                <KPI
+                  label="Última calificación final"
+                  value={(() => {
+                    const ultima = evaluacionesHistoricas[0];
+                    if (!ultima) return '—';
+                    const hseq = evaluacionesHseq.find(h => h.periodo_evaluacion === ultima?.periodo_evaluacion);
+                    const cf = calcularCalificacionFinal(ultima, hseq);
+                    return (cf ?? '—');
+                  })()}
+                  chip={(() => {
+                    const ultima = evaluacionesHistoricas[0];
+                    if (!ultima) return null;
+                    const hseq = evaluacionesHseq.find(h => h.periodo_evaluacion === ultima?.periodo_evaluacion);
+                    const cf = calcularCalificacionFinal(ultima, hseq);
+                    return cf ? getEstadoCalificacionFinal(cf) : null;
+                  })()}
+                />
+                <KPI
+                  label="Último promedio HSEQ"
+                  value={(() => {
+                    const ultima = evaluacionesHistoricas[0];
+                    const hseq = evaluacionesHseq.find(h => h.periodo_evaluacion === ultima?.periodo_evaluacion);
+                    return hseq?.promedio_hseq ? Number(hseq.promedio_hseq).toFixed(1) : '—';
+                  })()}
+                  chip={(() => {
+                    const ultima = evaluacionesHistoricas[0];
+                    const hseq = evaluacionesHseq.find(h => h.periodo_evaluacion === ultima?.periodo_evaluacion);
+                    return hseq?.promedio_hseq ? getEstadoCalificacionFinal(parseFloat(hseq.promedio_hseq)) : null;
+                  })()}
+                />
+                <KPI
+                  label="Promedio histórico final"
+                  value={(() => {
+                    const vals = evaluacionesHistoricas.map(ev => {
+                      const hseq = evaluacionesHseq.find(h => h.periodo_evaluacion === ev.periodo_evaluacion);
+                      return calcularCalificacionFinal(ev, hseq);
+                    }).filter(v => v !== null && v !== undefined);
+                    if (!vals.length) return '—';
+                    const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
+                    return avg.toFixed(1);
+                  })()}
+                />
+              </div>
+
+              {/* Filtros */}
+              <div className="filters-bar">
+                <div className="filters-left">
+                  <label>
+                    <span>Período</span>
+                    <select value={filterPeriodo} onChange={e=>setFilterPeriodo(e.target.value)}>
+                      <option value="">Todos</option>
+                      {periodos.map(p => <option key={p} value={p}>{p}</option>)}
+                    </select>
+                  </label>
+                  <label>
+                    <span>Estado</span>
+                    <select value={filterEstado} onChange={e=>setFilterEstado(e.target.value)}>
+                      <option value="">Todos</option>
+                      {estados.map(s => <option key={s} value={s}>{getDescripcionEstado(s)}</option>)}
+                    </select>
+                  </label>
+                  <label className="filters-search">
+                    <span>Buscar</span>
+                    <input
+                      type="search"
+                      placeholder="Período o fecha…"
+                      value={filterQuery}
+                      onChange={e=>setFilterQuery(e.target.value)}
+                    />
+                  </label>
                 </div>
-                <div className="results-summary-item">
-                  <span className="summary-label">Última calificación final:</span>
-                  <span className="summary-value">
-                    {(() => {
-                      const ultimaEvaluacion = evaluacionesHistoricas[0];
-                      const hseqCorrespondiente = evaluacionesHseq.find(hseq => 
-                        hseq.periodo_evaluacion === ultimaEvaluacion?.periodo_evaluacion
-                      );
-                      const calificacionFinal = calcularCalificacionFinal(ultimaEvaluacion, hseqCorrespondiente);
-                      return calificacionFinal ? renderEstrellas(calificacionFinal) : 'N/A';
-                    })()}
-                  </span>
-                </div>
-                <div className="results-summary-item">
-                  <span className="summary-label">Último promedio HSEQ:</span>
-                  <span className="summary-value">
-                    {(() => {
-                      const ultimaEvaluacion = evaluacionesHistoricas[0];
-                      const hseqCorrespondiente = evaluacionesHseq.find(hseq => 
-                        hseq.periodo_evaluacion === ultimaEvaluacion?.periodo_evaluacion
-                      );
-                      const promedioHseq = hseqCorrespondiente?.promedio_hseq ? parseFloat(hseqCorrespondiente.promedio_hseq) : 0;
-                      return promedioHseq > 0 ? renderEstrellas(promedioHseq) : 'N/A';
-                    })()}
-                  </span>
-                </div>
-                <div className="results-summary-item">
-                  <span className="summary-label">Promedio histórico final:</span>
-                  <span className="summary-value">
-                    {(() => {
-                      if (evaluacionesHistoricas.length === 0) return 'N/A';
-                      
-                      const calificacionesFinales = evaluacionesHistoricas.map(ev => {
-                        const hseqCorrespondiente = evaluacionesHseq.find(hseq => 
-                          hseq.periodo_evaluacion === ev.periodo_evaluacion
-                        );
-                        return calcularCalificacionFinal(ev, hseqCorrespondiente);
-                      }).filter(calif => calif !== null);
-                      
-                      if (calificacionesFinales.length === 0) return 'N/A';
-                      
-                      const promedioHistorico = calificacionesFinales.reduce((acc, calif) => acc + calif, 0) / calificacionesFinales.length;
-                      return renderEstrellas(promedioHistorico);
-                    })()}
-                  </span>
+                <div className="filters-right">
+                  {/* Puedes añadir aquí 'Exportar vista' si más adelante quieres */}
                 </div>
               </div>
 
@@ -1743,7 +1891,7 @@ const generateExcel = async (evaluacion) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {evaluacionesHistoricas.map(evaluacion => {
+                    {evaluacionesFiltradas.map(evaluacion => {
                       const promedioGeneral = evaluacion.promedios?.promedio_general ? parseFloat(evaluacion.promedios.promedio_general) : 0;
                       const promedioCompetencias = evaluacion.promedios?.promedio_competencias ? parseFloat(evaluacion.promedios.promedio_competencias) : 0;
                       
@@ -1821,61 +1969,32 @@ const generateExcel = async (evaluacion) => {
                 <div className="results-hseq-container">
                   {evaluacionesHseq.length > 0 ? (
                     evaluacionesHseq.map(hseqEval => (
-                      <div key={`hseq-${hseqEval.id_hseq_evaluacion}`} className="hseq-evaluation-card">
-                        <div className="hseq-card-header">
-                          <h3 className="hseq-card-title">
-                            🛡️ Evaluación HSEQ - {hseqEval.periodo_evaluacion}
-                          </h3>
-                          <span className="hseq-status-badge completed">
-                            ✅ Completada
-                          </span>
-                        </div>
-                        <div className="hseq-card-content">
-                          <div className="hseq-info-grid">
-                            <div className="hseq-info-item">
-                              <span className="hseq-info-label">Evaluador:</span>
-                              <span className="hseq-info-value">{hseqEval.evaluador_nombre || 'N/A'}</span>
-                            </div>
-                            <div className="hseq-info-item">
-                              <span className="hseq-info-label">Fecha:</span>
-                              <span className="hseq-info-value">{formatDate(hseqEval.fecha_evaluacion)}</span>
-                            </div>
-                            <div className="hseq-info-item">
-                              <span className="hseq-info-label">Estado:</span>
-                              <span className="hseq-info-value">{hseqEval.estado_evaluacion}</span>
-                            </div>
-                            <div className="hseq-info-item">
-                              <span className="hseq-info-label">Promedio HSEQ:</span>
-                              <span className="hseq-info-value">
-                                {hseqEval.promedio_hseq ? (
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    {renderEstrellas(parseFloat(hseqEval.promedio_hseq))}
-                                    <span style={{ fontSize: '12px', color: '#666' }}>
-                                      ({getEstadoCalificacionFinal(parseFloat(hseqEval.promedio_hseq))})
-                                    </span>
-                                  </div>
-                                ) : 'N/A'}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="hseq-actions">
-                            <button 
-                              className="hseq-download-btn"
-                              onClick={() => downloadHseqPDF(hseqEval.periodo_evaluacion)}
-                              title="Descargar PDF HSEQ"
-                            >
-                              📄 PDF HSEQ
-                            </button>
-                            <button 
-                              className="hseq-download-btn excel-btn"
-                              onClick={() => downloadHseqExcel(hseqEval)}
-                              title="Descargar Excel HSEQ"
-                            >
-                              📊 Excel HSEQ
-                            </button>
+                      <Collapsible
+                        key={`hseq-${hseqEval.id_hseq_evaluacion}`}
+                        title={`🛡️ Evaluación HSEQ - ${hseqEval.periodo_evaluacion}`}
+                        defaultOpen={false}
+                      >
+                        <div className="hseq-info-grid">
+                          <div className="hseq-info-item"><span className="hseq-info-label">Evaluador</span><span className="hseq-info-value">{hseqEval.evaluador_nombre || 'N/A'}</span></div>
+                          <div className="hseq-info-item"><span className="hseq-info-label">Fecha</span><span className="hseq-info-value">{formatDate(hseqEval.fecha_evaluacion)}</span></div>
+                          <div className="hseq-info-item"><span className="hseq-info-label">Estado</span><span className="hseq-info-value">{hseqEval.estado_evaluacion}</span></div>
+                          <div className="hseq-info-item">
+                            <span className="hseq-info-label">Promedio HSEQ</span>
+                            <span className="hseq-info-value">
+                              {hseqEval.promedio_hseq ? (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                  {renderEstrellas(parseFloat(hseqEval.promedio_hseq))}
+                                  <small style={{ color:'#666' }}>({getEstadoCalificacionFinal(parseFloat(hseqEval.promedio_hseq))})</small>
+                                </div>
+                              ) : 'N/A'}
+                            </span>
                           </div>
                         </div>
-                      </div>
+                        <div className="hseq-actions">
+                          <button className="hseq-download-btn" onClick={() => downloadHseqPDF(hseqEval.periodo_evaluacion)}>📄 PDF HSEQ</button>
+                          <button className="hseq-download-btn excel-btn" onClick={() => downloadHseqExcel(hseqEval)}>📊 Excel HSEQ</button>
+                        </div>
+                      </Collapsible>
                     ))
                   ) : (
                     <div className="hseq-no-evaluations">
