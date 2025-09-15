@@ -185,6 +185,154 @@ const getObs = (obj) =>
   obj?.comentario ??
   'N/A';
 
+// ===================== PDF Component Reporte Consolidado =====================
+const ConsolidatedReportDocument = ({ evaluationData }) => (
+  <Document>
+    <Page size="A4" orientation="landscape" style={pdfStyles.page}>
+      <View style={pdfStyles.header}>
+        <Text style={pdfStyles.title}>REPORTE CONSOLIDADO DE EVALUACIÓN</Text>
+        <Text style={pdfStyles.subtitle}>MERIDIAN CONSULTING LTDA</Text>
+      </View>
+
+      <View style={pdfStyles.section}>
+        <View style={pdfStyles.sectionHeader}>
+          <Text>DATOS DEL EMPLEADO</Text>
+        </View>
+        <View style={pdfStyles.sectionContent}>
+          <View style={pdfStyles.row}>
+            <Text style={pdfStyles.label}>Nombre:</Text>
+            <Text style={pdfStyles.value}>{evaluationData.empleado?.nombre || 'N/A'}</Text>
+          </View>
+          <View style={pdfStyles.row}>
+            <Text style={pdfStyles.label}>Cargo:</Text>
+            <Text style={pdfStyles.value}>{evaluationData.empleado?.cargo || 'N/A'}</Text>
+          </View>
+          <View style={pdfStyles.row}>
+            <Text style={pdfStyles.label}>Área:</Text>
+            <Text style={pdfStyles.value}>{evaluationData.empleado?.area || 'N/A'}</Text>
+          </View>
+          <View style={pdfStyles.row}>
+            <Text style={pdfStyles.label}>Período de Evaluación:</Text>
+            <Text style={pdfStyles.value}>{evaluationData.evaluacion?.periodo_evaluacion || 'N/A'}</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Resumen de Calificaciones por Componente */}
+      <View style={pdfStyles.section}>
+        <View style={pdfStyles.sectionHeader}>
+          <Text>RESUMEN DE CALIFICACIONES POR COMPONENTE</Text>
+        </View>
+        <View style={pdfStyles.sectionContent}>
+          <View style={pdfStyles.row}>
+            <Text style={pdfStyles.label}>Autoevaluación (20%):</Text>
+            <Text style={[pdfStyles.value, pdfStyles.promedio]}>
+              {evaluationData.promedios?.promedio_autoevaluacion || 'N/A'}
+            </Text>
+          </View>
+          <View style={pdfStyles.row}>
+            <Text style={pdfStyles.label}>Evaluación del Jefe (40%):</Text>
+            <Text style={[pdfStyles.value, pdfStyles.promedio]}>
+              {evaluationData.promedios?.promedio_evaluacion_jefe || 'N/A'}
+            </Text>
+          </View>
+          <View style={pdfStyles.row}>
+            <Text style={pdfStyles.label}>Evaluación HSEQ (40%):</Text>
+            <Text style={[pdfStyles.value, pdfStyles.promedio]}>
+              {evaluationData.promedios?.promedio_hseq || 'N/A'}
+            </Text>
+          </View>
+          <View style={pdfStyles.row}>
+            <Text style={pdfStyles.label}>Calificación Final Ponderada:</Text>
+            <Text style={[pdfStyles.value, pdfStyles.promedio]}>
+              {(() => {
+                const auto = evaluationData.promedios?.promedio_autoevaluacion ? parseFloat(evaluationData.promedios.promedio_autoevaluacion) : 0;
+                const jefe = evaluationData.promedios?.promedio_evaluacion_jefe ? parseFloat(evaluationData.promedios.promedio_evaluacion_jefe) : 0;
+                const hseq = evaluationData.promedios?.promedio_hseq ? parseFloat(evaluationData.promedios.promedio_hseq) : 0;
+                
+                if (auto > 0 && jefe > 0 && hseq > 0) {
+                  const calificacionFinal = (auto * 0.20) + (jefe * 0.40) + (hseq * 0.40);
+                  return Math.round(calificacionFinal * 10) / 10;
+                }
+                return 'N/A';
+              })()}
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Detalle de Competencias */}
+      {evaluationData.competencias && evaluationData.competencias.length > 0 && (
+        <View style={pdfStyles.section}>
+          <View style={pdfStyles.sectionHeader}>
+            <Text>DETALLE DE COMPETENCIAS</Text>
+          </View>
+          <View style={pdfStyles.sectionContent}>
+            <View style={pdfStyles.table}>
+              <View style={[pdfStyles.tableRow, pdfStyles.tableHeader]}>
+                <Text style={pdfStyles.tableCellAspect}>Competencia</Text>
+                <Text style={pdfStyles.tableCellSm}>Autoeval.</Text>
+                <Text style={pdfStyles.tableCellSm}>Jefe</Text>
+                <Text style={pdfStyles.tableCellSm}>Promedio</Text>
+              </View>
+              {evaluationData.competencias.map((c, idx) => (
+                <View key={idx} style={pdfStyles.tableRow}>
+                  <Text style={pdfStyles.tableCellAspect}>{c.aspecto || 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellSm}>{c.calificacion_empleado ?? 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellSm}>{c.calificacion_jefe ?? 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellSm}>{c.promedio ?? 'N/A'}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* Detalle de HSEQ */}
+      {evaluationData.hseq_data && evaluationData.hseq_data.length > 0 && (
+        <View style={pdfStyles.section}>
+          <View style={pdfStyles.sectionHeader}>
+            <Text>DETALLE DE RESPONSABILIDADES HSEQ</Text>
+          </View>
+          <View style={pdfStyles.sectionContent}>
+            <View style={pdfStyles.table}>
+              <View style={[pdfStyles.tableRow, pdfStyles.tableHeader]}>
+                <Text style={pdfStyles.tableCellAspect}>Responsabilidad</Text>
+                <Text style={pdfStyles.tableCellSm}>Calificación</Text>
+                <Text style={pdfStyles.tableCellObs}>Observaciones</Text>
+              </View>
+              {evaluationData.hseq_data.map((h, idx) => (
+                <View key={idx} style={pdfStyles.tableRow}>
+                  <Text style={pdfStyles.tableCellAspect}>{h.responsabilidad || 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellSm}>{h.calificacion ?? 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellObs}>{getObs(h)}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* Fórmula de Cálculo */}
+      <View style={pdfStyles.section}>
+        <View style={pdfStyles.sectionHeader}>
+          <Text>FÓRMULA DE CÁLCULO</Text>
+        </View>
+        <View style={pdfStyles.sectionContent}>
+          <View style={pdfStyles.row}>
+            <Text style={pdfStyles.label}>Fórmula:</Text>
+            <Text style={pdfStyles.value}>Calificación Final = (Autoevaluación × 0.20) + (Evaluación Jefe × 0.40) + (Evaluación HSEQ × 0.40)</Text>
+          </View>
+          <View style={pdfStyles.row}>
+            <Text style={pdfStyles.label}>Pesos:</Text>
+            <Text style={pdfStyles.value}>Autoevaluación: 20% | Evaluación del Jefe: 40% | Evaluación HSEQ: 40%</Text>
+          </View>
+        </View>
+      </View>
+    </Page>
+  </Document>
+);
+
 // ===================== PDF Component (SIN CAMBIOS) =====================
 const MyDocument = ({ evaluationData }) => (
   <Document>
@@ -571,6 +719,39 @@ function Results({ onLogout, userRole }) {
     return 'calificacion-baja';
   };
 
+  // ===================== PDF Reporte Consolidado =====================
+  const generateConsolidatedPDF = async (evaluacion) => {
+    try {
+      setGeneratingPDF(true);
+      const employeeId = localStorage.getItem('employeeId');
+      const apiUrl = process.env.REACT_APP_API_BASE_URL;
+      
+      // Obtener datos completos de la evaluación
+      const response = await fetch(`${apiUrl}/api/evaluations/${evaluacion.id_evaluacion}/complete/${employeeId}`);
+      if (!response.ok) throw new Error('Error al obtener datos completos de la evaluación');
+      const { data: evaluationData } = await response.json();
+      
+      // Generar PDF del reporte consolidado
+      const blob = await pdf(<ConsolidatedReportDocument evaluationData={evaluationData} />).toBlob();
+
+      const fileName = `reporte_consolidado_${evaluacion.id_evaluacion}_${new Date().toISOString().split('T')[0]}.pdf`;
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      success('PDF consolidado generado', `Reporte consolidado PDF generado exitosamente: ${fileName}`);
+    } catch (error) {
+      showError('Error al generar PDF consolidado', 'Error al generar el reporte consolidado PDF. Intente nuevamente.');
+    } finally {
+      setGeneratingPDF(false);
+    }
+  };
+
   // ===================== PDF (SIN CAMBIOS) =====================
   const generatePDF = async (evaluacion) => {
     try {
@@ -945,6 +1126,250 @@ const generateExcel = async (evaluacion) => {
   }
 };
 
+// ===================== EXCEL Reporte Consolidado =====================
+const generateConsolidatedExcel = async (evaluacion) => {
+  try {
+    setGeneratingExcel(true);
+
+    // ----- Fetch datos completos
+    const employeeId = localStorage.getItem('employeeId');
+    const apiUrl = process.env.REACT_APP_API_BASE_URL;
+    const resp = await fetch(`${apiUrl}/api/evaluations/${evaluacion.id_evaluacion}/complete/${employeeId}`);
+    if (!resp.ok) throw new Error('Error al obtener datos completos de la evaluación');
+    const responseData = await resp.json();
+    const { data: evaluationData } = responseData;
+
+    // ---------- Paleta y helpers
+    const PALETTE = {
+      blue: '184C8C',           // azul corporativo
+      text: '2B2B2B',           // gris oscuro texto
+      bg: 'F5F6F8',             // neutro fondo
+      border: 'DADFE5',         // bordes sutiles
+      zebra: 'FAFBFC',
+      heat: { green: 'D5E8D4', yellow: 'FFF2CC', red: 'F8CECC' },
+      status: { SUPERIOR: '2E7D32', SATISFACTORIO: '1976D2', REGULAR: 'F9A825', INSUFICIENTE: 'C62828', EXCELENTE: '2E7D32' }
+    };
+
+    const FONT_TITLE = { name: 'Calibri', size: 20, bold: true, color: { argb: 'FFFFFFFF' } };
+    const FONT_SUB   = { name: 'Calibri', size: 14, bold: true, color: { argb: 'FFFFFFFF' } };
+    const FONT_BODY  = { name: 'Calibri', size: 11, color: { argb: 'FF' + PALETTE.text } };
+    const ONE_DEC = '0.0';
+    const dash = (v) => (v === undefined || v === null || v === '' || v === 'N/A' || v === 'null') ? '—' : v;
+    const numOrBlank = (v) => Number.isFinite(parseFloat(v)) ? parseFloat(v) : null;
+
+    const estadoPorValor = (n) => {
+      const v = parseFloat(n || 0);
+      if (v >= 4.5) return 'EXCELENTE';
+      if (v >= 4.0) return 'SUPERIOR';
+      if (v >= 3.0) return 'SATISFACTORIO';
+      if (v >= 2.0) return 'REGULAR';
+      return 'INSUFICIENTE';
+    };
+
+    const normalizeObs = (obj) =>
+      obj?.observaciones ?? obj?.observacion ?? obj?.justificacion ?? obj?.comentario ?? obj?.nota ?? '';
+
+    const applyEstadoChip = (cell, estado) => {
+      const MAP = { EXCELENTE:'Excelente', SUPERIOR:'Superior', SATISFACTORIO:'Satisfactorio', REGULAR:'Regular', INSUFICIENTE:'Insuficiente' };
+      const text = MAP[estado] ?? dash(estado);
+      const color = PALETTE.status[estado] || PALETTE.text;
+      cell.value = { richText: [{ text: ` ${text} `, font: { name: 'Calibri', bold: true, color: { argb: 'FF' + color } } }] };
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PALETTE.bg } };
+      cell.border = { top:{style:'thin',color:{argb:PALETTE.border}}, left:{style:'thin',color:{argb:PALETTE.border}},
+                      bottom:{style:'thin',color:{argb:PALETTE.border}}, right:{style:'thin',color:{argb:PALETTE.border}} };
+    };
+
+    // ---------- Workbook
+    const wb = new ExcelJS.Workbook();
+    wb.created = new Date();
+    wb.properties.title = `Reporte Consolidado ${evaluacion.id_evaluacion}`;
+    wb.properties.company = 'Meridian Consulting LTDA';
+
+    // ---------- Hoja
+    const ws = wb.addWorksheet('Reporte Consolidado', {
+      pageSetup: {
+        paperSize: 9, orientation: 'portrait', fitToPage: true,
+        margins: { left: 0.6, right: 0.6, top: 0.8, bottom: 0.8, header: 0.3, footer: 0.3 }
+      }
+    });
+
+    // 6 columnas para acomodar 3 KPIs horizontales (A:B, C:D, E:F)
+    ws.columns = [
+      { key: 'A', width: 30 }, { key: 'B', width: 18 },
+      { key: 'C', width: 30 }, { key: 'D', width: 18 },
+      { key: 'E', width: 30 }, { key: 'F', width: 18 },
+    ];
+
+    // ---------- Encabezado
+    ws.mergeCells('A1:F1');
+    const cTitle = ws.getCell('A1');
+    cTitle.value = 'REPORTE CONSOLIDADO DE EVALUACIÓN – MERIDIAN CONSULTING LTDA';
+    cTitle.font = FONT_TITLE; cTitle.alignment = { horizontal: 'center', vertical: 'middle' };
+    cTitle.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PALETTE.blue } };
+    ws.addRow([]);
+
+    ws.mergeCells('A3:C3');
+    ws.getCell('A3').value = `Período: ${dash(evaluationData.evaluacion?.periodo_evaluacion)}`;
+    ws.getCell('A3').font = FONT_BODY;
+
+    ws.mergeCells('D3:F3');
+    const st = estadoPorValor(evaluationData.promedios?.promedio_general);
+    const estadoCell = ws.getCell('D3'); estadoCell.font = FONT_BODY;
+    applyEstadoChip(estadoCell, st);
+
+    ws.addRow([]);
+
+    // ---------- KPIs de Componentes (3 horizontales)
+    const promAuto = numOrBlank(evaluationData.promedios?.promedio_autoevaluacion);
+    const promJefe = numOrBlank(evaluationData.promedios?.promedio_evaluacion_jefe);
+    const promHseq = numOrBlank(evaluationData.promedios?.promedio_hseq);
+    
+    // Calcular calificación final ponderada
+    let promFinal = null;
+    if (promAuto && promJefe && promHseq) {
+      promFinal = (promAuto * 0.20) + (promJefe * 0.40) + (promHseq * 0.40);
+      promFinal = Math.round(promFinal * 10) / 10;
+    }
+    
+    const estadoFinal = estadoPorValor(promFinal);
+
+    const drawCard = (range, value, label, estadoOpt=null) => {
+      ws.mergeCells(range);
+      const c = ws.getCell(range.split(':')[0]);
+      const big = (value===null ? '—' : value.toFixed(1));
+      c.value = { richText: [
+        { text: `${big}\n`, font: { name:'Calibri', size: 22, bold: true, color:{ argb:'FF'+PALETTE.text } } },
+        { text: label,        font: { name:'Calibri', size: 11, color:{ argb:'FF'+PALETTE.text } } },
+      ]};
+      c.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PALETTE.bg } };
+      c.border = { top:{style:'thin',color:{argb:PALETTE.border}}, left:{style:'thin',color:{argb:PALETTE.border}},
+                   bottom:{style:'thin',color:{argb:PALETTE.border}}, right:{style:'thin',color:{argb:PALETTE.border}} };
+      // chip a la derecha
+      if (estadoOpt) {
+        const topRight = range.split(':')[1];
+        const chipCell = ws.getCell(topRight);
+        applyEstadoChip(chipCell, estadoOpt);
+      }
+    };
+
+    // fila de inicio para KPIs
+    const kpiTop = 5;
+    drawCard(`A${kpiTop}:B${kpiTop+3}`, promAuto, 'Autoevaluación (20%)', estadoPorValor(promAuto));
+    drawCard(`C${kpiTop}:D${kpiTop+3}`, promJefe, 'Evaluación Jefe (40%)', estadoPorValor(promJefe));
+    drawCard(`E${kpiTop}:F${kpiTop+3}`, promHseq, 'Evaluación HSEQ (40%)', estadoPorValor(promHseq));
+    ws.addRow([]); ws.addRow([]);
+
+    // ---------- Calificación Final
+    const addSectionHeader = (title) => {
+      const r = ws.addRow([title]); ws.mergeCells(`A${r.number}:F${r.number}`);
+      const c = ws.getCell(`A${r.number}`);
+      c.font = FONT_SUB; c.alignment = { horizontal: 'left', vertical: 'middle' };
+      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4B5A6B' } };
+      return r.number;
+    };
+    addSectionHeader('CALIFICACIÓN FINAL PONDERADA');
+
+    const finalRow = ws.addRow(['Calificación Final:', dash(promFinal), '', 'Estado:', '', '']);
+    ws.mergeCells(`B${finalRow.number}:C${finalRow.number}`);
+    ws.mergeCells(`E${finalRow.number}:F${finalRow.number}`);
+    
+    finalRow.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+    finalRow.getCell(4).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+    finalRow.eachCell(cell => {
+      cell.font = cell.font || { name: 'Calibri', size: 11, color: { argb: 'FF2B2B2B' } };
+      cell.border = { bottom: { style: 'thin', color: { argb: PALETTE.border } } };
+      cell.alignment = { vertical: 'middle' };
+    });
+    
+    // Aplicar chip de estado a la calificación final
+    applyEstadoChip(ws.getCell(`E${finalRow.number}`), estadoFinal);
+    ws.addRow([]);
+
+    // ---------- Fórmula de Cálculo
+    addSectionHeader('FÓRMULA DE CÁLCULO');
+    const formulaRow = ws.addRow(['Fórmula:', 'Calificación Final = (Autoevaluación × 0.20) + (Evaluación Jefe × 0.40) + (Evaluación HSEQ × 0.40)', '', '', '', '']);
+    ws.mergeCells(`B${formulaRow.number}:F${formulaRow.number}`);
+    formulaRow.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+    formulaRow.getCell(2).font = { name: 'Calibri', size: 11, color: { argb: 'FF2B2B2B' } };
+    ws.addRow([]);
+
+    // ---------- Detalle de Competencias
+    addSectionHeader('DETALLE DE COMPETENCIAS');
+    const hdrComp = ws.addRow(['Competencia', 'Autoeval.', 'Jefe', 'Promedio', 'Estado', 'Observaciones']);
+    hdrComp.eachCell((c, i) => {
+      if (i<=6) {
+        c.font = { name:'Calibri', bold:true, color:{ argb:'FFFFFFFF' } };
+        c.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:'FF34495E' } };
+        c.alignment = { horizontal:'center', vertical:'middle', wrapText: i===6 };
+      }
+    });
+    const headerCompRow = hdrComp.number;
+
+    let zebra = false;
+    (evaluationData.competencias || []).forEach(item => {
+      zebra = !zebra;
+      const emp = numOrBlank(item.calificacion_empleado);
+      const jef = numOrBlank(item.calificacion_jefe);
+      const pro = numOrBlank(item.promedio);
+      const est = estadoPorValor(pro);
+      const obs = normalizeObs(item);
+
+      const r = ws.addRow([dash(item.aspecto), emp, jef, pro, '', obs]);
+      r.eachCell((cell, col) => {
+        cell.font = FONT_BODY;
+        cell.border = { bottom:{ style:'thin', color:{ argb:PALETTE.border } } };
+        cell.alignment = { vertical:'middle', wrapText: col===6, horizontal: (col>=2 && col<=4) ? 'right' : (col===5 ? 'center' : 'left') };
+        if (zebra && col !== 4) cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:PALETTE.zebra } };
+      });
+      // formato 1 decimal
+      ['B','C','D'].forEach(col => { const c = ws.getCell(`${col}${r.number}`); if (c.value !== null) c.numFmt = ONE_DEC; });
+      // chip de estado
+      applyEstadoChip(ws.getCell(`E${r.number}`), est);
+    });
+    ws.addRow([]);
+
+    // ---------- Detalle de HSEQ
+    addSectionHeader('DETALLE DE RESPONSABILIDADES HSEQ');
+    const hdrH = ws.addRow(['Responsabilidad', 'Calificación', 'Estado', 'Observaciones']);
+    hdrH.eachCell((c, i) => {
+      if (i<=4) {
+        c.font = { name:'Calibri', bold:true, color:{ argb:'FFFFFFFF' } };
+        c.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:'FF34495E' } };
+        c.alignment = { horizontal:'center', vertical:'middle', wrapText: i===4 };
+      }
+    });
+
+    zebra = false;
+    (evaluationData.hseq_data || []).forEach(h => {
+      zebra = !zebra;
+      const cal = numOrBlank(h.calificacion);
+      const est = estadoPorValor(cal);
+      const r = ws.addRow([dash(h.responsabilidad), cal, '', normalizeObs(h)]);
+      r.eachCell((cell, col) => {
+        cell.font = FONT_BODY;
+        cell.border = { bottom:{ style:'thin', color:{ argb:PALETTE.border } } };
+        cell.alignment = { vertical:'middle', wrapText: col===4, horizontal: (col===2) ? 'right' : (col===3 ? 'center' : 'left') };
+        if (zebra) cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:PALETTE.zebra } };
+      });
+      ['B'].forEach(col => { const c = ws.getCell(`${col}${r.number}`); if (c.value !== null) c.numFmt = ONE_DEC; });
+      applyEstadoChip(ws.getCell(`C${r.number}`), est);
+    });
+    ws.addRow([]);
+
+    // ---------- Guardar
+    const buf = await wb.xlsx.writeBuffer({ useStyles: true, useSharedStrings: true });
+    const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const fileName = `reporte_consolidado_${evaluacion.id_evaluacion}_${new Date().toISOString().split('T')[0]}.xlsx`;
+    saveAs(blob, fileName);
+    success('Excel consolidado generado', `Reporte consolidado Excel generado: ${fileName}`);
+  } catch (e) {
+    showError('Error al generar Excel consolidado', 'Error al generar el reporte consolidado Excel. Intente nuevamente.');
+  } finally {
+    setGeneratingExcel(false);
+  }
+};
 
   // Descarga PDF directa (compat)
   const downloadPDF = async (evaluationId) => {
@@ -1842,6 +2267,76 @@ const generateExcel = async (evaluacion) => {
                     return avg.toFixed(1);
                   })()}
                 />
+              </div>
+
+              {/* Botones de Reporte Consolidado */}
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', margin: '20px 0' }}>
+                <button 
+                  onClick={() => generateConsolidatedPDF(evaluacionesHistoricas[0])} 
+                  disabled={generatingPDF || !evaluacionesHistoricas[0]}
+                  style={{
+                    background: generatingPDF ? '#6c757d' : 'linear-gradient(135deg, #dc3545, #c82333)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '12px 24px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: generatingPDF ? 'not-allowed' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 12px rgba(220, 53, 69, 0.3)',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseOver={(e) => {
+                    if (!generatingPDF) {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 6px 16px rgba(220, 53, 69, 0.4)';
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (!generatingPDF) {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = '0 4px 12px rgba(220, 53, 69, 0.3)';
+                    }
+                  }}
+                >
+                  {generatingPDF ? '⏳ Generando...' : '📄 Reporte Consolidado PDF'}
+                </button>
+                <button 
+                  onClick={() => generateConsolidatedExcel(evaluacionesHistoricas[0])} 
+                  disabled={generatingExcel || !evaluacionesHistoricas[0]}
+                  style={{
+                    background: generatingExcel ? '#6c757d' : 'linear-gradient(135deg, #28a745, #1e7e34)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '12px 24px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: generatingExcel ? 'not-allowed' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 12px rgba(40, 167, 69, 0.3)',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseOver={(e) => {
+                    if (!generatingExcel) {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 6px 16px rgba(40, 167, 69, 0.4)';
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (!generatingExcel) {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = '0 4px 12px rgba(40, 167, 69, 0.3)';
+                    }
+                  }}
+                >
+                  {generatingExcel ? '⏳ Generando...' : '📊 Reporte Consolidado Excel'}
+                </button>
               </div>
 
               {/* Filtros */}
