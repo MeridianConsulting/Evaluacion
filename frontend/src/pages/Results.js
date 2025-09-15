@@ -329,6 +329,45 @@ const ConsolidatedReportDocument = ({ evaluationData }) => (
           </View>
         </View>
       </View>
+
+      {/* Firmas */}
+      <View style={pdfStyles.signatureSection}>
+        <View style={pdfStyles.sectionHeader}>
+          <Text>FIRMAS</Text>
+        </View>
+        <View style={pdfStyles.signatureRow}>
+          <View style={pdfStyles.signatureBox}>
+            <Text style={pdfStyles.signatureLabel}>Evaluado</Text>
+            {evaluationData.firmas?.firma_empleado && evaluationData.firmas.firma_empleado.length > 100 ? (
+              <Image 
+                src={evaluationData.firmas.firma_empleado} 
+                style={pdfStyles.signatureImage}
+                onError={() => console.log('Error cargando firma empleado')}
+              />
+            ) : (
+              <Text style={pdfStyles.signatureLabel}>Firma no registrada</Text>
+            )}
+          </View>
+          <View style={pdfStyles.signatureBox}>
+            <Text style={pdfStyles.signatureLabel}>Jefe Directo</Text>
+            {evaluationData.firmas?.firma_jefe && evaluationData.firmas.firma_jefe.length > 100 ? (
+              <Image 
+                src={evaluationData.firmas.firma_jefe} 
+                style={pdfStyles.signatureImage}
+                onError={() => console.log('Error cargando firma jefe')}
+              />
+            ) : (
+              <Text style={pdfStyles.signatureLabel}>Firma no registrada</Text>
+            )}
+          </View>
+        </View>
+        <View style={pdfStyles.sectionContent}>
+          <View style={pdfStyles.row}>
+            <Text style={pdfStyles.label}>Fecha:</Text>
+            <Text style={pdfStyles.value}>{new Date().toLocaleDateString('es-ES')}</Text>
+          </View>
+        </View>
+      </View>
     </Page>
   </Document>
 );
@@ -731,8 +770,63 @@ function Results({ onLogout, userRole }) {
       if (!response.ok) throw new Error('Error al obtener datos completos de la evaluación');
       const { data: evaluationData } = await response.json();
       
+      // Calcular promedios de autoevaluación y evaluación del jefe desde las competencias
+      let promedioAutoevaluacion = 0;
+      let promedioEvaluacionJefe = 0;
+      let promedioHseq = 0;
+      
+      if (evaluationData.competencias && evaluationData.competencias.length > 0) {
+        const competencias = evaluationData.competencias;
+        let sumaAutoevaluacion = 0;
+        let sumaJefe = 0;
+        let countAutoevaluacion = 0;
+        let countJefe = 0;
+        
+        competencias.forEach(comp => {
+          if (comp.calificacion_empleado && !isNaN(parseFloat(comp.calificacion_empleado))) {
+            sumaAutoevaluacion += parseFloat(comp.calificacion_empleado);
+            countAutoevaluacion++;
+          }
+          if (comp.calificacion_jefe && !isNaN(parseFloat(comp.calificacion_jefe))) {
+            sumaJefe += parseFloat(comp.calificacion_jefe);
+            countJefe++;
+          }
+        });
+        
+        promedioAutoevaluacion = countAutoevaluacion > 0 ? Math.round((sumaAutoevaluacion / countAutoevaluacion) * 10) / 10 : 0;
+        promedioEvaluacionJefe = countJefe > 0 ? Math.round((sumaJefe / countJefe) * 10) / 10 : 0;
+      }
+      
+      // Obtener promedio HSEQ desde las evaluaciones HSEQ del empleado
+      try {
+        const hseqResponse = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
+        if (hseqResponse.ok) {
+          const hseqData = await hseqResponse.json();
+          if (hseqData.success && Array.isArray(hseqData.data)) {
+            // Buscar la evaluación HSEQ correspondiente al período de la evaluación actual
+            const hseqEval = hseqData.data.find(h => h.periodo_evaluacion === evaluacion.periodo_evaluacion);
+            if (hseqEval && hseqEval.promedio_hseq) {
+              promedioHseq = parseFloat(hseqEval.promedio_hseq);
+            }
+          }
+        }
+      } catch (hseqErr) {
+        console.log('Error obteniendo datos HSEQ:', hseqErr);
+      }
+      
+      // Agregar los promedios calculados al objeto de datos
+      const evaluationDataWithCalculated = {
+        ...evaluationData,
+        promedios: {
+          ...evaluationData.promedios,
+          promedio_autoevaluacion: promedioAutoevaluacion,
+          promedio_evaluacion_jefe: promedioEvaluacionJefe,
+          promedio_hseq: promedioHseq
+        }
+      };
+      
       // Generar PDF del reporte consolidado
-      const blob = await pdf(<ConsolidatedReportDocument evaluationData={evaluationData} />).toBlob();
+      const blob = await pdf(<ConsolidatedReportDocument evaluationData={evaluationDataWithCalculated} />).toBlob();
 
       const fileName = `reporte_consolidado_${evaluacion.id_evaluacion}_${new Date().toISOString().split('T')[0]}.pdf`;
       const url = URL.createObjectURL(blob);
@@ -1138,6 +1232,61 @@ const generateConsolidatedExcel = async (evaluacion) => {
     if (!resp.ok) throw new Error('Error al obtener datos completos de la evaluación');
     const responseData = await resp.json();
     const { data: evaluationData } = responseData;
+    
+    // Calcular promedios de autoevaluación y evaluación del jefe desde las competencias
+    let promedioAutoevaluacion = 0;
+    let promedioEvaluacionJefe = 0;
+    let promedioHseq = 0;
+    
+    if (evaluationData.competencias && evaluationData.competencias.length > 0) {
+      const competencias = evaluationData.competencias;
+      let sumaAutoevaluacion = 0;
+      let sumaJefe = 0;
+      let countAutoevaluacion = 0;
+      let countJefe = 0;
+      
+      competencias.forEach(comp => {
+        if (comp.calificacion_empleado && !isNaN(parseFloat(comp.calificacion_empleado))) {
+          sumaAutoevaluacion += parseFloat(comp.calificacion_empleado);
+          countAutoevaluacion++;
+        }
+        if (comp.calificacion_jefe && !isNaN(parseFloat(comp.calificacion_jefe))) {
+          sumaJefe += parseFloat(comp.calificacion_jefe);
+          countJefe++;
+        }
+      });
+      
+      promedioAutoevaluacion = countAutoevaluacion > 0 ? Math.round((sumaAutoevaluacion / countAutoevaluacion) * 10) / 10 : 0;
+      promedioEvaluacionJefe = countJefe > 0 ? Math.round((sumaJefe / countJefe) * 10) / 10 : 0;
+    }
+    
+    // Obtener promedio HSEQ desde las evaluaciones HSEQ del empleado
+    try {
+      const hseqResponse = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
+      if (hseqResponse.ok) {
+        const hseqData = await hseqResponse.json();
+        if (hseqData.success && Array.isArray(hseqData.data)) {
+          // Buscar la evaluación HSEQ correspondiente al período de la evaluación actual
+          const hseqEval = hseqData.data.find(h => h.periodo_evaluacion === evaluacion.periodo_evaluacion);
+          if (hseqEval && hseqEval.promedio_hseq) {
+            promedioHseq = parseFloat(hseqEval.promedio_hseq);
+          }
+        }
+      }
+    } catch (hseqErr) {
+      console.log('Error obteniendo datos HSEQ:', hseqErr);
+    }
+    
+    // Agregar los promedios calculados al objeto de datos
+    const evaluationDataWithCalculated = {
+      ...evaluationData,
+      promedios: {
+        ...evaluationData.promedios,
+        promedio_autoevaluacion: promedioAutoevaluacion,
+        promedio_evaluacion_jefe: promedioEvaluacionJefe,
+        promedio_hseq: promedioHseq
+      }
+    };
 
     // ---------- Paleta y helpers
     const PALETTE = {
@@ -1210,20 +1359,20 @@ const generateConsolidatedExcel = async (evaluacion) => {
     ws.addRow([]);
 
     ws.mergeCells('A3:C3');
-    ws.getCell('A3').value = `Período: ${dash(evaluationData.evaluacion?.periodo_evaluacion)}`;
+    ws.getCell('A3').value = `Período: ${dash(evaluationDataWithCalculated.evaluacion?.periodo_evaluacion)}`;
     ws.getCell('A3').font = FONT_BODY;
 
     ws.mergeCells('D3:F3');
-    const st = estadoPorValor(evaluationData.promedios?.promedio_general);
+    const st = estadoPorValor(evaluationDataWithCalculated.promedios?.promedio_general);
     const estadoCell = ws.getCell('D3'); estadoCell.font = FONT_BODY;
     applyEstadoChip(estadoCell, st);
 
     ws.addRow([]);
 
     // ---------- KPIs de Componentes (3 horizontales)
-    const promAuto = numOrBlank(evaluationData.promedios?.promedio_autoevaluacion);
-    const promJefe = numOrBlank(evaluationData.promedios?.promedio_evaluacion_jefe);
-    const promHseq = numOrBlank(evaluationData.promedios?.promedio_hseq);
+    const promAuto = numOrBlank(evaluationDataWithCalculated.promedios?.promedio_autoevaluacion);
+    const promJefe = numOrBlank(evaluationDataWithCalculated.promedios?.promedio_evaluacion_jefe);
+    const promHseq = numOrBlank(evaluationDataWithCalculated.promedios?.promedio_hseq);
     
     // Calcular calificación final ponderada
     let promFinal = null;
@@ -1308,7 +1457,7 @@ const generateConsolidatedExcel = async (evaluacion) => {
     const headerCompRow = hdrComp.number;
 
     let zebra = false;
-    (evaluationData.competencias || []).forEach(item => {
+    (evaluationDataWithCalculated.competencias || []).forEach(item => {
       zebra = !zebra;
       const emp = numOrBlank(item.calificacion_empleado);
       const jef = numOrBlank(item.calificacion_jefe);
@@ -1342,7 +1491,7 @@ const generateConsolidatedExcel = async (evaluacion) => {
     });
 
     zebra = false;
-    (evaluationData.hseq_data || []).forEach(h => {
+    (evaluationDataWithCalculated.hseq_data || []).forEach(h => {
       zebra = !zebra;
       const cal = numOrBlank(h.calificacion);
       const est = estadoPorValor(cal);
@@ -1356,6 +1505,27 @@ const generateConsolidatedExcel = async (evaluacion) => {
       ['B'].forEach(col => { const c = ws.getCell(`${col}${r.number}`); if (c.value !== null) c.numFmt = ONE_DEC; });
       applyEstadoChip(ws.getCell(`C${r.number}`), est);
     });
+    ws.addRow([]);
+
+    // ---------- Firmas
+    addSectionHeader('FIRMAS');
+    ws.addRow(['Evaluado:', dash(evaluationDataWithCalculated.empleado?.nombre), '', 'Jefe Directo:', dash(evaluationDataWithCalculated.datos_generales?.nombreEvaluador || ''), '']);
+    ws.addRow(['Cargo:', dash(evaluationDataWithCalculated.empleado?.cargo), '', 'Cargo:', dash(evaluationDataWithCalculated.datos_generales?.cargoEvaluador || ''), '']);
+    ws.addRow(['Firma del Empleado:', '', '', 'Firma del Jefe:', '', '']);
+    for (let i = 0; i < 6; i++) ws.addRow(['', '', '', '', '', '']);
+
+    const toDataUrl = (b64) => !b64 ? null : (b64.startsWith('data:image') ? b64 : `data:image/png;base64,${b64}`);
+    const empDataUrl = toDataUrl(evaluationDataWithCalculated.firmas?.firma_empleado);
+    const jefeDataUrl = toDataUrl(evaluationDataWithCalculated.firmas?.firma_jefe);
+    const firmaAnchorRow = ws.lastRow.number - 5;
+    if (empDataUrl) {
+      const imgId = wb.addImage({ base64: empDataUrl, extension: 'png' });
+      ws.addImage(imgId, { tl: { col: 1, row: firmaAnchorRow }, ext: { width: 220, height: 80 }, editAs: 'oneCell' });
+    }
+    if (jefeDataUrl) {
+      const imgId = wb.addImage({ base64: jefeDataUrl, extension: 'png' });
+      ws.addImage(imgId, { tl: { col: 5, row: firmaAnchorRow }, ext: { width: 220, height: 80 }, editAs: 'oneCell' });
+    }
     ws.addRow([]);
 
     // ---------- Guardar
