@@ -3,6 +3,17 @@ import { useNavigate } from "react-router-dom";
 import '../assets/css/Styles1.css';
 import logoMeridian from "../assets/img/logo_meridian_blanco.png";
 
+// Mensajes de error seguros que no comprometen la seguridad
+const SAFE_ERRORS = {
+  emptyFields: "Completa tu cédula y contraseña.",
+  invalidFormat: "Revisa el formato de la cédula.",
+  invalidCredentials: "Los datos ingresados no son correctos.",
+  lockedOut: "Demasiados intentos fallidos. Inténtalo de nuevo más tarde.",
+  serviceUnavailable: "No pudimos iniciar sesión en este momento. Inténtalo más tarde.",
+  network: "No fue posible conectarnos. Verifica tu conexión e inténtalo de nuevo.",
+  noAccess: "Tu cuenta no tiene acceso a este sistema. Contacta a soporte."
+};
+
 const Login = ({ onLogin }) => {
   const [cedula, setCedula] = useState("");
   const [contrasena, setContrasena] = useState("");
@@ -12,10 +23,18 @@ const Login = ({ onLogin }) => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    // Validaciones básicas en cliente
     if (!cedula || !contrasena) {
-      setError("Por favor, complete todos los campos.");
+      setError(SAFE_ERRORS.emptyFields);
       return;
     }
+    
+    // Validación sintáctica de cédula (formato básico)
+    if (!/^\d{6,12}$/.test(cedula)) {
+      setError(SAFE_ERRORS.invalidFormat);
+      return;
+    }
+
     setError("");
     try {
       const apiUrl = process.env.REACT_APP_API_BASE_URL;
@@ -27,30 +46,57 @@ const Login = ({ onLogin }) => {
         },
         body: JSON.stringify({ cedula, contrasena }),
       });
-      
+
+      // Si falla HTTP, mapea por status (no uses el mensaje crudo del server)
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Error en la respuesta del servidor');
+        switch (response.status) {
+          case 401:
+          case 403:
+            setError(SAFE_ERRORS.invalidCredentials);
+            break;
+          case 423: // Locked
+          case 429: // Too Many Requests
+            setError(SAFE_ERRORS.lockedOut);
+            break;
+          case 500:
+          case 502:
+          case 503:
+          case 504:
+          default:
+            setError(SAFE_ERRORS.serviceUnavailable);
+            break;
+        }
+        onLogin(false);
+        return;
       }
+
       const data = await response.json();
+
+      // Flujos posteriores a credenciales válidas (seguros de especificar)
+      if (data?.access === "denied") {
+        setError(SAFE_ERRORS.noAccess);
+        onLogin(false);
+        return;
+      }
+
       if (data.success) {
         const cedulaValue = data.empleado?.cedula;
         const finalRole = data.empleado?.rol || 'empleado';
 
         localStorage.setItem('employeeId', data.empleado.id_empleado);
-        if (cedulaValue) {
-          localStorage.setItem('cedula', cedulaValue);
-        }
+        if (cedulaValue) localStorage.setItem('cedula', cedulaValue);
         localStorage.setItem('userRole', finalRole);
+
         onLogin(true, finalRole);
         navigate("/LandingPage");
       } else {
-        setError(data.message || "Credenciales inválidas.");
+        // fallback seguro si el backend retorna success=false sin status HTTP de error
+        setError(SAFE_ERRORS.invalidCredentials);
         onLogin(false);
       }
     } catch (err) {
       console.error("Error en el login:", err);
-      setError("No se pudo conectar con el servidor.");
+      setError(SAFE_ERRORS.network);
       onLogin(false);
     }
   };
@@ -72,6 +118,7 @@ const Login = ({ onLogin }) => {
               value={cedula}
               onChange={(e) => setCedula(e.target.value)}
               placeholder="Ingrese su cédula"
+              autoComplete="username"
             />
           </div>
           <div className="login-password-container">
@@ -82,6 +129,7 @@ const Login = ({ onLogin }) => {
                 value={contrasena}
                 onChange={(e) => setContrasena(e.target.value)}
                 placeholder="Ingrese su contraseña"
+                autoComplete="current-password"
               />
               <button
                 type="button"
@@ -105,7 +153,11 @@ const Login = ({ onLogin }) => {
           <button type="button" className="login-button" onClick={handleLogin}>
             Iniciar Sesión
           </button>
-          {error && <div className="login-error-message">{error}</div>}
+          {error && (
+            <div className="login-error-message" role="alert" aria-live="assertive">
+              {error}
+            </div>
+          )}
         </form>
       </div>
     </div>
