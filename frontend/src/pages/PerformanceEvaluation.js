@@ -1192,7 +1192,7 @@ function PerformanceEvaluation() {
         padding: "clamp(1rem, 5vw, 2rem)" 
       }}>
         <h1 className="evaluacion-desempeno">EVALUACIÓN DE DESEMPEÑO</h1>
-        {isManagerView ? (
+        {isManagerView && (
           <div style={{
             background: 'linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)',
             border: '1px solid #bbdefb',
@@ -1205,20 +1205,6 @@ function PerformanceEvaluation() {
           }}>
             <strong>📋 Modo: Evaluación del Líder Inmediato</strong><br/>
             Está completando la evaluación del jefe directo. Esta es la etapa 2 del proceso de evaluación.
-          </div>
-        ) : (
-          <div style={{
-            background: 'linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%)',
-            border: '1px solid #c8e6c9',
-            borderRadius: '12px',
-            padding: '15px',
-            margin: '15px auto',
-            maxWidth: '600px',
-            fontSize: '14px',
-            color: '#2e7d32'
-          }}>
-            <strong>👤 Modo: Autoevaluación del Colaborador</strong><br/>
-            Está completando su autoevaluación. Esta es la etapa 1 del proceso de evaluación.
           </div>
         )}
         {isSaving && (
