@@ -4,7 +4,6 @@ import logoMeridian from '../assets/img/logo_meridian_blanco.png';
 import burgerMenu from '../assets/img/burger.png';
 
 function Header({ onLogout }) {
-  // Rol exclusivamente desde backend
   const [backendRole, setBackendRole] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [hasEvaluationToken, setHasEvaluationToken] = useState(false);
@@ -18,7 +17,13 @@ function Header({ onLogout }) {
     }
   }, []);
 
-  // Cargar rol real del backend
+  useEffect(() => {
+    const body = document.body;
+    const prev = body.style.overflow;
+    body.style.overflow = menuOpen ? 'hidden' : prev || '';
+    return () => { body.style.overflow = prev || ''; };
+  }, [menuOpen]);
+
   useEffect(() => {
     const loadRoleFromBackend = async () => {
       try {
@@ -30,265 +35,247 @@ function Header({ onLogout }) {
         const data = await resp.json();
         const role = (data && (data.data?.rol || data.rol)) || '';
         if (role) setBackendRole(String(role));
-      } catch (_) { /* noop */ }
+      } catch (_) {}
     };
     loadRoleFromBackend();
   }, []);
 
-  // Verificar si existe un token de evaluación válido
   useEffect(() => {
     const checkEvaluationToken = () => {
       const token = localStorage.getItem('evaluationToken');
       const tokenExpiry = localStorage.getItem('evaluationTokenExpiry');
-      
       if (token && tokenExpiry) {
-        const now = new Date().getTime();
-        const expiry = parseInt(tokenExpiry);
-        
-        if (now < expiry) {
-          setHasEvaluationToken(true);
-        } else {
-          // Token expirado, limpiar
+        const now = Date.now();
+        const expiry = parseInt(tokenExpiry, 10);
+        if (now < expiry) setHasEvaluationToken(true);
+        else {
           localStorage.removeItem('evaluationToken');
           localStorage.removeItem('evaluationTokenExpiry');
           setHasEvaluationToken(false);
         }
-      } else {
-        setHasEvaluationToken(false);
-      }
+      } else setHasEvaluationToken(false);
     };
-
     checkEvaluationToken();
-    
-    // Verificar cada vez que se abre el menú
-    if (menuOpen) {
-      checkEvaluationToken();
-    }
+    if (menuOpen) checkEvaluationToken();
   }, [menuOpen]);
 
-  // Consultar si el usuario actual tiene evaluaciones asignadas como evaluador HSEQ (en DB)
   useEffect(() => {
     const checkAssignedEvaluations = async () => {
       try {
         const currentUserId = localStorage.getItem('employeeId');
         const apiUrl = process.env.REACT_APP_API_BASE_URL;
-        if (!currentUserId || !apiUrl) {
-          setHasAssignedAsEvaluator(false);
-          return;
-        }
-        
-        // Verificar si tiene evaluaciones HSEQ asignadas para el período actual
+        if (!currentUserId || !apiUrl) { setHasAssignedAsEvaluator(false); return; }
         const periodo = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
         const resp = await fetch(`${apiUrl}/api/evaluations/hseq-evaluated/${currentUserId}/${periodo}`);
-        
-        if (!resp.ok) {
-          setHasAssignedAsEvaluator(false);
-          return;
-        }
-        
+        if (!resp.ok) { setHasAssignedAsEvaluator(false); return; }
         const data = await resp.json();
         const assigned = (data && (data.data || data.evaluaciones || data)) || [];
         setHasAssignedAsEvaluator(Array.isArray(assigned) && assigned.length > 0);
-      } catch (_) {
-        setHasAssignedAsEvaluator(false);
-      }
+      } catch (_) { setHasAssignedAsEvaluator(false); }
     };
-
     checkAssignedEvaluations();
-    if (menuOpen) {
-      checkAssignedEvaluations();
-    }
+    if (menuOpen) checkAssignedEvaluations();
   }, [menuOpen]);
 
-  // Consultar si el usuario actual tiene evaluaciones asignadas como jefe inmediato
   useEffect(() => {
     const checkAssignedAsBoss = async () => {
       try {
         const currentUserId = localStorage.getItem('employeeId');
         const apiUrl = process.env.REACT_APP_API_BASE_URL;
-        if (!currentUserId || !apiUrl) {
-          setHasAssignedAsBoss(false);
-          return;
-        }
-        
-        // Verificar si tiene evaluaciones asignadas como jefe
+        if (!currentUserId || !apiUrl) { setHasAssignedAsBoss(false); return; }
         const resp = await fetch(`${apiUrl}/api/evaluations/assigned/${currentUserId}`);
-        
-        if (!resp.ok) {
-          setHasAssignedAsBoss(false);
-          return;
-        }
-        
+        if (!resp.ok) { setHasAssignedAsBoss(false); return; }
         const data = await resp.json();
         const assigned = (data && (data.data || data.evaluaciones || data)) || [];
         setHasAssignedAsBoss(Array.isArray(assigned) && assigned.length > 0);
-      } catch (_) {
-        setHasAssignedAsBoss(false);
-      }
+      } catch (_) { setHasAssignedAsBoss(false); }
     };
-
     checkAssignedAsBoss();
-    if (menuOpen) {
-      checkAssignedAsBoss();
-    }
+    if (menuOpen) checkAssignedAsBoss();
   }, [menuOpen]);
 
-  const handleToggleMenu = () => {
-    setMenuOpen(prev => !prev);
-  };
+  const goToPage = (path) => { navigate(path); setMenuOpen(false); };
+  const handleLogout = () => { localStorage.clear(); onLogout?.(); navigate('/'); };
 
-  const handleLogout = () => {
-    // Limpiar todo el localStorage
-    localStorage.clear();
-    
-    if (onLogout) {
-      onLogout();
-    }
-    navigate('/');
-  };
-
-  // Función para redirigir a las distintas páginas
-  const goToPage = (path) => {
-    navigate(path);
-    setMenuOpen(false);
-  };
-
-  // Mostrar Evaluar Equipo si el usuario tiene evaluaciones asignadas como jefe o como evaluador HSEQ
   const canSeeTeamEvaluations = hasAssignedAsBoss || hasAssignedAsEvaluator;
-
-  // Rol efectivo exclusivamente desde backend
   const effectiveRole = String(backendRole || '');
   const isHseqRole = effectiveRole.toLowerCase() === 'hseq';
+  const isAdmin = effectiveRole.toLowerCase() === 'admin';
 
   return (
-    <header>
-      <nav className="navbar">
-        <div className="navbar-logo">
-          <Link to="/LandingPage">
-            <img src={logoMeridian} alt="Meridian Logo" className="navbar-logo-img" />
+    <header className="mc-header">
+      <nav className="mc-navbar" role="navigation" aria-label="Principal">
+        <div className="mc-left">
+          <Link to="/LandingPage" aria-label="Inicio" className="mc-logo-link">
+            <img src={logoMeridian} alt="Meridian Consulting" className="mc-logo" />
           </Link>
         </div>
-        <div className="menu-container">
-          {/* Botón rápido visible para ir al Panel de Administración solo si rol=admin */}
-          {String(effectiveRole).toLowerCase() === 'admin' && (
-            <button className="admin-quick-button" onClick={() => goToPage('/admin')}>
+
+        <div className="mc-right">
+          {isAdmin && (
+            <button className="mc-admin-quick" onClick={() => goToPage('/admin')}>
               Panel de Administración
             </button>
           )}
-          <div className="navbar-menu" onClick={handleToggleMenu}>
-            <img src={burgerMenu} alt="Menú" className="burger-icon" />
-          </div>
-          <div className={`side-menu ${menuOpen ? 'open' : ''}`}>
-            {/* Botón de evaluación solo si hay token válido */}
-            {hasEvaluationToken && (
-              <button className="menu-item evaluation" onClick={() => goToPage('/performance')}>
-                Evaluación de Desempeño
-              </button>
-            )}
-            
-            {/* Todos pueden ver resultados */}
-            <button className="menu-item" onClick={() => goToPage('/results')}>Resultados</button>
-            
-            {/* Todos pueden ver su perfil */}
-            <button className="menu-item" onClick={() => goToPage('/profile')}>Perfil</button>
-            
-            
-            {/* Mostrar Evaluar Equipo si rol es jefe/admin o si tiene asignaciones */}
-            {canSeeTeamEvaluations && (
-              <button className="menu-item" onClick={() => goToPage('/team-evaluations')}>
-                Evaluar Equipo
-              </button>
-            )}
 
-            {/* Solo HSEQ: acceso a evaluación HSEQ global */}
-            {isHseqRole && (
-              <button className="menu-item" onClick={() => goToPage('/hseq-evaluation')}>
-                Evaluar HSEQ
-              </button>
-            )}
-            
-            {/* Botón de administración solo se muestra como botón rápido superior para evitar duplicados */}
-            
-            <button className="menu-item logout" onClick={handleLogout}>
-              Cerrar Sesión
-            </button>
-          </div>
+          <ul className="mc-inline-links">
+            <li><button className="mc-link" onClick={() => goToPage('/results')}>Resultados</button></li>
+            <li className="mc-sep" aria-hidden="true" />
+            <li><button className="mc-link" onClick={() => goToPage('/profile')}>Perfil</button></li>
+            <li className="mc-sep" aria-hidden="true" />
+            <li><button className="mc-link" onClick={handleLogout}>Cerrar Sesión</button></li>
+          </ul>
+
+          <button
+            className="mc-burger"
+            aria-label="Abrir menú"
+            aria-expanded={menuOpen}
+            aria-controls="mc-drawer"
+            onClick={() => setMenuOpen(v => !v)}
+          >
+            <img src={burgerMenu} alt="" className="mc-burger-icon" />
+          </button>
         </div>
       </nav>
-        <style>{`
-          .navbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 18px;
-            background: linear-gradient(135deg, rgba(14,26,54,.92), rgba(31,59,115,.92));
-            border-bottom: 1px solid rgba(255,255,255,.10);
-            box-shadow: 0 6px 24px rgba(2,8,23,.25);
-            backdrop-filter: saturate(120%) blur(6px);
-            position: sticky; top: 0; z-index: 1000;
-          }
-          .navbar-logo-img {
-            height: 42px;
-            filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
-            transition: transform .2s ease, filter .2s ease;
-          }
-          .navbar-logo-img:hover {
-            transform: translateY(-1px) scale(1.02);
-            filter: drop-shadow(0 6px 14px rgba(0,0,0,.35));
-          }
-          .menu-container {
-            display: flex; align-items: center; gap: 10px;
-          }
-          .burger-icon {
-            width: 28px; height: 28px; cursor: pointer; transition: transform .15s ease;
-          }
-          .navbar-menu:hover .burger-icon {
-            transform: scale(1.05);
-          }
 
-          /* ===== BOTONES UNIFICADOS ===== */
-          .header-btn {
-            margin-right: 8px;
-            padding: 12px 14px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,.12);
-            background: rgba(255,255,255,.06);
-            color: #e5e7eb;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
-            text-align: left;
-            width: 100%;
-          }
-          .header-btn:hover {
-            background: rgba(255,255,255,.10);
-            box-shadow: 0 6px 16px rgba(0,0,0,.25);
-            transform: translateY(-1px);
-          }
+      <div className={`mc-backdrop ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(false)} />
 
-          /* Variantes */
-          .header-btn.logout { color: #f87171; }
-          .header-btn.evaluation { color: #facc15; }
+      <aside id="mc-drawer" className={`mc-drawer ${menuOpen ? 'open' : ''}`} role="menu">
+        {isAdmin && (
+          <button className="mc-menu-item mc-menu-accent" onClick={() => goToPage('/admin')}>
+            Panel de Administración
+          </button>
+        )}
+        {hasEvaluationToken && (
+          <button className="mc-menu-item mc-menu-eval" onClick={() => goToPage('/performance')}>
+            Evaluación de Desempeño
+          </button>
+        )}
+        <button className="mc-menu-item" onClick={() => goToPage('/results')}>Resultados</button>
+        <button className="mc-menu-item" onClick={() => goToPage('/profile')}>Perfil</button>
+        {canSeeTeamEvaluations && (
+          <button className="mc-menu-item" onClick={() => goToPage('/team-evaluations')}>
+            Evaluar Equipo
+          </button>
+        )}
+        {isHseqRole && (
+          <button className="mc-menu-item" onClick={() => goToPage('/hseq-evaluation')}>
+            Evaluar HSEQ
+          </button>
+        )}
+        <button className="mc-menu-item mc-menu-logout" onClick={handleLogout}>Cerrar Sesión</button>
+      </aside>
 
-          /* Menú lateral */
-          .side-menu {
-            position: fixed; top: 64px; right: 0; bottom: 0; width: min(320px, 86vw);
-            background: linear-gradient(180deg, rgba(14,26,54,.98), rgba(31,59,115,.98));
-            border-left: 1px solid rgba(255,255,255,.10);
-            box-shadow: -16px 0 30px rgba(2,8,23,.35);
-            transform: translateX(100%);
-            transition: transform .25s ease;
-            padding: 16px; display: flex; flex-direction: column; gap: 12px;
-          }
-          .side-menu.open { transform: translateX(0); }
+      <style>{`
+        :root{
+  --mc-bg-1: rgba(14,26,54,.92);
+  --mc-bg-2: rgba(31,59,115,.92);
+  --mc-border: rgba(255,255,255,.10);
+  --mc-text: #e5e7eb;
+  --mc-yellow:#facc15;
+  --mc-red:#f87171;
+}
 
-          @media (max-width: 640px) {
-            .navbar { padding: 10px 12px; }
-            .navbar-logo-img { height: 38px; }
-            .admin-quick-button { display: none; }
-          }
-    `}</style>
+/* Usa la MISMA fuente del resto de la página */
+.mc-header{ position:sticky; top:0; z-index:1000; font-family:"Libre Franklin", sans-serif; }
+.mc-header button,
+.mc-header a,
+.mc-header li,
+.mc-header * { font-family: inherit; }
 
+/* NAVBAR más alto y amplio */
+.mc-navbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: calc(16px + env(safe-area-inset-top)) 28px 16px 28px;
+  background: linear-gradient(135deg, var(--mc-bg-1), var(--mc-bg-2));
+  border-bottom: 1px solid var(--mc-border);
+  box-shadow: 0 8px 28px rgba(2,8,23,.28);
+  backdrop-filter: saturate(120%) blur(6px);
+}
+
+/* LOGO más grande */
+.mc-logo{ height:56px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
+  transition: transform .2s ease, filter .2s ease; }
+.mc-logo:hover{ transform: translateY(-1px) scale(1.02); filter: drop-shadow(0 6px 14px rgba(0,0,0,.35)); }
+
+.mc-right{ display:flex; align-items:center; gap:18px; }
+
+/* BOTÓN DORADO (usa peso 700 disponible) */
+.mc-admin-quick{
+  padding:14px 20px; border-radius:14px;
+  background:#d4b018; color:#0e1a36;
+  font-weight:700; font-size:16.5px; line-height:1;  /* <= peso 700 */
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 8px 18px rgba(0,0,0,.25);
+  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+  cursor:pointer;
+}
+.mc-admin-quick:hover{ transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 12px 26px rgba(0,0,0,.35); }
+
+/* LINKS de cabecera más grandes */
+.mc-inline-links{ display:none; list-style:none; margin:0; padding:0; align-items:center; gap:18px; }
+.mc-link{
+  background:transparent; border:0; color:var(--mc-text); cursor:pointer;
+  font-weight:700; font-size:18px; letter-spacing:.2px;   /* <= peso 700 */
+  padding:12px 12px; border-radius:12px;
+  transition: background .15s ease, transform .15s ease;
+}
+.mc-link:hover{ background: rgba(255,255,255,.08); transform: translateY(-1px); }
+.mc-sep{ width:1.5px; height:24px; background: rgba(255,255,255,.28); border-radius:1px; }
+
+/* HAMBURGUESA más grande */
+.mc-burger{ background:transparent; border:0; padding:10px; display:flex; }
+.mc-burger-icon{ width:34px; height:34px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
+
+/* BACKDROP */
+.mc-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,.4); opacity:0; visibility:hidden; pointer-events:none; transition:opacity .2s ease; }
+.mc-backdrop.open{ opacity:1; visibility:visible; pointer-events:auto; }
+
+/* DRAWER más ancho + elementos más grandes */
+.mc-drawer{
+  position:fixed; right:0; top:0;
+  width:min(90vw, 360px);
+  height:100svh; max-height:100dvh;
+  padding: calc(22px + env(safe-area-inset-top)) 22px 24px 22px;
+  background: linear-gradient(180deg, rgba(14,26,54,.98), rgba(31,59,115,.98));
+  border-left:1px solid var(--mc-border);
+  box-shadow:-20px 0 40px rgba(2,8,23,.35);
+  display:flex; flex-direction:column; gap:14px;
+  transform: translate3d(110%,0,0);
+  transition: transform .25s ease;
+  z-index:1001;
+}
+.mc-drawer.open{ transform: translate3d(0,0,0); }
+
+.mc-menu-item{
+  width:100%; text-align:left;
+  padding:16px 16px; border-radius:14px;
+  border:1px solid var(--mc-border);
+  background: rgba(255,255,255,.06);
+  color:var(--mc-text); font-weight:700; font-size:18px; /* <= peso 700 */
+  cursor:pointer;
+  transition: background .15s ease, transform .15s ease, box-shadow .15s ease;
+}
+.mc-menu-item:hover{ background: rgba(255,255,255,.10); transform: translateY(-1px); box-shadow: 0 8px 18px rgba(0,0,0,.25); }
+.mc-menu-eval{ color:var(--mc-yellow); }
+.mc-menu-logout{ color:var(--mc-red); }
+.mc-menu-accent{ color:#0e1a36; background: rgba(250,204,21,.92); }
+
+/* RESPONSIVE */
+@media (max-width:1023px){
+  .mc-admin-quick{ display:none; }
+  .mc-inline-links{ display:none; }
+  .mc-burger{ display:flex; }
+  .mc-logo{ height:48px; }
+  .mc-navbar{ padding: calc(14px + env(safe-area-inset-top)) 22px 14px 22px; }
+}
+@media (min-width:1024px){
+  .mc-inline-links{ display:flex; }
+  .mc-burger{ display:none; }
+  .mc-navbar{ padding: 18px 30px; }
+}
+
+      `}</style>
     </header>
   );
 }
