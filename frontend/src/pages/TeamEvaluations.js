@@ -5,6 +5,7 @@ import '../assets/css/TeamEvaluations.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useNotification } from '../components/NotificationSystem';
+import SEO from '../components/SEO';
 
 function TeamEvaluations({ onLogout, userRole }) {
   const navigate = useNavigate();
@@ -137,7 +138,30 @@ function TeamEvaluations({ onLogout, userRole }) {
   }
 
   return (
-    <div className="team-evaluations-page">
+    <>
+      <SEO 
+        title="Evaluaciones del Equipo - Gestión de Evaluaciones"
+        description="Gestiona las evaluaciones de tu equipo en el sistema de Meridian Consulting LTDA. Supervisa el progreso de evaluaciones, asigna tareas y revisa resultados del equipo."
+        keywords="evaluaciones equipo, gestión evaluaciones, supervisión equipo, evaluación jefe, Meridian Consulting, gestión del desempeño"
+        url="https://evaluacion.meridianltda.com/team-evaluations"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "Evaluaciones del Equipo - Gestión de Evaluaciones",
+          "description": "Página de gestión de evaluaciones del equipo en el sistema de Meridian Consulting LTDA",
+          "url": "https://evaluacion.meridianltda.com/team-evaluations",
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "Sistema de Evaluación de Desempeño - Meridian Consulting LTDA",
+            "url": "https://evaluacion.meridianltda.com"
+          },
+          "about": {
+            "@type": "Thing",
+            "name": "Gestión de Evaluaciones de Equipo"
+          }
+        }}
+      />
+      <div className="team-evaluations-page">
       <Header onLogout={onLogout} userRole={userRole} />
       
       <main className="team-evaluations-main">
@@ -218,7 +242,8 @@ function TeamEvaluations({ onLogout, userRole }) {
       </main>
       
       <Footer />
-    </div>
+      </div>
+    </>
   );
 }
 

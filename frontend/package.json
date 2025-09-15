@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@dr.pogodin/react-helmet": "^3.0.4",
     "@react-pdf/renderer": "^4.3.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
@@ -25,7 +26,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "update-sitemap": "node scripts/updateSitemap.js",
+    "seo-build": "npm run update-sitemap && npm run build",
+    "postbuild": "npm run update-sitemap"
   },
   "eslintConfig": {
     "extends": [

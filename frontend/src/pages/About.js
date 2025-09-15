@@ -2,10 +2,35 @@ import React from 'react';
 import '../assets/css/Styles1.css'; // Archivo de estilos exclusivos para la página Acerca de
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 
 function About({ onLogout }) {
   return (
-    <div className="about-page-unique">
+    <>
+      <SEO 
+        title="Acerca de Nosotros - Meridian Consulting LTDA"
+        description="Conoce más sobre Meridian Consulting LTDA, nuestra misión, visión y compromiso con el desarrollo del talento humano a través de sistemas de evaluación de desempeño."
+        keywords="Meridian Consulting, empresa, misión, visión, valores, desarrollo talento humano, evaluación desempeño, Colombia"
+        url="https://evaluacion.meridianltda.com/about"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          "name": "Acerca de Nosotros - Meridian Consulting LTDA",
+          "description": "Información sobre Meridian Consulting LTDA y nuestro sistema de evaluación de desempeño",
+          "url": "https://evaluacion.meridianltda.com/about",
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "Sistema de Evaluación de Desempeño - Meridian Consulting LTDA",
+            "url": "https://evaluacion.meridianltda.com"
+          },
+          "mainEntity": {
+            "@type": "Organization",
+            "name": "Meridian Consulting LTDA",
+            "url": "https://meridianltda.com"
+          }
+        }}
+      />
+      <div className="about-page-unique">
       <Header onLogout={onLogout} />
       
       <main className="about-main-unique">
@@ -45,7 +70,8 @@ function About({ onLogout }) {
       </main>
       
       <Footer />
-    </div>
+      </div>
+    </>
   );
 }
 

@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Hseq from '../components/hseq';
 import { useNotification } from '../components/NotificationSystem';
+import SEO from '../components/SEO';
 
 function HseqEvaluation({ onLogout, userRole }) {
   const { success, error: showError, warning } = useNotification();
@@ -215,7 +216,30 @@ function HseqEvaluation({ onLogout, userRole }) {
   };
 
   return (
-    <div className="hseq-evaluation-page">
+    <>
+      <SEO 
+        title="Evaluación HSEQ - Seguridad, Salud y Medio Ambiente"
+        description="Sistema de evaluación HSEQ (Salud, Seguridad, Medio Ambiente y Calidad) de Meridian Consulting LTDA. Evalúa el cumplimiento de estándares de seguridad y calidad en el trabajo."
+        keywords="evaluación HSEQ, seguridad laboral, salud ocupacional, medio ambiente, calidad, Meridian Consulting, evaluación seguridad"
+        url="https://evaluacion.meridianltda.com/hseq-evaluation"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "Evaluación HSEQ - Seguridad, Salud y Medio Ambiente",
+          "description": "Sistema de evaluación HSEQ para Meridian Consulting LTDA",
+          "url": "https://evaluacion.meridianltda.com/hseq-evaluation",
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "Sistema de Evaluación de Desempeño - Meridian Consulting LTDA",
+            "url": "https://evaluacion.meridianltda.com"
+          },
+          "about": {
+            "@type": "Thing",
+            "name": "Evaluación HSEQ (Salud, Seguridad, Medio Ambiente y Calidad)"
+          }
+        }}
+      />
+      <div className="hseq-evaluation-page">
       <Header onLogout={onLogout} userRole={userRole} />
       <main className="evaluation-container-unique" style={{ padding: 'clamp(1rem, 5vw, 2rem)', flex: 1 }}>
         <style>{`
@@ -553,7 +577,8 @@ function HseqEvaluation({ onLogout, userRole }) {
         </div>
       </main>
       <Footer />
-    </div>
+      </div>
+    </>
   );
 }
 

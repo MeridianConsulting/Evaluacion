@@ -6,6 +6,7 @@ import SignatureUploader from '../components/SignatureUploader';
 import { useNotification } from '../components/NotificationSystem';
 import CompletionCelebration from '../components/CompletionCelebration';
 import CompetenciasTable from "../components/CompetenciasTable";
+import SEO from '../components/SEO';
 
 
 function PerformanceEvaluation() {
@@ -1179,7 +1180,30 @@ function PerformanceEvaluation() {
   }, [showAlert]);
 
   return (
-    <div className="evaluation-page-unique">
+    <>
+      <SEO 
+        title="Evaluación de Desempeño - Autoevaluación del Colaborador"
+        description="Completa tu autoevaluación de desempeño en el sistema de Meridian Consulting LTDA. Evalúa tus competencias, logros y áreas de mejora para tu desarrollo profesional."
+        keywords="autoevaluación, evaluación de desempeño, competencias laborales, desarrollo profesional, Meridian Consulting, evaluación 360"
+        url="https://evaluacion.meridianltda.com/performance"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "Evaluación de Desempeño - Autoevaluación del Colaborador",
+          "description": "Sistema de autoevaluación de desempeño para colaboradores de Meridian Consulting LTDA",
+          "url": "https://evaluacion.meridianltda.com/performance",
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "Sistema de Evaluación de Desempeño - Meridian Consulting LTDA",
+            "url": "https://evaluacion.meridianltda.com"
+          },
+          "about": {
+            "@type": "Thing",
+            "name": "Evaluación de Desempeño Laboral"
+          }
+        }}
+      />
+      <div className="evaluation-page-unique">
       <style>{`
         @keyframes spin {
           0% { transform: rotate(0deg); }
@@ -1894,7 +1918,8 @@ function PerformanceEvaluation() {
           }
         }}
       />
-    </div>
+      </div>
+    </>
   );
 };
 

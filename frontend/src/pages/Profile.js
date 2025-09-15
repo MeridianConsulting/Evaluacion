@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../assets/css/Styles1.css'; 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 
 const Profile = ({ onLogout, userRole }) => {
   const [employee, setEmployee] = useState(null);
@@ -65,7 +66,26 @@ const Profile = ({ onLogout, userRole }) => {
   }, []);
 
   return (
-    <div className="profile-page-unique">
+    <>
+      <SEO 
+        title="Perfil de Usuario - Sistema de Evaluación"
+        description="Gestiona tu perfil de usuario en el sistema de evaluación de desempeño de Meridian Consulting LTDA. Actualiza tu información personal y cambia tu contraseña."
+        keywords="perfil usuario, información personal, cambio contraseña, configuración cuenta, Meridian Consulting"
+        url="https://evaluacion.meridianltda.com/profile"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "Perfil de Usuario - Sistema de Evaluación",
+          "description": "Página de perfil de usuario del sistema de evaluación de desempeño de Meridian Consulting LTDA",
+          "url": "https://evaluacion.meridianltda.com/profile",
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "Sistema de Evaluación de Desempeño - Meridian Consulting LTDA",
+            "url": "https://evaluacion.meridianltda.com"
+          }
+        }}
+      />
+      <div className="profile-page-unique">
       <Header onLogout={onLogout} userRole={userRole} />
 
       <style>{`
@@ -224,7 +244,8 @@ const Profile = ({ onLogout, userRole }) => {
       </div>
 
       <Footer />
-    </div>
+      </div>
+    </>
   );
 };
 

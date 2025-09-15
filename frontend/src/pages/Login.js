@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import '../assets/css/Styles1.css';
 import logoMeridian from "../assets/img/logo_meridian_blanco.png";
+import SEO from '../components/SEO';
 
 // Mensajes de error seguros que no comprometen la seguridad
 const SAFE_ERRORS = {
@@ -102,7 +103,26 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className="login-page">
+    <>
+      <SEO 
+        title="Iniciar Sesión - Sistema de Evaluación de Desempeño"
+        description="Accede al sistema de evaluación de desempeño de Meridian Consulting LTDA. Inicia sesión con tu cédula y contraseña para comenzar tu evaluación."
+        keywords="login, iniciar sesión, evaluación de desempeño, Meridian Consulting, autenticación"
+        url="https://evaluacion.meridianltda.com/"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "Iniciar Sesión - Sistema de Evaluación de Desempeño",
+          "description": "Página de inicio de sesión del sistema de evaluación de desempeño de Meridian Consulting LTDA",
+          "url": "https://evaluacion.meridianltda.com/",
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "Sistema de Evaluación de Desempeño - Meridian Consulting LTDA",
+            "url": "https://evaluacion.meridianltda.com"
+          }
+        }}
+      />
+      <div className="login-page">
       <div className="login-logo">
         <img src={logoMeridian} alt="Logo Meridian" className="login-logo-img" />
       </div>
@@ -160,7 +180,8 @@ const Login = ({ onLogin }) => {
           )}
         </form>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

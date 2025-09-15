@@ -4,6 +4,7 @@ import './CRUD.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useNotification } from '../components/NotificationSystem';
+import SEO from '../components/SEO';
 
 function CargosCRUD({ onLogout }) {
   const { success, error: showError } = useNotification();
@@ -222,7 +223,30 @@ function CargosCRUD({ onLogout }) {
   }
 
   return (
-    <div className="crud-container">
+    <>
+      <SEO 
+        title="Gestión de Cargos - Panel de Administración"
+        description="Gestiona los cargos y posiciones en el sistema de evaluación de desempeño de Meridian Consulting LTDA. Administra la estructura organizacional y roles del personal."
+        keywords="gestión cargos, administración posiciones, estructura organizacional, roles personal, Meridian Consulting, evaluación desempeño"
+        url="https://evaluacion.meridianltda.com/admin/cargos"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "Gestión de Cargos - Panel de Administración",
+          "description": "Página de gestión de cargos del sistema de evaluación de desempeño",
+          "url": "https://evaluacion.meridianltda.com/admin/cargos",
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "Sistema de Evaluación de Desempeño - Meridian Consulting LTDA",
+            "url": "https://evaluacion.meridianltda.com"
+          },
+          "about": {
+            "@type": "Thing",
+            "name": "Gestión de Cargos y Posiciones"
+          }
+        }}
+      />
+      <div className="crud-container">
       <Header onLogout={onLogout} />
       
       <main className="crud-main">
@@ -339,7 +363,8 @@ function CargosCRUD({ onLogout }) {
       </main>
 
       <Footer />
-    </div>
+      </div>
+    </>
   );
 }
 

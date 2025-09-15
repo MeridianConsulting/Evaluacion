@@ -2,10 +2,32 @@ import React from 'react';
 import '../assets/css/Styles1.css'; // Archivo de estilos exclusivo para esta página
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 
 function Services({ onLogout }) {
   return (
-    <div className="services-page-unique">
+    <>
+      <SEO 
+        title="Servicios - Meridian Consulting LTDA"
+        description="Descubre los servicios de consultoría de Meridian Consulting LTDA especializados en hidrocarburos, evaluación de desempeño y desarrollo del talento humano en Colombia."
+        keywords="servicios consultoría, hidrocarburos, evaluación desempeño, desarrollo talento humano, Meridian Consulting, Colombia, consultoría especializada"
+        url="https://evaluacion.meridianltda.com/services"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "name": "Servicios de Consultoría - Meridian Consulting LTDA",
+          "description": "Servicios especializados en hidrocarburos y evaluación de desempeño",
+          "url": "https://evaluacion.meridianltda.com/services",
+          "provider": {
+            "@type": "Organization",
+            "name": "Meridian Consulting LTDA",
+            "url": "https://meridianltda.com"
+          },
+          "serviceType": "Consultoría en Hidrocarburos y Evaluación de Desempeño",
+          "areaServed": "Colombia"
+        }}
+      />
+      <div className="services-page-unique">
       <Header onLogout={onLogout} />
 
       <main className="services-main-unique">
@@ -61,7 +83,8 @@ function Services({ onLogout }) {
       </main>
 
       <Footer />
-    </div>
+      </div>
+    </>
   );
 }
 

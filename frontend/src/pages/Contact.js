@@ -2,10 +2,35 @@ import React from 'react';
 import '../assets/css/Styles1.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 
 function Contact({ onLogout }) {
   return (
-    <div className="contact-page-unique">
+    <>
+      <SEO 
+        title="Contacto - Meridian Consulting LTDA"
+        description="Contacta con Meridian Consulting LTDA para consultas sobre nuestro sistema de evaluación de desempeño. Información de contacto, ubicación y soporte técnico."
+        keywords="contacto, Meridian Consulting, soporte técnico, consultas, evaluación desempeño, Colombia, hidrocarburos"
+        url="https://evaluacion.meridianltda.com/contact"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          "name": "Contacto - Meridian Consulting LTDA",
+          "description": "Página de contacto de Meridian Consulting LTDA",
+          "url": "https://evaluacion.meridianltda.com/contact",
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "Sistema de Evaluación de Desempeño - Meridian Consulting LTDA",
+            "url": "https://evaluacion.meridianltda.com"
+          },
+          "mainEntity": {
+            "@type": "Organization",
+            "name": "Meridian Consulting LTDA",
+            "url": "https://meridianltda.com"
+          }
+        }}
+      />
+      <div className="contact-page-unique">
       <Header onLogout={onLogout} />
 
       <main className="contact-main-unique">
@@ -43,7 +68,8 @@ function Contact({ onLogout }) {
       </main>
 
       <Footer />
-    </div>
+      </div>
+    </>
   );
 }
 

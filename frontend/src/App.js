@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { HelmetProvider } from "@dr.pogodin/react-helmet";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Contact from "./pages/Contact";
@@ -71,9 +72,10 @@ function App() {
   }, [isAuthenticated, userRole]);
 
   return (
-    <NotificationProvider>
-      <Router>
-        <Routes>
+    <HelmetProvider>
+      <NotificationProvider>
+        <Router>
+          <Routes>
         {/* Ruta de login pública */}
         <Route
           path="/"
@@ -255,9 +257,10 @@ function App() {
             )
           }
         />
-        </Routes>
-      </Router>
-    </NotificationProvider>
+          </Routes>
+        </Router>
+      </NotificationProvider>
+    </HelmetProvider>
   );
 }
 

@@ -4,6 +4,7 @@ import './CRUD.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useNotification } from '../components/NotificationSystem';
+import SEO from '../components/SEO';
 
 function EmpleadosCRUD({ onLogout, userRole }) {
   const { success, error: showError } = useNotification();
@@ -264,7 +265,30 @@ function EmpleadosCRUD({ onLogout, userRole }) {
   }
 
   return (
-    <div className="crud-container">
+    <>
+      <SEO 
+        title="Gestión de Empleados - Panel de Administración"
+        description="Gestiona la información de empleados en el sistema de evaluación de desempeño de Meridian Consulting LTDA. Agrega, edita y administra los datos del personal."
+        keywords="gestión empleados, administración personal, CRUD empleados, Meridian Consulting, evaluación desempeño, administración sistema"
+        url="https://evaluacion.meridianltda.com/admin/empleados"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "Gestión de Empleados - Panel de Administración",
+          "description": "Página de gestión de empleados del sistema de evaluación de desempeño",
+          "url": "https://evaluacion.meridianltda.com/admin/empleados",
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "Sistema de Evaluación de Desempeño - Meridian Consulting LTDA",
+            "url": "https://evaluacion.meridianltda.com"
+          },
+          "about": {
+            "@type": "Thing",
+            "name": "Gestión de Empleados"
+          }
+        }}
+      />
+      <div className="crud-container">
       <Header onLogout={onLogout} userRole={userRole} />
       
       <main className="crud-main">
@@ -515,7 +539,8 @@ function EmpleadosCRUD({ onLogout, userRole }) {
       </main>
 
       <Footer />
-    </div>
+      </div>
+    </>
   );
 }
 

@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import SEO from '../components/SEO';
 
 function DashboardSelector({ onLogout }) {
   const navigate = useNavigate();
@@ -217,7 +218,30 @@ function DashboardSelector({ onLogout }) {
   };
 
   return (
-    <div className="admin-dashboard">
+    <>
+      <SEO 
+        title="Panel de Administración - Sistema de Evaluación"
+        description="Panel de administración del sistema de evaluación de desempeño de Meridian Consulting LTDA. Gestiona empleados, cargos y configuraciones del sistema."
+        keywords="panel administración, gestión empleados, gestión cargos, administración sistema, Meridian Consulting, evaluación desempeño"
+        url="https://evaluacion.meridianltda.com/admin"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "Panel de Administración - Sistema de Evaluación",
+          "description": "Panel de administración del sistema de evaluación de desempeño",
+          "url": "https://evaluacion.meridianltda.com/admin",
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "Sistema de Evaluación de Desempeño - Meridian Consulting LTDA",
+            "url": "https://evaluacion.meridianltda.com"
+          },
+          "about": {
+            "@type": "Thing",
+            "name": "Administración de Sistema de Evaluación"
+          }
+        }}
+      />
+      <div className="admin-dashboard">
       <Header onLogout={onLogout} />
       
       <main className="admin-main">
@@ -266,7 +290,8 @@ function DashboardSelector({ onLogout }) {
       </main>
 
       <Footer />
-    </div>
+      </div>
+    </>
   );
 }
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../assets/css/Styles1.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 
 function LandingPage({ onLogout }) {
   const [showModal, setShowModal] = useState(false);
@@ -96,7 +97,26 @@ function LandingPage({ onLogout }) {
   }, [showModal, countdown]);
 
   return (
-    <div className="landing-page">
+    <>
+      <SEO 
+        title="Dashboard Principal - Sistema de Evaluación de Desempeño"
+        description="Panel principal del sistema de evaluación de desempeño de Meridian Consulting LTDA. Accede a tus evaluaciones, resultados y herramientas de desarrollo profesional."
+        keywords="dashboard, evaluación de desempeño, panel principal, Meridian Consulting, desarrollo profesional"
+        url="https://evaluacion.meridianltda.com/LandingPage"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "Dashboard Principal - Sistema de Evaluación de Desempeño",
+          "description": "Panel principal del sistema de evaluación de desempeño de Meridian Consulting LTDA",
+          "url": "https://evaluacion.meridianltda.com/LandingPage",
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "Sistema de Evaluación de Desempeño - Meridian Consulting LTDA",
+            "url": "https://evaluacion.meridianltda.com"
+          }
+        }}
+      />
+      <div className="landing-page">
       <style>{`
         :root {
           --bg-1: #0e1a36;
@@ -929,7 +949,8 @@ function LandingPage({ onLogout }) {
       )}
 
       <Footer />
-    </div>
+      </div>
+    </>
   );
 }
 

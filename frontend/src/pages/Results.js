@@ -6,6 +6,7 @@ import { Document, Page, Text, View, StyleSheet, pdf, Image } from '@react-pdf/r
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { useNotification } from '../components/NotificationSystem';
+import SEO from '../components/SEO';
 
 // ==== Helpers UI (KPI, Collapsible, Timeline) ====
 const KPI = ({ label, value, chip }) => (
@@ -2002,7 +2003,30 @@ const generateConsolidatedExcel = async (evaluacion) => {
   };
 
   return (
-    <div className="results-page">
+    <>
+      <SEO 
+        title="Resultados de Evaluación de Desempeño"
+        description="Consulta tus resultados de evaluación de desempeño en Meridian Consulting LTDA. Visualiza tu progreso, competencias evaluadas y métricas de desarrollo profesional."
+        keywords="resultados evaluación, desempeño laboral, métricas profesionales, competencias evaluadas, progreso profesional, Meridian Consulting"
+        url="https://evaluacion.meridianltda.com/results"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "Resultados de Evaluación de Desempeño",
+          "description": "Página de resultados del sistema de evaluación de desempeño de Meridian Consulting LTDA",
+          "url": "https://evaluacion.meridianltda.com/results",
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "Sistema de Evaluación de Desempeño - Meridian Consulting LTDA",
+            "url": "https://evaluacion.meridianltda.com"
+          },
+          "about": {
+            "@type": "Thing",
+            "name": "Resultados de Evaluación de Desempeño Laboral"
+          }
+        }}
+      />
+      <div className="results-page">
       <style>{`
         .estado-badge { padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
         .estado-completada { background-color: #d4edda; color: #155724; }
@@ -2825,7 +2849,8 @@ const generateConsolidatedExcel = async (evaluacion) => {
       </main>
 
       <Footer />
-    </div>
+      </div>
+    </>
   );
 }
 
