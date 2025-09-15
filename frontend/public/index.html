@@ -1,20 +1,115 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
+    <!-- Meta tags básicos -->
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
+    <!-- SEO Meta Tags -->
+    <title>Sistema de Evaluación de Desempeño | Meridian Consulting LTDA</title>
+    <meta name="description" content="Sistema integral de evaluación de desempeño para empleados. Autoevaluación, evaluación del jefe directo y evaluación HSEQ. Herramienta profesional para el desarrollo del talento humano en Meridian Consulting LTDA." />
+    <meta name="keywords" content="evaluación de desempeño, recursos humanos, autoevaluación, evaluación 360, desarrollo profesional, talento humano, Meridian Consulting, gestión del desempeño, competencias laborales" />
+    <meta name="author" content="Meridian Consulting LTDA" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="Spanish" />
+    <meta name="revisit-after" content="7 days" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://evaluacion.meridianltda.com/" />
+    <meta property="og:title" content="Sistema de Evaluación de Desempeño | Meridian Consulting LTDA" />
+    <meta property="og:description" content="Sistema integral de evaluación de desempeño para empleados. Autoevaluación, evaluación del jefe directo y evaluación HSEQ." />
+    <meta property="og:image" content="https://evaluacion.meridianltda.com/logo192.png" />
+    <meta property="og:site_name" content="Meridian Consulting LTDA" />
+    <meta property="og:locale" content="es_CO" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://evaluacion.meridianltda.com/" />
+    <meta property="twitter:title" content="Sistema de Evaluación de Desempeño | Meridian Consulting LTDA" />
+    <meta property="twitter:description" content="Sistema integral de evaluación de desempeño para empleados. Autoevaluación, evaluación del jefe directo y evaluación HSEQ." />
+    <meta property="twitter:image" content="https://evaluacion.meridianltda.com/logo192.png" />
+    
+    <!-- Favicon y iconos -->
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon.ico" />
+    
+    <!-- Theme y colores -->
+    <meta name="theme-color" content="#1F3B73" />
+    <meta name="msapplication-TileColor" content="#1F3B73" />
+    <meta name="msapplication-config" content="%PUBLIC_URL%/browserconfig.xml" />
+    
+    <!-- Manifest -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <title>Meridian Consulting LTDA</title>
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://evaluacion.meridianltda.com/" />
+    
+    <!-- Preconnect para optimización -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Sistema de Evaluación de Desempeño",
+      "description": "Sistema integral de evaluación de desempeño para empleados de Meridian Consulting LTDA",
+      "url": "https://evaluacion.meridianltda.com",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "COP"
+      },
+      "provider": {
+        "@type": "Organization",
+        "name": "Meridian Consulting LTDA",
+        "url": "https://meridianltda.com",
+        "logo": "https://evaluacion.meridianltda.com/logo192.png"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "José Mateo López Cifuentes",
+        "email": "josemateolopezcifuentes@gmail.com"
+      }
+    }
+    </script>
+    
+    <!-- DNS Prefetch -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
   </head>
   <body>
-    <noscript>Developed by José Mateo López Cifuentes - Email: josemateolopezcifuentes@gmail.com - LinkedIn: José Mateo López Cifuentes (Visit: https://shorturl.at/Sx0PY)</noscript>
+    <!-- Fallback para usuarios sin JavaScript -->
+    <noscript>
+      <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
+        <h1>Sistema de Evaluación de Desempeño</h1>
+        <p>Para utilizar este sistema, necesitas habilitar JavaScript en tu navegador.</p>
+        <p><strong>Desarrollado por:</strong> José Mateo López Cifuentes</p>
+        <p><strong>Email:</strong> josemateolopezcifuentes@gmail.com</p>
+        <p><strong>LinkedIn:</strong> <a href="https://shorturl.at/Sx0PY" target="_blank">José Mateo López Cifuentes</a></p>
+        <p><strong>Empresa:</strong> Meridian Consulting LTDA</p>
+      </div>
+    </noscript>
+    
+    <!-- Root de React -->
     <div id="root"></div>
+    
+    <!-- Google Analytics (opcional - descomenta si tienes GA) -->
+    <!--
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+    -->
   </body>
 </html>

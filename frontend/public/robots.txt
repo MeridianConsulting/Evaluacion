@@ -1,3 +1,25 @@
-# https://www.robotstxt.org/robotstxt.html
+# Robots.txt para evaluacion.meridianltda.com
+# Sistema de Evaluación de Desempeño - Meridian Consulting LTDA
+
 User-agent: *
-Disallow:
+Allow: /
+
+# Permitir acceso a archivos estáticos importantes
+Allow: /static/
+Allow: /favicon.ico
+Allow: /logo192.png
+Allow: /manifest.json
+
+# Bloquear acceso a archivos sensibles
+Disallow: /api/
+Disallow: /admin/
+Disallow: /node_modules/
+Disallow: /.env
+Disallow: /package.json
+Disallow: /package-lock.json
+
+# Sitemap
+Sitemap: https://evaluacion.meridianltda.com/sitemap.xml
+
+# Crawl-delay para ser amigable con el servidor
+Crawl-delay: 1
