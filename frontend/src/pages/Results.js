@@ -2318,8 +2318,7 @@ const generateConsolidatedExcel = async (evaluacion) => {
           .filters-left label{ flex:1; min-width:140px; }
           .filters-left select, .filters-left input{ width:100%; min-width:0; }
 
-          /* HSEQ: dos columnas */
-          .results-hseq-container{ grid-template-columns: 1fr 1fr; }
+          /* HSEQ: dos columnas (ahora manejado por la regla general) */
 
           /* Textos informativos a una columna */
           .results-info > div{ grid-template-columns:1fr; }
@@ -2379,6 +2378,49 @@ const generateConsolidatedExcel = async (evaluacion) => {
 
           .progreso-evaluacion{ height:6px; }
         }
+
+        /* ===== Interpretación de resultados (responsive real) ===== */
+        .results-info-grid{
+          display:grid;
+          grid-template-columns: repeat(2, minmax(260px, 1fr));
+          gap:20px;
+          margin-top:15px;
+        }
+        /* desktop ancho (opcional: 3 columnas) */
+        @media (min-width: 1280px){
+          .results-info-grid{ grid-template-columns: repeat(3, minmax(260px, 1fr)); }
+        }
+        /* tablet */
+        @media (max-width: 1024px){
+          .results-info-grid{ grid-template-columns: 1fr 1fr; }
+        }
+        /* móvil */
+        @media (max-width: 768px){
+          .results-info-grid{ grid-template-columns: 1fr; }
+        }
+
+        /* Puntos de color (bullets) en la leyenda */
+        .dot{
+          width:10px; height:10px; border-radius:999px;
+          display:inline-block; margin-right:8px; vertical-align:middle;
+        }
+        .calificacion-excelente.dot{ background:#1e7e34; }
+        .calificacion-buena.dot{ background:#1976D2; }
+        .calificacion-satisfactoria.dot{ background:#1d4ed8; }
+        .calificacion-regular.dot{ background:#b45309; }
+        .calificacion-baja.dot{ background:#b91c1c; }
+
+        /* HSEQ: columnas auto (1–3 según ancho) */
+        .results-hseq-container{
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+          gap: 20px;
+          align-items: stretch;   /* que todas las tarjetas llenen el alto del track */
+        }
+
+        /* asegura que la tarjeta no se "encoja" dentro del grid */
+        .card-collapsible{ width:100%; min-width:0; }
+        .hseq-evaluation-card{ width:100%; }
 
       `}</style>
 
@@ -2753,7 +2795,7 @@ const generateConsolidatedExcel = async (evaluacion) => {
 
               <div className="results-info">
                 <h3>Interpretación de resultados</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '15px' }}>
+                <div className="results-info-grid">
                   <div>
                     <h4 style={{ color: '#2c5aa0', marginBottom: '10px' }}>Calificación Final (Promedio Ponderado)</h4>
                     <ul>

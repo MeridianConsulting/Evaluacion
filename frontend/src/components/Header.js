@@ -177,7 +177,7 @@ function Header({ onLogout }) {
 }
 
 /* Usa la MISMA fuente del resto de la página */
-.mc-header{ position:sticky; top:0; z-index:1000; font-family:"Libre Franklin", sans-serif; }
+.mc-header{ position:sticky; top:0; z-index:99999; font-family:"Libre Franklin", sans-serif; }
 .mc-header button,
 .mc-header a,
 .mc-header li,
@@ -243,7 +243,7 @@ function Header({ onLogout }) {
   display:flex; flex-direction:column; gap:14px;
   transform: translate3d(110%,0,0);
   transition: transform .25s ease;
-  z-index:1001;
+  z-index:99998;
 }
 .mc-drawer.open{ transform: translate3d(0,0,0); }
 

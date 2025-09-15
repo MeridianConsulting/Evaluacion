@@ -234,7 +234,7 @@ function LandingPage({ onLogout }) {
           left: 0;
           right: 0;
           margin: 0 auto;
-          z-index: 10000;
+          z-index: 100000;
           display: grid;
           grid-template-columns: auto 1fr auto auto; /* última columna para el botón de cierre */
           align-items: center;
