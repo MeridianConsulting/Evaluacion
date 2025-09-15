@@ -2300,6 +2300,86 @@ const generateConsolidatedExcel = async (evaluacion) => {
 
         /* Small tweaks existentes */
         .action-buttons{ gap:6px }
+
+                /* ====== Responsive extras (NO cambian desktop) ====== */
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* >= tablet pequeña / <= 1024px */
+        @media (max-width: 1024px) {
+          .results-container{ max-width:100%; padding:0 16px; }
+          .results-title{ font-size:22px; line-height:1.2; }
+
+          /* KPIs de 4 → 2 columnas */
+          .kpi-grid{ grid-template-columns: repeat(2, minmax(160px,1fr)); gap:12px; }
+
+          /* Filtros en columna */
+          .filters-bar{ flex-direction:column; align-items:stretch; gap:10px; }
+          .filters-left{ width:100%; gap:10px; }
+          .filters-left label{ flex:1; min-width:140px; }
+          .filters-left select, .filters-left input{ width:100%; min-width:0; }
+
+          /* HSEQ: dos columnas */
+          .results-hseq-container{ grid-template-columns: 1fr 1fr; }
+
+          /* Textos informativos a una columna */
+          .results-info > div{ grid-template-columns:1fr; }
+        }
+
+        /* móviles medianos / <= 768px */
+        @media (max-width: 768px) {
+          .results-main{ padding-top:8px; }
+          .results-title{ font-size:20px; }
+
+          /* KPIs: 1 columna, tamaños más amigables */
+          .kpi-card{ padding:14px; }
+          .kpi-value{ font-size:32px; }
+          .kpi-label{ font-size:11px; }
+          .kpi-grid{ grid-template-columns: 1fr; }
+
+          /* Tabla: scroll horizontal (sin romper layout) */
+          .results-table-container{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+          .results-table{ min-width: 760px; } /* conserva estructura y header sticky */
+
+          /* Botones de acción: ocupar ancho disponible */
+          .action-buttons{ width:100%; }
+          .action-buttons .download-btn{ flex:1; min-width:120px; }
+
+          /* Filtros apilados 100% */
+          .filters-left{ flex-direction:column; align-items:stretch; }
+          .filters-left label{ width:100%; }
+          .filters-search input{ width:100%; }
+
+          /* Tarjetas HSEQ y badges */
+          .hseq-card-header h3{ font-size:16px; }
+          .hseq-period-badge{ font-size:11px; padding:4px 10px; }
+          .hseq-download-buttons{ flex-direction:column; }
+          .hseq-download-btn{ width:100%; justify-content:center; }
+
+          /* Timeline compacto */
+          .timeline3{ flex-wrap:wrap; gap:6px; }
+          .tl-line{ width:36px; }
+        }
+
+        /* móviles chicos / <= 480px */
+        @media (max-width: 480px) {
+          .results-container{ padding:0 12px; }
+          .results-title{ font-size:18px; }
+
+          .kpi-card{ padding:12px; }
+          .kpi-value{ font-size:28px; }
+
+          .collapsible-head{ padding:10px 12px; }
+          .collapsible-body{ padding:12px; }
+
+          .filters-bar{ padding:10px; }
+          .results-section-title{ font-size:20px; }
+
+          .hseq-evaluation-card{ padding:16px; }
+          .hseq-info-grid{ grid-template-columns:1fr; }
+
+          .progreso-evaluacion{ height:6px; }
+        }
+
       `}</style>
 
       <Header onLogout={onLogout} userRole={userRole} />
