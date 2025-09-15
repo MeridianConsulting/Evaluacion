@@ -1055,6 +1055,57 @@ class EvaluationControllerNativo {
     }
 
     /**
+     * Obtiene datos HSEQ de las tablas hseq_evaluacion y hseq_evaluacion_items
+     */
+    private function getHseqDataFromHseqTables($evaluationId, $employeeId, $periodoEvaluacion) {
+        try {
+            // Buscar la evaluación HSEQ correspondiente al empleado (primero por período exacto, luego la más reciente)
+            $sql = "
+                SELECT he.id_hseq_evaluacion, he.promedio_hseq, he.estado, he.fecha_evaluacion, he.periodo_evaluacion
+                FROM hseq_evaluacion he
+                WHERE he.id_empleado = ?
+                ORDER BY 
+                    CASE WHEN he.periodo_evaluacion = ? THEN 0 ELSE 1 END,
+                    he.fecha_evaluacion DESC
+                LIMIT 1
+            ";
+            $stmt = $this->db->prepare($sql);
+            if (!$stmt) {
+                return [];
+            }
+            $stmt->bind_param('is', $employeeId, $periodoEvaluacion);
+            $stmt->execute();
+            $hseqEval = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            if (!$hseqEval) {
+                return [];
+            }
+
+            // Obtener los items de la evaluación HSEQ
+            $sqlItems = "
+                SELECT hei.id_item, hei.id_responsabilidad, hei.responsabilidad, 
+                       hei.calificacion, hei.justificacion, hei.fecha_creacion
+                FROM hseq_evaluacion_items hei
+                WHERE hei.id_hseq_evaluacion = ?
+                ORDER BY hei.id_item
+            ";
+            $stmtItems = $this->db->prepare($sqlItems);
+            if (!$stmtItems) {
+                return [];
+            }
+            $stmtItems->bind_param('i', $hseqEval['id_hseq_evaluacion']);
+            $stmtItems->execute();
+            $items = $stmtItems->get_result()->fetch_all(MYSQLI_ASSOC);
+            $stmtItems->close();
+
+            return $items;
+        } catch (Exception $e) {
+            return [];
+        }
+    }
+
+    /**
      * Obtiene competencias
      */
     private function getCompetencias($evaluationId) {
@@ -2605,8 +2656,8 @@ class EvaluationControllerNativo {
                 $competencias = $this->getCompetencias($evaluationId);
                 $evaluacion['competencias_detalle'] = $competencias;
                 
-                // Obtener datos HSEQ
-                $hseqData = $this->getHseqData($evaluationId);
+                // Obtener datos HSEQ de las tablas hseq_evaluacion y hseq_evaluacion_items
+                $hseqData = $this->getHseqDataFromHseqTables($evaluationId, $evaluacion['id_empleado'], $evaluacion['periodo_evaluacion']);
                 $evaluacion['hseq_detalle'] = $hseqData;
                 
                 // Calcular promedios de competencias
