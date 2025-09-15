@@ -161,6 +161,10 @@ RewriteRule \.(jpg|jpeg|png|gif|webp|svg)$ - [NC,F,L]
     
     # Content Security Policy básico (ajustar según necesidades)
     Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:;"
+    
+    # Headers específicos para Google SEO
+    Header always set X-Robots-Tag "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+    Header always set Cache-Control "public, max-age=31536000" "expr=%{REQUEST_URI} =~ m#\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$#"
 </IfModule>
 
 # Configuración de errores personalizados (opcional)
@@ -190,8 +194,12 @@ AddDefaultCharset UTF-8
 # ===========================================
 
 # Redirección HTTPS (recomendado para SEO)
-# RewriteCond %{HTTPS} off
-# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Forzar www (opcional - descomenta si quieres forzar con www)
+# RewriteCond %{HTTP_HOST} !^www\.evaluacion\.meridianltda\.com [NC]
+# RewriteRule ^(.*)$ https://www.evaluacion.meridianltda.com/$1 [L,R=301]
 
 # Redirección www (opcional - descomenta si quieres forzar sin www)
 # RewriteCond %{HTTP_HOST} ^www\.evaluacion\.meridianltda\.com [NC]
