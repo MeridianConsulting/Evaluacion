@@ -196,6 +196,26 @@ const MyDocument = ({ evaluationData }) => (
               <Text style={pdfStyles.label}>Promedio General:</Text>
               <Text style={pdfStyles.value}>{evaluationData.promedios.promedio_general || 'N/A'}</Text>
             </View>
+            <View style={pdfStyles.row}>
+              <Text style={pdfStyles.label}>Calificación Final Ponderada:</Text>
+              <Text style={[pdfStyles.value, pdfStyles.promedio]}>
+                {(() => {
+                  // Calcular calificación final ponderada para el PDF
+                  const promedioCompetencias = evaluationData.promedios?.promedio_competencias ? parseFloat(evaluationData.promedios.promedio_competencias) : 0;
+                  const promedioHseq = evaluationData.promedios?.promedio_hseq ? parseFloat(evaluationData.promedios.promedio_hseq) : 0;
+                  
+                  if (promedioCompetencias > 0 && promedioHseq > 0) {
+                    // Aproximación: usar el promedio de competencias para autoevaluación y jefe
+                    const promedioAutoevaluacion = promedioCompetencias;
+                    const promedioJefe = promedioCompetencias;
+                    
+                    const calificacionFinal = (promedioAutoevaluacion * 0.20) + (promedioJefe * 0.40) + (promedioHseq * 0.40);
+                    return Math.round(calificacionFinal * 10) / 10;
+                  }
+                  return 'N/A';
+                })()}
+              </Text>
+            </View>
           </View>
         </View>
       )}
@@ -627,7 +647,18 @@ const generateExcel = async (evaluacion) => {
     const promComp = numOrBlank(evaluationData.promedios?.promedio_competencias);
     const promHseq = numOrBlank(evaluationData.promedios?.promedio_hseq);
     const promGral = numOrBlank(evaluationData.promedios?.promedio_general);
-    const estadoGral = estadoPorValor(promGral);
+    
+    // Calcular calificación final ponderada para Excel
+    let promFinal = null;
+    if (promComp && promHseq) {
+      // Aproximación: usar el promedio de competencias para autoevaluación y jefe
+      const promedioAutoevaluacion = promComp;
+      const promedioJefe = promComp;
+      promFinal = (promedioAutoevaluacion * 0.20) + (promedioJefe * 0.40) + (promHseq * 0.40);
+      promFinal = Math.round(promFinal * 10) / 10;
+    }
+    
+    const estadoGral = estadoPorValor(promFinal || promGral);
 
     const drawCard = (range, value, label, estadoOpt=null) => {
       ws.mergeCells(range);
@@ -653,7 +684,7 @@ const generateExcel = async (evaluacion) => {
     const kpiTop = 5;
     drawCard(`A${kpiTop}:B${kpiTop+3}`, promComp, 'Promedio Competencias');
     drawCard(`C${kpiTop}:D${kpiTop+3}`, promHseq, 'Promedio HSEQ');
-    drawCard(`E${kpiTop}:F${kpiTop+3}`, promGral, 'Promedio General', estadoGral);
+    drawCard(`E${kpiTop}:F${kpiTop+3}`, promFinal || promGral, 'Calificación Final', estadoGral);
     ws.addRow([]); ws.addRow([]);
 
     // ---------- Datos del empleado (2 columnas)
@@ -1214,6 +1245,95 @@ const generateExcel = async (evaluacion) => {
     return progresos[estado] || 0;
   };
 
+  // Función para calcular la calificación final ponderada
+  const calcularCalificacionFinal = (evaluacion, hseqEval) => {
+    try {
+      // Obtener promedios disponibles
+      const promedioCompetencias = evaluacion.promedios?.promedio_competencias ? parseFloat(evaluacion.promedios.promedio_competencias) : 0;
+      const promedioHseq = hseqEval?.promedio_hseq ? parseFloat(hseqEval.promedio_hseq) : 0;
+
+      // Intentar obtener datos detallados de competencias
+      let promedioAutoevaluacion = 0;
+      let promedioJefe = 0;
+
+      // Verificar si tenemos competencias detalladas
+      if (evaluacion.competencias_detalle && evaluacion.competencias_detalle.length > 0) {
+        // Calcular promedio de autoevaluación
+        const sumaAutoevaluacion = evaluacion.competencias_detalle.reduce((sum, comp) => {
+          const calif = parseFloat(comp.calificacion_empleado) || 0;
+          return sum + calif;
+        }, 0);
+        promedioAutoevaluacion = sumaAutoevaluacion / evaluacion.competencias_detalle.length;
+
+        // Calcular promedio de evaluación del jefe
+        const sumaJefe = evaluacion.competencias_detalle.reduce((sum, comp) => {
+          const calif = parseFloat(comp.calificacion_jefe) || 0;
+          return sum + calif;
+        }, 0);
+        promedioJefe = sumaJefe / evaluacion.competencias_detalle.length;
+      } else {
+        // Si no tenemos datos detallados, usar el promedio de competencias como base
+        if (promedioCompetencias > 0) {
+          // Aproximación: dividir el promedio de competencias entre empleado y jefe
+          // Asumimos que el promedio de competencias es el promedio entre ambos
+          promedioAutoevaluacion = promedioCompetencias;
+          promedioJefe = promedioCompetencias;
+        }
+      }
+
+      // Verificar que tengamos datos para calcular
+      if (promedioAutoevaluacion === 0 && promedioJefe === 0 && promedioHseq === 0) {
+        return null;
+      }
+
+      // Calcular promedio ponderado: Autoevaluación 20%, Jefe 40%, HSEQ 40%
+      let calificacionFinal = 0;
+      let totalPeso = 0;
+
+      // Autoevaluación (20%)
+      if (promedioAutoevaluacion > 0) {
+        calificacionFinal += promedioAutoevaluacion * 0.20;
+        totalPeso += 0.20;
+      }
+
+      // Evaluación del jefe (40%)
+      if (promedioJefe > 0) {
+        calificacionFinal += promedioJefe * 0.40;
+        totalPeso += 0.40;
+      }
+
+      // Evaluación HSEQ (40%)
+      if (promedioHseq > 0) {
+        calificacionFinal += promedioHseq * 0.40;
+        totalPeso += 0.40;
+      }
+
+      // Si no tenemos todas las evaluaciones, ajustar el peso
+      if (totalPeso < 1.0 && totalPeso > 0) {
+        calificacionFinal = calificacionFinal / totalPeso;
+      }
+
+      // Redondear a 1 decimal
+      const calificacionRedondeada = totalPeso > 0 ? Math.round(calificacionFinal * 10) / 10 : null;
+      
+      return calificacionRedondeada;
+    } catch (error) {
+      console.error('Error calculando calificación final:', error);
+      return null;
+    }
+  };
+
+  // Función para obtener el estado de la calificación final
+  const getEstadoCalificacionFinal = (calificacion) => {
+    if (!calificacion || calificacion === 0) return 'N/A';
+    const num = parseFloat(calificacion);
+    if (num >= 4.5) return 'EXCELENTE';
+    if (num >= 4.0) return 'SUPERIOR';
+    if (num >= 3.0) return 'SATISFACTORIO';
+    if (num >= 2.0) return 'REGULAR';
+    return 'INSUFICIENTE';
+  };
+
   return (
     <div className="results-page">
       <style>{`
@@ -1528,6 +1648,21 @@ const generateExcel = async (evaluacion) => {
             </div>
           </div>
 
+          <div className="results-info-banner" style={{ background: 'linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%)', border: '1px solid #c3e6cb' }}>
+            <div className="info-icon">📊</div>
+            <div className="info-content">
+              <h3>Cálculo de Calificación Final</h3>
+              <p>La <strong>calificación final</strong> se calcula mediante un promedio ponderado de las tres evaluaciones:</p>
+              <ul>
+                <li><strong>Autoevaluación:</strong> 20% del peso total</li>
+                <li><strong>Evaluación del Jefe:</strong> 40% del peso total</li>
+                <li><strong>Evaluación HSEQ:</strong> 40% del peso total</li>
+              </ul>
+              <p><strong>Fórmula:</strong> Calificación Final = (Autoeval × 0.20) + (Jefe × 0.40) + (HSEQ × 0.40)</p>
+              <p>Si alguna evaluación no está disponible, el sistema ajusta automáticamente los pesos proporcionalmente.</p>
+            </div>
+          </div>
+
           {loading ? (
             <div className="results-loading"><p>Cargando historial de evaluaciones...</p></div>
           ) : error ? (
@@ -1546,23 +1681,49 @@ const generateExcel = async (evaluacion) => {
                   <span className="summary-value">{evaluacionesHistoricas.length}</span>
                 </div>
                 <div className="results-summary-item">
-                  <span className="summary-label">Última calificación:</span>
+                  <span className="summary-label">Última calificación final:</span>
                   <span className="summary-value">
-                    {evaluacionesHistoricas[0]?.promedios?.promedio_general
-                      ? renderEstrellas(parseFloat(evaluacionesHistoricas[0].promedios.promedio_general))
-                      : 'N/A'}
+                    {(() => {
+                      const ultimaEvaluacion = evaluacionesHistoricas[0];
+                      const hseqCorrespondiente = evaluacionesHseq.find(hseq => 
+                        hseq.periodo_evaluacion === ultimaEvaluacion?.periodo_evaluacion
+                      );
+                      const calificacionFinal = calcularCalificacionFinal(ultimaEvaluacion, hseqCorrespondiente);
+                      return calificacionFinal ? renderEstrellas(calificacionFinal) : 'N/A';
+                    })()}
                   </span>
                 </div>
                 <div className="results-summary-item">
-                  <span className="summary-label">Promedio histórico:</span>
+                  <span className="summary-label">Último promedio HSEQ:</span>
                   <span className="summary-value">
-                    {evaluacionesHistoricas.length > 0
-                      ? renderEstrellas(
-                          evaluacionesHistoricas.reduce((acc, ev) =>
-                            acc + (ev.promedios?.promedio_general ? parseFloat(ev.promedios.promedio_general) : 0), 0
-                          ) / evaluacionesHistoricas.length
-                        )
-                      : 'N/A'}
+                    {(() => {
+                      const ultimaEvaluacion = evaluacionesHistoricas[0];
+                      const hseqCorrespondiente = evaluacionesHseq.find(hseq => 
+                        hseq.periodo_evaluacion === ultimaEvaluacion?.periodo_evaluacion
+                      );
+                      const promedioHseq = hseqCorrespondiente?.promedio_hseq ? parseFloat(hseqCorrespondiente.promedio_hseq) : 0;
+                      return promedioHseq > 0 ? renderEstrellas(promedioHseq) : 'N/A';
+                    })()}
+                  </span>
+                </div>
+                <div className="results-summary-item">
+                  <span className="summary-label">Promedio histórico final:</span>
+                  <span className="summary-value">
+                    {(() => {
+                      if (evaluacionesHistoricas.length === 0) return 'N/A';
+                      
+                      const calificacionesFinales = evaluacionesHistoricas.map(ev => {
+                        const hseqCorrespondiente = evaluacionesHseq.find(hseq => 
+                          hseq.periodo_evaluacion === ev.periodo_evaluacion
+                        );
+                        return calcularCalificacionFinal(ev, hseqCorrespondiente);
+                      }).filter(calif => calif !== null);
+                      
+                      if (calificacionesFinales.length === 0) return 'N/A';
+                      
+                      const promedioHistorico = calificacionesFinales.reduce((acc, calif) => acc + calif, 0) / calificacionesFinales.length;
+                      return renderEstrellas(promedioHistorico);
+                    })()}
                   </span>
                 </div>
               </div>
@@ -1574,8 +1735,10 @@ const generateExcel = async (evaluacion) => {
                       <th>Fecha</th>
                       <th>Período</th>
                       <th>Estado</th>
+                      <th>Calificación Final</th>
                       <th>Promedio General</th>
                       <th>Promedio Competencias</th>
+                      <th>Promedio HSEQ</th>
                       <th>Acciones</th>
                     </tr>
                   </thead>
@@ -1583,7 +1746,15 @@ const generateExcel = async (evaluacion) => {
                     {evaluacionesHistoricas.map(evaluacion => {
                       const promedioGeneral = evaluacion.promedios?.promedio_general ? parseFloat(evaluacion.promedios.promedio_general) : 0;
                       const promedioCompetencias = evaluacion.promedios?.promedio_competencias ? parseFloat(evaluacion.promedios.promedio_competencias) : 0;
-                      const promedioHseq = evaluacion.promedios?.promedio_hseq ? parseFloat(evaluacion.promedios.promedio_hseq) : 0;
+                      
+                      // Buscar el promedio HSEQ correspondiente en las evaluaciones HSEQ
+                      const hseqCorrespondiente = evaluacionesHseq.find(hseq => 
+                        hseq.periodo_evaluacion === evaluacion.periodo_evaluacion
+                      );
+                      const promedioHseq = hseqCorrespondiente?.promedio_hseq ? parseFloat(hseqCorrespondiente.promedio_hseq) : 0;
+
+                      // Calcular calificación final para esta evaluación
+                      const calificacionFinal = calcularCalificacionFinal(evaluacion, hseqCorrespondiente);
 
                       return (
                         <tr key={evaluacion.id_evaluacion}>
@@ -1605,8 +1776,28 @@ const generateExcel = async (evaluacion) => {
                               </small>
                             </div>
                           </td>
+                          <td className={getColorClase(calificacionFinal)}>
+                            {calificacionFinal ? (
+                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                {renderEstrellas(calificacionFinal)}
+                                <small style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
+                                  {getEstadoCalificacionFinal(calificacionFinal)}
+                                </small>
+                              </div>
+                            ) : 'N/A'}
+                          </td>
                           <td className={getColorClase(promedioGeneral)}>{promedioGeneral > 0 ? renderEstrellas(promedioGeneral) : 'N/A'}</td>
-                          <td className={getColorClase(promedioCompetencias)}>{promedioCompetencias > 0 ? promedioCompetencias.toFixed(2) : 'N/A'}</td>
+                          <td className={getColorClase(promedioCompetencias)}>{promedioCompetencias > 0 ? promedioCompetencias.toFixed(1) : 'N/A'}</td>
+                          <td className={getColorClase(promedioHseq)}>
+                            {promedioHseq > 0 ? (
+                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                {renderEstrellas(promedioHseq)}
+                                <small style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
+                                  {getEstadoCalificacionFinal(promedioHseq)}
+                                </small>
+                              </div>
+                            ) : 'N/A'}
+                          </td>
                           <td>
                             <div className="action-buttons">
                               <button className="download-btn pdf-btn" onClick={() => generatePDF(evaluacion)} disabled={generatingPDF} title="Generar PDF">
@@ -1653,6 +1844,19 @@ const generateExcel = async (evaluacion) => {
                               <span className="hseq-info-label">Estado:</span>
                               <span className="hseq-info-value">{hseqEval.estado_evaluacion}</span>
                             </div>
+                            <div className="hseq-info-item">
+                              <span className="hseq-info-label">Promedio HSEQ:</span>
+                              <span className="hseq-info-value">
+                                {hseqEval.promedio_hseq ? (
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    {renderEstrellas(parseFloat(hseqEval.promedio_hseq))}
+                                    <span style={{ fontSize: '12px', color: '#666' }}>
+                                      ({getEstadoCalificacionFinal(parseFloat(hseqEval.promedio_hseq))})
+                                    </span>
+                                  </div>
+                                ) : 'N/A'}
+                              </span>
+                            </div>
                           </div>
                           <div className="hseq-actions">
                             <button 
@@ -1685,13 +1889,29 @@ const generateExcel = async (evaluacion) => {
 
               <div className="results-info">
                 <h3>Interpretación de resultados</h3>
-                <ul>
-                  <li><span className="calificacion-excelente dot"></span> 4.5 - 5.0: Desempeño excepcional</li>
-                  <li><span className="calificacion-buena dot"></span> 4.0 - 4.4: Desempeño superior al esperado</li>
-                  <li><span className="calificacion-satisfactoria dot"></span> 3.0 - 3.9: Desempeño esperado</li>
-                  <li><span className="calificacion-regular dot"></span> 2.0 - 2.9: Desempeño por debajo de lo esperado</li>
-                  <li><span className="calificacion-baja dot"></span> 0.0 - 1.9: Desempeño insuficiente</li>
-                </ul>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '15px' }}>
+                  <div>
+                    <h4 style={{ color: '#2c5aa0', marginBottom: '10px' }}>Calificación Final (Promedio Ponderado)</h4>
+                    <ul>
+                      <li><span className="calificacion-excelente dot"></span> 4.5 - 5.0: EXCELENTE</li>
+                      <li><span className="calificacion-buena dot"></span> 4.0 - 4.4: SUPERIOR</li>
+                      <li><span className="calificacion-satisfactoria dot"></span> 3.0 - 3.9: SATISFACTORIO</li>
+                      <li><span className="calificacion-regular dot"></span> 2.0 - 2.9: REGULAR</li>
+                      <li><span className="calificacion-baja dot"></span> 0.0 - 1.9: INSUFICIENTE</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 style={{ color: '#2c5aa0', marginBottom: '10px' }}>Componentes de Evaluación</h4>
+                    <ul>
+                      <li><strong>Autoevaluación:</strong> 20% del peso total</li>
+                      <li><strong>Evaluación del Jefe:</strong> 40% del peso total</li>
+                      <li><strong>Evaluación HSEQ:</strong> 40% del peso total</li>
+                    </ul>
+                    <p style={{ fontSize: '12px', color: '#666', marginTop: '10px', fontStyle: 'italic' }}>
+                      La calificación final combina las tres perspectivas para obtener una evaluación integral del desempeño.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           )}
