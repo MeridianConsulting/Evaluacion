@@ -6,7 +6,6 @@ import SignatureUploader from '../components/SignatureUploader';
 import { useNotification } from '../components/NotificationSystem';
 import CompletionCelebration from '../components/CompletionCelebration';
 import CompetenciasTable from "../components/CompetenciasTable";
-import EvaluationProgress from '../components/EvaluationProgress';
 
 
 function PerformanceEvaluation() {
@@ -1246,19 +1245,6 @@ function PerformanceEvaluation() {
         )}
       </div>
 
-      {/* Componente de progreso de evaluación */}
-      {(() => {
-        // En vista de empleado, mostrar 50% (UI) durante la autoevaluación
-        const uiEstado = !isManagerView
-          ? 'AUTOEVALUACION_COMPLETADA'
-          : currentEvaluationState;
-        return (
-          <EvaluationProgress 
-            estado={uiEstado} 
-            isManagerView={isManagerView} 
-          />
-        );
-      })()}
 
       {/* Alerta de campos obligatorios */}
       <div style={alertStyle}>

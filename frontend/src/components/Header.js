@@ -138,6 +138,9 @@ function Header({ onLogout }) {
   };
 
   const handleLogout = () => {
+    // Limpiar todo el localStorage
+    localStorage.clear();
+    
     if (onLogout) {
       onLogout();
     }
