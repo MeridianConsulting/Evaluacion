@@ -122,6 +122,12 @@ function Header({ onLogout }) {
             <li><button className="mc-link" onClick={() => goToPage('/results')}>Resultados</button></li>
             <li className="mc-sep" aria-hidden="true" />
             <li><button className="mc-link" onClick={() => goToPage('/profile')}>Perfil</button></li>
+            {canSeeTeamEvaluations && (
+              <>
+                <li className="mc-sep" aria-hidden="true" />
+                <li><button className="mc-link" onClick={() => goToPage('/team-evaluations')}>Evaluar Equipo</button></li>
+              </>
+            )}
             <li className="mc-sep" aria-hidden="true" />
             <li><button className="mc-link" onClick={handleLogout}>Cerrar Sesión</button></li>
           </ul>
