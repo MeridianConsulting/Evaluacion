@@ -1,0 +1,8 @@
+# Archivo .htaccess temporalmente deshabilitado para diagnóstico
+# RewriteEngine On
+
+# Para el frontend (React), redirigir todo al index.html excepto /backend/
+# RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteCond %{REQUEST_FILENAME} !-d
+# RewriteCond %{REQUEST_URI} !^/backend/
+# RewriteRule ^ index.html [QSA,L]
