@@ -144,7 +144,7 @@ INSERT INTO `empleados` (`id_empleado`, `cedula`, `nombre`, `tipo_documento`, `c
 (11, 1020733194, 'ELOY GABRIEL GOMEZ REYES', 'CC ', 'Coordinador de gestión humana', 'ADMINISTRACION', '2023-06-13', 'profesionalgh@meridian.com.co', '1020733194', 'ADMINISTRACION', NULL, 'empleado'),
 (12, 1031145571, 'DIANA MARCELA JACOBO MANCERA', 'CC ', 'Soporte hseq', 'ADMINISTRACION', '2023-08-14', 'soportehseq@meridian.com.co', '1031145571', 'ADMINISTRACION', NULL, 'HSEQ'),
 (13, 1121936876, 'LAURA DANIELA SEGURA MORERA', 'CC ', 'Soporte hseq proyectos', 'COMPANY MAN - ADMINISTRACION', '2023-09-05', 'profesionalhseq@meridian.com.co', '1121936876', 'COMPANY MAN', NULL, 'HSEQ'),
-(14, 52978024, 'ERIKA LILIANA MANCIPE RODRIGUEZ', 'CC', 'Aprendiz etapa practica', 'ADMINISTRACION', '2023-11-01', 'aprendizhseq@meridian.com.co', '52978024', 'ADMINISTRACION', NULL, 'empleado'),
+(14, 52978024, 'ERIKA LILIANA MANCIPE RODRIGUEZ', 'CC', 'Aprendiz etapa practica', 'ADMINISTRACION', '2023-11-01', 'aprendizhseq@meridian.com.co', '52978024', 'ADMINISTRACION', NULL, 'HSEQ'),
 (15, 1007627524, 'ANDRES CAMILO CARDENAS REYES', 'CC ', 'Profesional soporte it', 'ADMINISTRACION', '2023-12-04', 'soporteit.nivel1@meridian.com.co', '1007627524', 'ADMINISTRACION', NULL, 'empleado'),
 (17, 1007647736, 'SONIA STEPHANIA FONSECA LOPEZ', 'CC ', 'Asistente de nomina y gestion humana', 'ADMINISTRACION', '2024-05-02', 'contratacion@meridian.com.co', '1007647736', 'ADMINISTRACION', NULL, 'empleado'),
 (18, 1121848186, 'MARIA SHIRLEY ORDOÑEZ CUESTA', 'CC ', 'Profesional administrativa y de gestión humana, proyectos', 'COMPANY MAN - ADMINISTRACION', '2024-05-14', 'profesionaladministrativoproyectos@meridian.com.co', '1121848186', 'COMPANY MAN', NULL, 'empleado'),

@@ -30,12 +30,26 @@ function Header({ onLogout }) {
         const currentUserId = localStorage.getItem('employeeId');
         const apiUrl = process.env.REACT_APP_API_BASE_URL;
         if (!currentUserId || !apiUrl) return;
-        const resp = await fetch(`${apiUrl}/employees/${currentUserId}`);
-        if (!resp.ok) return;
+        
+        const resp = await fetch(`${apiUrl}/api/employees/${currentUserId}`);
+        if (!resp.ok) {
+          return;
+        }
+        
         const data = await resp.json();
-        const role = (data && (data.data?.rol || data.rol)) || '';
-        if (role) setBackendRole(String(role));
-      } catch (_) {}
+        
+        // Intentar obtener el rol de diferentes formas posibles
+        let role = '';
+        if (data) {
+          role = data.data?.rol || data.rol || data.role || '';
+        }
+        
+        if (role) {
+          setBackendRole(String(role).trim());
+        }
+      } catch (error) {
+        // Error silencioso
+      }
     };
     loadRoleFromBackend();
   }, []);
@@ -98,7 +112,7 @@ function Header({ onLogout }) {
   const handleLogout = () => { localStorage.clear(); onLogout?.(); navigate('/'); };
 
   const canSeeTeamEvaluations = hasAssignedAsBoss || hasAssignedAsEvaluator;
-  const effectiveRole = String(backendRole || '');
+  const effectiveRole = String(backendRole || '').trim();
   const isHseqRole = effectiveRole.toLowerCase() === 'hseq';
   const isAdmin = effectiveRole.toLowerCase() === 'admin';
 
@@ -119,6 +133,12 @@ function Header({ onLogout }) {
           )}
 
           <ul className="mc-inline-links">
+            {hasEvaluationToken && (
+              <>
+                <li><button className="mc-link mc-link-eval" onClick={() => goToPage('/performance')}>Evaluación de Desempeño</button></li>
+                <li className="mc-sep" aria-hidden="true" />
+              </>
+            )}
             <li><button className="mc-link" onClick={() => goToPage('/results')}>Resultados</button></li>
             <li className="mc-sep" aria-hidden="true" />
             <li><button className="mc-link" onClick={() => goToPage('/profile')}>Perfil</button></li>
@@ -128,8 +148,14 @@ function Header({ onLogout }) {
                 <li><button className="mc-link" onClick={() => goToPage('/team-evaluations')}>Evaluar Equipo</button></li>
               </>
             )}
+            {isHseqRole && (
+              <>
+                <li className="mc-sep" aria-hidden="true" />
+                <li><button className="mc-link" onClick={() => goToPage('/hseq-evaluation')}>Evaluar HSEQ</button></li>
+              </>
+            )}
             <li className="mc-sep" aria-hidden="true" />
-            <li><button className="mc-link" onClick={handleLogout}>Cerrar Sesión</button></li>
+            <li><button className="mc-link mc-link-logout" onClick={handleLogout}>Cerrar Sesión</button></li>
           </ul>
 
           <button
@@ -227,6 +253,8 @@ function Header({ onLogout }) {
   transition: background .15s ease, transform .15s ease;
 }
 .mc-link:hover{ background: rgba(255,255,255,.08); transform: translateY(-1px); }
+.mc-link-eval{ color:var(--mc-yellow); }
+.mc-link-logout{ color:var(--mc-red); }
 .mc-sep{ width:1.5px; height:24px; background: rgba(255,255,255,.28); border-radius:1px; }
 
 /* HAMBURGUESA más grande */
@@ -279,6 +307,7 @@ function Header({ onLogout }) {
   .mc-inline-links{ display:flex; }
   .mc-burger{ display:none; }
   .mc-navbar{ padding: 18px 30px; }
+  .mc-drawer{ display:none; }
 }
 
       `}</style>

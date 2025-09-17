@@ -23,7 +23,7 @@ const Profile = ({ onLogout, userRole }) => {
     if (!value) return { label: 'Sin contraseña', level: 'none' };
     if (score <= 2) return { label: 'Muy débil', level: 'weak' };
     if (score <= 4) return { label: 'Aceptable', level: 'medium' };
-    return { label: 'Segura 🚀', level: 'strong' };
+    return { label: 'Segura ✓', level: 'strong' };
   };
 
   const getInitials = (name) => {
@@ -152,11 +152,11 @@ const Profile = ({ onLogout, userRole }) => {
                 <div className="hero-info">
                   <h1 className="hero-title">{employee.nombre}</h1>
                   <div className="hero-meta">
-                    <span className="chip">🪪 {employee.cedula}</span>
-                    <span className="chip">📧 {employee.email}</span>
+                    <span className="chip">🆔 {employee.cedula}</span>
+                    <span className="chip">✉ {employee.email}</span>
                     <span className="chip">💼 {employee.cargo}</span>
                     <span className="chip">🏢 {employee.area || 'N/D'}</span>
-                    <span className="chip">🛡️ {employee.rol === 'admin' ? 'Administrador' : employee.rol === 'jefe' ? 'Jefe' : 'Empleado'}</span>
+                    <span className="chip">🔐 {employee.rol === 'admin' ? 'Administrador' : employee.rol === 'jefe' ? 'Jefe' : 'Empleado'}</span>
                   </div>
                 </div>
               </div>
@@ -170,9 +170,9 @@ const Profile = ({ onLogout, userRole }) => {
                   <div className="form-row">
                     <label>Nueva contraseña</label>
                     <div className="input-wrap">
-                      <span className="prefix" aria-hidden="true">🔒</span>
+                      <span className="prefix" aria-hidden="true">🔑</span>
                       <input type={showNew ? "text" : "password"} value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Ingresa la nueva contraseña" />
-                      <button type="button" className="toggle" onClick={() => setShowNew(!showNew)}>{showNew ? '🙈' : '👁️'}</button>
+                      <button type="button" className="toggle" onClick={() => setShowNew(!showNew)}>{showNew ? '●' : '⊙'}</button>
                     </div>
                     {newPassword && (
                       <div className="strength-wrap">
@@ -189,9 +189,9 @@ const Profile = ({ onLogout, userRole }) => {
                   <div className="form-row">
                     <label>Confirmar nueva contraseña</label>
                     <div className="input-wrap">
-                      <span className="prefix" aria-hidden="true">🔒</span>
+                      <span className="prefix" aria-hidden="true">🔑</span>
                       <input type={showConfirm ? "text" : "password"} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Confirma la nueva contraseña" />
-                      <button type="button" className="toggle" onClick={() => setShowConfirm(!showConfirm)}>{showConfirm ? '🙈' : '👁️'}</button>
+                      <button type="button" className="toggle" onClick={() => setShowConfirm(!showConfirm)}>{showConfirm ? '●' : '⊙'}</button>
                     </div>
                   </div>
 
