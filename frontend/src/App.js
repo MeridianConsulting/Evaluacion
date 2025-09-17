@@ -71,6 +71,43 @@ function App() {
     }
   }, [isAuthenticated, userRole]);
 
+  // Cargar rol desde el backend para usuarios autenticados
+  useEffect(() => {
+    const loadRoleFromBackend = async () => {
+      if (!isAuthenticated) return;
+      
+      try {
+        const currentUserId = localStorage.getItem('employeeId');
+        const apiUrl = process.env.REACT_APP_API_BASE_URL;
+        if (!currentUserId || !apiUrl) return;
+        
+        const resp = await fetch(`${apiUrl}/api/employees/${currentUserId}`);
+        if (!resp.ok) return;
+        
+        const data = await resp.json();
+        
+        // Intentar obtener el rol de diferentes formas posibles
+        let role = '';
+        if (data) {
+          role = data.data?.rol || data.rol || data.role || '';
+        }
+        
+        if (role) {
+          const backendRole = String(role).trim();
+          // Solo actualizar si el rol del backend es diferente al actual
+          if (backendRole.toLowerCase() !== userRole?.toLowerCase()) {
+            setUserRole(backendRole);
+            localStorage.setItem('userRole', backendRole);
+          }
+        }
+      } catch (error) {
+        // Error silencioso
+      }
+    };
+    
+    loadRoleFromBackend();
+  }, [isAuthenticated, userRole]);
+
   return (
     <HelmetProvider>
       <NotificationProvider>

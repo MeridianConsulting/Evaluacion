@@ -4,6 +4,7 @@ import logoMeridian from '../assets/img/logo_meridian_blanco.png';
 import facebookLogo from '../assets/img/facebook_white.png';
 import twitterLogo from '../assets/img/twitter_white.png';
 import linkedinLogo from '../assets/img/linkedin_white.png';
+import instagramLogo from '../assets/img/instagram.png';
 
 function Footer() {
   return (
@@ -52,11 +53,14 @@ function Footer() {
           <Link to="/privacy">Política de Privacidad</Link> | <Link to="/terms">Términos de Uso</Link>
         </p>
         <div className="footer-social">
-          <a href="https://www.facebook.com/people/Meridian-Consulting/61566887615958/#" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.facebook.com/share/19QZ1UQ4tC/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">
             <img src={facebookLogo} alt="Facebook" className="social-logo" />
           </a>
-          <a href="https://x.com/meridiancons" target="_blank" rel="noopener noreferrer">
+          <a href="https://x.com/meridianLTDA" target="_blank" rel="noopener noreferrer">
             <img src={twitterLogo} alt="Twitter" className="social-logo" />
+          </a>
+          <a href="https://www.instagram.com/meridian.consulting/" target="_blank" rel="noopener noreferrer">
+            <img src={instagramLogo} alt="Instagram" className="social-logo" />
           </a>
           <a href="https://co.linkedin.com/company/meridian-consulting-ltda" target="_blank" rel="noopener noreferrer">
             <img src={linkedinLogo} alt="LinkedIn" className="social-logo" />
