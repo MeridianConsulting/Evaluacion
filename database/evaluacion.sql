@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 24-09-2025 a las 15:07:02
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
+-- Servidor: localhost:3306
+-- Tiempo de generación: 24-09-2025 a las 10:27:03
+-- Versión del servidor: 10.6.22-MariaDB-cll-lve
+-- Versión de PHP: 8.3.22
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -348,6 +348,29 @@ CREATE TABLE `evaluacion` (
   `comentarios_hseq` text DEFAULT NULL COMMENT 'Comentarios de la evaluación HSEQ institucional'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `evaluacion` (movido al final del archivo)
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `evaluacion_acta_compromiso`
+--
+
+CREATE TABLE `evaluacion_acta_compromiso` (
+  `id_acta_compromiso` int(11) NOT NULL,
+  `id_evaluacion` int(11) NOT NULL,
+  `criterio` text NOT NULL,
+  `compromiso` text NOT NULL,
+  `fecha_creacion` datetime DEFAULT current_timestamp(),
+  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `evaluacion_acta_compromiso` (movido al final del archivo)
+--
+
 -- --------------------------------------------------------
 
 --
@@ -366,6 +389,10 @@ CREATE TABLE `evaluacion_competencias` (
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `evaluacion_competencias` (movido al final del archivo)
+--
+
 -- --------------------------------------------------------
 
 --
@@ -382,6 +409,10 @@ CREATE TABLE `evaluacion_estado_historial` (
   `comentario` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `evaluacion_estado_historial` (movido al final del archivo)
+--
+
 -- --------------------------------------------------------
 
 --
@@ -396,6 +427,10 @@ CREATE TABLE `evaluacion_firmas` (
   `fecha_creacion` datetime DEFAULT current_timestamp(),
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `evaluacion_firmas` (movido al final del archivo)
+--
 
 -- --------------------------------------------------------
 
@@ -432,6 +467,10 @@ CREATE TABLE `evaluacion_mejoramiento` (
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `evaluacion_mejoramiento` (movido al final del archivo)
+--
+
 -- --------------------------------------------------------
 
 --
@@ -452,20 +491,9 @@ CREATE TABLE `evaluacion_plan_accion` (
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
 --
--- Estructura de tabla para la tabla `evaluacion_acta_compromiso`
+-- Volcado de datos para la tabla `evaluacion_plan_accion` (movido al final del archivo)
 --
-
-CREATE TABLE `evaluacion_acta_compromiso` (
-  `id_acta_compromiso` int(11) NOT NULL,
-  `id_evaluacion` int(11) NOT NULL,
-  `criterio` text NOT NULL,
-  `compromiso` text NOT NULL,
-  `fecha_creacion` datetime DEFAULT current_timestamp(),
-  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -489,6 +517,10 @@ CREATE TABLE `evaluacion_promedios` (
   `fecha_creacion` datetime DEFAULT current_timestamp(),
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `evaluacion_promedios` (movido al final del archivo)
+--
 
 -- --------------------------------------------------------
 
@@ -528,41 +560,6 @@ CREATE TABLE `hseq_evaluacion_items` (
 -- --------------------------------------------------------
 
 --
--- Estructura Stand-in para la vista `v_evaluaciones_estado`
--- (Véase abajo para la vista actual)
---
-CREATE TABLE `v_evaluaciones_estado` (
-`id_evaluacion` int(11)
-,`id_empleado` int(11)
-,`nombre_empleado` varchar(100)
-,`cargo_empleado` varchar(100)
-,`area_empleado` varchar(100)
-,`estado_evaluacion` enum('AUTOEVALUACION_PENDIENTE','AUTOEVALUACION_COMPLETADA','EVALUACION_JEFE_PENDIENTE','EVALUACION_JEFE_COMPLETADA','HSEQ_PENDIENTE','HSEQ_COMPLETADA','EVALUACION_FINALIZADA','BORRADOR','COMPLETADA','APROBADA')
-,`fecha_autoevaluacion` datetime
-,`fecha_evaluacion_jefe` datetime
-,`fecha_evaluacion_hseq` datetime
-,`periodo_evaluacion` varchar(50)
-,`fecha_evaluacion` datetime
-,`fecha_creacion` datetime
-,`fecha_actualizacion` datetime
-,`nombre_jefe` varchar(100)
-,`cargo_jefe` varchar(100)
-,`nombre_evaluador_hseq` varchar(100)
-,`cargo_evaluador_hseq` varchar(100)
-,`estado_descripcion` varchar(26)
-,`progreso_porcentaje` int(3)
-);
-
--- --------------------------------------------------------
-
---
--- Estructura para la vista `v_evaluaciones_estado`
---
-DROP TABLE IF EXISTS `v_evaluaciones_estado`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_evaluaciones_estado`  AS SELECT `e`.`id_evaluacion` AS `id_evaluacion`, `e`.`id_empleado` AS `id_empleado`, `emp`.`nombre` AS `nombre_empleado`, `emp`.`cargo` AS `cargo_empleado`, `emp`.`area` AS `area_empleado`, `e`.`estado_evaluacion` AS `estado_evaluacion`, `e`.`fecha_autoevaluacion` AS `fecha_autoevaluacion`, `e`.`fecha_evaluacion_jefe` AS `fecha_evaluacion_jefe`, `e`.`fecha_evaluacion_hseq` AS `fecha_evaluacion_hseq`, `e`.`periodo_evaluacion` AS `periodo_evaluacion`, `e`.`fecha_evaluacion` AS `fecha_evaluacion`, `e`.`fecha_creacion` AS `fecha_creacion`, `e`.`fecha_actualizacion` AS `fecha_actualizacion`, `jefe`.`nombre` AS `nombre_jefe`, `jefe`.`cargo` AS `cargo_jefe`, `hseq_eval`.`nombre` AS `nombre_evaluador_hseq`, `hseq_eval`.`cargo` AS `cargo_evaluador_hseq`, CASE WHEN `e`.`estado_evaluacion` = 'AUTOEVALUACION_PENDIENTE' THEN 'Pendiente Autoevaluación' WHEN `e`.`estado_evaluacion` = 'AUTOEVALUACION_COMPLETADA' THEN 'Pendiente Evaluación Jefe' WHEN `e`.`estado_evaluacion` = 'EVALUACION_JEFE_PENDIENTE' THEN 'Pendiente Evaluación Jefe' WHEN `e`.`estado_evaluacion` = 'EVALUACION_JEFE_COMPLETADA' THEN 'Pendiente Evaluación HSEQ' WHEN `e`.`estado_evaluacion` = 'HSEQ_PENDIENTE' THEN 'Pendiente Evaluación HSEQ' WHEN `e`.`estado_evaluacion` = 'HSEQ_COMPLETADA' THEN 'Evaluación HSEQ Completada' WHEN `e`.`estado_evaluacion` = 'EVALUACION_FINALIZADA' THEN 'Evaluación Finalizada' ELSE `e`.`estado_evaluacion` END AS `estado_descripcion`, CASE WHEN `e`.`estado_evaluacion` = 'AUTOEVALUACION_PENDIENTE' THEN 20 WHEN `e`.`estado_evaluacion` = 'AUTOEVALUACION_COMPLETADA' THEN 40 WHEN `e`.`estado_evaluacion` = 'EVALUACION_JEFE_PENDIENTE' THEN 40 WHEN `e`.`estado_evaluacion` = 'EVALUACION_JEFE_COMPLETADA' THEN 60 WHEN `e`.`estado_evaluacion` = 'HSEQ_PENDIENTE' THEN 60 WHEN `e`.`estado_evaluacion` = 'HSEQ_COMPLETADA' THEN 80 WHEN `e`.`estado_evaluacion` = 'EVALUACION_FINALIZADA' THEN 100 ELSE 0 END AS `progreso_porcentaje` FROM (((`evaluacion` `e` left join `empleados` `emp` on(`e`.`id_empleado` = `emp`.`id_empleado`)) left join `empleados` `jefe` on(`e`.`id_jefe` = `jefe`.`id_empleado`)) left join `empleados` `hseq_eval` on(`e`.`id_evaluador_hseq` = `hseq_eval`.`id_empleado`)) ;
-
---
 -- Índices para tablas volcadas
 --
 
@@ -570,23 +567,19 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- Indices de la tabla `cargo`
 --
 ALTER TABLE `cargo`
-  ADD PRIMARY KEY (`id_cargo`),
-  ADD UNIQUE KEY `uk_nombre_cargo` (`nombre_cargo`);
+  ADD PRIMARY KEY (`id_cargo`);
 
 --
 -- Indices de la tabla `detalle_evaluacion`
 --
 ALTER TABLE `detalle_evaluacion`
-  ADD PRIMARY KEY (`id_detalle_evaluacion`),
-  ADD KEY `fk_detalle_eval_evaluacion` (`id_evaluacion`);
+  ADD PRIMARY KEY (`id_detalle_evaluacion`);
 
 --
 -- Indices de la tabla `empleados`
 --
 ALTER TABLE `empleados`
-  ADD PRIMARY KEY (`id_empleado`),
-  ADD UNIQUE KEY `uk_cedula` (`cedula`),
-  ADD KEY `fk_empleados_cargo` (`cargo`);
+  ADD PRIMARY KEY (`id_empleado`);
 
 --
 -- Indices de la tabla `evaluacion`
@@ -594,10 +587,14 @@ ALTER TABLE `empleados`
 ALTER TABLE `evaluacion`
   ADD PRIMARY KEY (`id_evaluacion`),
   ADD KEY `fk_evaluacion_empleado` (`id_empleado`),
-  ADD KEY `idx_evaluacion_empleado_fecha` (`id_empleado`,`fecha_evaluacion`),
-  ADD KEY `idx_evaluacion_estado` (`estado_evaluacion`),
-  ADD KEY `idx_evaluacion_id_jefe` (`id_jefe`),
-  ADD KEY `idx_evaluacion_hseq_evaluador` (`id_evaluador_hseq`);
+  ADD KEY `fk_evaluacion_jefe` (`id_jefe`);
+
+--
+-- Indices de la tabla `evaluacion_acta_compromiso`
+--
+ALTER TABLE `evaluacion_acta_compromiso`
+  ADD PRIMARY KEY (`id_acta_compromiso`),
+  ADD KEY `fk_acta_compromiso_evaluacion` (`id_evaluacion`);
 
 --
 -- Indices de la tabla `evaluacion_competencias`
@@ -611,8 +608,7 @@ ALTER TABLE `evaluacion_competencias`
 --
 ALTER TABLE `evaluacion_estado_historial`
   ADD PRIMARY KEY (`id_historial`),
-  ADD KEY `fk_historial_evaluacion` (`id_evaluacion`),
-  ADD KEY `fk_historial_usuario` (`id_usuario_cambio`);
+  ADD KEY `fk_historial_evaluacion` (`id_evaluacion`);
 
 --
 -- Indices de la tabla `evaluacion_firmas`
@@ -625,8 +621,7 @@ ALTER TABLE `evaluacion_firmas`
 -- Indices de la tabla `evaluacion_hseq`
 --
 ALTER TABLE `evaluacion_hseq`
-  ADD PRIMARY KEY (`id_hseq`),
-  ADD KEY `fk_hseq_evaluacion` (`id_evaluacion`);
+  ADD PRIMARY KEY (`id_hseq`);
 
 --
 -- Indices de la tabla `evaluacion_mejoramiento`
@@ -643,13 +638,6 @@ ALTER TABLE `evaluacion_plan_accion`
   ADD KEY `fk_plan_accion_evaluacion` (`id_evaluacion`);
 
 --
--- Indices de la tabla `evaluacion_acta_compromiso`
---
-ALTER TABLE `evaluacion_acta_compromiso`
-  ADD PRIMARY KEY (`id_acta_compromiso`),
-  ADD KEY `fk_acta_compromiso_evaluacion` (`id_evaluacion`);
-
---
 -- Indices de la tabla `evaluacion_promedios`
 --
 ALTER TABLE `evaluacion_promedios`
@@ -660,16 +648,13 @@ ALTER TABLE `evaluacion_promedios`
 -- Indices de la tabla `hseq_evaluacion`
 --
 ALTER TABLE `hseq_evaluacion`
-  ADD PRIMARY KEY (`id_hseq_evaluacion`),
-  ADD KEY `idx_hseq_empleado_periodo` (`id_empleado`,`periodo_evaluacion`),
-  ADD KEY `idx_hseq_evaluador` (`id_evaluador`);
+  ADD PRIMARY KEY (`id_hseq_evaluacion`);
 
 --
 -- Indices de la tabla `hseq_evaluacion_items`
 --
 ALTER TABLE `hseq_evaluacion_items`
-  ADD PRIMARY KEY (`id_item`),
-  ADD KEY `fk_hseq_item_eval` (`id_hseq_evaluacion`);
+  ADD PRIMARY KEY (`id_item`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -697,25 +682,31 @@ ALTER TABLE `empleados`
 -- AUTO_INCREMENT de la tabla `evaluacion`
 --
 ALTER TABLE `evaluacion`
-  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `evaluacion_acta_compromiso`
+--
+ALTER TABLE `evaluacion_acta_compromiso`
+  MODIFY `id_acta_compromiso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_competencias`
 --
 ALTER TABLE `evaluacion_competencias`
-  MODIFY `id_competencia` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_competencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_estado_historial`
 --
 ALTER TABLE `evaluacion_estado_historial`
-  MODIFY `id_historial` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_historial` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_firmas`
 --
 ALTER TABLE `evaluacion_firmas`
-  MODIFY `id_firma` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_firma` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_hseq`
@@ -727,25 +718,19 @@ ALTER TABLE `evaluacion_hseq`
 -- AUTO_INCREMENT de la tabla `evaluacion_mejoramiento`
 --
 ALTER TABLE `evaluacion_mejoramiento`
-  MODIFY `id_mejoramiento` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_mejoramiento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_plan_accion`
 --
 ALTER TABLE `evaluacion_plan_accion`
-  MODIFY `id_plan_accion` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `evaluacion_acta_compromiso`
---
-ALTER TABLE `evaluacion_acta_compromiso`
-  MODIFY `id_acta_compromiso` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_plan_accion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_promedios`
 --
 ALTER TABLE `evaluacion_promedios`
-  MODIFY `id_promedio` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_promedio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `hseq_evaluacion`
@@ -764,23 +749,17 @@ ALTER TABLE `hseq_evaluacion_items`
 --
 
 --
--- Filtros para la tabla `detalle_evaluacion`
---
-ALTER TABLE `detalle_evaluacion`
-  ADD CONSTRAINT `fk_detalle_eval_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Filtros para la tabla `empleados`
---
-ALTER TABLE `empleados`
-  ADD CONSTRAINT `fk_empleados_cargo` FOREIGN KEY (`cargo`) REFERENCES `cargo` (`nombre_cargo`);
-
---
 -- Filtros para la tabla `evaluacion`
 --
 ALTER TABLE `evaluacion`
-  ADD CONSTRAINT `fk_evaluacion_empleado` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_evaluacion_hseq_evaluador` FOREIGN KEY (`id_evaluador_hseq`) REFERENCES `empleados` (`id_empleado`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_evaluacion_empleado` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_evaluacion_jefe` FOREIGN KEY (`id_jefe`) REFERENCES `empleados` (`id_empleado`) ON DELETE SET NULL;
+
+--
+-- Filtros para la tabla `evaluacion_acta_compromiso`
+--
+ALTER TABLE `evaluacion_acta_compromiso`
+  ADD CONSTRAINT `fk_acta_compromiso_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `evaluacion_competencias`
@@ -792,20 +771,13 @@ ALTER TABLE `evaluacion_competencias`
 -- Filtros para la tabla `evaluacion_estado_historial`
 --
 ALTER TABLE `evaluacion_estado_historial`
-  ADD CONSTRAINT `fk_historial_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_historial_usuario` FOREIGN KEY (`id_usuario_cambio`) REFERENCES `empleados` (`id_empleado`) ON DELETE SET NULL;
+  ADD CONSTRAINT `fk_historial_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `evaluacion_firmas`
 --
 ALTER TABLE `evaluacion_firmas`
   ADD CONSTRAINT `fk_firmas_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE;
-
---
--- Filtros para la tabla `evaluacion_hseq`
---
-ALTER TABLE `evaluacion_hseq`
-  ADD CONSTRAINT `fk_hseq_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `evaluacion_mejoramiento`
@@ -820,29 +792,74 @@ ALTER TABLE `evaluacion_plan_accion`
   ADD CONSTRAINT `fk_plan_accion_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE;
 
 --
--- Filtros para la tabla `evaluacion_acta_compromiso`
---
-ALTER TABLE `evaluacion_acta_compromiso`
-  ADD CONSTRAINT `fk_acta_compromiso_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE;
-
---
 -- Filtros para la tabla `evaluacion_promedios`
 --
 ALTER TABLE `evaluacion_promedios`
   ADD CONSTRAINT `fk_promedios_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE;
 
---
--- Filtros para la tabla `hseq_evaluacion`
---
-ALTER TABLE `hseq_evaluacion`
-  ADD CONSTRAINT `fk_hseq_eval_empleado` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_hseq_eval_evaluador` FOREIGN KEY (`id_evaluador`) REFERENCES `empleados` (`id_empleado`);
+-- --------------------------------------------------------
 
 --
--- Filtros para la tabla `hseq_evaluacion_items`
+-- INSERTAR DATOS DESPUÉS DE DEFINIR ESTRUCTURA
 --
-ALTER TABLE `hseq_evaluacion_items`
-  ADD CONSTRAINT `fk_hseq_item_eval` FOREIGN KEY (`id_hseq_evaluacion`) REFERENCES `hseq_evaluacion` (`id_hseq_evaluacion`) ON DELETE CASCADE;
+
+-- Insertar datos en evaluacion (sin especificar id_evaluacion para que se auto-genere)
+INSERT INTO `evaluacion` (`id_empleado`, `fecha_evaluacion`, `periodo_evaluacion`, `categoria_evaluacion`, `observaciones_generales`, `estado_evaluacion`, `id_jefe`, `fecha_creacion`, `fecha_actualizacion`, `fecha_autoevaluacion`, `fecha_evaluacion_jefe`, `fecha_evaluacion_hseq`, `id_evaluador_hseq`, `comentarios_hseq`) VALUES
+(146, '2025-09-24 09:35:50', '2025-09', 'Anual', NULL, 'AUTOEVALUACION_COMPLETADA', 1, '2025-09-24 09:35:50', '2025-09-24 09:35:50', '2025-09-24 09:35:50', NULL, NULL, NULL, NULL);
+
+-- Obtener el ID auto-generado de la evaluación
+SET @evaluation_id = LAST_INSERT_ID();
+
+-- Insertar datos en evaluacion_acta_compromiso
+INSERT INTO `evaluacion_acta_compromiso` (`id_evaluacion`, `criterio`, `compromiso`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(@evaluation_id, 'qweqdasdasdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'qweqdasdasdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', '2025-09-24 09:35:50', '2025-09-24 09:35:50');
+
+-- Insertar datos en evaluacion_competencias
+INSERT INTO `evaluacion_competencias` (`id_evaluacion`, `id_aspecto`, `aspecto`, `calificacion_empleado`, `calificacion_jefe`, `promedio`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(@evaluation_id, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '4', '', 2.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '1', '', 0.50, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 3, 'Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.', '2', '', 1.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '2', '', 1.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 5, 'Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia', '2', '', 1.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 6, 'Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.', '2', '', 1.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '2', '', 1.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 8, 'Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.', '2', '', 1.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 9, 'Anticipa problemas y posibles soluciones que advierten su carácter de especialista.', '2', '', 1.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativas al propio, para analizar y proponer soluciones posibles.', '2', '', 1.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 11, 'Articula sus actuaciones con las de los demás', '2', '', 1.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 12, 'Cumple los compromisos adquiridos', '5', '', 2.50, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '2', '', 1.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 14, 'Escucha con interés y capta las necesidades de los demás.', '2', '', 1.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '2', '', 1.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 16, 'Toma la iniciativa en el contacto con clientes internos y externos para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.', '2', '', 1.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '2', '', 1.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '3', '', 1.50, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '2', '', 1.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '3', '', 1.50, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '4', '', 2.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '2', '', 1.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50'),
+(@evaluation_id, 23, 'Prioriza y organiza sus funciones para asegurar el cumplimiento sin reprocesos.', '3', '', 1.50, '2025-09-24 09:35:50', '2025-09-24 09:35:50');
+
+-- Insertar datos en evaluacion_estado_historial
+INSERT INTO `evaluacion_estado_historial` (`id_evaluacion`, `estado_anterior`, `estado_nuevo`, `fecha_cambio`, `id_usuario_cambio`, `comentario`) VALUES
+(@evaluation_id, NULL, 'AUTOEVALUACION_COMPLETADA', '2025-09-24 09:35:50', 146, NULL);
+
+-- Insertar datos en evaluacion_firmas
+INSERT INTO `evaluacion_firmas` (`id_evaluacion`, `firma_empleado`, `firma_jefe`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(@evaluation_id, 'uploads/signatures/employee_146_1758731750.png', '', '2025-09-24 09:35:50', '2025-09-24 09:35:50');
+
+-- Insertar datos en evaluacion_mejoramiento
+INSERT INTO `evaluacion_mejoramiento` (`id_evaluacion`, `fortalezas`, `aspectos_mejorar`, `necesidades_capacitacion`, `comentarios_jefe`, `fecha_revision_jefe`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(@evaluation_id, 'qweqdasdasdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'qweqdasdasdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'qweqdasdasdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', '', NULL, '2025-09-24 09:35:50', '2025-09-24 09:35:50');
+
+-- Insertar datos en evaluacion_plan_accion
+INSERT INTO `evaluacion_plan_accion` (`id_evaluacion`, `actividad`, `responsable`, `seguimiento`, `comentarios_jefe`, `aprobado_jefe`, `fecha_revision_jefe`, `fecha`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(@evaluation_id, '', '', '', '', 'PENDIENTE', NULL, '0000-00-00', '2025-09-24 09:35:50', '2025-09-24 09:35:50');
+
+-- Insertar datos en evaluacion_promedios
+INSERT INTO `evaluacion_promedios` (`id_evaluacion`, `promedio_competencias`, `promedio_hseq`, `promedio_general`, `promedio_comunicacion_efectiva`, `promedio_instrumentalidad_decisiones`, `promedio_aporte_profesional`, `promedio_colaboracion`, `promedio_relaciones_interpersonales`, `promedio_gestion_procedimientos`, `promedio_cumplimiento_funciones`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(@evaluation_id, 2.39, 0.00, 2.39, 2.25, 2.00, 2.00, 3.00, 2.00, 2.33, 3.00, '2025-09-24 09:35:50', '2025-09-24 09:35:50');
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -305,35 +305,8 @@ class EvaluationControllerNativo {
                 if ($competenciasData) { $this->saveCompetencias($evaluationId, $competenciasData); }
                 $this->savePromedios($evaluationId, $promedioCompetencias, $hseqAverage, $generalAverage, $groupAverages);
 
-                // Actualizar firmas: mantener la firma del empleado existente y actualizar solo la del jefe
-                if ($bossSignaturePath) {
-                    // Primero verificar si ya existe un registro de firmas para esta evaluación
-                    $stmtCheck = $this->db->prepare("SELECT id_firma, firma_empleado FROM evaluacion_firmas WHERE id_evaluacion = ?");
-                    $stmtCheck->bind_param('i', $evaluationId);
-                    $stmtCheck->execute();
-                    $result = $stmtCheck->get_result()->fetch_assoc();
-                    $stmtCheck->close();
-                    
-                    if ($result) {
-                        // Actualizar el registro existente, manteniendo la firma del empleado
-                        $stmtUpdate = $this->db->prepare("UPDATE evaluacion_firmas SET firma_jefe = ? WHERE id_evaluacion = ?");
-                        if (!$stmtUpdate) {
-                            throw new Exception('Error al preparar UPDATE de firma del jefe: ' . $this->db->error);
-                        }
-                        $stmtUpdate->bind_param('si', $bossSignaturePath, $evaluationId);
-                        $stmtUpdate->execute();
-                        $stmtUpdate->close();
-                    } else {
-                        // Insertar nuevo registro con solo la firma del jefe (la del empleado se agregará después)
-                        $stmtInsert = $this->db->prepare("INSERT INTO evaluacion_firmas (id_evaluacion, firma_jefe) VALUES (?, ?)");
-                        if (!$stmtInsert) {
-                            throw new Exception('Error al preparar INSERT de firma del jefe: ' . $this->db->error);
-                        }
-                        $stmtInsert->bind_param('is', $evaluationId, $bossSignaturePath);
-                        $stmtInsert->execute();
-                        $stmtInsert->close();
-                    }
-                }
+                // Actualizar firmas usando la función mejorada
+                $this->saveFirmas($evaluationId, $employeeSignaturePath, $bossSignaturePath);
 
                 $this->db->commit();
                 echo json_encode(["success" => true, "message" => "Evaluación actualizada", "id_evaluacion" => $evaluationId]);
@@ -816,16 +789,38 @@ class EvaluationControllerNativo {
      * Guarda firmas
      */
     private function saveFirmas($evaluationId, $employeeSignaturePath, $bossSignaturePath) {
-        $stmt = $this->db->prepare("
-            INSERT INTO evaluacion_firmas 
-            (id_evaluacion, firma_empleado, firma_jefe) 
-            VALUES (?, ?, ?)
-        ");
-        $firmaEmpleado = $employeeSignaturePath ?? '';
-        $firmaJefe = $bossSignaturePath ?? '';
-        $stmt->bind_param('iss', $evaluationId, $firmaEmpleado, $firmaJefe);
-        $stmt->execute();
-        $stmt->close();
+        // Verificar si ya existe un registro de firmas para esta evaluación
+        $checkStmt = $this->db->prepare("SELECT id_firma FROM evaluacion_firmas WHERE id_evaluacion = ?");
+        $checkStmt->bind_param('i', $evaluationId);
+        $checkStmt->execute();
+        $result = $checkStmt->get_result();
+        $checkStmt->close();
+        
+        if ($result->num_rows > 0) {
+            // Si existe, actualizar solo la firma del jefe (preservar la firma del empleado)
+            if ($bossSignaturePath) {
+                $stmt = $this->db->prepare("
+                    UPDATE evaluacion_firmas 
+                    SET firma_jefe = ?, fecha_actualizacion = NOW()
+                    WHERE id_evaluacion = ?
+                ");
+                $stmt->bind_param('si', $bossSignaturePath, $evaluationId);
+                $stmt->execute();
+                $stmt->close();
+            }
+        } else {
+            // Si no existe, crear nuevo registro
+            $stmt = $this->db->prepare("
+                INSERT INTO evaluacion_firmas 
+                (id_evaluacion, firma_empleado, firma_jefe) 
+                VALUES (?, ?, ?)
+            ");
+            $firmaEmpleado = $employeeSignaturePath ?? '';
+            $firmaJefe = $bossSignaturePath ?? '';
+            $stmt->bind_param('iss', $evaluationId, $firmaEmpleado, $firmaJefe);
+            $stmt->execute();
+            $stmt->close();
+        }
     }
 
     /**

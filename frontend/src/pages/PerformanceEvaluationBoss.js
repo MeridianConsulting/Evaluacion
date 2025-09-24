@@ -110,10 +110,22 @@ function PerformanceEvaluationBoss() {
   useEffect(() => {
     const loadExistingEvaluation = async () => {
       if (!existingEvaluationId || !employee?.id_empleado) return;
+      
+      // Validar que el evaluationId sea válido (mayor que 0)
+      if (!existingEvaluationId || existingEvaluationId === '0' || existingEvaluationId === 0) {
+        setError('Error: La evaluación no existe o no se creó correctamente. El empleado debe completar su autoevaluación primero.');
+        setLoading(false);
+        return;
+      }
+      
       try {
         const apiUrl = process.env.REACT_APP_API_BASE_URL;
         const resp = await fetch(`${apiUrl}/api/evaluations/${existingEvaluationId}/complete/${employee.id_empleado}`);
-        if (!resp.ok) return;
+        if (!resp.ok) {
+          setError('Error: No se pudo cargar la evaluación. Verifique que la evaluación existe y que el empleado completó su autoevaluación.');
+          setLoading(false);
+          return;
+        }
         const payload = await resp.json();
         const data = payload?.data || {};
 
@@ -765,13 +777,14 @@ function PerformanceEvaluationBoss() {
       }
     });
 
-    // Validar competencias - TODAS OBLIGATORIAS
+    // Validar competencias - CONDICIONAL POR MODO
     rows.forEach((row, index) => {
       const workerOk = row.worker && String(row.worker) !== '' && String(row.worker) !== '0';
       const bossOk = row.boss && String(row.boss) !== '' && String(row.boss) !== '0';
       
-      // Validar worker SIEMPRE (autoevaluación obligatoria)
-      if (!workerOk) {
+      // En modo jefe: solo validar que existan las calificaciones del empleado (ya las llenó)
+      // En modo empleado: validar que el empleado llene sus calificaciones
+      if (!isManagerView && !workerOk) {
         errores[`competencia_worker_${row.id}`] = true;
         isValid = false;
       }
@@ -782,8 +795,9 @@ function PerformanceEvaluationBoss() {
         isValid = false;
       }
 
-      // Validar justificaciones para calificaciones extremas (1, 2 o 5)
-      if (workerOk) {
+      // Validar justificaciones CONDICIONALMENTE
+      // Solo validar justificaciones del trabajador en modo empleado
+      if (!isManagerView && workerOk) {
         const workerVal = Number(row.worker);
         if ((workerVal === 1 || workerVal === 2 || workerVal === 5) && !row.justificacionTrabajador?.trim()) {
           errores[`competencia_worker_justificacion_${row.id}`] = true;
@@ -791,6 +805,7 @@ function PerformanceEvaluationBoss() {
         }
       }
       
+      // Validar justificaciones del jefe SIEMPRE
       if (bossOk) {
         const bossVal = Number(row.boss);
         if ((bossVal === 1 || bossVal === 2 || bossVal === 5) && !row.justificacionJefe?.trim()) {
@@ -896,7 +911,8 @@ function PerformanceEvaluationBoss() {
     }
 
     // Validar firmas - CONDICIONAL POR MODO
-    if (!employeeSignature) {
+    // Solo validar firma del empleado en modo empleado
+    if (!isManagerView && !employeeSignature) {
       errores.employeeSignature = true;
       isValid = false;
     }
@@ -926,13 +942,14 @@ function PerformanceEvaluationBoss() {
   const validateAllCalifications = () => {
     const errores = {};
 
-    // Validar competencias (rows) - TODAS OBLIGATORIAS
+    // Validar competencias (rows) - CONDICIONAL POR MODO
     rows.forEach((row) => {
       const workerOk = row.worker && String(row.worker) !== '' && String(row.worker) !== '0';
       const bossOk = row.boss && String(row.boss) !== '' && String(row.boss) !== '0';
       
-      // Validar worker SIEMPRE (autoevaluación obligatoria)
-      if (!workerOk) {
+      // En modo jefe: solo validar que existan las calificaciones del empleado (ya las llenó)
+      // En modo empleado: validar que el empleado llene sus calificaciones
+      if (!isManagerView && !workerOk) {
         errores[`competencia_worker_${row.id}`] = true;
       }
       
@@ -941,14 +958,16 @@ function PerformanceEvaluationBoss() {
         errores[`competencia_boss_${row.id}`] = true;
       }
 
-      // Validar justificaciones para calificaciones extremas (1, 2 o 5)
-      if (workerOk) {
+      // Validar justificaciones CONDICIONALMENTE
+      // Solo validar justificaciones del trabajador en modo empleado
+      if (!isManagerView && workerOk) {
         const workerVal = Number(row.worker);
         if ((workerVal === 1 || workerVal === 2 || workerVal === 5) && !row.justificacionTrabajador?.trim()) {
           errores[`competencia_worker_justificacion_${row.id}`] = true;
         }
       }
       
+      // Validar justificaciones del jefe SIEMPRE
       if (bossOk) {
         const bossVal = Number(row.boss);
         if ((bossVal === 1 || bossVal === 2 || bossVal === 5) && !row.justificacionJefe?.trim()) {
@@ -988,11 +1007,13 @@ function PerformanceEvaluationBoss() {
       errores.planAccion_required = true;
     }
 
-    // Validar firmas - AMBAS OBLIGATORIAS
-    if (!employeeSignature) {
+    // Validar firmas - CONDICIONAL POR MODO
+    // Solo validar firma del empleado en modo empleado
+    if (!isManagerView && !employeeSignature) {
       errores.employeeSignature = true;
     }
-    if (!bossSignature) {
+    // Solo validar firma del jefe en modo jefe
+    if (isManagerView && !bossSignature) {
       errores.bossSignature = true;
     }
 
@@ -1018,9 +1039,11 @@ function PerformanceEvaluationBoss() {
     const promedioNumber = Number(promedioCompetencias);
 
     const erroresBasicos = {};
+    // Solo validar firma del empleado en modo empleado
     if (!isManagerView && !employeeSignature) {
       erroresBasicos.employeeSignature = true;
     }
+    // Solo validar firma del jefe en modo jefe
     if (isManagerView && !bossSignature) {
       erroresBasicos.bossSignature = true;
     }
@@ -1088,8 +1111,8 @@ function PerformanceEvaluationBoss() {
     try {
       setIsSubmitting(true);
       const apiUrl = process.env.REACT_APP_API_BASE_URL;
-      if (!existingEvaluationId) {
-        warning('Falta identificador', 'No se encontró el ID de la evaluación.');
+      if (!existingEvaluationId || existingEvaluationId === '0' || existingEvaluationId === 0) {
+        warning('Falta identificador', 'No se encontró el ID de la evaluación. La evaluación debe existir en la base de datos.');
         setIsSubmitting(false);
         return;
       }
