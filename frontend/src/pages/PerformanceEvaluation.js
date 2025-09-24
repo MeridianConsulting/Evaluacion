@@ -133,7 +133,9 @@ function PerformanceEvaluation() {
               ...r,
               worker: found.calificacion_empleado ? Number(found.calificacion_empleado) : '',
               boss: found.calificacion_jefe ? Number(found.calificacion_jefe) : '',
-              average: found.promedio ? String(found.promedio) : ''
+              average: found.promedio ? String(found.promedio) : '',
+              justificacionTrabajador: found.justificacion_empleado || '',
+              justificacionJefe: found.justificacion_jefe || ''
             };
           }));
         }
@@ -170,6 +172,10 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 2,
@@ -177,6 +183,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 3,
@@ -184,6 +192,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 4,
@@ -191,6 +201,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 5,
@@ -198,6 +210,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 6,
@@ -205,6 +219,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 7,
@@ -212,6 +228,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 8,
@@ -219,6 +237,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 9,
@@ -226,6 +246,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 10,
@@ -233,6 +255,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 11,
@@ -240,6 +264,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 12,
@@ -247,6 +273,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 13,
@@ -254,6 +282,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 14,
@@ -261,6 +291,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 15,
@@ -268,6 +300,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 16,
@@ -275,6 +309,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 17,
@@ -282,6 +318,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 18,
@@ -289,6 +327,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 19,
@@ -296,6 +336,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 20,
@@ -303,6 +345,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 21,
@@ -310,6 +354,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 22,
@@ -317,6 +363,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
     {
       id: 23,
@@ -324,6 +372,8 @@ function PerformanceEvaluation() {
       worker: "",
       boss: "",
       average: "",
+      justificacionTrabajador: "",
+      justificacionJefe: "",
     },
   ]);
 
@@ -590,10 +640,8 @@ function PerformanceEvaluation() {
     console.log('=== DEBUG validarFormulario ===');
     console.log('isManagerView:', isManagerView);
 
-    // Validar datos generales (según modo)
-    const requiredGeneralFields = isManagerView
-      ? ['fechaEvaluacion']
-      : ['fechaIngreso','fechaEvaluacion','area'];
+    // Validar datos generales - TODOS OBLIGATORIOS
+    const requiredGeneralFields = ['fechaIngreso', 'fechaEvaluacion', 'area', 'categoriaEvaluacion'];
     console.log('requiredGeneralFields:', requiredGeneralFields);
     requiredGeneralFields.forEach(key => {
       console.log(`Validando ${key}:`, datosGenerales[key]);
@@ -604,7 +652,7 @@ function PerformanceEvaluation() {
       }
     });
 
-    // Validar competencias (condicional por modo)
+    // Validar competencias - TODAS OBLIGATORIAS
     console.log('Validando competencias...');
     rows.forEach((row, index) => {
       const workerOk = row.worker && String(row.worker) !== '' && String(row.worker) !== '0';
@@ -612,22 +660,43 @@ function PerformanceEvaluation() {
       
       console.log(`Row ${index}: worker=${row.worker} (${workerOk}), boss=${row.boss} (${bossOk})`);
       
-      // Solo validar worker en modo empleado, boss en modo jefe
-      if (!isManagerView && !workerOk) {
-        errores[`worker_${index}`] = true;
+      // Validar worker SIEMPRE (autoevaluación obligatoria)
+      if (!workerOk) {
+        errores[`competencia_worker_${row.id}`] = true;
         isValid = false;
         console.log(`ERROR en competencia ${index}: worker no válido`);
       }
-      if (isManagerView && !bossOk) {
-        errores[`boss_${index}`] = true;
+      
+      // Validar boss SIEMPRE (evaluación del jefe obligatoria)
+      if (!bossOk) {
+        errores[`competencia_boss_${row.id}`] = true;
         isValid = false;
         console.log(`ERROR en competencia ${index}: boss no válido`);
+      }
+
+      // Validar justificaciones para calificaciones extremas (1, 2 o 5)
+      if (workerOk) {
+        const workerVal = Number(row.worker);
+        if ((workerVal === 1 || workerVal === 2 || workerVal === 5) && !row.justificacionTrabajador?.trim()) {
+          errores[`competencia_worker_justificacion_${row.id}`] = true;
+          isValid = false;
+          console.log(`ERROR en competencia ${index}: falta justificación del trabajador para calificación ${workerVal}`);
+        }
+      }
+      
+      if (bossOk) {
+        const bossVal = Number(row.boss);
+        if ((bossVal === 1 || bossVal === 2 || bossVal === 5) && !row.justificacionJefe?.trim()) {
+          errores[`competencia_boss_justificacion_${row.id}`] = true;
+          isValid = false;
+          console.log(`ERROR en competencia ${index}: falta justificación del jefe para calificación ${bossVal}`);
+        }
       }
     });
 
     // HSEQ deshabilitado - no validar
 
-    // Validar mejoramiento
+    // Validar mejoramiento - OBLIGATORIO
     console.log('Validando mejoramiento...');
     console.log('fortalezas:', mejoramiento.fortalezas);
     console.log('aspectosMejorar:', mejoramiento.aspectosMejorar);
@@ -643,12 +712,16 @@ function PerformanceEvaluation() {
       console.log('ERROR: aspectosMejorar vacío');
     }
 
-    // Validar planes de acción (solo en modo jefe). Para empleado es 100% opcional
-    if (isManagerView) {
-      planesAccion.forEach((plan, index) => {
-        const keys = Object.keys(plan).filter(k => k !== 'id');
-        const hasAny = keys.some(k => plan[k] && String(plan[k]).trim() !== '');
-        if (hasAny) {
+    // Validar planes de acción - OBLIGATORIO (al menos uno completo)
+    let hasValidPlan = false;
+    planesAccion.forEach((plan, index) => {
+      const keys = Object.keys(plan).filter(k => k !== 'id');
+      const hasAny = keys.some(k => plan[k] && String(plan[k]).trim() !== '');
+      if (hasAny) {
+        const allFilled = keys.every(k => plan[k] && String(plan[k]).trim() !== '');
+        if (allFilled) {
+          hasValidPlan = true;
+        } else {
           keys.forEach(k => {
             if (!plan[k] || String(plan[k]).trim() === '') {
               errores[`planAccion_${index}_${k}`] = true;
@@ -656,15 +729,21 @@ function PerformanceEvaluation() {
             }
           });
         }
-      });
+      }
+    });
+    
+    if (!hasValidPlan) {
+      errores.planAccion_required = true;
+      isValid = false;
+      console.log('ERROR: se requiere al menos un plan de acción completo');
     }
 
-    // Validar firmas (condicional por modo)
-    if (!isManagerView && !employeeSignature) {
+    // Validar firmas - AMBAS OBLIGATORIAS
+    if (!employeeSignature) {
       errores.employeeSignature = true;
       isValid = false;
     }
-    if (isManagerView && !bossSignature) {
+    if (!bossSignature) {
       errores.bossSignature = true;
       isValid = false;
     }
@@ -736,17 +815,34 @@ function PerformanceEvaluation() {
   const validateAllCalifications = () => {
     const errores = {};
 
-    // Validar competencias (rows) - condicional por modo
+    // Validar competencias (rows) - TODAS OBLIGATORIAS
     rows.forEach((row) => {
       const workerOk = row.worker && String(row.worker) !== '' && String(row.worker) !== '0';
       const bossOk = row.boss && String(row.boss) !== '' && String(row.boss) !== '0';
       
-      // Solo validar worker en modo empleado, boss en modo jefe
-      if (!isManagerView && !workerOk) {
+      // Validar worker SIEMPRE (autoevaluación obligatoria)
+      if (!workerOk) {
         errores[`competencia_worker_${row.id}`] = true;
       }
-      if (isManagerView && !bossOk) {
+      
+      // Validar boss SIEMPRE (evaluación del jefe obligatoria)
+      if (!bossOk) {
         errores[`competencia_boss_${row.id}`] = true;
+      }
+
+      // Validar justificaciones para calificaciones extremas (1, 2 o 5)
+      if (workerOk) {
+        const workerVal = Number(row.worker);
+        if ((workerVal === 1 || workerVal === 2 || workerVal === 5) && !row.justificacionTrabajador?.trim()) {
+          errores[`competencia_worker_justificacion_${row.id}`] = true;
+        }
+      }
+      
+      if (bossOk) {
+        const bossVal = Number(row.boss);
+        if ((bossVal === 1 || bossVal === 2 || bossVal === 5) && !row.justificacionJefe?.trim()) {
+          errores[`competencia_boss_justificacion_${row.id}`] = true;
+        }
       }
     });
 
@@ -794,9 +890,7 @@ function PerformanceEvaluation() {
 
     if (hayErroresCalif || !formularioValido) {
       window.scrollTo(0, 0);
-      const msg = isManagerView
-        ? 'Complete las calificaciones del trabajador y del jefe, y los campos requeridos.'
-        : 'Complete las calificaciones del trabajador y los campos requeridos.';
+      const msg = 'Complete TODAS las calificaciones (trabajador y jefe), justificaciones para calificaciones 1, 2 o 5, y todos los campos requeridos.';
       warning('Campos obligatorios', msg);
       return;
     }
@@ -902,6 +996,8 @@ function PerformanceEvaluation() {
             worker: "",
             boss: "",
             average: "",
+            justificacionTrabajador: "",
+            justificacionJefe: "",
           },
           {
             id: 2,
@@ -1392,7 +1488,7 @@ function PerformanceEvaluation() {
             {/* Fila 4 */}
             <div className="evaluation-row">
               <div className="evaluation-field" style={{ position: 'relative', zIndex: 9999 }}>
-                <label>Nombre del evaluador:</label>
+                <label>Nombre del Jefe Inmediato:</label>
                 <div style={{ position: 'relative', zIndex: 10000 }}>
                 <input 
                   type="text" 
