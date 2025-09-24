@@ -149,7 +149,13 @@ class EvaluationControllerNativo {
                     $this->saveMejoramiento($evaluationId, $mejoramiento);
                 }
 
-                // 3. Guardar plan de acción
+                // 3. Guardar acta de compromiso
+                $actaCompromiso = json_decode($_POST['actaCompromiso'] ?? '[]', true);
+                if ($actaCompromiso) {
+                    $this->saveActaCompromiso($evaluationId, $actaCompromiso);
+                }
+
+                // 4. Guardar plan de acción
                 if ($planAccion) {
                     $this->savePlanAccion($evaluationId, $planAccion);
                 }
@@ -280,10 +286,20 @@ class EvaluationControllerNativo {
                 $this->db->query("DELETE FROM evaluacion_competencias WHERE id_evaluacion = " . (int)$evaluationId);
                 $this->db->query("DELETE FROM evaluacion_hseq WHERE id_evaluacion = " . (int)$evaluationId);
                 $this->db->query("DELETE FROM evaluacion_mejoramiento WHERE id_evaluacion = " . (int)$evaluationId);
+                $this->db->query("DELETE FROM evaluacion_acta_compromiso WHERE id_evaluacion = " . (int)$evaluationId);
                 $this->db->query("DELETE FROM evaluacion_plan_accion WHERE id_evaluacion = " . (int)$evaluationId);
                 $this->db->query("DELETE FROM evaluacion_promedios WHERE id_evaluacion = " . (int)$evaluationId);
 
                 if ($mejoramiento) { $this->saveMejoramiento($evaluationId, $mejoramiento); }
+                
+                // Guardar acta de compromiso
+                $actaCompromiso = json_decode($_POST['actaCompromiso'] ?? '[]', true);
+                if ($actaCompromiso) {
+                    // Eliminar actas existentes y guardar las nuevas
+                    $this->db->query("DELETE FROM evaluacion_acta_compromiso WHERE id_evaluacion = " . (int)$evaluationId);
+                    $this->saveActaCompromiso($evaluationId, $actaCompromiso);
+                }
+                
                 if ($planAccion)   { $this->savePlanAccion($evaluationId, $planAccion); }
                 // HSEQ se gestiona en tablas independientes, no guardar aquí
                 if ($competenciasData) { $this->saveCompetencias($evaluationId, $competenciasData); }
@@ -612,25 +628,65 @@ class EvaluationControllerNativo {
     private function saveMejoramiento($evaluationId, $mejoramiento) {
         $stmt = $this->db->prepare("
             INSERT INTO evaluacion_mejoramiento 
-            (id_evaluacion, fortalezas, aspectos_mejorar, comentarios_jefe) 
-            VALUES (?, ?, ?, ?)
+            (id_evaluacion, fortalezas, aspectos_mejorar, necesidades_capacitacion, comentarios_jefe) 
+            VALUES (?, ?, ?, ?, ?)
         ");
         if (!$stmt) {
             throw new Exception('Error al preparar INSERT mejoramiento: ' . $this->db->error);
         }
         $fortalezas = $mejoramiento['fortalezas'] ?? '';
         $aspectosMejorar = $mejoramiento['aspectosMejorar'] ?? '';
+        $necesidadesCapacitacion = $mejoramiento['necesidadesCapacitacion'] ?? '';
         $comentariosJefe = $mejoramiento['comentariosJefe'] ?? '';
-        $stmt->bind_param('isss', 
+        $stmt->bind_param('issss', 
             $evaluationId,
             $fortalezas,
             $aspectosMejorar,
+            $necesidadesCapacitacion,
             $comentariosJefe
         );
         if (!$stmt->execute()) {
             throw new Exception('Error al ejecutar INSERT mejoramiento: ' . $stmt->error);
         }
         $stmt->close();
+    }
+
+    /**
+     * Guarda acta de compromiso
+     */
+    private function saveActaCompromiso($evaluationId, $actaCompromiso) {
+        if (!is_array($actaCompromiso) || empty($actaCompromiso)) {
+            return;
+        }
+        
+        foreach ($actaCompromiso as $acta) {
+            if (empty($acta['criterio']) && empty($acta['compromiso'])) {
+                continue; // Saltar actas vacías
+            }
+            
+            $stmt = $this->db->prepare("
+                INSERT INTO evaluacion_acta_compromiso 
+                (id_evaluacion, criterio, compromiso) 
+                VALUES (?, ?, ?)
+            ");
+            if (!$stmt) {
+                throw new Exception('Error al preparar INSERT acta compromiso: ' . $this->db->error);
+            }
+            
+            $criterio = $acta['criterio'] ?? '';
+            $compromiso = $acta['compromiso'] ?? '';
+            
+            $stmt->bind_param('iss', 
+                $evaluationId,
+                $criterio,
+                $compromiso
+            );
+            
+            if (!$stmt->execute()) {
+                throw new Exception('Error al ejecutar INSERT acta compromiso: ' . $stmt->error);
+            }
+            $stmt->close();
+        }
     }
 
     /**
@@ -1037,6 +1093,19 @@ class EvaluationControllerNativo {
     }
 
     /**
+     * Obtiene datos de acta de compromiso
+     */
+    private function getActaCompromiso($evaluationId) {
+        $stmt = $this->db->prepare("SELECT * FROM evaluacion_acta_compromiso WHERE id_evaluacion = ? ORDER BY id_acta_compromiso");
+        $stmt->bind_param('i', $evaluationId);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        
+        return $result;
+    }
+
+    /**
      * Obtiene plan de acción
      */
     private function getPlanAccion($evaluationId) {
@@ -1279,6 +1348,7 @@ class EvaluationControllerNativo {
                     'idEvaluador' => $jefeData ? $jefeData['id_empleado'] : ''
                 ],
                 'mejoramiento' => $this->getMejoramiento($evaluationId),
+                'acta_compromiso' => $this->getActaCompromiso($evaluationId),
                 'plan_accion' => $this->getPlanAccion($evaluationId),
                 'hseq_data' => $this->getHseqData($evaluationId),
                 'competencias' => $this->getCompetencias($evaluationId),
@@ -1407,6 +1477,7 @@ class EvaluationControllerNativo {
             $evaluacionCompleta = [
                 'evaluacion' => $evaluacion,
                 'mejoramiento' => $this->getMejoramiento($evaluationId),
+                'acta_compromiso' => $this->getActaCompromiso($evaluationId),
                 'plan_accion' => $this->getPlanAccion($evaluationId),
                 'hseq_data' => $this->getHseqData($evaluationId),
                 'competencias' => $this->getCompetencias($evaluationId),

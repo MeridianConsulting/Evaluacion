@@ -44,7 +44,8 @@ function PerformanceEvaluationBoss() {
   const isSelfView = false;
   const [mejoramiento, setMejoramiento] = useState({
     fortalezas: '',
-    aspectosMejorar: ''
+    aspectosMejorar: '',
+    necesidadesCapacitacion: ''
   });
   const [planesAccion, setPlanesAccion] = useState([
     {
@@ -54,6 +55,13 @@ function PerformanceEvaluationBoss() {
       seguimiento: '',
       fecha: '',
       comentariosJefe: ''
+    }
+  ]);
+  const [actaCompromiso, setActaCompromiso] = useState([
+    {
+      id: 1,
+      criterio: '',
+      compromiso: ''
     }
   ]);
   const [comentariosJefe, setComentariosJefe] = useState('');
@@ -151,12 +159,30 @@ function PerformanceEvaluationBoss() {
         if (data.mejoramiento) {
           setMejoramiento({
             fortalezas: data.mejoramiento.fortalezas || '',
-            aspectosMejorar: data.mejoramiento.aspectos_mejorar || data.mejoramiento.aspectosMejorar || ''
+            aspectosMejorar: data.mejoramiento.aspectos_mejorar || data.mejoramiento.aspectosMejorar || '',
+            necesidadesCapacitacion: data.mejoramiento.necesidades_capacitacion || data.mejoramiento.necesidadesCapacitacion || ''
           });
           // Cargar comentarios del jefe si existen
           if (data.mejoramiento.comentarios_jefe) {
             setComentariosJefe(data.mejoramiento.comentarios_jefe);
           }
+        }
+
+        // Acta de compromiso
+        if (data.acta_compromiso && Array.isArray(data.acta_compromiso) && data.acta_compromiso.length > 0) {
+          setActaCompromiso(data.acta_compromiso.map((acta, index) => ({
+            id: index + 1,
+            criterio: acta.criterio || '',
+            compromiso: acta.compromiso || ''
+          })));
+        } else {
+          setActaCompromiso([
+            {
+              id: 1,
+              criterio: '',
+              compromiso: ''
+            }
+          ]);
         }
 
         // Plan de acción (si viene uno)
@@ -400,6 +426,7 @@ function PerformanceEvaluationBoss() {
       rows,
       mejoramiento,
       planesAccion,
+      actaCompromiso,
       employeeSignature,
       bossSignature,
       timestamp: new Date().getTime()
@@ -420,6 +447,11 @@ function PerformanceEvaluationBoss() {
         if (formData.timestamp && (now - formData.timestamp) < maxAge) {
           setDatosGenerales(formData.datosGenerales || datosGenerales);
           setRows(formData.rows || rows);
+          setMejoramiento(formData.mejoramiento || mejoramiento);
+          setPlanesAccion(formData.planesAccion || planesAccion);
+          setActaCompromiso(formData.actaCompromiso || actaCompromiso);
+          setEmployeeSignature(formData.employeeSignature || null);
+          setBossSignature(formData.bossSignature || null);
           return true;
         } else {
           // Datos muy antiguos, limpiar
@@ -549,7 +581,7 @@ function PerformanceEvaluationBoss() {
         setIsSaving(false);
       }, 500);
     }
-  }, [datosGenerales, rows, mejoramiento, planesAccion, employeeSignature, bossSignature, employee, formTouched]);
+  }, [datosGenerales, rows, mejoramiento, planesAccion, actaCompromiso, employeeSignature, bossSignature, employee, formTouched]);
 
   // Calcula promedio cada vez que cambie evaluación
   const handleSelectChange = (rowId, field, value) => {
@@ -613,6 +645,40 @@ function PerformanceEvaluationBoss() {
   const removePlanAccion = (planId) => {
     if (planesAccion.length > 1) {
       setPlanesAccion(prev => prev.filter(plan => plan.id !== planId));
+      setFormTouched(true);
+    }
+  };
+
+  // Manejar cambio en acta de compromiso
+  const handleActaCompromisoChange = (actaId, field, value) => {
+    setActaCompromiso(prev => 
+      prev.map(acta => 
+        acta.id === actaId ? { ...acta, [field]: value } : acta
+      )
+    );
+    setFormTouched(true);
+  };
+
+  // Agregar nuevo acta de compromiso
+  const addActaCompromiso = () => {
+    if (actaCompromiso.length < 3) {
+      const newId = Math.max(...actaCompromiso.map(a => a.id)) + 1;
+      setActaCompromiso(prev => [
+        ...prev,
+        {
+          id: newId,
+          criterio: '',
+          compromiso: ''
+        }
+      ]);
+      setFormTouched(true);
+    }
+  };
+
+  // Eliminar acta de compromiso
+  const removeActaCompromiso = (actaId) => {
+    if (actaCompromiso.length > 1) {
+      setActaCompromiso(prev => prev.filter(acta => acta.id !== actaId));
       setFormTouched(true);
     }
   };
@@ -734,17 +800,30 @@ function PerformanceEvaluationBoss() {
       }
     });
 
-    // Validar mejoramiento - OBLIGATORIO
+    // Validar mejoramiento - OBLIGATORIO con mínimo de caracteres
     if (!mejoramiento.fortalezas.trim()) {
       errores.fortalezas = true;
       isValid = false;
+    } else if (mejoramiento.fortalezas.trim().length < 50) {
+      errores.fortalezas = true;
+      isValid = false;
     }
+    
     if (!mejoramiento.aspectosMejorar.trim()) {
+      errores.aspectosMejorar = true;
+      isValid = false;
+    } else if (mejoramiento.aspectosMejorar.trim().length < 50) {
       errores.aspectosMejorar = true;
       isValid = false;
     }
 
-    // Validar planes de acción - OBLIGATORIO (al menos uno completo)
+    // Validar necesidades de capacitación (opcional pero si se llena debe tener mínimo 30 caracteres)
+    if (mejoramiento.necesidadesCapacitacion && mejoramiento.necesidadesCapacitacion.trim().length > 0 && mejoramiento.necesidadesCapacitacion.trim().length < 30) {
+      errores.necesidadesCapacitacion = true;
+      isValid = false;
+    }
+
+    // Validar planes de acción - OBLIGATORIO (al menos uno completo con mínimo de caracteres)
     let hasValidPlan = false;
     planesAccion.forEach((plan, index) => {
       const keys = Object.keys(plan).filter(k => k !== 'id');
@@ -752,7 +831,19 @@ function PerformanceEvaluationBoss() {
       if (hasAny) {
         const allFilled = keys.every(k => plan[k] && String(plan[k]).trim() !== '');
         if (allFilled) {
-          hasValidPlan = true;
+          // Validar mínimo de caracteres para cada campo
+          const actividadOk = plan.actividad && plan.actividad.trim().length >= 30;
+          const responsableOk = plan.responsable && plan.responsable.trim().length >= 20;
+          const seguimientoOk = plan.seguimiento && plan.seguimiento.trim().length >= 30;
+          
+          if (actividadOk && responsableOk && seguimientoOk) {
+            hasValidPlan = true;
+          } else {
+            if (!actividadOk) errores[`planAccion_${index}_actividad`] = true;
+            if (!responsableOk) errores[`planAccion_${index}_responsable`] = true;
+            if (!seguimientoOk) errores[`planAccion_${index}_seguimiento`] = true;
+            isValid = false;
+          }
         } else {
           keys.forEach(k => {
             if (!plan[k] || String(plan[k]).trim() === '') {
@@ -766,6 +857,41 @@ function PerformanceEvaluationBoss() {
     
     if (!hasValidPlan) {
       errores.planAccion_required = true;
+      isValid = false;
+    }
+
+    // Validar acta de compromiso - OBLIGATORIO (al menos uno completo con mínimo de caracteres)
+    let hasValidActa = false;
+    actaCompromiso.forEach((acta, index) => {
+      const keys = Object.keys(acta).filter(k => k !== 'id');
+      const hasAny = keys.some(k => acta[k] && String(acta[k]).trim() !== '');
+      if (hasAny) {
+        const allFilled = keys.every(k => acta[k] && String(acta[k]).trim() !== '');
+        if (allFilled) {
+          // Validar mínimo de caracteres para cada campo
+          const criterioOk = acta.criterio && acta.criterio.trim().length >= 30;
+          const compromisoOk = acta.compromiso && acta.compromiso.trim().length >= 30;
+          
+          if (criterioOk && compromisoOk) {
+            hasValidActa = true;
+          } else {
+            if (!criterioOk) errores[`actaCompromiso_${index}_criterio`] = true;
+            if (!compromisoOk) errores[`actaCompromiso_${index}_compromiso`] = true;
+            isValid = false;
+          }
+        } else {
+          keys.forEach(k => {
+            if (!acta[k] || String(acta[k]).trim() === '') {
+              errores[`actaCompromiso_${index}_${k}`] = true;
+              isValid = false;
+            }
+          });
+        }
+      }
+    });
+    
+    if (!hasValidActa) {
+      errores.actaCompromiso_required = true;
       isValid = false;
     }
 
@@ -1241,7 +1367,7 @@ function PerformanceEvaluationBoss() {
           },
         ]);
         
-        setMejoramiento({ fortalezas: '', aspectosMejorar: '' });
+        setMejoramiento({ fortalezas: '', aspectosMejorar: '', necesidadesCapacitacion: '' });
         setComentariosJefe('');
         setPlanesAccion([
           {
@@ -1251,6 +1377,13 @@ function PerformanceEvaluationBoss() {
             seguimiento: '',
             fecha: '',
             comentariosJefe: ''
+          }
+        ]);
+        setActaCompromiso([
+          {
+            id: 1,
+            criterio: '',
+            compromiso: ''
           }
         ]);
         setEmployeeSignature(null);
@@ -1592,7 +1725,7 @@ function PerformanceEvaluationBoss() {
               style={getErrorStyle('fortalezas')}
             />
             {visibleErrors.fortalezas && (
-              <span className="error-message">Este campo es obligatorio</span>
+              <span className="error-message">Este campo es obligatorio (mínimo 50 caracteres)</span>
             )}
           </div>
 
@@ -1611,7 +1744,7 @@ function PerformanceEvaluationBoss() {
               style={getErrorStyle('aspectosMejorar')}
             />
             {visibleErrors.aspectosMejorar && (
-              <span className="error-message">Este campo es obligatorio</span>
+              <span className="error-message">Este campo es obligatorio (mínimo 50 caracteres)</span>
             )}
           </div>
 
@@ -1623,11 +1756,13 @@ function PerformanceEvaluationBoss() {
               rows="3"
               className="campo-textarea"
               value={mejoramiento.necesidadesCapacitacion || ''}
-              onChange={(e) => setMejoramiento(prev => ({
-                ...prev,
-                necesidadesCapacitacion: e.target.value
-              }))}
+              onChange={handleMejoramientoChange}
+              name="necesidadesCapacitacion"
+              style={getErrorStyle('necesidadesCapacitacion')}
             />
+            {visibleErrors.necesidadesCapacitacion && (
+              <span className="error-message">Si se llena este campo, debe tener mínimo 30 caracteres</span>
+            )}
           </div>
 
           {/* Acta de compromiso */}
@@ -1641,28 +1776,57 @@ function PerformanceEvaluationBoss() {
                 </tr>
               </thead>
               <tbody>
-                {planesAccion.map((plan, index) => (
-                  <tr key={plan.id}>
+                {actaCompromiso.map((acta, index) => (
+                  <tr key={acta.id}>
                     <td>
                       <input
                         type="text"
-                        placeholder="Aspecto a mejorar"
-                        value={plan.actividad}
-                        onChange={(e) => handlePlanAccionChange(plan.id, 'actividad', e.target.value)}
+                        placeholder="Criterio específico"
+                        value={acta.criterio}
+                        onChange={(e) => handleActaCompromisoChange(acta.id, 'criterio', e.target.value)}
+                        style={getErrorStyle(`actaCompromiso_${index}_criterio`)}
                       />
+                      {visibleErrors[`actaCompromiso_${index}_criterio`] && (
+                        <span className="error-message">Este campo es obligatorio (mínimo 30 caracteres)</span>
+                      )}
                     </td>
                     <td>
                       <input
                         type="text"
-                        placeholder="Compromiso"
-                        value={plan.responsable}
-                        onChange={(e) => handlePlanAccionChange(plan.id, 'responsable', e.target.value)}
+                        placeholder="Compromiso específico"
+                        value={acta.compromiso}
+                        onChange={(e) => handleActaCompromisoChange(acta.id, 'compromiso', e.target.value)}
+                        style={getErrorStyle(`actaCompromiso_${index}_compromiso`)}
                       />
+                      {visibleErrors[`actaCompromiso_${index}_compromiso`] && (
+                        <span className="error-message">Este campo es obligatorio (mínimo 30 caracteres)</span>
+                      )}
+                    </td>
+                    <td>
+                      <button
+                        type="button"
+                        onClick={() => removeActaCompromiso(acta.id)}
+                        className="btn-remove"
+                        disabled={actaCompromiso.length === 1}
+                      >
+                        Eliminar
+                      </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            <button
+              type="button"
+              onClick={addActaCompromiso}
+              className="btn-add"
+              disabled={actaCompromiso.length >= 3}
+            >
+              Agregar Criterio
+            </button>
+            {visibleErrors.actaCompromiso_required && (
+              <span className="error-message">Se requiere al menos un criterio de compromiso completo</span>
+            )}
           </div>
         </section>
 
@@ -1777,7 +1941,7 @@ function PerformanceEvaluationBoss() {
                       style={getErrorStyle(`planAccion_${index}_actividad`)}
                     />
                     {visibleErrors[`planAccion_${index}_actividad`] && (
-                      <span className="error-message">Obligatorio</span>
+                      <span className="error-message">Obligatorio (mínimo 30 caracteres)</span>
                     )}
                   </td>
                   <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
@@ -1790,7 +1954,7 @@ function PerformanceEvaluationBoss() {
                       style={getErrorStyle(`planAccion_${index}_responsable`)}
                     />
                     {visibleErrors[`planAccion_${index}_responsable`] && (
-                      <span className="error-message">Obligatorio</span>
+                      <span className="error-message">Obligatorio (mínimo 20 caracteres)</span>
                     )}
                   </td>
                   <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
@@ -1803,7 +1967,7 @@ function PerformanceEvaluationBoss() {
                       style={getErrorStyle(`planAccion_${index}_seguimiento`)}
                     />
                     {visibleErrors[`planAccion_${index}_seguimiento`] && (
-                      <span className="error-message">Obligatorio</span>
+                      <span className="error-message">Obligatorio (mínimo 30 caracteres)</span>
                     )}
                   </td>
                   <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem", position: 'relative' }}>

@@ -424,6 +424,7 @@ CREATE TABLE `evaluacion_mejoramiento` (
   `id_evaluacion` int(11) NOT NULL,
   `fortalezas` text DEFAULT NULL,
   `aspectos_mejorar` text DEFAULT NULL,
+  `necesidades_capacitacion` text DEFAULT NULL,
   `comentarios_jefe` text DEFAULT NULL,
   `fecha_revision_jefe` datetime DEFAULT NULL,
   `fecha_creacion` datetime DEFAULT current_timestamp(),
@@ -446,6 +447,21 @@ CREATE TABLE `evaluacion_plan_accion` (
   `aprobado_jefe` enum('PENDIENTE','APROBADO','RECHAZADO') DEFAULT 'PENDIENTE',
   `fecha_revision_jefe` datetime DEFAULT NULL,
   `fecha` date DEFAULT NULL,
+  `fecha_creacion` datetime DEFAULT current_timestamp(),
+  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `evaluacion_acta_compromiso`
+--
+
+CREATE TABLE `evaluacion_acta_compromiso` (
+  `id_acta_compromiso` int(11) NOT NULL,
+  `id_evaluacion` int(11) NOT NULL,
+  `criterio` text NOT NULL,
+  `compromiso` text NOT NULL,
   `fecha_creacion` datetime DEFAULT current_timestamp(),
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -626,6 +642,13 @@ ALTER TABLE `evaluacion_plan_accion`
   ADD KEY `fk_plan_accion_evaluacion` (`id_evaluacion`);
 
 --
+-- Indices de la tabla `evaluacion_acta_compromiso`
+--
+ALTER TABLE `evaluacion_acta_compromiso`
+  ADD PRIMARY KEY (`id_acta_compromiso`),
+  ADD KEY `fk_acta_compromiso_evaluacion` (`id_evaluacion`);
+
+--
 -- Indices de la tabla `evaluacion_promedios`
 --
 ALTER TABLE `evaluacion_promedios`
@@ -712,6 +735,12 @@ ALTER TABLE `evaluacion_plan_accion`
   MODIFY `id_plan_accion` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `evaluacion_acta_compromiso`
+--
+ALTER TABLE `evaluacion_acta_compromiso`
+  MODIFY `id_acta_compromiso` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `evaluacion_promedios`
 --
 ALTER TABLE `evaluacion_promedios`
@@ -788,6 +817,12 @@ ALTER TABLE `evaluacion_mejoramiento`
 --
 ALTER TABLE `evaluacion_plan_accion`
   ADD CONSTRAINT `fk_plan_accion_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `evaluacion_acta_compromiso`
+--
+ALTER TABLE `evaluacion_acta_compromiso`
+  ADD CONSTRAINT `fk_acta_compromiso_evaluacion` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluacion` (`id_evaluacion`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `evaluacion_promedios`
