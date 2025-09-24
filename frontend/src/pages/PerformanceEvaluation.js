@@ -222,14 +222,14 @@ function PerformanceEvaluation() {
     },
     {
       id: 9,
-      aspecto: "Anticipa problemas y posibles que advierten su carácter de especialista.",
+      aspecto: "Anticipa problemas y posibles soluciones que advierten su carácter de especialista.",
       worker: "",
       boss: "",
       average: "",
     },
     {
       id: 10,
-      aspecto: "Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.",
+      aspecto: "Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativas al propio, para analizar y proponer soluciones posibles.",
       worker: "",
       boss: "",
       average: "",
@@ -271,7 +271,7 @@ function PerformanceEvaluation() {
     },
     {
       id: 16,
-      aspecto: "Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.",
+      aspecto: "Toma la iniciativa en el contacto con clientes internos y externos para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.",
       worker: "",
       boss: "",
       average: "",
@@ -320,7 +320,7 @@ function PerformanceEvaluation() {
     },
     {
       id: 23,
-      aspecto: "Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.",
+      aspecto: "Prioriza y organiza sus funciones para asegurar el cumplimiento sin reprocesos.",
       worker: "",
       boss: "",
       average: "",
@@ -954,14 +954,14 @@ function PerformanceEvaluation() {
           },
           {
             id: 9,
-            aspecto: "Anticipa problemas y posibles que advierten su carácter de especialista.",
+            aspecto: "Anticipa problemas y posibles soluciones que advierten su carácter de especialista.",
             worker: "",
             boss: "",
             average: "",
           },
           {
             id: 10,
-            aspecto: "Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativa al propio, para analizar y proponer soluciones posibles.",
+            aspecto: "Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativas al propio, para analizar y proponer soluciones posibles.",
             worker: "",
             boss: "",
             average: "",
@@ -1003,7 +1003,7 @@ function PerformanceEvaluation() {
           },
           {
             id: 16,
-            aspecto: "Toma la iniciativa en el contacto con cliente interno y externo para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.",
+            aspecto: "Toma la iniciativa en el contacto con clientes internos y externos para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.",
             worker: "",
             boss: "",
             average: "",
@@ -1052,7 +1052,7 @@ function PerformanceEvaluation() {
           },
           {
             id: 23,
-            aspecto: "Prioriza y organiza sus funciones para asegurar cumplimiento sin reprocesos.",
+            aspecto: "Prioriza y organiza sus funciones para asegurar el cumplimiento sin reprocesos.",
             worker: "",
             boss: "",
             average: "",
@@ -1342,12 +1342,8 @@ function PerformanceEvaluation() {
                   type="date" 
                   name="fechaEvaluacion"
                   value={datosGenerales.fechaEvaluacion}
-                  readOnly
-                  style={{
-                    ...getErrorStyle('datosGenerales_fechaEvaluacion'),
-                    backgroundColor: '#f5f5f5',
-                    cursor: 'not-allowed'
-                  }}
+                  onChange={handleDatosGeneralesChange}
+                  style={getErrorStyle('datosGenerales_fechaEvaluacion')}
                 />
                 {visibleErrors.datosGenerales_fechaEvaluacion && (
                   <span className="error-message">Este campo es obligatorio</span>

@@ -151,7 +151,7 @@ const CompetenciasTable = ({
                     style={getCalificationErrorStyle(rows[0].id, 'worker')}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -164,7 +164,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[0].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[0].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -189,7 +189,7 @@ const CompetenciasTable = ({
                     style={getCalificationErrorStyle(rows[1].id, 'worker')}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -202,7 +202,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[1].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[1].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -225,7 +225,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[2].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -238,7 +238,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[2].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[2].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -261,7 +261,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[3].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -274,7 +274,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[3].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[3].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -328,7 +328,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[4].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -341,7 +341,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[4].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[4].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -364,7 +364,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[5].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -377,7 +377,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[5].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[5].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -431,7 +431,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[6].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -444,7 +444,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[6].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[6].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -467,7 +467,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[7].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -480,7 +480,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[7].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[7].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -503,7 +503,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[8].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -516,7 +516,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[8].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[8].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -539,7 +539,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[9].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -552,7 +552,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[9].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[9].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -605,7 +605,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[10].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -618,7 +618,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[10].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[10].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -641,7 +641,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[11].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -654,7 +654,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[11].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[11].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -677,7 +677,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[12].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -690,7 +690,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[12].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[12].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -744,7 +744,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[13].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -757,7 +757,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[13].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[13].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -780,7 +780,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[14].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -793,7 +793,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[14].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[14].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -816,7 +816,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[15].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -829,7 +829,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[15].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[15].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -884,7 +884,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[16].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -897,7 +897,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[16].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[16].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -920,7 +920,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[17].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -933,7 +933,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[17].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[17].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -956,7 +956,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[18].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -969,7 +969,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[18].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[18].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -1015,7 +1015,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[19].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -1028,7 +1028,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[19].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[19].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -1049,7 +1049,7 @@ const CompetenciasTable = ({
                     onChange={(e) => handleSelectChange(rows[20].id, "worker", e.target.value)}
                     
                   >
-                    <option value="">1 - 5</option>
+                    <option value="">Seleccione calificación</option>
                     <option value="1">1 - No Cumple</option>
                     <option value="2">2 - Regular</option>
                     <option value="3">3 - Parcial</option>
@@ -1062,7 +1062,7 @@ const CompetenciasTable = ({
                   <textarea
                     className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                     value={rows[20].justificacionTrabajador || ''}
                     onChange={(e)=>{
                       setRows(prev=>prev.map(r=> r.id===rows[20].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -1082,7 +1082,7 @@ const CompetenciasTable = ({
                     value={rows[21].worker === 0 ? "" : rows[21].worker}
                     onChange={(e) => handleSelectChange(rows[21].id, "worker", e.target.value)}
                     >
-                      <option value="">1 - 5</option>
+                      <option value="">Seleccione calificación</option>
                       <option value="1">1 - No Cumple</option>
                       <option value="2">2 - Regular</option>
                       <option value="3">3 - Parcial</option>
@@ -1095,7 +1095,7 @@ const CompetenciasTable = ({
                     <textarea
                       className="justificacion-textarea"
                     rows={2}
-                    placeholder="Explique la calificación (si 5 o ≤2)"
+                    placeholder="Explique la calificación (si es 5 o 2 o menos)"
                       value={rows[21].justificacionTrabajador || ''}
                       onChange={(e)=>{
                         setRows(prev=>prev.map(r=> r.id===rows[21].id?{...r, justificacionTrabajador: e.target.value}:r));
@@ -1116,7 +1116,7 @@ const CompetenciasTable = ({
                       value={rows[22].worker === 0 ? "" : rows[22].worker}
                       onChange={(e) => handleSelectChange(rows[22].id, "worker", e.target.value)}
                     >
-                      <option value="">1 - 5</option>
+                      <option value="">Seleccione calificación</option>
                       <option value="1">1 - No Cumple</option>
                       <option value="2">2 - Regular</option>
                       <option value="3">3 - Parcial</option>
@@ -1129,7 +1129,7 @@ const CompetenciasTable = ({
                     <textarea
                       className="justificacion-textarea"
                       rows={2}
-                      placeholder="Explique la calificación (si 5 o ≤2)"
+                      placeholder="Explique la calificación (si es 5 o 2 o menos)"
                       value={rows[22].justificacionTrabajador || ''}
                       onChange={(e)=>{
                         setRows(prev=>prev.map(r=> r.id===rows[22].id?{...r, justificacionTrabajador: e.target.value}:r));
