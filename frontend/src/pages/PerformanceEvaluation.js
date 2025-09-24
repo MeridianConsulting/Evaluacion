@@ -695,11 +695,11 @@ function PerformanceEvaluation() {
         console.log(`ERROR en competencia ${index}: worker no válido`);
       }
       
-      // Validar boss SIEMPRE (evaluación del jefe obligatoria)
-      if (!bossOk) {
+      // Validar boss SOLO en modo jefe (isManagerView = true)
+      if (isManagerView && !bossOk) {
         errores[`competencia_boss_${row.id}`] = true;
         isValid = false;
-        console.log(`ERROR en competencia ${index}: boss no válido`);
+        console.log(`ERROR en competencia ${index}: boss no válido (modo jefe)`);
       }
 
       // Validar justificaciones para calificaciones extremas (1, 2 o 5)
@@ -712,7 +712,8 @@ function PerformanceEvaluation() {
         }
       }
       
-      if (bossOk) {
+      // Validar justificaciones del jefe SOLO en modo jefe
+      if (isManagerView && bossOk) {
         const bossVal = Number(row.boss);
         if ((bossVal === 1 || bossVal === 2 || bossVal === 5) && !row.justificacionJefe?.trim()) {
           errores[`competencia_boss_justificacion_${row.id}`] = true;
@@ -830,12 +831,14 @@ function PerformanceEvaluation() {
       console.log('ERROR: se requiere al menos un acta de compromiso completo con mínimo de caracteres');
     }
 
-    // Validar firmas - AMBAS OBLIGATORIAS
+    // Validar firmas - CONDICIONAL POR MODO
     if (!employeeSignature) {
       errores.employeeSignature = true;
       isValid = false;
     }
-    if (!bossSignature) {
+    
+    // Solo validar firma del jefe en modo jefe (isManagerView = true)
+    if (isManagerView && !bossSignature) {
       errores.bossSignature = true;
       isValid = false;
     }
@@ -951,8 +954,8 @@ function PerformanceEvaluation() {
         errores[`competencia_worker_${row.id}`] = true;
       }
       
-      // Validar boss SIEMPRE (evaluación del jefe obligatoria)
-      if (!bossOk) {
+      // Validar boss SOLO en modo jefe (isManagerView = true)
+      if (isManagerView && !bossOk) {
         errores[`competencia_boss_${row.id}`] = true;
       }
 
@@ -964,7 +967,8 @@ function PerformanceEvaluation() {
         }
       }
       
-      if (bossOk) {
+      // Validar justificaciones del jefe SOLO en modo jefe
+      if (isManagerView && bossOk) {
         const bossVal = Number(row.boss);
         if ((bossVal === 1 || bossVal === 2 || bossVal === 5) && !row.justificacionJefe?.trim()) {
           errores[`competencia_boss_justificacion_${row.id}`] = true;
@@ -1064,6 +1068,9 @@ function PerformanceEvaluation() {
     const year = currentDate.getFullYear();
     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
     formData.append('periodoEvaluacion', `${year}-${month}`);
+    
+    // Agregar categoría de evaluación
+    formData.append('categoriaEvaluacion', datosGenerales.categoriaEvaluacion);
 
     // Enviar datos completos para persistencia detallada en las nuevas tablas
     formData.append('competenciasData', JSON.stringify(rows));
@@ -1600,22 +1607,84 @@ function PerformanceEvaluation() {
             </div>
 
             {/* Fila 3 - Categoría de Evaluación */}
-            <div className="evaluation-row">
-              <div className="evaluation-field">
-                <label>Categoría de Evaluación:</label>
+            <div className="evaluation-row" style={{ 
+              marginTop: '20px',
+              padding: '20px',
+              background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+              borderRadius: '12px',
+              border: '2px solid #e2e8f0',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+            }}>
+              <div className="evaluation-field" style={{ 
+                width: '100%',
+                maxWidth: '400px',
+                margin: '0 auto'
+              }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  color: '#1e293b',
+                  marginBottom: '12px',
+                  textAlign: 'center',
+                  letterSpacing: '0.5px',
+                  textTransform: 'uppercase'
+                }}>
+                   Categoría de Evaluación
+                </label>
                 <select 
                   name="categoriaEvaluacion"
                   value={datosGenerales.categoriaEvaluacion}
                   onChange={handleDatosGeneralesChange}
-                  style={getErrorStyle('datosGenerales_categoriaEvaluacion')}
+                  style={{
+                    ...getErrorStyle('datosGenerales_categoriaEvaluacion'),
+                    width: '100%',
+                    padding: '14px 16px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#1e293b',
+                    backgroundColor: '#ffffff',
+                    border: '2px solid #cbd5e1',
+                    borderRadius: '10px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                    outline: 'none',
+                    textAlign: 'center'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#1F3B73';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(31, 59, 115, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#cbd5e1';
+                    e.target.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+                  }}
                 >
-                  <option value="Período de prueba">Período de prueba</option>
-                  <option value="Trimestral">Trimestral</option>
-                  <option value="Anual">Anual</option>
+                  <option value="Período de prueba"> Período de prueba</option>
+                  <option value="Trimestral"> Trimestral</option>
+                  <option value="Anual"> Anual</option>
                 </select>
                 {visibleErrors.datosGenerales_categoriaEvaluacion && (
-                  <span className="error-message">Este campo es obligatorio</span>
+                  <span className="error-message" style={{ 
+                    display: 'block', 
+                    textAlign: 'center', 
+                    marginTop: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600'
+                  }}>
+                     Este campo es obligatorio
+                  </span>
                 )}
+                <div style={{
+                  marginTop: '8px',
+                  fontSize: '12px',
+                  color: '#64748b',
+                  textAlign: 'center',
+                  fontStyle: 'italic'
+                }}>
+                  Seleccione el tipo de evaluación correspondiente
+                </div>
               </div>
             </div>
 
@@ -1860,46 +1929,155 @@ function PerformanceEvaluation() {
           {/* Acta de compromiso */}
           <div className="mejora-bloque">
             <h3 className="mejora-subtitulo">ACTA DE COMPROMISO</h3>
-            <table className="compromiso-table">
+            <table className="compromiso-table" style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+              marginTop: '16px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              borderRadius: '8px',
+              overflow: 'hidden'
+            }}>
               <thead>
+                {/* Barra de título "ACTA DE COMPROMISO" con gradiente */}
                 <tr>
-                  <th>CRITERIO</th>
-                  <th>COMPROMISO</th>
+                  <th
+                    colSpan={3}
+                    style={{
+                      background: "linear-gradient(90deg, #1F3B73 0%, #0A0F1A 100%)",
+                      color: "#FFFFFF",
+                      padding: "0.8rem 1rem",
+                      textAlign: "center",
+                      fontSize: "1.1rem",
+                      fontWeight: "bold",
+                      height: "28px",
+                      borderBottom: "1px solid rgba(0,0,0,0.25)"
+                    }}
+                  >
+                    ACTA DE COMPROMISO
+                  </th>
+                </tr>
+                {/* Encabezado de columnas */}
+                <tr>
+                  <th style={{ 
+                    background: "#1E2A3A", 
+                    color: "#FFFFFF",
+                    textAlign: "center",
+                    padding: "0.6rem 0.4rem",
+                    fontWeight: "bold",
+                    fontSize: "0.9rem",
+                    height: "24px",
+                    borderTop: "1px solid #1E2A3A",
+                    borderLeft: "1px solid #243447",
+                    borderBottom: "1px solid #243447",
+                    borderRight: "1px solid rgba(51,51,51,0.5)",
+                    width: "40%"
+                  }}>CRITERIO</th>
+                  <th style={{ 
+                    background: "#1E2A3A", 
+                    color: "#FFFFFF",
+                    textAlign: "center",
+                    padding: "0.6rem 0.4rem",
+                    fontWeight: "bold",
+                    fontSize: "0.9rem",
+                    height: "24px",
+                    borderTop: "1px solid #1E2A3A",
+                    borderLeft: "1px solid #243447",
+                    borderBottom: "1px solid #243447",
+                    borderRight: "1px solid rgba(51,51,51,0.5)",
+                    width: "40%"
+                  }}>COMPROMISO</th>
+                  <th style={{ 
+                    background: "#1E2A3A", 
+                    color: "#FFFFFF",
+                    textAlign: "center",
+                    padding: "0.6rem 0.4rem",
+                    fontWeight: "bold",
+                    fontSize: "0.9rem",
+                    height: "24px",
+                    borderTop: "1px solid #1E2A3A",
+                    borderLeft: "1px solid #243447",
+                    borderBottom: "1px solid #243447",
+                    borderRight: "1px solid rgba(51,51,51,0.5)",
+                    width: "20%"
+                  }}>ACCIÓN</th>
                 </tr>
               </thead>
               <tbody>
                 {actaCompromiso.map((acta, index) => (
-                  <tr key={acta.id}>
-                    <td>
+                  <tr key={acta.id} style={{ backgroundColor: "#fff" }}>
+                    <td style={{ padding: "0.8rem", border: "1px solid #e5e7eb" }}>
                       <input
                         type="text"
                         placeholder="Criterio específico"
                         value={acta.criterio}
                         onChange={(e) => handleActaCompromisoChange(acta.id, 'criterio', e.target.value)}
-                        style={getErrorStyle(`actaCompromiso_${index}_criterio`)}
+                        style={{
+                          ...getErrorStyle(`actaCompromiso_${index}_criterio`),
+                          width: '100%',
+                          padding: '8px 12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '4px',
+                          fontSize: '14px',
+                          backgroundColor: '#fff'
+                        }}
                       />
                       {visibleErrors[`actaCompromiso_${index}_criterio`] && (
-                        <span className="error-message">Este campo es obligatorio (mínimo 30 caracteres)</span>
+                        <span className="error-message" style={{ display: 'block', marginTop: '4px', fontSize: '12px' }}>
+                          Este campo es obligatorio (mínimo 30 caracteres)
+                        </span>
                       )}
                     </td>
-                    <td>
+                    <td style={{ padding: "0.8rem", border: "1px solid #e5e7eb" }}>
                       <input
                         type="text"
                         placeholder="Compromiso específico"
                         value={acta.compromiso}
                         onChange={(e) => handleActaCompromisoChange(acta.id, 'compromiso', e.target.value)}
-                        style={getErrorStyle(`actaCompromiso_${index}_compromiso`)}
+                        style={{
+                          ...getErrorStyle(`actaCompromiso_${index}_compromiso`),
+                          width: '100%',
+                          padding: '8px 12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '4px',
+                          fontSize: '14px',
+                          backgroundColor: '#fff'
+                        }}
                       />
                       {visibleErrors[`actaCompromiso_${index}_compromiso`] && (
-                        <span className="error-message">Este campo es obligatorio (mínimo 30 caracteres)</span>
+                        <span className="error-message" style={{ display: 'block', marginTop: '4px', fontSize: '12px' }}>
+                          Este campo es obligatorio (mínimo 30 caracteres)
+                        </span>
                       )}
                     </td>
-                    <td>
+                    <td style={{ padding: "0.8rem", border: "1px solid #e5e7eb", textAlign: "center" }}>
                       <button
                         type="button"
                         onClick={() => removeActaCompromiso(acta.id)}
-                        className="btn-remove"
                         disabled={actaCompromiso.length === 1}
+                        style={{
+                          background: actaCompromiso.length === 1 ? '#e5e7eb' : '#ef4444',
+                          color: actaCompromiso.length === 1 ? '#9ca3af' : 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          padding: '6px 12px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          cursor: actaCompromiso.length === 1 ? 'not-allowed' : 'pointer',
+                          transition: 'all 0.2s ease',
+                          opacity: actaCompromiso.length === 1 ? 0.6 : 1
+                        }}
+                        onMouseOver={(e) => {
+                          if (actaCompromiso.length > 1) {
+                            e.target.style.background = '#dc2626';
+                            e.target.style.transform = 'translateY(-1px)';
+                          }
+                        }}
+                        onMouseOut={(e) => {
+                          if (actaCompromiso.length > 1) {
+                            e.target.style.background = '#ef4444';
+                            e.target.style.transform = 'translateY(0)';
+                          }
+                        }}
                       >
                         Eliminar
                       </button>
@@ -1908,16 +2086,55 @@ function PerformanceEvaluation() {
                 ))}
               </tbody>
             </table>
-            <button
-              type="button"
-              onClick={addActaCompromiso}
-              className="btn-add"
-              disabled={actaCompromiso.length >= 3}
-            >
-              Agregar Criterio
-            </button>
+            
+            {/* Botón para agregar criterio */}
+            <div style={{ textAlign: 'center', marginTop: '16px' }}>
+              <button
+                type="button"
+                onClick={addActaCompromiso}
+                disabled={actaCompromiso.length >= 3}
+                style={{
+                  background: actaCompromiso.length >= 3 
+                    ? '#e5e7eb' 
+                    : 'linear-gradient(135deg, #1F3B73, #0A0F1A)',
+                  color: actaCompromiso.length >= 3 ? '#9ca3af' : 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: actaCompromiso.length >= 3 ? 'not-allowed' : 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: actaCompromiso.length >= 3 
+                    ? 'none' 
+                    : '0 4px 12px rgba(31, 59, 115, 0.3)',
+                  transition: 'all 0.3s ease',
+                  opacity: actaCompromiso.length >= 3 ? 0.6 : 1
+                }}
+                onMouseOver={(e) => {
+                  if (actaCompromiso.length < 3) {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 6px 16px rgba(31, 59, 115, 0.4)';
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (actaCompromiso.length < 3) {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 12px rgba(31, 59, 115, 0.3)';
+                  }
+                }}
+              >
+                <span style={{ fontSize: '16px' }}>+</span>
+                {actaCompromiso.length >= 3 ? 'Máximo 3 criterios' : 'Agregar Criterio'}
+              </button>
+            </div>
+            
             {visibleErrors.actaCompromiso_required && (
-              <span className="error-message">Se requiere al menos un criterio de compromiso completo</span>
+              <span className="error-message" style={{ display: 'block', textAlign: 'center', marginTop: '8px' }}>
+                Se requiere al menos un criterio de compromiso completo
+              </span>
             )}
           </div>
         </section>
@@ -2089,7 +2306,14 @@ function PerformanceEvaluation() {
           </table>
           
           {/* Botón para agregar más planes de acción */}
-          <div style={{ textAlign: 'center', marginTop: '16px' }}>
+          <div style={{ 
+            textAlign: 'center', 
+            marginTop: '20px',
+            padding: '16px',
+            background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+            borderRadius: '12px',
+            border: '1px solid #e2e8f0'
+          }}>
             <button
               type="button"
               onClick={addPlanAccion}
@@ -2101,18 +2325,20 @@ function PerformanceEvaluation() {
                 color: planesAccion.length >= 4 ? '#9ca3af' : 'white',
                 border: 'none',
                 borderRadius: '8px',
-                padding: '12px 24px',
-                fontSize: '14px',
+                padding: '14px 28px',
+                fontSize: '15px',
                 fontWeight: '600',
                 cursor: planesAccion.length >= 4 ? 'not-allowed' : 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '10px',
                 boxShadow: planesAccion.length >= 4 
                   ? 'none' 
                   : '0 4px 12px rgba(31, 59, 115, 0.3)',
                 transition: 'all 0.3s ease',
-                opacity: planesAccion.length >= 4 ? 0.6 : 1
+                opacity: planesAccion.length >= 4 ? 0.6 : 1,
+                minWidth: '200px',
+                justifyContent: 'center'
               }}
               onMouseOver={(e) => {
                 if (planesAccion.length < 4) {
@@ -2127,9 +2353,17 @@ function PerformanceEvaluation() {
                 }
               }}
             >
-              <span style={{ fontSize: '16px' }}>+</span>
+              <span style={{ fontSize: '18px', fontWeight: 'bold' }}>+</span>
               {planesAccion.length >= 4 ? 'Máximo 4 planes' : 'Agregar Plan de Acción'}
             </button>
+            <div style={{ 
+              marginTop: '8px', 
+              fontSize: '12px', 
+              color: '#64748b',
+              fontStyle: 'italic'
+            }}>
+              {planesAccion.length < 4 ? `Puede agregar hasta ${4 - planesAccion.length} plan${4 - planesAccion.length > 1 ? 'es' : ''} más` : 'Ha alcanzado el máximo de planes'}
+            </div>
           </div>
         </section>
 

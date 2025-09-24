@@ -120,7 +120,7 @@ function TeamEvaluations({ onLogout, userRole }) {
     const { employeeId, evaluationId } = assignment;
     console.log('Extracted - employeeId:', employeeId, 'evaluationId:', evaluationId);
     
-    if (!employeeId || !evaluationId) {
+    if (!employeeId || evaluationId === null || evaluationId === undefined) {
       console.log('Missing data - employeeId:', employeeId, 'evaluationId:', evaluationId);
       return info('Datos incompletos', 'No se encontró el identificador de evaluación.');
     }

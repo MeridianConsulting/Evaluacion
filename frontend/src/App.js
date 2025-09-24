@@ -21,6 +21,9 @@ import { NotificationProvider } from "./components/NotificationSystem";
 import "./App.css";
 
 function App() {
+  // Estado de carga para evitar redirecciones prematuras
+  const [isLoading, setIsLoading] = useState(true);
+  
   // Se inicializa el estado de autenticación
   const [isAuthenticated, setIsAuthenticated] = useState(
     localStorage.getItem("isAuthenticated") === "true"
@@ -61,6 +64,23 @@ function App() {
     }
     return false;
   };
+
+  // useEffect para manejar la carga inicial
+  useEffect(() => {
+    // Verificar autenticación al cargar la aplicación
+    const checkAuth = () => {
+      const authStatus = localStorage.getItem("isAuthenticated") === "true";
+      const storedRole = localStorage.getItem("userRole") || "empleado";
+      
+      setIsAuthenticated(authStatus);
+      setUserRole(storedRole);
+      setIsLoading(false);
+    };
+
+    // Pequeño delay para asegurar que localStorage esté disponible
+    const timer = setTimeout(checkAuth, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     // Asegura rol admin para la cédula especial aún si vino del backend con otro rol
@@ -107,6 +127,47 @@ function App() {
     
     loadRoleFromBackend();
   }, [isAuthenticated, userRole]);
+
+  // Mostrar spinner de carga mientras se verifica la autenticación
+  if (isLoading) {
+    return (
+      <HelmetProvider>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          background: 'linear-gradient(135deg, #1F3B73 0%, #0A0F1A 100%)',
+          color: 'white',
+          fontSize: '18px',
+          fontWeight: '600'
+        }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '20px'
+          }}>
+            <div style={{
+              width: '50px',
+              height: '50px',
+              border: '4px solid rgba(255,255,255,0.3)',
+              borderTop: '4px solid white',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite'
+            }}></div>
+            <div>Cargando aplicación...</div>
+          </div>
+          <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}</style>
+        </div>
+      </HelmetProvider>
+    );
+  }
 
   return (
     <HelmetProvider>

@@ -335,6 +335,7 @@ CREATE TABLE `evaluacion` (
   `id_empleado` int(11) NOT NULL,
   `fecha_evaluacion` datetime NOT NULL,
   `periodo_evaluacion` varchar(50) DEFAULT NULL,
+  `categoria_evaluacion` enum('Período de prueba','Trimestral','Anual') DEFAULT 'Anual',
   `observaciones_generales` longtext DEFAULT NULL,
   `estado_evaluacion` enum('AUTOEVALUACION_PENDIENTE','AUTOEVALUACION_COMPLETADA','EVALUACION_JEFE_PENDIENTE','EVALUACION_JEFE_COMPLETADA','HSEQ_PENDIENTE','HSEQ_COMPLETADA','EVALUACION_FINALIZADA','BORRADOR','COMPLETADA','APROBADA') DEFAULT 'AUTOEVALUACION_PENDIENTE',
   `id_jefe` int(11) DEFAULT NULL,

@@ -1565,6 +1565,7 @@ class EvaluationControllerNativo {
                 'ID Evaluación'     => $evaluacion['id_evaluacion'] ?? 'N/D',
                 'Fecha evaluación'  => !empty($evaluacion['fecha_evaluacion']) ? date('d/m/Y', strtotime($evaluacion['fecha_evaluacion'])) : 'N/D',
                 'Período'           => $evaluacion['periodo_evaluacion'] ?? 'N/D',
+                'Categoría'         => $evaluacion['categoria_evaluacion'] ?? 'Anual',
                 'Estado'            => $evaluacion['estado_evaluacion'] ?? 'N/D',
             ];
 
@@ -1636,6 +1637,12 @@ class EvaluationControllerNativo {
                     $row++;
                     $sheet->setCellValue('A'.$row, 'Aspectos a Mejorar'); 
                     $sheet->setCellValue('B'.$row, (string)($mejoramiento['aspectos_mejorar'] ?? ($mejoramiento['aspectosMejorar'] ?? '')));
+                    $row++;
+                    if (!empty($mejoramiento['necesidades_capacitacion'])) {
+                        $sheet->setCellValue('A'.$row, 'Necesidades de Capacitación'); 
+                        $sheet->setCellValue('B'.$row, (string)$mejoramiento['necesidades_capacitacion']);
+                        $row++;
+                    }
                     $row += 2;
                 }
                 if (!empty($planAccion)) {
@@ -1644,6 +1651,22 @@ class EvaluationControllerNativo {
                     $sheet->setCellValue('A'.$row, 'Responsable'); $sheet->setCellValue('B'.$row, (string)($planAccion['responsable'] ?? '')); $row++;
                     $sheet->setCellValue('A'.$row, 'Seguimiento'); $sheet->setCellValue('B'.$row, (string)($planAccion['seguimiento'] ?? '')); $row++;
                     $sheet->setCellValue('A'.$row, 'Fecha');       $sheet->setCellValue('B'.$row, (string)($planAccion['fecha'] ?? '')); $row++;
+                }
+
+                // Acta de compromiso (si existe)
+                $actaCompromiso = $this->getActaCompromiso($evaluationId);
+                if (!empty($actaCompromiso)) {
+                    $sheet->setCellValue('A'.$row, 'ACTA DE COMPROMISO'); $row++;
+                    foreach ($actaCompromiso as $acta) {
+                        if (!empty($acta['criterio']) || !empty($acta['compromiso'])) {
+                            $sheet->setCellValue('A'.$row, 'Criterio'); 
+                            $sheet->setCellValue('B'.$row, (string)($acta['criterio'] ?? ''));
+                            $row++;
+                            $sheet->setCellValue('A'.$row, 'Compromiso'); 
+                            $sheet->setCellValue('B'.$row, (string)($acta['compromiso'] ?? ''));
+                            $row += 2;
+                        }
+                    }
                 }
 
                 // -------- Hoja Competencias --------
@@ -1766,6 +1789,7 @@ class EvaluationControllerNativo {
                     <p><strong>Área:</strong> ' . htmlspecialchars($evaluacion['area']) . '</p>
                     <p><strong>Fecha de Evaluación:</strong> ' . date('d/m/Y', strtotime($evaluacion['fecha_evaluacion'])) . '</p>
                     <p><strong>Período:</strong> ' . htmlspecialchars($evaluacion['periodo_evaluacion']) . '</p>
+                    <p><strong>Categoría de Evaluación:</strong> ' . htmlspecialchars($evaluacion['categoria_evaluacion'] ?? 'Anual') . '</p>
                 </div>
             </div>';
 
@@ -1810,9 +1834,13 @@ class EvaluationControllerNativo {
                 <h3>MEJORAMIENTO Y DESARROLLO</h3>
                 <div class="section-content">
                     <p><strong>Fortalezas:</strong><br>' . htmlspecialchars($mejoramiento['fortalezas']) . '</p>
-                    <p><strong>Aspectos a Mejorar:</strong><br>' . htmlspecialchars($mejoramiento['aspectos_mejorar']) . '</p>
-                </div>
-            </div>';
+                    <p><strong>Aspectos a Mejorar:</strong><br>' . htmlspecialchars($mejoramiento['aspectos_mejorar']) . '</p>';
+            
+            if (!empty($mejoramiento['necesidades_capacitacion'])) {
+                $html .= '<p><strong>Necesidades de Capacitación:</strong><br>' . htmlspecialchars($mejoramiento['necesidades_capacitacion']) . '</p>';
+            }
+            
+            $html .= '</div></div>';
         }
 
         if ($planAccion) {
@@ -1826,6 +1854,27 @@ class EvaluationControllerNativo {
                     <p><strong>Fecha:</strong> ' . htmlspecialchars($planAccion['fecha']) . '</p>
                 </div>
             </div>';
+        }
+
+        // Sección de acta de compromiso
+        if (isset($data['acta_compromiso']) && !empty($data['acta_compromiso'])) {
+            $html .= '
+            <div class="section">
+                <h3>ACTA DE COMPROMISO</h3>
+                <div class="section-content">
+                    <table>
+                        <tr><th>Criterio</th><th>Compromiso</th></tr>';
+            
+            foreach ($data['acta_compromiso'] as $acta) {
+                if (!empty($acta['criterio']) || !empty($acta['compromiso'])) {
+                    $html .= '<tr>
+                        <td>' . htmlspecialchars($acta['criterio']) . '</td>
+                        <td>' . htmlspecialchars($acta['compromiso']) . '</td>
+                    </tr>';
+                }
+            }
+            
+            $html .= '</table></div></div>';
         }
 
         // Sección de firmas con imágenes reales
