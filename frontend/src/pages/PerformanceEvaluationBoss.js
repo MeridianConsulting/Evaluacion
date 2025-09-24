@@ -1111,8 +1111,12 @@ function PerformanceEvaluationBoss() {
       fd.append('mejoramiento', JSON.stringify({
         fortalezas: mejoramiento.fortalezas || '',
         aspectosMejorar: mejoramiento.aspectosMejorar || '',
+        necesidadesCapacitacion: mejoramiento.necesidadesCapacitacion || '',
         comentariosJefe: comentariosJefe || ''
       }));
+
+      // Acta de compromiso
+      fd.append('actaCompromiso', JSON.stringify(actaCompromiso));
 
       // Plan de acción: enviar el primero no vacío (API espera objeto, no arreglo)
       const firstFilledPlan = (planesAccion.find(p =>

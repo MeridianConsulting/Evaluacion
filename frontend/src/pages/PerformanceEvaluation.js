@@ -1069,6 +1069,7 @@ function PerformanceEvaluation() {
     formData.append('competenciasData', JSON.stringify(rows));
     formData.append('hseqData', JSON.stringify([]));
     formData.append('mejoramiento', JSON.stringify(mejoramiento));
+    formData.append('actaCompromiso', JSON.stringify(actaCompromiso));
     formData.append('planesAccion', JSON.stringify(planesAccion));
 
     if (employeeSignature) {
