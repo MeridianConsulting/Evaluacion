@@ -78,6 +78,7 @@ class EvaluationControllerNativo {
             $generalAverage = isset($_POST['generalAverage']) ? (float)$_POST['generalAverage'] : null;
             $groupAverages = json_decode($_POST['groupAverages'] ?? 'null', true);
             $periodoEvaluacion = $_POST['periodoEvaluacion'] ?? null;
+            $categoriaEvaluacion = $_POST['categoriaEvaluacion'] ?? 'Anual';
             $bossId = isset($_POST['bossId']) ? (int)$_POST['bossId'] : null;
             
             if (!$employeeId) {
@@ -124,14 +125,14 @@ class EvaluationControllerNativo {
             $this->db->begin_transaction();
             try {
                 // 1. Insertar evaluación principal
-                $insertEvalSql = 'INSERT INTO evaluacion (id_empleado, fecha_evaluacion, periodo_evaluacion, estado_evaluacion, id_jefe) VALUES (?, NOW(), ?, ?, ?)';
+                $insertEvalSql = 'INSERT INTO evaluacion (id_empleado, fecha_evaluacion, periodo_evaluacion, categoria_evaluacion, estado_evaluacion, id_jefe) VALUES (?, NOW(), ?, ?, ?, ?)';
                 $stmtEval = $this->db->prepare($insertEvalSql);
                 if (!$stmtEval) {
                     throw new Exception('Error al preparar INSERT evaluacion: ' . $this->db->error);
                 }
                 // Determinar estado según el flujo de trabajo
                 $estado = $this->determinarEstadoEvaluacion($employeeSignaturePath, $bossSignaturePath, false, null);
-                $stmtEval->bind_param('issi', $employeeId, $periodoEvaluacion, $estado, $bossId);
+                $stmtEval->bind_param('isssi', $employeeId, $periodoEvaluacion, $categoriaEvaluacion, $estado, $bossId);
                 if (!$stmtEval->execute()) {
                     throw new Exception('Error al ejecutar INSERT evaluacion: ' . $stmtEval->error);
                 }
@@ -228,6 +229,7 @@ class EvaluationControllerNativo {
             $hseqAverage = isset($_POST['hseqAverage']) ? (float)$_POST['hseqAverage'] : null;
             $generalAverage = isset($_POST['generalAverage']) ? (float)$_POST['generalAverage'] : null;
             $groupAverages = json_decode($_POST['groupAverages'] ?? 'null', true);
+            $categoriaEvaluacion = $_POST['categoriaEvaluacion'] ?? 'Anual';
 
             $employeeSignaturePath = null;
             $bossSignaturePath = null;
@@ -265,8 +267,8 @@ class EvaluationControllerNativo {
                 
                 // Determinar nuevo estado según el flujo de trabajo (basado en firmas existentes o adjuntas)
                 $estado = $this->determinarEstadoEvaluacion($employeeSignaturePath, $bossSignaturePath, true, $evaluationId);
-                $stmt = $this->db->prepare("UPDATE evaluacion SET estado_evaluacion = ?, fecha_actualizacion = NOW() WHERE id_evaluacion = ?");
-                $stmt->bind_param('si', $estado, $evaluationId);
+                $stmt = $this->db->prepare("UPDATE evaluacion SET estado_evaluacion = ?, categoria_evaluacion = ?, fecha_actualizacion = NOW() WHERE id_evaluacion = ?");
+                $stmt->bind_param('ssi', $estado, $categoriaEvaluacion, $evaluationId);
                 $stmt->execute();
                 $stmt->close();
                 
@@ -336,7 +338,7 @@ class EvaluationControllerNativo {
     public function getAssignedToBoss($bossId) {
         try {
             $stmt = $this->db->prepare("
-                SELECT e.id_evaluacion, e.id_empleado, e.periodo_evaluacion, e.estado_evaluacion,
+                SELECT e.id_evaluacion, e.id_empleado, e.periodo_evaluacion, e.categoria_evaluacion, e.estado_evaluacion,
                        emp.nombre, emp.cargo, emp.area
                 FROM evaluacion e
                 JOIN empleados emp ON emp.id_empleado = e.id_empleado
@@ -408,6 +410,7 @@ class EvaluationControllerNativo {
                        emp.area,
                        e.estado_evaluacion,
                        e.periodo_evaluacion,
+                       e.categoria_evaluacion,
                        e.fecha_creacion,
                        e.fecha_autoevaluacion,
                        e.fecha_evaluacion_jefe,
@@ -425,6 +428,11 @@ class EvaluationControllerNativo {
             $stmt->execute();
             $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             $stmt->close();
+
+            // Debug temporal para verificar los datos retornados
+            error_log("getEvaluationsAssignedToBoss - BossId: $bossId");
+            error_log("getEvaluationsAssignedToBoss - Rows count: " . count($rows));
+            error_log("getEvaluationsAssignedToBoss - First row: " . json_encode($rows[0] ?? null));
 
             echo json_encode(["success" => true, "data" => $rows]);
         } catch (Exception $e) {
@@ -1177,7 +1185,7 @@ class EvaluationControllerNativo {
         try {
             // Verificar que la evaluación pertenece al empleado y obtener todos los datos del empleado
             $stmt = $this->db->prepare("
-                SELECT e.id_evaluacion, e.fecha_evaluacion, e.periodo_evaluacion, e.observaciones_generales, e.estado_evaluacion, e.fecha_creacion, e.fecha_actualizacion,
+                SELECT e.id_evaluacion, e.fecha_evaluacion, e.periodo_evaluacion, e.categoria_evaluacion, e.observaciones_generales, e.estado_evaluacion, e.fecha_creacion, e.fecha_actualizacion,
                        emp.id_empleado, emp.cedula, emp.nombre, emp.tipo_documento, emp.cargo, emp.area, emp.fecha_inicio_contrato, 
                        emp.email, 
                        emp.proyecto, emp.ods, emp.rol
@@ -2196,6 +2204,7 @@ class EvaluationControllerNativo {
                     e.id_empleado,
                     e.fecha_evaluacion,
                     e.periodo_evaluacion,
+                    e.categoria_evaluacion,
                     e.observaciones_generales,
                     e.estado_evaluacion,
                     e.fecha_creacion,
@@ -2567,6 +2576,7 @@ class EvaluationControllerNativo {
                     emp.email  AS empleado_email,
                     e.fecha_evaluacion,
                     e.periodo_evaluacion,
+                    e.categoria_evaluacion,
                     e.estado_evaluacion,
                     e.fecha_creacion,
                     e.fecha_autoevaluacion,
@@ -2619,6 +2629,7 @@ class EvaluationControllerNativo {
                     emp.email  AS empleado_email,
                     e.fecha_evaluacion,
                     e.periodo_evaluacion,
+                    e.categoria_evaluacion,
                     e.estado_evaluacion,
                     e.fecha_creacion,
                     e.fecha_autoevaluacion,

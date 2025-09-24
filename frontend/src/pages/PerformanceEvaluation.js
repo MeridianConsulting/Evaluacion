@@ -38,6 +38,7 @@ function PerformanceEvaluation() {
     cargoEvaluador: '',
     areaEvaluador: '',
     idEvaluador: '',
+    categoriaEvaluacion: 'Anual', // Valor por defecto
   });
   const [empleados, setEmpleados] = useState([]);
   const [empleadosFiltrados, setEmpleadosFiltrados] = useState([]);
@@ -1372,7 +1373,27 @@ function PerformanceEvaluation() {
               </div>
             </div>
 
-            {/* Fila 3 */}
+            {/* Fila 3 - Categoría de Evaluación */}
+            <div className="evaluation-row">
+              <div className="evaluation-field">
+                <label>Categoría de Evaluación:</label>
+                <select 
+                  name="categoriaEvaluacion"
+                  value={datosGenerales.categoriaEvaluacion}
+                  onChange={handleDatosGeneralesChange}
+                  style={getErrorStyle('datosGenerales_categoriaEvaluacion')}
+                >
+                  <option value="Período de prueba">Período de prueba</option>
+                  <option value="Trimestral">Trimestral</option>
+                  <option value="Anual">Anual</option>
+                </select>
+                {visibleErrors.datosGenerales_categoriaEvaluacion && (
+                  <span className="error-message">Este campo es obligatorio</span>
+                )}
+              </div>
+            </div>
+
+            {/* Fila 4 */}
             <div className="evaluation-row">
               <div className="evaluation-field" style={{ position: 'relative', zIndex: 9999 }}>
                 <label>Nombre del evaluador:</label>
@@ -1528,14 +1549,12 @@ function PerformanceEvaluation() {
             </li>
             <li>
               <strong>Justifique las calificaciones extremas.</strong><br />
-              <em>
                 Si otorga una calificación de 5, explique los factores de excelencia.<br />
                 Si otorga una calificación de 2 o menor, justifique las razones de la deficiencia.
-              </em>
             </li>
             <li>
-              <strong>Proponga un plan de acción obligatorio</strong> para calificaciones de 5, 2 o menor.<br />
-              Este plan debe detallar los pasos para mantener la excelencia o corregir las deficiencias.
+              <strong>Proponga un plan de acción obligatorio</strong> <br/>
+               Para calificaciones de 5, 2 o menor, este plan debe detallar los pasos para mantener la excelencia o corregir las deficiencias.
             </li>
           </ol>
         </section>

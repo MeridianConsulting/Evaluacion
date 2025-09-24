@@ -36,6 +36,7 @@ function PerformanceEvaluationBoss() {
     fechaIngreso: '',
     fechaEvaluacion: '',
     area: '',
+    categoriaEvaluacion: 'Anual', // Valor por defecto
   });
   // Modo de evaluación: autoevaluación (empleado) o revisión de jefe
   // Por defecto: desactivar gating por rol para evitar conflictos
@@ -1432,6 +1433,26 @@ function PerformanceEvaluationBoss() {
               </div>
             </div>
 
+            {/* Fila 3 - Categoría de Evaluación */}
+            <div className="evaluation-row">
+              <div className="evaluation-field">
+                <label>Categoría de Evaluación:</label>
+                <select 
+                  name="categoriaEvaluacion"
+                  value={datosGenerales.categoriaEvaluacion}
+                  onChange={(e) => handleDatosGeneralesChange(e)}
+                  style={getErrorStyle('datosGenerales_categoriaEvaluacion')}
+                >
+                  <option value="Período de prueba">Período de prueba</option>
+                  <option value="Trimestral">Trimestral</option>
+                  <option value="Anual">Anual</option>
+                </select>
+                {visibleErrors.datosGenerales_categoriaEvaluacion && (
+                  <span className="error-message">Este campo es obligatorio</span>
+                )}
+              </div>
+            </div>
+
         </section>
 
         <hr className="evaluation-hr"/>
@@ -1454,14 +1475,12 @@ function PerformanceEvaluationBoss() {
             </li>
             <li>
               <strong>Justifique las calificaciones extremas.</strong><br />
-              <em>
                 Si otorga una calificación de 5, explique los factores de excelencia.<br />
                 Si otorga una calificación de 2 o menor, justifique las razones de la deficiencia.
-              </em>
             </li>
             <li>
-              <strong>Proponga un plan de acción obligatorio</strong> para calificaciones de 5, 2 o menor.<br />
-              Este plan debe detallar los pasos para mantener la excelencia o corregir las deficiencias.
+              <strong>Proponga un plan de acción obligatorio</strong> <br/>
+               Para calificaciones de 5, 2 o menor, este plan debe detallar los pasos para mantener la excelencia o corregir las deficiencias.
             </li>
           </ol>
         </section>

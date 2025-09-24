@@ -25,7 +25,14 @@ function TeamEvaluations({ onLogout, userRole }) {
           if (resp.ok) {
             const json = await resp.json();
             const rows = (json && (json.data || json.evaluaciones)) || [];
+            // Debug temporal para ver los datos del backend
+            console.log('Raw data from backend:', rows);
+            
             const mapped = rows.map(r => {
+              // Debug temporal para cada registro
+              console.log('Processing row:', r);
+              console.log('id_evaluacion:', r.id_evaluacion, 'id_empleado:', r.id_empleado);
+              
               const raw = (r.estado_evaluacion || '').toString().toUpperCase();
               let display = 'Pendiente';
               
@@ -65,7 +72,7 @@ function TeamEvaluations({ onLogout, userRole }) {
                   display = raw || 'Pendiente';
               }
               
-              return {
+              const mappedRow = {
                 id: r.id_evaluacion,
                 employeeId: r.id_empleado,
                 evaluationId: r.id_evaluacion,
@@ -77,6 +84,11 @@ function TeamEvaluations({ onLogout, userRole }) {
                 periodoEvaluacion: r.periodo_evaluacion,
                 fechaCreacion: r.fecha_creacion
               };
+              
+              // Debug temporal para el objeto mapeado
+              console.log('Mapped row:', mappedRow);
+              
+              return mappedRow;
             });
             setTeamMembers(mapped);
             setLoading(false);
@@ -101,8 +113,15 @@ function TeamEvaluations({ onLogout, userRole }) {
   }, []);
 
   const handleEvaluate = (assignment) => {
+    // Debug temporal para diagnosticar el problema
+    console.log('Assignment data:', assignment);
+    console.log('Available fields:', Object.keys(assignment));
+    
     const { employeeId, evaluationId } = assignment;
+    console.log('Extracted - employeeId:', employeeId, 'evaluationId:', evaluationId);
+    
     if (!employeeId || !evaluationId) {
+      console.log('Missing data - employeeId:', employeeId, 'evaluationId:', evaluationId);
       return info('Datos incompletos', 'No se encontró el identificador de evaluación.');
     }
     // Navegar a la nueva ruta limpia para revisión de jefe (SPA)

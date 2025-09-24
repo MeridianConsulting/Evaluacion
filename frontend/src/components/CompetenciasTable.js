@@ -124,7 +124,7 @@ const CompetenciasTable = ({
                     width: "12%",
                   }}
                 >
-                  Comunicación <br /> efectiva
+                  COMUNICACIÓN <br /> EFECTIVA
                 </td>
                 <td
                   rowSpan={4}
@@ -302,7 +302,7 @@ const CompetenciasTable = ({
                     width: "12%",
                   }}
                 >
-                  Instrumentalidad de <br /> decisiones
+                  INSTRUMENTALIDAD DE <br /> DECISIONES
                 </td>
                 <td
                   rowSpan={2}
@@ -405,7 +405,7 @@ const CompetenciasTable = ({
                     width: "12%",
                   }}
                 >
-                  Aporte <br /> profesional
+                  APORTE <br /> PROFESIONAL
                 </td>
                 <td
                   rowSpan={4}
@@ -580,7 +580,7 @@ const CompetenciasTable = ({
                     width: "12%",
                   }}
                 >
-                  Colaboración
+                  COLABORACIÓN
                 </td>
                 <td
                   rowSpan={3}
@@ -718,7 +718,7 @@ const CompetenciasTable = ({
                     width: "12%",
                   }}
                 >
-                  Relaciones <br /> interpersonales
+                  RELACIONES <br /> INTERPERSONALES
                 </td>
                 <td
                   rowSpan={3}
@@ -857,7 +857,7 @@ const CompetenciasTable = ({
                     width: "12%",
                   }}
                 >
-                  Gestión de <br /> procedimientos
+                  GESTIÓN DE <br /> PROCEDIMIENTOS
                 </td>
                 <td
                   rowSpan={3}
@@ -992,7 +992,7 @@ const CompetenciasTable = ({
                     width: "12%",
                   }}
                 >
-                  Cumplimiento de <br /> funciones del cargo
+                  CUMPLIMIENTO DE <br /> FUNCIONES DEL CARGO
                 </td>
                 <td
                   rowSpan={4}

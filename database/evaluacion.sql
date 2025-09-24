@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 17-09-2025 a las 18:00:39
+-- Tiempo de generación: 24-09-2025 a las 15:07:02
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -43,21 +43,21 @@ INSERT INTO `cargo` (`id_cargo`, `nombre_cargo`, `objetivo_cargo`, `proceso_gest
 (2, 'Subgerente', '', ''),
 (3, 'Gerente administrativa y financiera', '', ''),
 (4, 'Analista contable', '', ''),
-(5, 'Analista de nomina y gestion humana', '', ''),
+(5, 'Analista de nomina y contratacion', '', ''),
 (6, 'Aprendiz etapa lectiva', '', ''),
 (7, 'Aprendiz etapa practica', '', ''),
 (8, 'Asesor administrativo', '', ''),
 (9, 'Asistente administrativa y de gestión humana', '', ''),
 (10, 'Asistente administrativo', '', ''),
 (11, 'Asistente contable', '', ''),
-(12, 'Asistente de nomina y gestion humana', '', ''),
-(13, 'Asistente gestión humana y nómina', '', ''),
+(12, 'Asistente de nomina y contratacion', '', ''),
+(13, 'Analista de Gestion Humana', '', ''),
 (14, 'Asistente logistico administrativo', '', ''),
 (15, 'Auxiliar contable', '', ''),
 (16, 'Contador junior', '', ''),
 (17, 'Contador senior', '', ''),
 (18, 'Coordinador contable y financiero', '', ''),
-(19, 'Coordinador de gestión humana', '', ''),
+(19, 'Profesional de Gestión Humana', '', ''),
 (20, 'Coordinador de proyectos', '', ''),
 (21, 'Coordinador hseq', '', ''),
 (22, 'Ingeniero asistente de supervision integral de pozos tipo ii', '', ''),
@@ -141,12 +141,12 @@ INSERT INTO `empleados` (`id_empleado`, `cedula`, `nombre`, `tipo_documento`, `c
 (8, 1007493802, 'MICHAEL STIVEN RUIZ CARO', 'CC ', 'Soporte hseq ii', 'COMPANY MAN - ADMINISTRACION', '2022-05-02', 'soportehseqproyectos@meridian.com.co', '1007493802', 'COMPANY MAN', NULL, ' HSEQ'),
 (9, 1119211830, 'LUIS MIGUEL GUEVARA MARLES', 'CC ', 'Coordinador hseq', 'ADMINISTRACION', '2022-11-22', 'hseq@meridian.com.co', '1119211830', 'ADMINISTRACION', NULL, 'HSEQ'),
 (10, 1014180459, 'SANDRA MILENA FLOREZ PRADO', 'CC ', 'Asistente administrativa y de gestión humana', 'ADMINISTRACION', '2023-05-02', 'asistenteadministrativo2@meridian.com.co ', '1014180459', 'ADMINISTRACION', NULL, 'empleado'),
-(11, 1020733194, 'ELOY GABRIEL GOMEZ REYES', 'CC ', 'Coordinador de gestión humana', 'ADMINISTRACION', '2023-06-13', 'profesionalgh@meridian.com.co', '1020733194', 'ADMINISTRACION', NULL, 'empleado'),
+(11, 1020733194, 'ELOY GABRIEL GOMEZ REYES', 'CC ', 'Profesional de Gestión Humana', 'ADMINISTRACION', '2023-06-13', 'profesionalgh@meridian.com.co', '1020733194', 'ADMINISTRACION', NULL, 'empleado'),
 (12, 1031145571, 'DIANA MARCELA JACOBO MANCERA', 'CC ', 'Soporte hseq', 'ADMINISTRACION', '2023-08-14', 'soportehseq@meridian.com.co', '1031145571', 'ADMINISTRACION', NULL, 'HSEQ'),
 (13, 1121936876, 'LAURA DANIELA SEGURA MORERA', 'CC ', 'Soporte hseq proyectos', 'COMPANY MAN - ADMINISTRACION', '2023-09-05', 'profesionalhseq@meridian.com.co', '1121936876', 'COMPANY MAN', NULL, 'HSEQ'),
-(14, 52978024, 'ERIKA LILIANA MANCIPE RODRIGUEZ', 'CC', 'Aprendiz etapa practica', 'ADMINISTRACION', '2023-11-01', 'aprendizhseq@meridian.com.co', '52978024', 'ADMINISTRACION', NULL, 'HSEQ'),
+(14, 52978024, 'ERIKA LILIANA MANCIPE RODRIGUEZ', 'CC', 'Aprendiz etapa practica', 'ADMINISTRACION', '2023-11-01', 'aprendizhseq@meridian.com.co', '52978024', 'ADMINISTRACION', NULL, 'empleado'),
 (15, 1007627524, 'ANDRES CAMILO CARDENAS REYES', 'CC ', 'Profesional soporte it', 'ADMINISTRACION', '2023-12-04', 'soporteit.nivel1@meridian.com.co', '1007627524', 'ADMINISTRACION', NULL, 'empleado'),
-(17, 1007647736, 'SONIA STEPHANIA FONSECA LOPEZ', 'CC ', 'Asistente de nomina y gestion humana', 'ADMINISTRACION', '2024-05-02', 'contratacion@meridian.com.co', '1007647736', 'ADMINISTRACION', NULL, 'empleado'),
+(17, 1007647736, 'SONIA STEPHANIA FONSECA LOPEZ', 'CC ', 'Asistente de nomina y contratacion', 'ADMINISTRACION', '2024-05-02', 'contratacion@meridian.com.co', '1007647736', 'ADMINISTRACION', NULL, 'empleado'),
 (18, 1121848186, 'MARIA SHIRLEY ORDOÑEZ CUESTA', 'CC ', 'Profesional administrativa y de gestión humana, proyectos', 'COMPANY MAN - ADMINISTRACION', '2024-05-14', 'profesionaladministrativoproyectos@meridian.com.co', '1121848186', 'COMPANY MAN', NULL, 'empleado'),
 (19, 1102580512, 'FABRYZCIO ANDRES ORTIZ GARCIA', 'CC ', 'Aprendiz etapa lectiva', 'ADMINISTRACION', '2024-06-04', 'Fabryzcioortiz@gmail.com', '1102580512', 'ADMINISTRACION', NULL, 'empleado'),
 (20, 1031649053, 'EYMER SANTIAGO MÉNDEZ HERRERA', 'CC ', 'Aprendiz etapa lectiva', 'ADMINISTRACION', '2024-06-04', 'Santiagom202418@gmail.com ', '1031649053', 'ADMINISTRACION', NULL, 'empleado'),
@@ -219,12 +219,12 @@ INSERT INTO `empleados` (`id_empleado`, `cedula`, `nombre`, `tipo_documento`, `c
 (87, 1098726424, 'EMMANUEL ROBLES ALBARRACIN', 'CC ', 'Profesional junior', 'PETROSERVICIOS', '2025-01-20', 'emmanuel.robles@meridianecp.com', '1098726424', 'PETROSERVICIOS', '3047761-4', 'empleado'),
 (88, 1095918218, 'WILMAR ANDRES DE LA HOZ GAMBOA', 'CC ', 'Profesional senior', 'PETROSERVICIOS', '2025-01-22', 'wilmar.delahoz@meridianecp.com', '1095918218', 'PETROSERVICIOS', '2025-3046906-VRO-GLC-005', 'empleado'),
 (89, 478731, 'ZENAIDA DEL VALLE MARCANO DE VILLARROEL', 'CE', 'Profesional senior', 'PETROSERVICIOS', '2025-01-27', 'zenaida.marcano@meridianecp.com', '478731', 'PETROSERVICIOS', '2024-3046906-VRO-GDA-004', 'empleado'),
-(90, 79954907, 'RONALD VASQUEZ ZARATE', 'CC ', 'Analista de nomina y gestion humana', 'ADMINISTRACION', '2025-01-27', 'nominas@meridian.com.co', '79954907', 'ADMINISTRACION', '90049530', 'empleado'),
+(90, 79954907, 'RONALD VASQUEZ ZARATE', 'CC ', 'Analista de nomina y contratacion', 'ADMINISTRACION', '2025-01-27', 'nominas@meridian.com.co', '79954907', 'ADMINISTRACION', '90049530', 'empleado'),
 (91, 1136888916, 'DANIEL ANDRES JOYA SAAVEDRA', 'CC ', 'Profesional de proyectos m1', 'FRONTERA - ADMINISTRACION', '2025-02-10', 'proyectos2@meridian.com.co', '1136888916', 'FRONTERA', '90049530', 'empleado'),
 (92, 1039448281, 'CRISTINA  CARO VELEZ', 'CC ', 'Profesional junior', 'PETROSERVICIOS', '2025-02-17', 'cristina.caro@meridianecp.com', '1039448281', 'PETROSERVICIOS', '90049431', 'empleado'),
 (94, 13740129, 'JULIO CESAR FIGUEROA VEGA', 'CC ', 'Profesional senior', 'PETROSERVICIOS', '2025-03-03', 'julio.figueroa@meridianecp.com', '13740129', 'PETROSERVICIOS', '90049431', 'empleado'),
 (96, 1075212439, 'MARIANN LISSETTE MAHECHA LAVERDE', 'CC ', 'Profesional senior', 'PETROSERVICIOS', '2025-03-17', 'mariann.mahecha@meridianecp.com', '1075212439', 'PETROSERVICIOS', '90045724', 'empleado'),
-(97, 1000588440, 'LUISA FERNANDA PACHECHO RUBIO', 'C.C.', 'Asistente gestión humana y nómina', 'ADMINISTRACION', '2025-03-19', 'analistagh@meridian.com.co', '1000588440', 'ADMINISTRACION', '90049330', 'empleado'),
+(97, 1000588440, 'LUISA FERNANDA PACHECHO RUBIO', 'C.C.', 'Analista de Gestion Humana', 'ADMINISTRACION', '2025-03-19', 'analistagh@meridian.com.co', '1000588440', 'ADMINISTRACION', '90049330', 'empleado'),
 (98, 75101511, 'JORGE EDUARDO PAIBA ALZATE', 'CC ', 'Profesional senior', 'PETROSERVICIOS', '2025-03-20', 'jorge.paiba@meridianecp.com', '75101511', 'PETROSERVICIOS', '90045724', 'empleado'),
 (99, 56078704, 'MARIA CLAUDIA OROZCO CUJIA\n', 'CC ', 'Profesional junior', 'PETROSERVICIOS', '2025-03-31', 'maria.orozco@meridianecp.com', '56078704', 'PETROSERVICIOS', '90049330', 'empleado'),
 (100, 1016037506, 'PAOLA ANDREA GOMEZ CABRERA', 'CC ', 'Profesional junior', 'PETROSERVICIOS', '2025-04-01', 'paola.gomez@meridianecp.com', '1016037506', 'PETROSERVICIOS', '90045724', 'empleado'),
@@ -655,7 +655,7 @@ ALTER TABLE `hseq_evaluacion_items`
 -- AUTO_INCREMENT de la tabla `cargo`
 --
 ALTER TABLE `cargo`
-  MODIFY `id_cargo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=338;
+  MODIFY `id_cargo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_evaluacion`
@@ -667,31 +667,31 @@ ALTER TABLE `detalle_evaluacion`
 -- AUTO_INCREMENT de la tabla `empleados`
 --
 ALTER TABLE `empleados`
-  MODIFY `id_empleado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=796;
+  MODIFY `id_empleado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=197;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion`
 --
 ALTER TABLE `evaluacion`
-  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_competencias`
 --
 ALTER TABLE `evaluacion_competencias`
-  MODIFY `id_competencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id_competencia` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_estado_historial`
 --
 ALTER TABLE `evaluacion_estado_historial`
-  MODIFY `id_historial` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_historial` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_firmas`
 --
 ALTER TABLE `evaluacion_firmas`
-  MODIFY `id_firma` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_firma` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_hseq`
@@ -703,19 +703,19 @@ ALTER TABLE `evaluacion_hseq`
 -- AUTO_INCREMENT de la tabla `evaluacion_mejoramiento`
 --
 ALTER TABLE `evaluacion_mejoramiento`
-  MODIFY `id_mejoramiento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_mejoramiento` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_plan_accion`
 --
 ALTER TABLE `evaluacion_plan_accion`
-  MODIFY `id_plan_accion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_plan_accion` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_promedios`
 --
 ALTER TABLE `evaluacion_promedios`
-  MODIFY `id_promedio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_promedio` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `hseq_evaluacion`

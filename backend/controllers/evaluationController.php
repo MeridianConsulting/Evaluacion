@@ -84,12 +84,13 @@ class EvaluationController {
       $observacionesJson = json_encode($observaciones, JSON_UNESCAPED_UNICODE);
 
       // Insert principal en evaluacion
-      $insertEvalSql = 'INSERT INTO evaluacion (id_empleado, fecha_evaluacion, observaciones_generales) VALUES (?, NOW(), ?)';
+      $categoriaEvaluacion = $_POST['categoriaEvaluacion'] ?? 'Anual';
+      $insertEvalSql = 'INSERT INTO evaluacion (id_empleado, fecha_evaluacion, categoria_evaluacion, observaciones_generales) VALUES (?, NOW(), ?, ?)';
       $stmtEval = $this->db->prepare($insertEvalSql);
       if (!$stmtEval) {
         throw new Exception('Error al preparar INSERT evaluacion: ' . $this->db->error);
       }
-      $stmtEval->bind_param('is', $employeeId, $observacionesJson);
+      $stmtEval->bind_param('iss', $employeeId, $categoriaEvaluacion, $observacionesJson);
       if (!$stmtEval->execute()) {
         throw new Exception('Error al ejecutar INSERT evaluacion: ' . $stmtEval->error);
       }
