@@ -349,7 +349,7 @@ const ConsolidatedReportDocument = ({ evaluationData }) => (
               <Image 
                 src={evaluationData.firmas.firma_empleado} 
                 style={pdfStyles.signatureImage}
-                onError={() => console.log('Error cargando firma empleado')}
+                onError={() => {}}
               />
             ) : (
               <Text style={pdfStyles.signatureLabel}>Firma no registrada</Text>
@@ -361,7 +361,7 @@ const ConsolidatedReportDocument = ({ evaluationData }) => (
               <Image 
                 src={evaluationData.firmas.firma_jefe} 
                 style={pdfStyles.signatureImage}
-                onError={() => console.log('Error cargando firma jefe')}
+                onError={() => {}}
               />
             ) : (
               <Text style={pdfStyles.signatureLabel}>Firma no registrada</Text>
@@ -560,7 +560,7 @@ const MyDocument = ({ evaluationData }) => (
               <Image 
                 src={evaluationData.firmas.firma_empleado} 
                 style={pdfStyles.signatureImage}
-                onError={() => console.log('Error cargando firma empleado')}
+                onError={() => {}}
               />
             ) : (
               <Text style={pdfStyles.signatureLabel}>Firma no registrada</Text>
@@ -572,7 +572,7 @@ const MyDocument = ({ evaluationData }) => (
               <Image 
                 src={evaluationData.firmas.firma_jefe} 
                 style={pdfStyles.signatureImage}
-                onError={() => console.log('Error cargando firma jefe')}
+                onError={() => {}}
               />
             ) : (
               <Text style={pdfStyles.signatureLabel}>Firma no registrada</Text>
@@ -714,22 +714,6 @@ function Results({ onLogout, userRole }) {
     }
   };
 
-  // Función de diagnóstico HSEQ (temporal)
-  const diagnosticHseq = async () => {
-    try {
-      const employeeId = localStorage.getItem('employeeId');
-      const apiUrl = process.env.REACT_APP_API_BASE_URL;
-      
-      const response = await fetch(`${apiUrl}/api/evaluations/hseq/diagnostic/${employeeId}`);
-      const data = await response.json();
-      
-      console.log('Diagnóstico HSEQ:', data);
-      alert('Diagnóstico HSEQ completado. Revisa la consola para ver los detalles.');
-    } catch (error) {
-      console.error('Error en diagnóstico HSEQ:', error);
-      alert('Error en diagnóstico HSEQ. Revisa la consola.');
-    }
-  };
 
   // UI helpers
   const renderEstrellas = (calificacion) => {
@@ -800,10 +784,8 @@ function Results({ onLogout, userRole }) {
         const hseqResponse = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
         if (hseqResponse.ok) {
           const hseqResponseData = await hseqResponse.json();
-          console.log('Respuesta HSEQ completa:', hseqResponseData);
           
           if (hseqResponseData.success && Array.isArray(hseqResponseData.data)) {
-            console.log('Evaluaciones HSEQ encontradas:', hseqResponseData.data);
             
             // Buscar la evaluación HSEQ correspondiente al período de la evaluación actual
             let hseqEval = hseqResponseData.data.find(h => h.periodo_evaluacion === evaluacion.periodo_evaluacion);
@@ -811,7 +793,6 @@ function Results({ onLogout, userRole }) {
             // Si no se encuentra para el período exacto, buscar la más reciente
             if (!hseqEval && hseqResponseData.data.length > 0) {
               hseqEval = hseqResponseData.data[0]; // La más reciente (ya están ordenadas por fecha DESC)
-              console.log('Usando evaluación HSEQ más reciente:', hseqEval);
             }
             
             if (hseqEval) {
@@ -824,32 +805,34 @@ function Results({ onLogout, userRole }) {
                   const hseqDetailResponse = await fetch(`${apiUrl}/api/evaluations/hseq/${hseqEval.id_hseq_evaluacion}`);
                   if (hseqDetailResponse.ok) {
                     const hseqDetailData = await hseqDetailResponse.json();
-                    console.log('Detalles HSEQ obtenidos:', hseqDetailData);
                     
                     if (hseqDetailData.success && hseqDetailData.data && hseqDetailData.data.criterios) {
                       hseqData = hseqDetailData.data.criterios;
-                      console.log('Criterios HSEQ procesados:', hseqData);
                     }
                   } else {
-                    console.error('Error en respuesta de detalles HSEQ:', hseqDetailResponse.status);
                   }
                 } catch (hseqDetailErr) {
-                  console.error('Error obteniendo detalles HSEQ:', hseqDetailErr);
+                  // Error obteniendo detalles HSEQ
                 }
               }
             } else {
-              console.warn(`No se encontró evaluación HSEQ para el empleado ${employeeId}`);
             }
           } else {
-            console.warn('No se encontraron evaluaciones HSEQ para el empleado');
           }
         } else {
-          console.error('Error en respuesta HSEQ:', hseqResponse.status);
         }
       } catch (hseqErr) {
-        console.error('Error obteniendo datos HSEQ:', hseqErr);
+        // Error obteniendo datos HSEQ
       }
       
+      // Asegurar que las firmas estén disponibles
+      if (!evaluationData.firmas) {
+        evaluationData.firmas = {
+          firma_empleado: null,
+          firma_jefe: null
+        };
+      }
+
       // Agregar los promedios calculados al objeto de datos
       const evaluationDataWithCalculated = {
         ...evaluationData,
@@ -862,10 +845,6 @@ function Results({ onLogout, userRole }) {
         hseq_data: hseqData
       };
       
-      // Debug: verificar datos HSEQ
-      console.log('Datos HSEQ obtenidos:', hseqData);
-      console.log('Promedio HSEQ:', promedioHseq);
-      console.log('Período de evaluación:', evaluacion.periodo_evaluacion);
       
       // Generar PDF del reporte consolidado
       const blob = await pdf(<ConsolidatedReportDocument evaluationData={evaluationDataWithCalculated} />).toBlob();
@@ -907,6 +886,12 @@ function Results({ onLogout, userRole }) {
         if (evaluationData.firmas.firma_jefe && !evaluationData.firmas.firma_jefe.startsWith('data:image')) {
           evaluationData.firmas.firma_jefe = `data:image/png;base64,${evaluationData.firmas.firma_jefe}`;
         }
+      } else {
+        // Si no hay firmas, inicializar objeto vacío
+        evaluationData.firmas = {
+          firma_empleado: null,
+          firma_jefe: null
+        };
       }
       
       const blob = await pdf(<MyDocument evaluationData={evaluationData} />).toBlob();
@@ -1055,22 +1040,18 @@ const generateExcel = async (evaluacion) => {
                     hseqData = hseqDetailData.data.criterios;
                     console.log('Datos HSEQ procesados:', hseqData);
                   } else {
-                    console.warn('No se encontraron criterios HSEQ en la respuesta');
                   }
                 } else {
-                  console.error('Error obteniendo detalles HSEQ:', hseqDetailResponse.status);
+                  // Error obteniendo detalles HSEQ
                 }
               } catch (detailErr) {
-                console.error('Error en request de detalles HSEQ:', detailErr);
+                // Error en request de detalles HSEQ
               }
             } else {
-              console.warn(`No se encontró evaluación HSEQ para el empleado ${employeeId}`);
             }
           } else {
-            console.warn('No se encontraron evaluaciones HSEQ para el empleado');
           }
         } else {
-          console.error('Error en respuesta HSEQ:', hseqResponse.status);
         }
       }
     } catch (hseqErr) {
@@ -1511,6 +1492,14 @@ const generateConsolidatedExcel = async (evaluacion) => {
       cell.border = { top:{style:'thin',color:{argb:PALETTE.border}}, left:{style:'thin',color:{argb:PALETTE.border}},
                       bottom:{style:'thin',color:{argb:PALETTE.border}}, right:{style:'thin',color:{argb:PALETTE.border}} };
     };
+
+    // Asegurar que las firmas estén disponibles
+    if (!evaluationData.firmas) {
+      evaluationData.firmas = {
+        firma_empleado: null,
+        firma_jefe: null
+      };
+    }
 
     // Agregar los promedios calculados y datos HSEQ al objeto de datos
     const evaluationDataWithCalculated = {
@@ -2192,7 +2181,6 @@ const generateConsolidatedExcel = async (evaluacion) => {
       
       return calificacionRedondeada;
     } catch (error) {
-      console.error('Error calculando calificación final:', error);
       return null;
     }
   };
@@ -2858,34 +2846,6 @@ const generateConsolidatedExcel = async (evaluacion) => {
                   }}
                 >
                   {generatingExcel ? '⏳ Generando...' : '📊 Reporte Consolidado Excel'}
-                </button>
-                <button 
-                  onClick={diagnosticHseq}
-                  style={{
-                    background: 'linear-gradient(135deg, #17a2b8, #138496)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '12px 24px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    boxShadow: '0 4px 12px rgba(23, 162, 184, 0.3)',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onMouseOver={(e) => {
-                    e.target.style.transform = 'translateY(-2px)';
-                    e.target.style.boxShadow = '0 6px 16px rgba(23, 162, 184, 0.4)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.target.style.transform = 'translateY(0)';
-                    e.target.style.boxShadow = '0 4px 12px rgba(23, 162, 184, 0.3)';
-                  }}
-                >
-                  🔍 Diagnóstico HSEQ
                 </button>
               </div>
 

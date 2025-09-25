@@ -26,7 +26,7 @@ function HseqEvaluation({ onLogout, userRole }) {
     { id: 5,  responsabilidad: 'Participar en las actividades de capacitación y entrenamiento definidas en el programa de capacitación anual de la compañía y en las demás actividades HSEQ que se realicen mostrando así su compromiso con el Sistema de Gestión Integral de la Compañía.', evaluacionJefe: '', justificacionJefe: '' },
     { id: 6,  responsabilidad: 'Participar y contribuir al cumplimiento de los objetivos del Sistema de Gestión Integral.', evaluacionJefe: '', justificacionJefe: '' },
     { id: 7,  responsabilidad: 'Conocer, aplicar e interiorizar las políticas HSEQ, demostrando su compromiso con la compañía.', evaluacionJefe: '', justificacionJefe: '' },
-    { id: 8,  responsabilidad: 'Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales. Velar para que sus colaboradores realicen los respectivos reportes.', evaluacionJefe: '', justificacionJefe: '' },
+    { id: 8,  responsabilidad: 'Reportar oportunamente actos y condiciones inseguras que generen accidentes e incidentes laborales y ambientales.', evaluacionJefe: '', justificacionJefe: '' },
     { id: 9,  responsabilidad: 'Garantizar el cumplimiento y el control de la información documentada establecida para las diferentes actividades que se generen en la compañía y para el óptimo desarrollo de sus funciones, velando así por la disponibilidad y seguridad de la información.', evaluacionJefe: '', justificacionJefe: '' },
     { id: 10, responsabilidad: 'Garantizar la satisfacción del cliente brindando un alto estándar de calidad en el servicio prestado.', evaluacionJefe: '', justificacionJefe: '' },
     { id: 11, responsabilidad: 'Participar en la evaluación del cumplimiento de los aspectos HSEQ de sus colaboradores.', evaluacionJefe: '', justificacionJefe: '' },
@@ -38,7 +38,6 @@ function HseqEvaluation({ onLogout, userRole }) {
     { id: 17, responsabilidad: 'Participar cuando se ha requerido en la investigación de los incidentes, accidentes de trabajo y enfermedad laboral asociados a su proyecto.', evaluacionJefe: '', justificacionJefe: '' },
     { id: 18, responsabilidad: 'Participar en simulacros, elección de COPASST y elección de comité de convivencia.', evaluacionJefe: '', justificacionJefe: '' },
     { id: 19, responsabilidad: 'Cumplir con las funciones y responsabilidades asignadas de ser elegido miembro del COPASST, Comité de convivencia laboral y/o comité de emergencias.', evaluacionJefe: '', justificacionJefe: '' },
-    { id: 20, responsabilidad: 'Diligenciar el formato de Auto reporte de Condiciones de Trabajo del Tele trabajador con el fin de determinar los peligros presentes en el lugar su trabajo.', evaluacionJefe: '', justificacionJefe: '' },
   ]);
 
   useEffect(() => {
@@ -131,6 +130,12 @@ function HseqEvaluation({ onLogout, userRole }) {
   }, [employees, searchText]);
 
   const goToEvaluate = (emp) => {
+    // Verificar si el empleado ya fue evaluado en este período
+    if (emp && evaluatedSet.has(Number(emp.id_empleado))) {
+      warning('Evaluación ya realizada', 'La evaluación de este empleado ya fue realizada en este período.');
+      return;
+    }
+    
     setSelectedEmployee(emp || null);
     setIsDashboardCollapsed(true);
     setTimeout(() => {
@@ -144,6 +149,21 @@ function HseqEvaluation({ onLogout, userRole }) {
   const validarEvaluacionHseq = () => {
     if (!selectedEmployee) {
       warning('Selección requerida', 'Debe seleccionar un empleado para evaluar.');
+      return false;
+    }
+
+    // Verificar si el empleado ya fue evaluado en este período
+    if (evaluatedSet.has(Number(selectedEmployee.id_empleado))) {
+      warning('Evaluación ya realizada', 'La evaluación de este empleado ya fue realizada en este período.');
+      return false;
+    }
+
+    // Verificar que el usuario actual tenga permisos HSEQ
+    const evaluadorNombre = localStorage.getItem('employeeName');
+    const perfilesHseqPermitidos = ['Diana', 'Michael', 'Laura'];
+    
+    if (!evaluadorNombre || !perfilesHseqPermitidos.includes(evaluadorNombre)) {
+      warning('Sin permisos', 'Solo los perfiles HSEQ autorizados (Diana, Michael, Laura) pueden realizar evaluaciones HSEQ.');
       return false;
     }
 
@@ -181,8 +201,21 @@ function HseqEvaluation({ onLogout, userRole }) {
       
       // Obtener ID del evaluador HSEQ desde localStorage
       const evaluadorId = localStorage.getItem('employeeId');
+      const evaluadorNombre = localStorage.getItem('employeeName');
+      
       if (evaluadorId) {
         formData.append('evaluatorId', evaluadorId);
+      }
+      
+      // Configurar firma del Coordinador HSEQ (Luis Guevara) independientemente de quién ejecute la evaluación
+      formData.append('signatureName', 'Luis Guevara');
+      formData.append('signatureTitle', 'Coordinador HSEQ');
+      
+      // Si el evaluador actual es uno de los perfiles HSEQ permitidos, se registra como evaluador
+      const perfilesHseqPermitidos = ['Diana', 'Michael', 'Laura'];
+      if (evaluadorNombre && perfilesHseqPermitidos.includes(evaluadorNombre)) {
+        formData.append('evaluatorName', evaluadorNombre);
+        formData.append('evaluatorRole', 'HSEQ');
       }
 
       const response = await fetch(`${apiBase}/api/evaluations/save-hseq`, {
@@ -355,6 +388,13 @@ function HseqEvaluation({ onLogout, userRole }) {
                     onChange={(e) => {
                       const val = e.target.value;
                       const emp = employees.find(x => String(x.id_empleado) === String(val));
+                      
+                      // Verificar si el empleado ya fue evaluado en este período
+                      if (emp && evaluatedSet.has(Number(emp.id_empleado))) {
+                        warning('Evaluación ya realizada', 'La evaluación de este empleado ya fue realizada en este período.');
+                        return;
+                      }
+                      
                       setSelectedEmployee(emp || null);
                     }}
                   >
@@ -488,6 +528,12 @@ function HseqEvaluation({ onLogout, userRole }) {
                   </span>
                   <span className="hseq-badge" style={{ background: evaluatedSet.has(Number(selectedEmployee.id_empleado)) ? '#ecfdf5' : '#fefce8', color: evaluatedSet.has(Number(selectedEmployee.id_empleado)) ? '#065f46' : '#92400e', borderColor: evaluatedSet.has(Number(selectedEmployee.id_empleado)) ? 'rgba(16,185,129,.25)' : 'rgba(245,158,11,.25)'}}>
                     {evaluatedSet.has(Number(selectedEmployee.id_empleado)) ? 'HSEQ: Completada' : 'HSEQ: Pendiente'}
+                  </span>
+                  <span className="hseq-badge" style={{ background: '#e0f2fe', color: '#0369a1', borderColor: 'rgba(3,105,161,.25)' }}>
+                    <span>Evaluador:</span> {localStorage.getItem('employeeName') || 'Usuario'}
+                  </span>
+                  <span className="hseq-badge" style={{ background: '#f0f9ff', color: '#1e40af', borderColor: 'rgba(30,64,175,.25)' }}>
+                    <span>Firma:</span> Luis Guevara (Coordinador HSEQ)
                   </span>
                 </div>
                 <Hseq

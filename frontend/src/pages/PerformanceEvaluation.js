@@ -1108,7 +1108,6 @@ function PerformanceEvaluation() {
         // Obtener el ID de la evaluación recién guardada
         const evaluationId = data.id_evaluacion;
         
-        // Guardar el ID de la evaluación para poder descargar el PDF
         localStorage.setItem('lastEvaluationId', evaluationId);
         
         // Obtener promedios reales de la base de datos
@@ -2417,17 +2416,6 @@ function PerformanceEvaluation() {
         closeOnBackdrop={false}
         onClose={() => { setShowCompletion(false); window.location.href = '/'; }}
         onPrimaryAction={() => (window.location.href = '/')}
-        onDownload={() => {
-          // Descargar PDF de la evaluación usando el endpoint existente
-          const evaluationId = localStorage.getItem('lastEvaluationId');
-          if (evaluationId && employee?.id_empleado) {
-            const apiUrl = process.env.REACT_APP_API_BASE_URL;
-            const downloadUrl = `${apiUrl}/api/evaluations/${evaluationId}/pdf/${employee.id_empleado}`;
-            window.open(downloadUrl, '_blank');
-          } else {
-            showError('Error', 'No se pudo obtener la información necesaria para descargar el PDF');
-          }
-        }}
       />
       </div>
     </>

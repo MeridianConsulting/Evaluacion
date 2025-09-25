@@ -910,7 +910,7 @@ function LandingPage({ onLogout }) {
               <div className="section section-full">
                 <h3>Términos y condiciones</h3>
                 <div className="terms-box">
-                  <p><strong>Meridian Consulting Ltda.</strong> resguardará electrónicamente esta evaluación. Al proceder, acepta el tratamiento de datos y la validez de la firma electrónica.</p>
+                  <p><strong>Al diligenciar la autoevaluación, usted autoriza de manera previa, expresa e informada el tratamiento de sus datos personales por parte de Meridian Consulting conforme a lo establecido en la Ley 1581 de 2012 y demás normas concordantes.</strong> La información recolectada será utilizada exclusivamente para fines relacionados con la actividad correspondiente. El manejo de sus datos se realizará bajo estrictos criterios de seguridad y confidencialidad, garantizando en todo momento sus derechos como titular de la información.</p>
                   <p><strong>Confidencialidad:</strong> información exclusiva para evaluación y desarrollo profesional.</p>
                   <p><strong>Integridad:</strong> los datos deben ser veraces y reflejar el desempeño real.</p>
                 </div>
