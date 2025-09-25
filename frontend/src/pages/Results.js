@@ -290,12 +290,12 @@ const ConsolidatedReportDocument = ({ evaluationData }) => (
       )}
 
       {/* Detalle de HSEQ */}
-      {evaluationData.hseq_data && evaluationData.hseq_data.length > 0 && (
-        <View style={pdfStyles.section}>
-          <View style={pdfStyles.sectionHeader}>
-            <Text>DETALLE DE RESPONSABILIDADES HSEQ</Text>
-          </View>
-          <View style={pdfStyles.sectionContent}>
+      <View style={pdfStyles.section}>
+        <View style={pdfStyles.sectionHeader}>
+          <Text>DETALLE DE RESPONSABILIDADES HSEQ</Text>
+        </View>
+        <View style={pdfStyles.sectionContent}>
+          {evaluationData.hseq_data && evaluationData.hseq_data.length > 0 ? (
             <View style={pdfStyles.table}>
               <View style={[pdfStyles.tableRow, pdfStyles.tableHeader]}>
                 <Text style={pdfStyles.tableCellAspect}>Responsabilidad</Text>
@@ -310,9 +310,15 @@ const ConsolidatedReportDocument = ({ evaluationData }) => (
                 </View>
               ))}
             </View>
-          </View>
+          ) : (
+            <View style={{ padding: '20px', textAlign: 'center' }}>
+              <Text style={{ color: '#666', fontSize: '12px' }}>
+                No se encontraron datos de evaluación HSEQ para este período.
+              </Text>
+            </View>
+          )}
         </View>
-      )}
+      </View>
 
       {/* Fórmula de Cálculo */}
       <View style={pdfStyles.section}>
@@ -486,33 +492,6 @@ const MyDocument = ({ evaluationData }) => (
         </View>
       )}
 
-      {evaluationData.hseq_data && evaluationData.hseq_data.length > 0 && (
-        <View style={pdfStyles.section}>
-          <View style={pdfStyles.sectionHeader}>
-            <Text>RESPONSABILIDADES HSEQ</Text>
-          </View>
-          <View style={pdfStyles.sectionContent}>
-            <View style={pdfStyles.table}>
-              <View style={[pdfStyles.tableRow, pdfStyles.tableHeader]}>
-                <Text style={pdfStyles.tableCellAspect}>Responsabilidad</Text>
-                <Text style={pdfStyles.tableCellSm}>Calificación</Text>
-                <Text style={pdfStyles.tableCellSm}>Autoeval.</Text>
-                <Text style={pdfStyles.tableCellSm}>Eval. Jefe</Text>
-                <Text style={pdfStyles.tableCellObs}>Observaciones</Text>
-              </View>
-              {evaluationData.hseq_data.map((h, idx) => (
-                <View key={idx} style={pdfStyles.tableRow}>
-                  <Text style={pdfStyles.tableCellAspect}>{h.responsabilidad || 'N/A'}</Text>
-                  <Text style={pdfStyles.tableCellSm}>{h.calificacion ?? 'N/A'}</Text>
-                  <Text style={pdfStyles.tableCellSm}>{h.autoevaluacion ?? 'N/A'}</Text>
-                  <Text style={pdfStyles.tableCellSm}>{h.evaluacion_jefe ?? 'N/A'}</Text>
-                  <Text style={pdfStyles.tableCellObs}>{getObs(h)}</Text>
-                </View>
-              ))}
-            </View>
-          </View>
-        </View>
-      )}
 
       {evaluationData.mejoramiento && (
         <View style={pdfStyles.section}>
@@ -735,6 +714,23 @@ function Results({ onLogout, userRole }) {
     }
   };
 
+  // Función de diagnóstico HSEQ (temporal)
+  const diagnosticHseq = async () => {
+    try {
+      const employeeId = localStorage.getItem('employeeId');
+      const apiUrl = process.env.REACT_APP_API_BASE_URL;
+      
+      const response = await fetch(`${apiUrl}/api/evaluations/hseq/diagnostic/${employeeId}`);
+      const data = await response.json();
+      
+      console.log('Diagnóstico HSEQ:', data);
+      alert('Diagnóstico HSEQ completado. Revisa la consola para ver los detalles.');
+    } catch (error) {
+      console.error('Error en diagnóstico HSEQ:', error);
+      alert('Error en diagnóstico HSEQ. Revisa la consola.');
+    }
+  };
+
   // UI helpers
   const renderEstrellas = (calificacion) => {
     const estrellas = [];
@@ -798,21 +794,60 @@ function Results({ onLogout, userRole }) {
         promedioEvaluacionJefe = countJefe > 0 ? Math.round((sumaJefe / countJefe) * 10) / 10 : 0;
       }
       
-      // Obtener promedio HSEQ desde las evaluaciones HSEQ del empleado
+      // Obtener datos detallados de HSEQ desde las evaluaciones HSEQ del empleado
+      let hseqData = [];
       try {
         const hseqResponse = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
         if (hseqResponse.ok) {
-          const hseqData = await hseqResponse.json();
-          if (hseqData.success && Array.isArray(hseqData.data)) {
+          const hseqResponseData = await hseqResponse.json();
+          console.log('Respuesta HSEQ completa:', hseqResponseData);
+          
+          if (hseqResponseData.success && Array.isArray(hseqResponseData.data)) {
+            console.log('Evaluaciones HSEQ encontradas:', hseqResponseData.data);
+            
             // Buscar la evaluación HSEQ correspondiente al período de la evaluación actual
-            const hseqEval = hseqData.data.find(h => h.periodo_evaluacion === evaluacion.periodo_evaluacion);
-            if (hseqEval && hseqEval.promedio_hseq) {
-              promedioHseq = parseFloat(hseqEval.promedio_hseq);
+            let hseqEval = hseqResponseData.data.find(h => h.periodo_evaluacion === evaluacion.periodo_evaluacion);
+            
+            // Si no se encuentra para el período exacto, buscar la más reciente
+            if (!hseqEval && hseqResponseData.data.length > 0) {
+              hseqEval = hseqResponseData.data[0]; // La más reciente (ya están ordenadas por fecha DESC)
+              console.log('Usando evaluación HSEQ más reciente:', hseqEval);
             }
+            
+            if (hseqEval) {
+              if (hseqEval.promedio_hseq) {
+                promedioHseq = parseFloat(hseqEval.promedio_hseq);
+              }
+              // Obtener los datos detallados de HSEQ usando el ID de la evaluación
+              if (hseqEval.id_hseq_evaluacion) {
+                try {
+                  const hseqDetailResponse = await fetch(`${apiUrl}/api/evaluations/hseq/${hseqEval.id_hseq_evaluacion}`);
+                  if (hseqDetailResponse.ok) {
+                    const hseqDetailData = await hseqDetailResponse.json();
+                    console.log('Detalles HSEQ obtenidos:', hseqDetailData);
+                    
+                    if (hseqDetailData.success && hseqDetailData.data && hseqDetailData.data.criterios) {
+                      hseqData = hseqDetailData.data.criterios;
+                      console.log('Criterios HSEQ procesados:', hseqData);
+                    }
+                  } else {
+                    console.error('Error en respuesta de detalles HSEQ:', hseqDetailResponse.status);
+                  }
+                } catch (hseqDetailErr) {
+                  console.error('Error obteniendo detalles HSEQ:', hseqDetailErr);
+                }
+              }
+            } else {
+              console.warn(`No se encontró evaluación HSEQ para el empleado ${employeeId}`);
+            }
+          } else {
+            console.warn('No se encontraron evaluaciones HSEQ para el empleado');
           }
+        } else {
+          console.error('Error en respuesta HSEQ:', hseqResponse.status);
         }
       } catch (hseqErr) {
-        console.log('Error obteniendo datos HSEQ:', hseqErr);
+        console.error('Error obteniendo datos HSEQ:', hseqErr);
       }
       
       // Agregar los promedios calculados al objeto de datos
@@ -823,8 +858,14 @@ function Results({ onLogout, userRole }) {
           promedio_autoevaluacion: promedioAutoevaluacion,
           promedio_evaluacion_jefe: promedioEvaluacionJefe,
           promedio_hseq: promedioHseq
-        }
+        },
+        hseq_data: hseqData
       };
+      
+      // Debug: verificar datos HSEQ
+      console.log('Datos HSEQ obtenidos:', hseqData);
+      console.log('Promedio HSEQ:', promedioHseq);
+      console.log('Período de evaluación:', evaluacion.periodo_evaluacion);
       
       // Generar PDF del reporte consolidado
       const blob = await pdf(<ConsolidatedReportDocument evaluationData={evaluationDataWithCalculated} />).toBlob();
@@ -949,6 +990,103 @@ const generateExcel = async (evaluacion) => {
       if (v >= 4.5) return PALETTE.heat.green;
       if (v >= 3.0) return PALETTE.heat.yellow;
       return PALETTE.heat.red;
+    };
+
+    // Calcular promedios de autoevaluación y evaluación del jefe desde las competencias
+    let promedioAutoevaluacion = 0;
+    let promedioEvaluacionJefe = 0;
+    let promedioHseq = 0;
+    
+    if (evaluationData.competencias && evaluationData.competencias.length > 0) {
+      const competencias = evaluationData.competencias;
+      let sumaAutoevaluacion = 0;
+      let sumaJefe = 0;
+      let countAutoevaluacion = 0;
+      let countJefe = 0;
+      
+      competencias.forEach(comp => {
+        if (comp.calificacion_empleado && !isNaN(parseFloat(comp.calificacion_empleado))) {
+          sumaAutoevaluacion += parseFloat(comp.calificacion_empleado);
+          countAutoevaluacion++;
+        }
+        if (comp.calificacion_jefe && !isNaN(parseFloat(comp.calificacion_jefe))) {
+          sumaJefe += parseFloat(comp.calificacion_jefe);
+          countJefe++;
+        }
+      });
+      
+      promedioAutoevaluacion = countAutoevaluacion > 0 ? Math.round((sumaAutoevaluacion / countAutoevaluacion) * 10) / 10 : 0;
+      promedioEvaluacionJefe = countJefe > 0 ? Math.round((sumaJefe / countJefe) * 10) / 10 : 0;
+    }
+    
+    // Obtener datos detallados de HSEQ desde las evaluaciones HSEQ del empleado
+    let hseqData = [];
+    try {
+      const hseqResponse = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
+      if (hseqResponse.ok) {
+        const hseqResponseData = await hseqResponse.json();
+        console.log('Respuesta HSEQ completa:', hseqResponseData);
+        
+        if (hseqResponseData.success && Array.isArray(hseqResponseData.data)) {
+          console.log('Evaluaciones HSEQ encontradas:', hseqResponseData.data);
+          
+          // Buscar la evaluación HSEQ correspondiente al período de la evaluación actual
+          let hseqEval = hseqResponseData.data.find(h => h.periodo_evaluacion === evaluacion.periodo_evaluacion);
+          
+          // Si no se encuentra para el período exacto, buscar la más reciente
+          if (!hseqEval && hseqResponseData.data.length > 0) {
+            hseqEval = hseqResponseData.data[0]; // La más reciente (ya están ordenadas por fecha DESC)
+            console.log('Usando evaluación HSEQ más reciente:', hseqEval);
+          }
+          
+          if (hseqEval) {
+            if (hseqEval.promedio_hseq) {
+              promedioHseq = parseFloat(hseqEval.promedio_hseq);
+            }
+            // Obtener los datos detallados de HSEQ usando el ID de la evaluación
+            if (hseqEval.id_hseq_evaluacion) {
+              try {
+                const hseqDetailResponse = await fetch(`${apiUrl}/api/evaluations/hseq/${hseqEval.id_hseq_evaluacion}`);
+                if (hseqDetailResponse.ok) {
+                  const hseqDetailData = await hseqDetailResponse.json();
+                  console.log('Detalles HSEQ obtenidos:', hseqDetailData);
+                  
+                  if (hseqDetailData.success && hseqDetailData.data && hseqDetailData.data.criterios) {
+                    hseqData = hseqDetailData.data.criterios;
+                    console.log('Datos HSEQ procesados:', hseqData);
+                  } else {
+                    console.warn('No se encontraron criterios HSEQ en la respuesta');
+                  }
+                } else {
+                  console.error('Error obteniendo detalles HSEQ:', hseqDetailResponse.status);
+                }
+              } catch (detailErr) {
+                console.error('Error en request de detalles HSEQ:', detailErr);
+              }
+            } else {
+              console.warn(`No se encontró evaluación HSEQ para el empleado ${employeeId}`);
+            }
+          } else {
+            console.warn('No se encontraron evaluaciones HSEQ para el empleado');
+          }
+        } else {
+          console.error('Error en respuesta HSEQ:', hseqResponse.status);
+        }
+      }
+    } catch (hseqErr) {
+      console.error('Error obteniendo datos HSEQ:', hseqErr);
+    }
+
+    // Agregar los promedios calculados al objeto de datos
+    const evaluationDataWithCalculated = {
+      ...evaluationData,
+      promedios: {
+        ...evaluationData.promedios,
+        promedio_autoevaluacion: promedioAutoevaluacion,
+        promedio_evaluacion_jefe: promedioEvaluacionJefe,
+        promedio_hseq: promedioHseq
+      },
+      hseq_data: hseqData
     };
 
     // ---------- Workbook
@@ -1128,31 +1266,42 @@ const generateExcel = async (evaluacion) => {
 
     // ---------- HSEQ (tabla)
     addSectionHeader('RESPONSABILIDADES HSEQ');
-    const hdrH = ws.addRow(['Responsabilidad', 'Calificación', 'Autoeval.', 'Eval. Jefe', 'Estado', 'Observaciones']);
+    const hdrH = ws.addRow(['Responsabilidad', 'Calificación', 'Estado', 'Observaciones']);
     hdrH.eachCell((c, i) => {
-      if (i<=6) {
+      if (i<=4) {
         c.font = { name:'Calibri', bold:true, color:{ argb:'FFFFFFFF' } };
         c.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:'FF34495E' } };
-        c.alignment = { horizontal:'center', vertical:'middle', wrapText: i===6 };
+        c.alignment = { horizontal:'center', vertical:'middle', wrapText: i===4 };
       }
     });
-    const headerHseqRow = hdrH.number;
 
     zebra = false;
-    (evaluationData.hseq_data || []).forEach(h => {
-      zebra = !zebra;
-      const cal = numOrBlank(h.calificacion);
-      const est = estadoPorValor(cal);
-      const r = ws.addRow([dash(h.responsabilidad), cal, numOrBlank(h.autoevaluacion), numOrBlank(h.evaluacion_jefe), '', normalizeObs(h)]);
-      r.eachCell((cell, col) => {
-        cell.font = FONT_BODY;
-        cell.border = { bottom:{ style:'thin', color:{ argb:PALETTE.border } } };
-        cell.alignment = { vertical:'middle', wrapText: col===6, horizontal: (col>=2 && col<=4) ? 'right' : (col===5 ? 'center' : 'left') };
-        if (zebra) cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:PALETTE.zebra } };
+    if (evaluationDataWithCalculated.hseq_data && evaluationDataWithCalculated.hseq_data.length > 0) {
+      evaluationDataWithCalculated.hseq_data.forEach(h => {
+        zebra = !zebra;
+        const cal = numOrBlank(h.calificacion);
+        const est = estadoPorValor(cal);
+        const r = ws.addRow([dash(h.responsabilidad), cal, est, normalizeObs(h)]);
+        r.eachCell((cell, col) => {
+          cell.font = FONT_BODY;
+          cell.border = { bottom:{ style:'thin', color:{ argb:PALETTE.border } } };
+          cell.alignment = { vertical:'middle', wrapText: col===4, horizontal: (col===2) ? 'right' : (col===3 ? 'center' : 'left') };
+          if (zebra) cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:PALETTE.zebra } };
+        });
+        // formato 1 decimal
+        const c = ws.getCell(`B${r.number}`); if (c.value !== null) c.numFmt = ONE_DEC;
+        // chip de estado
+        applyEstadoChip(ws.getCell(`C${r.number}`), est);
       });
-      ['B','C','D'].forEach(col => { const c = ws.getCell(`${col}${r.number}`); if (c.value !== null) c.numFmt = ONE_DEC; });
-      applyEstadoChip(ws.getCell(`E${r.number}`), est);
-    });
+    } else {
+      // Mostrar mensaje cuando no hay datos HSEQ
+      const noDataRow = ws.addRow(['No se encontraron datos de evaluación HSEQ para este período', '', '', '']);
+      noDataRow.eachCell((cell, col) => {
+        cell.font = { name:'Calibri', italic:true, color:{ argb:'FF666666' } };
+        cell.alignment = { horizontal:'center', vertical:'middle' };
+      });
+      ws.mergeCells(`A${noDataRow.number}:D${noDataRow.number}`);
+    }
     ws.addRow([]);
 
     // ---------- Plan de mejora (SMART + semáforo)
@@ -1261,33 +1410,66 @@ const generateConsolidatedExcel = async (evaluacion) => {
       promedioEvaluacionJefe = countJefe > 0 ? Math.round((sumaJefe / countJefe) * 10) / 10 : 0;
     }
     
-    // Obtener promedio HSEQ desde las evaluaciones HSEQ del empleado
+    // Obtener datos detallados de HSEQ desde las evaluaciones HSEQ del empleado
+    let hseqData = [];
     try {
       const hseqResponse = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
       if (hseqResponse.ok) {
-        const hseqData = await hseqResponse.json();
-        if (hseqData.success && Array.isArray(hseqData.data)) {
+        const hseqResponseData = await hseqResponse.json();
+        console.log('Respuesta HSEQ completa (Excel):', hseqResponseData);
+        
+        if (hseqResponseData.success && Array.isArray(hseqResponseData.data)) {
+          console.log('Evaluaciones HSEQ encontradas (Excel):', hseqResponseData.data);
+          
           // Buscar la evaluación HSEQ correspondiente al período de la evaluación actual
-          const hseqEval = hseqData.data.find(h => h.periodo_evaluacion === evaluacion.periodo_evaluacion);
-          if (hseqEval && hseqEval.promedio_hseq) {
-            promedioHseq = parseFloat(hseqEval.promedio_hseq);
+          let hseqEval = hseqResponseData.data.find(h => h.periodo_evaluacion === evaluacion.periodo_evaluacion);
+          
+          // Si no se encuentra para el período exacto, buscar la más reciente
+          if (!hseqEval && hseqResponseData.data.length > 0) {
+            hseqEval = hseqResponseData.data[0]; // La más reciente (ya están ordenadas por fecha DESC)
+            console.log('Usando evaluación HSEQ más reciente (Excel):', hseqEval);
           }
+          
+          if (hseqEval) {
+            if (hseqEval.promedio_hseq) {
+              promedioHseq = parseFloat(hseqEval.promedio_hseq);
+            }
+            // Obtener los datos detallados de HSEQ usando el ID de la evaluación
+            if (hseqEval.id_hseq_evaluacion) {
+              try {
+                const hseqDetailResponse = await fetch(`${apiUrl}/api/evaluations/hseq/${hseqEval.id_hseq_evaluacion}`);
+                if (hseqDetailResponse.ok) {
+                  const hseqDetailData = await hseqDetailResponse.json();
+                  console.log('Detalles HSEQ obtenidos (Excel):', hseqDetailData);
+                  
+                  if (hseqDetailData.success && hseqDetailData.data && hseqDetailData.data.criterios) {
+                    hseqData = hseqDetailData.data.criterios;
+                    console.log('Criterios HSEQ procesados (Excel):', hseqData);
+                  }
+                } else {
+                  console.error('Error en respuesta de detalles HSEQ (Excel):', hseqDetailResponse.status);
+                }
+              } catch (hseqDetailErr) {
+                console.error('Error obteniendo detalles HSEQ (Excel):', hseqDetailErr);
+              }
+            }
+          } else {
+            console.warn(`No se encontró evaluación HSEQ para el empleado ${employeeId} (Excel)`);
+          }
+        } else {
+          console.warn('No se encontraron evaluaciones HSEQ para el empleado (Excel)');
         }
+      } else {
+        console.error('Error en respuesta HSEQ (Excel):', hseqResponse.status);
       }
     } catch (hseqErr) {
-      console.log('Error obteniendo datos HSEQ:', hseqErr);
+      console.error('Error obteniendo datos HSEQ (Excel):', hseqErr);
     }
     
-    // Agregar los promedios calculados al objeto de datos
-    const evaluationDataWithCalculated = {
-      ...evaluationData,
-      promedios: {
-        ...evaluationData.promedios,
-        promedio_autoevaluacion: promedioAutoevaluacion,
-        promedio_evaluacion_jefe: promedioEvaluacionJefe,
-        promedio_hseq: promedioHseq
-      }
-    };
+    // Debug: verificar datos HSEQ
+    console.log('Datos HSEQ obtenidos (Excel):', hseqData);
+    console.log('Promedio HSEQ (Excel):', promedioHseq);
+    console.log('Período de evaluación (Excel):', evaluacion.periodo_evaluacion);
 
     // ---------- Paleta y helpers
     const PALETTE = {
@@ -1328,6 +1510,18 @@ const generateConsolidatedExcel = async (evaluacion) => {
       cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PALETTE.bg } };
       cell.border = { top:{style:'thin',color:{argb:PALETTE.border}}, left:{style:'thin',color:{argb:PALETTE.border}},
                       bottom:{style:'thin',color:{argb:PALETTE.border}}, right:{style:'thin',color:{argb:PALETTE.border}} };
+    };
+
+    // Agregar los promedios calculados y datos HSEQ al objeto de datos
+    const evaluationDataWithCalculated = {
+      ...evaluationData,
+      promedios: {
+        ...evaluationData.promedios,
+        promedio_autoevaluacion: promedioAutoevaluacion,
+        promedio_evaluacion_jefe: promedioEvaluacionJefe,
+        promedio_hseq: promedioHseq
+      },
+      hseq_data: hseqData
     };
 
     // ---------- Workbook
@@ -1482,8 +1676,8 @@ const generateConsolidatedExcel = async (evaluacion) => {
 
     // ---------- Detalle de HSEQ
     addSectionHeader('DETALLE DE RESPONSABILIDADES HSEQ');
-    const hdrH = ws.addRow(['Responsabilidad', 'Calificación', 'Estado', 'Observaciones']);
-    hdrH.eachCell((c, i) => {
+    const hdrHseq = ws.addRow(['Responsabilidad', 'Calificación', 'Estado', 'Observaciones']);
+    hdrHseq.eachCell((c, i) => {
       if (i<=4) {
         c.font = { name:'Calibri', bold:true, color:{ argb:'FFFFFFFF' } };
         c.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:'FF34495E' } };
@@ -1492,20 +1686,32 @@ const generateConsolidatedExcel = async (evaluacion) => {
     });
 
     zebra = false;
-    (evaluationDataWithCalculated.hseq_data || []).forEach(h => {
-      zebra = !zebra;
-      const cal = numOrBlank(h.calificacion);
-      const est = estadoPorValor(cal);
-      const r = ws.addRow([dash(h.responsabilidad), cal, '', normalizeObs(h)]);
-      r.eachCell((cell, col) => {
-        cell.font = FONT_BODY;
-        cell.border = { bottom:{ style:'thin', color:{ argb:PALETTE.border } } };
-        cell.alignment = { vertical:'middle', wrapText: col===4, horizontal: (col===2) ? 'right' : (col===3 ? 'center' : 'left') };
-        if (zebra) cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:PALETTE.zebra } };
+    if (evaluationDataWithCalculated.hseq_data && evaluationDataWithCalculated.hseq_data.length > 0) {
+      evaluationDataWithCalculated.hseq_data.forEach(h => {
+        zebra = !zebra;
+        const cal = numOrBlank(h.calificacion);
+        const est = estadoPorValor(cal);
+        const r = ws.addRow([dash(h.responsabilidad), cal, est, normalizeObs(h)]);
+        r.eachCell((cell, col) => {
+          cell.font = FONT_BODY;
+          cell.border = { bottom:{ style:'thin', color:{ argb:PALETTE.border } } };
+          cell.alignment = { vertical:'middle', wrapText: col===4, horizontal: (col===2) ? 'right' : (col===3 ? 'center' : 'left') };
+          if (zebra) cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:PALETTE.zebra } };
+        });
+        // formato 1 decimal
+        const c = ws.getCell(`B${r.number}`); if (c.value !== null) c.numFmt = ONE_DEC;
+        // chip de estado
+        applyEstadoChip(ws.getCell(`C${r.number}`), est);
       });
-      ['B'].forEach(col => { const c = ws.getCell(`${col}${r.number}`); if (c.value !== null) c.numFmt = ONE_DEC; });
-      applyEstadoChip(ws.getCell(`C${r.number}`), est);
-    });
+    } else {
+      // Mostrar mensaje cuando no hay datos HSEQ
+      const noDataRow = ws.addRow(['No se encontraron datos de evaluación HSEQ para este período', '', '', '']);
+      noDataRow.eachCell((cell, col) => {
+        cell.font = { name:'Calibri', italic:true, color:{ argb:'FF666666' } };
+        cell.alignment = { horizontal:'center', vertical:'middle' };
+      });
+      ws.mergeCells(`A${noDataRow.number}:D${noDataRow.number}`);
+    }
     ws.addRow([]);
 
     // ---------- Firmas
@@ -2652,6 +2858,34 @@ const generateConsolidatedExcel = async (evaluacion) => {
                   }}
                 >
                   {generatingExcel ? '⏳ Generando...' : '📊 Reporte Consolidado Excel'}
+                </button>
+                <button 
+                  onClick={diagnosticHseq}
+                  style={{
+                    background: 'linear-gradient(135deg, #17a2b8, #138496)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '12px 24px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 12px rgba(23, 162, 184, 0.3)',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 6px 16px rgba(23, 162, 184, 0.4)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 12px rgba(23, 162, 184, 0.3)';
+                  }}
+                >
+                  🔍 Diagnóstico HSEQ
                 </button>
               </div>
 

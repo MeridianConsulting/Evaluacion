@@ -665,41 +665,30 @@ function PerformanceEvaluation() {
     const errores = {};
     let isValid = true;
 
-    console.log('=== DEBUG validarFormulario ===');
-    console.log('isManagerView:', isManagerView);
-
     // Validar datos generales - TODOS OBLIGATORIOS
     const requiredGeneralFields = ['fechaIngreso', 'fechaEvaluacion', 'area', 'categoriaEvaluacion'];
-    console.log('requiredGeneralFields:', requiredGeneralFields);
     requiredGeneralFields.forEach(key => {
-      console.log(`Validando ${key}:`, datosGenerales[key]);
       if (!datosGenerales[key]) {
         errores[`datosGenerales_${key}`] = true;
         isValid = false;
-        console.log(`ERROR en ${key}: campo vacío`);
       }
     });
 
     // Validar competencias - TODAS OBLIGATORIAS
-    console.log('Validando competencias...');
     rows.forEach((row, index) => {
       const workerOk = row.worker && String(row.worker) !== '' && String(row.worker) !== '0';
       const bossOk = row.boss && String(row.boss) !== '' && String(row.boss) !== '0';
-      
-      console.log(`Row ${index}: worker=${row.worker} (${workerOk}), boss=${row.boss} (${bossOk})`);
       
       // Validar worker SIEMPRE (autoevaluación obligatoria)
       if (!workerOk) {
         errores[`competencia_worker_${row.id}`] = true;
         isValid = false;
-        console.log(`ERROR en competencia ${index}: worker no válido`);
       }
       
       // Validar boss SOLO en modo jefe (isManagerView = true)
       if (isManagerView && !bossOk) {
         errores[`competencia_boss_${row.id}`] = true;
         isValid = false;
-        console.log(`ERROR en competencia ${index}: boss no válido (modo jefe)`);
       }
 
       // Validar justificaciones para calificaciones extremas (1, 2 o 5)
@@ -708,7 +697,6 @@ function PerformanceEvaluation() {
         if ((workerVal === 1 || workerVal === 2 || workerVal === 5) && !row.justificacionTrabajador?.trim()) {
           errores[`competencia_worker_justificacion_${row.id}`] = true;
           isValid = false;
-          console.log(`ERROR en competencia ${index}: falta justificación del trabajador para calificación ${workerVal}`);
         }
       }
       
@@ -718,7 +706,6 @@ function PerformanceEvaluation() {
         if ((bossVal === 1 || bossVal === 2 || bossVal === 5) && !row.justificacionJefe?.trim()) {
           errores[`competencia_boss_justificacion_${row.id}`] = true;
           isValid = false;
-          console.log(`ERROR en competencia ${index}: falta justificación del jefe para calificación ${bossVal}`);
         }
       }
     });
@@ -726,35 +713,26 @@ function PerformanceEvaluation() {
     // HSEQ deshabilitado - no validar
 
     // Validar mejoramiento - OBLIGATORIO con mínimo de caracteres
-    console.log('Validando mejoramiento...');
-    console.log('fortalezas:', mejoramiento.fortalezas);
-    console.log('aspectosMejorar:', mejoramiento.aspectosMejorar);
-    
     if (!mejoramiento.fortalezas.trim()) {
       errores.fortalezas = true;
       isValid = false;
-      console.log('ERROR: fortalezas vacío');
     } else if (mejoramiento.fortalezas.trim().length < 50) {
       errores.fortalezas = true;
       isValid = false;
-      console.log('ERROR: fortalezas menos de 50 caracteres');
     }
     
     if (!mejoramiento.aspectosMejorar.trim()) {
       errores.aspectosMejorar = true;
       isValid = false;
-      console.log('ERROR: aspectosMejorar vacío');
     } else if (mejoramiento.aspectosMejorar.trim().length < 50) {
       errores.aspectosMejorar = true;
       isValid = false;
-      console.log('ERROR: aspectosMejorar menos de 50 caracteres');
     }
 
     // Validar necesidades de capacitación (opcional pero si se llena debe tener mínimo 30 caracteres)
     if (mejoramiento.necesidadesCapacitacion && mejoramiento.necesidadesCapacitacion.trim().length > 0 && mejoramiento.necesidadesCapacitacion.trim().length < 30) {
       errores.necesidadesCapacitacion = true;
       isValid = false;
-      console.log('ERROR: necesidadesCapacitacion menos de 30 caracteres');
     }
 
     // Validar planes de acción - OBLIGATORIO (al menos uno completo con mínimo de caracteres)
@@ -792,7 +770,6 @@ function PerformanceEvaluation() {
     if (!hasValidPlan) {
       errores.planAccion_required = true;
       isValid = false;
-      console.log('ERROR: se requiere al menos un plan de acción completo con mínimo de caracteres');
     }
 
     // Validar acta de compromiso - OBLIGATORIO (al menos uno completo con mínimo de caracteres)
@@ -828,7 +805,6 @@ function PerformanceEvaluation() {
     if (!hasValidActa) {
       errores.actaCompromiso_required = true;
       isValid = false;
-      console.log('ERROR: se requiere al menos un acta de compromiso completo con mínimo de caracteres');
     }
 
     // Validar firmas - CONDICIONAL POR MODO
@@ -843,8 +819,6 @@ function PerformanceEvaluation() {
       isValid = false;
     }
 
-    console.log('Errores finales:', errores);
-    console.log('isValid final:', isValid);
     setValidationErrors(errores);
     return isValid;
   };
@@ -982,22 +956,12 @@ function PerformanceEvaluation() {
   };
 
   const handleSubmitEvaluation = async () => {
-    console.log('=== DEBUG VALIDACIÓN ===');
-    console.log('isManagerView:', isManagerView);
-    console.log('employeeSignature:', !!employeeSignature);
-    console.log('bossSignature:', !!bossSignature);
-    console.log('datosGenerales:', datosGenerales);
-    console.log('mejoramiento:', mejoramiento);
-    console.log('planesAccion:', planesAccion);
-    
     // Validar calificaciones de todas las secciones
     const erroresCalificaciones = validateAllCalifications();
-    console.log('erroresCalificaciones:', erroresCalificaciones);
 
     // Validar promedio y firmas (condicional por modo)
     const promedioCompetencias = calcularPromedioCompetencias();
     const promedioNumber = Number(promedioCompetencias);
-    console.log('promedioCompetencias:', promedioCompetencias, 'promedioNumber:', promedioNumber);
 
     const erroresBasicos = {};
     if (!isManagerView && !employeeSignature) {
@@ -1006,28 +970,65 @@ function PerformanceEvaluation() {
     if (isManagerView && !bossSignature) {
       erroresBasicos.bossSignature = true;
     }
-    console.log('erroresBasicos:', erroresBasicos);
 
     // Validar otros campos (datos generales, mejoramiento, plan de acción)
     const formularioValido = validarFormulario();
-    console.log('formularioValido:', formularioValido);
     
     // Fusionar errores de calificaciones y firmas con los del formulario
     setValidationErrors(prev => ({ ...prev, ...erroresCalificaciones, ...erroresBasicos }));
     const hayErroresCalif = Object.keys(erroresCalificaciones).length > 0;
     const hayErroresFirmas = Object.keys(erroresBasicos).length > 0;
-    console.log('hayErroresCalif:', hayErroresCalif, 'hayErroresFirmas:', hayErroresFirmas);
 
     if (hayErroresCalif || !formularioValido) {
       window.scrollTo(0, 0);
-      const msg = 'Complete TODAS las calificaciones (trabajador y jefe), justificaciones para calificaciones 1, 2 o 5, y todos los campos requeridos.';
-      warning('Campos obligatorios', msg);
+      
+      // Construir mensaje específico basado en los errores encontrados
+      const erroresDetectados = [];
+      
+      // Verificar errores de competencias
+      const erroresCompetencias = Object.keys(erroresCalificaciones).filter(k => k.startsWith('competencia_'));
+      if (erroresCompetencias.length > 0) {
+        const erroresWorker = erroresCompetencias.filter(k => k.includes('_worker_') && !k.includes('_justificacion_'));
+        const erroresBoss = erroresCompetencias.filter(k => k.includes('_boss_') && !k.includes('_justificacion_'));
+        const erroresJustificacion = erroresCompetencias.filter(k => k.includes('_justificacion_'));
+        
+        if (erroresWorker.length > 0) {
+          erroresDetectados.push(`${erroresWorker.length} calificación${erroresWorker.length > 1 ? 'es' : ''} del trabajador sin completar`);
+        }
+        if (erroresBoss.length > 0) {
+          erroresDetectados.push(`${erroresBoss.length} calificación${erroresBoss.length > 1 ? 'es' : ''} del jefe sin completar`);
+        }
+        if (erroresJustificacion.length > 0) {
+          erroresDetectados.push(`${erroresJustificacion.length} justificación${erroresJustificacion.length > 1 ? 'es' : ''} requerida${erroresJustificacion.length > 1 ? 's' : ''} para calificaciones 1, 2 o 5`);
+        }
+      }
+      
+      // Verificar errores de formulario
+      const erroresFormulario = Object.keys(validationErrors).filter(k => !k.startsWith('competencia_'));
+      if (erroresFormulario.length > 0) {
+        const camposFaltantes = [];
+        if (erroresFormulario.some(k => k.includes('datosGenerales_'))) camposFaltantes.push('datos generales');
+        if (erroresFormulario.some(k => k.includes('fortalezas'))) camposFaltantes.push('fortalezas');
+        if (erroresFormulario.some(k => k.includes('aspectosMejorar'))) camposFaltantes.push('aspectos a mejorar');
+        if (erroresFormulario.some(k => k.includes('planAccion_'))) camposFaltantes.push('plan de acción');
+        if (erroresFormulario.some(k => k.includes('actaCompromiso_'))) camposFaltantes.push('acta de compromiso');
+        
+        if (camposFaltantes.length > 0) {
+          erroresDetectados.push(`campos requeridos: ${camposFaltantes.join(', ')}`);
+        }
+      }
+      
+      const mensaje = erroresDetectados.length > 0 
+        ? `Por favor complete: ${erroresDetectados.join('; ')}.`
+        : 'Por favor complete todos los campos obligatorios.';
+      
+      warning('Campos obligatorios', mensaje);
       return;
     }
 
     if (!promedioNumber || promedioNumber <= 0) {
       window.scrollTo(0, 0);
-      warning('Validación requerida', 'Seleccione al menos una calificación en competencias para calcular el promedio.');
+      warning('Calificaciones requeridas', 'Debe completar al menos una calificación en la sección de competencias para poder finalizar la evaluación.');
       return;
     }
 
@@ -1037,8 +1038,8 @@ function PerformanceEvaluation() {
       if (!isManagerView && !employeeSignature) faltantes.push('Evaluado');
       if (isManagerView && !bossSignature) faltantes.push('Jefe Directo');
       const mensaje = faltantes.length === 2 
-        ? 'Las firmas del Evaluado y del Jefe Directo son obligatorias.' 
-        : `La firma del ${faltantes[0]} es obligatoria.`;
+        ? 'Las firmas digitales del Evaluado y del Jefe Directo son obligatorias para finalizar la evaluación.' 
+        : `La firma digital del ${faltantes[0]} es obligatoria para finalizar la evaluación.`;
       warning('Firmas requeridas', mensaje);
       return;
     }

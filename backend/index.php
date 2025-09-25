@@ -140,6 +140,14 @@ function handleRequest($method, $path) {
         return;
     }
 
+    // Ruta para diagnóstico HSEQ
+    if (preg_match("#^api/evaluations/hseq/diagnostic/(\d+)$#", $path, $matches) && $method === "GET") {
+        $employeeId = (int)$matches[1];
+        $controller = new EvaluationControllerNativo();
+        $controller->diagnosticHseqData($employeeId);
+        return;
+    }
+
     // Reportes HSEQ independientes
     if (preg_match("#^api/hseq/evaluations/(\d+)/pdf$#", $path, $matches) && $method === "GET") {
         $hseqEvalId = (int)$matches[1];

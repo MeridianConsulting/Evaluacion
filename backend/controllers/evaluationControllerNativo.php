@@ -475,10 +475,13 @@ class EvaluationControllerNativo {
      */
     public function getHseqEvaluationsByEmployee($employeeId) {
         try {
+            // Log para debug
+            error_log("Buscando evaluaciones HSEQ para empleado ID: " . $employeeId);
+            
             $sql = "
                 SELECT he.id_empleado,
                        emp.nombre AS empleado_nombre,
-                       he.id_hseq_evaluacion AS id_evaluacion,
+                       he.id_hseq_evaluacion,
                        he.periodo_evaluacion,
                        he.estado AS estado_evaluacion,
                        he.fecha_evaluacion,
@@ -500,8 +503,15 @@ class EvaluationControllerNativo {
             $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             $stmt->close();
 
+            // Log para debug
+            error_log("Evaluaciones HSEQ encontradas: " . count($rows));
+            if (count($rows) > 0) {
+                error_log("Primera evaluación: " . json_encode($rows[0]));
+            }
+
             echo json_encode(["success" => true, "data" => $rows]);
         } catch (Exception $e) {
+            error_log("Error en getHseqEvaluationsByEmployee: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(["success" => false, "message" => "Error al obtener evaluaciones HSEQ del empleado", "error" => $e->getMessage()]);
         }
@@ -512,6 +522,9 @@ class EvaluationControllerNativo {
      */
     public function getHseqEvaluationDetails($hseqEvaluationId) {
         try {
+            // Log para debug
+            error_log("Obteniendo detalles de evaluación HSEQ ID: " . $hseqEvaluationId);
+            
             // Obtener información básica de la evaluación
             $sql = "
                 SELECT he.id_hseq_evaluacion,
@@ -538,8 +551,11 @@ class EvaluationControllerNativo {
             $stmt->close();
 
             if (!$evaluacion) {
+                error_log("Evaluación HSEQ no encontrada para ID: " . $hseqEvaluationId);
                 throw new Exception('Evaluación HSEQ no encontrada');
             }
+            
+            error_log("Evaluación HSEQ encontrada: " . json_encode($evaluacion));
 
             // Obtener criterios de la evaluación
             $sqlCriterios = "
@@ -562,6 +578,12 @@ class EvaluationControllerNativo {
             $stmtCriterios->execute();
             $criterios = $stmtCriterios->get_result()->fetch_all(MYSQLI_ASSOC);
             $stmtCriterios->close();
+
+            // Log para debug
+            error_log("Criterios HSEQ encontrados: " . count($criterios));
+            if (count($criterios) > 0) {
+                error_log("Primer criterio: " . json_encode($criterios[0]));
+            }
 
             // Calcular totales
             $totalPuntos = 0;
@@ -588,10 +610,88 @@ class EvaluationControllerNativo {
                 'promedio_final' => round($promedioFinal, 2)
             ];
 
+            // Log para debug
+            error_log("Resultado completo de evaluación HSEQ: " . json_encode($resultado));
+
             echo json_encode(["success" => true, "data" => $resultado]);
         } catch (Exception $e) {
+            error_log("Error en getHseqEvaluationDetails: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(["success" => false, "message" => "Error al obtener detalles de la evaluación HSEQ", "error" => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Método de diagnóstico para verificar datos HSEQ
+     */
+    public function diagnosticHseqData($employeeId) {
+        try {
+            error_log("=== DIAGNÓSTICO HSEQ PARA EMPLEADO: " . $employeeId . " ===");
+            
+            // Verificar si existe la tabla hseq_evaluacion
+            $sql = "SHOW TABLES LIKE 'hseq_evaluacion'";
+            $result = $this->db->query($sql);
+            if ($result->num_rows == 0) {
+                error_log("ERROR: Tabla hseq_evaluacion no existe");
+                echo json_encode(["success" => false, "message" => "Tabla hseq_evaluacion no existe"]);
+                return;
+            }
+            error_log("✓ Tabla hseq_evaluacion existe");
+            
+            // Verificar si existe la tabla hseq_evaluacion_items
+            $sql = "SHOW TABLES LIKE 'hseq_evaluacion_items'";
+            $result = $this->db->query($sql);
+            if ($result->num_rows == 0) {
+                error_log("ERROR: Tabla hseq_evaluacion_items no existe");
+                echo json_encode(["success" => false, "message" => "Tabla hseq_evaluacion_items no existe"]);
+                return;
+            }
+            error_log("✓ Tabla hseq_evaluacion_items existe");
+            
+            // Contar evaluaciones HSEQ para el empleado
+            $sql = "SELECT COUNT(*) as total FROM hseq_evaluacion WHERE id_empleado = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bind_param('i', $employeeId);
+            $stmt->execute();
+            $count = $stmt->get_result()->fetch_assoc()['total'];
+            $stmt->close();
+            error_log("Evaluaciones HSEQ para empleado $employeeId: $count");
+            
+            // Obtener todas las evaluaciones HSEQ del empleado
+            $sql = "SELECT * FROM hseq_evaluacion WHERE id_empleado = ? ORDER BY fecha_evaluacion DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bind_param('i', $employeeId);
+            $stmt->execute();
+            $evaluaciones = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+            
+            error_log("Evaluaciones encontradas: " . json_encode($evaluaciones));
+            
+            // Para cada evaluación, contar sus criterios
+            foreach ($evaluaciones as $eval) {
+                $sql = "SELECT COUNT(*) as total FROM hseq_evaluacion_items WHERE id_hseq_evaluacion = ?";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bind_param('i', $eval['id_hseq_evaluacion']);
+                $stmt->execute();
+                $criteriosCount = $stmt->get_result()->fetch_assoc()['total'];
+                $stmt->close();
+                error_log("Evaluación {$eval['id_hseq_evaluacion']} tiene $criteriosCount criterios");
+            }
+            
+            echo json_encode([
+                "success" => true, 
+                "message" => "Diagnóstico completado",
+                "data" => [
+                    "tabla_hseq_evaluacion" => "existe",
+                    "tabla_hseq_evaluacion_items" => "existe",
+                    "evaluaciones_count" => $count,
+                    "evaluaciones" => $evaluaciones
+                ]
+            ]);
+            
+        } catch (Exception $e) {
+            error_log("Error en diagnóstico HSEQ: " . $e->getMessage());
+            echo json_encode(["success" => false, "message" => "Error en diagnóstico", "error" => $e->getMessage()]);
         }
     }
 
