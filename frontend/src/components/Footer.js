@@ -25,7 +25,7 @@ function Footer() {
         <div className="footer-contact">
           <p>Email: info@meridian.com.co</p>
           <p>Teléfono: (571) 7469090 Ext 1190.</p>
-          <p>Dirección: Cl. 67 #7 - 35, Bogotá</p>
+          <p>Dirección: Cl. 67 #7-37, Bogotá</p>
         </div>
 
         <div className="footer-links">
