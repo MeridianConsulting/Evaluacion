@@ -349,7 +349,7 @@ const ConsolidatedReportDocument = ({ evaluationData }) => (
               <Image 
                 src={evaluationData.firmas.firma_empleado} 
                 style={pdfStyles.signatureImage}
-                onError={() => {}}
+                onError={() => console.log('Error cargando firma empleado')}
               />
             ) : (
               <Text style={pdfStyles.signatureLabel}>Firma no registrada</Text>
@@ -361,7 +361,7 @@ const ConsolidatedReportDocument = ({ evaluationData }) => (
               <Image 
                 src={evaluationData.firmas.firma_jefe} 
                 style={pdfStyles.signatureImage}
-                onError={() => {}}
+                onError={() => console.log('Error cargando firma empleado')}
               />
             ) : (
               <Text style={pdfStyles.signatureLabel}>Firma no registrada</Text>
@@ -560,7 +560,7 @@ const MyDocument = ({ evaluationData }) => (
               <Image 
                 src={evaluationData.firmas.firma_empleado} 
                 style={pdfStyles.signatureImage}
-                onError={() => {}}
+                onError={() => console.log('Error cargando firma empleado')}
               />
             ) : (
               <Text style={pdfStyles.signatureLabel}>Firma no registrada</Text>
@@ -572,7 +572,7 @@ const MyDocument = ({ evaluationData }) => (
               <Image 
                 src={evaluationData.firmas.firma_jefe} 
                 style={pdfStyles.signatureImage}
-                onError={() => {}}
+                onError={() => console.log('Error cargando firma empleado')}
               />
             ) : (
               <Text style={pdfStyles.signatureLabel}>Firma no registrada</Text>
@@ -751,6 +751,10 @@ function Results({ onLogout, userRole }) {
       if (!response.ok) throw new Error('Error al obtener datos completos de la evaluación');
       const { data: evaluationData } = await response.json();
       
+      // Debug: Verificar que las firmas se están obteniendo
+      console.log('Datos de evaluación obtenidos:', evaluationData);
+      console.log('Firmas obtenidas:', evaluationData.firmas);
+      
       // Calcular promedios de autoevaluación y evaluación del jefe desde las competencias
       let promedioAutoevaluacion = 0;
       let promedioEvaluacionJefe = 0;
@@ -825,8 +829,8 @@ function Results({ onLogout, userRole }) {
         // Error obteniendo datos HSEQ
       }
       
-      // Asegurar que las firmas estén disponibles
-      if (!evaluationData.firmas) {
+      // Asegurar que las firmas estén disponibles y sean un objeto
+      if (!evaluationData.firmas || Array.isArray(evaluationData.firmas)) {
         evaluationData.firmas = {
           firma_empleado: null,
           firma_jefe: null
@@ -842,9 +846,17 @@ function Results({ onLogout, userRole }) {
           promedio_evaluacion_jefe: promedioEvaluacionJefe,
           promedio_hseq: promedioHseq
         },
-        hseq_data: hseqData
+        hseq_data: hseqData,
+        firmas: evaluationData.firmas // Asegurar que las firmas se mantengan
       };
       
+      
+      // Debug: Verificar las firmas antes de generar PDF
+      console.log('Firmas antes de generar PDF:', evaluationDataWithCalculated.firmas);
+      console.log('Firma empleado en PDF:', evaluationDataWithCalculated.firmas?.firma_empleado ? 'Sí' : 'No');
+      console.log('Firma jefe en PDF:', evaluationDataWithCalculated.firmas?.firma_jefe ? 'Sí' : 'No');
+      console.log('Tipo de firmas:', typeof evaluationDataWithCalculated.firmas);
+      console.log('Es array:', Array.isArray(evaluationDataWithCalculated.firmas));
       
       // Generar PDF del reporte consolidado
       const blob = await pdf(<ConsolidatedReportDocument evaluationData={evaluationDataWithCalculated} />).toBlob();
@@ -878,7 +890,7 @@ function Results({ onLogout, userRole }) {
       const { data: evaluationData } = await response.json();
       
       // Limpiar y validar las firmas antes de generar el PDF
-      if (evaluationData.firmas) {
+      if (evaluationData.firmas && !Array.isArray(evaluationData.firmas)) {
         // Asegurar que las firmas tengan el formato correcto
         if (evaluationData.firmas.firma_empleado && !evaluationData.firmas.firma_empleado.startsWith('data:image')) {
           evaluationData.firmas.firma_empleado = `data:image/png;base64,${evaluationData.firmas.firma_empleado}`;
@@ -887,7 +899,7 @@ function Results({ onLogout, userRole }) {
           evaluationData.firmas.firma_jefe = `data:image/png;base64,${evaluationData.firmas.firma_jefe}`;
         }
       } else {
-        // Si no hay firmas, inicializar objeto vacío
+        // Si no hay firmas o es un array, inicializar objeto vacío
         evaluationData.firmas = {
           firma_empleado: null,
           firma_jefe: null
@@ -1358,6 +1370,10 @@ const generateConsolidatedExcel = async (evaluacion) => {
     const responseData = await resp.json();
     const { data: evaluationData } = responseData;
     
+    // Debug: Verificar que las firmas se están obteniendo
+    console.log('Datos de evaluación obtenidos (Excel):', evaluationData);
+    console.log('Firmas obtenidas (Excel):', evaluationData.firmas);
+    
     // Calcular promedios de autoevaluación y evaluación del jefe desde las competencias
     let promedioAutoevaluacion = 0;
     let promedioEvaluacionJefe = 0;
@@ -1469,8 +1485,8 @@ const generateConsolidatedExcel = async (evaluacion) => {
                       bottom:{style:'thin',color:{argb:PALETTE.border}}, right:{style:'thin',color:{argb:PALETTE.border}} };
     };
 
-    // Asegurar que las firmas estén disponibles
-    if (!evaluationData.firmas) {
+    // Asegurar que las firmas estén disponibles y sean un objeto
+    if (!evaluationData.firmas || Array.isArray(evaluationData.firmas)) {
       evaluationData.firmas = {
         firma_empleado: null,
         firma_jefe: null
@@ -1486,7 +1502,8 @@ const generateConsolidatedExcel = async (evaluacion) => {
         promedio_evaluacion_jefe: promedioEvaluacionJefe,
         promedio_hseq: promedioHseq
       },
-      hseq_data: hseqData
+      hseq_data: hseqData,
+      firmas: evaluationData.firmas // Asegurar que las firmas se mantengan
     };
 
     // ---------- Workbook
@@ -1689,6 +1706,11 @@ const generateConsolidatedExcel = async (evaluacion) => {
     const toDataUrl = (b64) => !b64 ? null : (b64.startsWith('data:image') ? b64 : `data:image/png;base64,${b64}`);
     const empDataUrl = toDataUrl(evaluationDataWithCalculated.firmas?.firma_empleado);
     const jefeDataUrl = toDataUrl(evaluationDataWithCalculated.firmas?.firma_jefe);
+    
+    // Debug: Verificar las firmas procesadas
+    console.log('Firma empleado procesada:', empDataUrl ? 'Sí' : 'No');
+    console.log('Firma jefe procesada:', jefeDataUrl ? 'Sí' : 'No');
+    console.log('Firmas en Excel:', evaluationDataWithCalculated.firmas);
     const firmaAnchorRow = ws.lastRow.number - 5;
     if (empDataUrl) {
       const imgId = wb.addImage({ base64: empDataUrl, extension: 'png' });
@@ -1699,6 +1721,13 @@ const generateConsolidatedExcel = async (evaluacion) => {
       ws.addImage(imgId, { tl: { col: 5, row: firmaAnchorRow }, ext: { width: 220, height: 80 }, editAs: 'oneCell' });
     }
     ws.addRow([]);
+
+    // Debug: Verificar las firmas antes de generar Excel
+    console.log('Firmas antes de generar Excel:', evaluationDataWithCalculated.firmas);
+    console.log('Firma empleado en Excel:', evaluationDataWithCalculated.firmas?.firma_empleado ? 'Sí' : 'No');
+    console.log('Firma jefe en Excel:', evaluationDataWithCalculated.firmas?.firma_jefe ? 'Sí' : 'No');
+    console.log('Tipo de firmas en Excel:', typeof evaluationDataWithCalculated.firmas);
+    console.log('Es array en Excel:', Array.isArray(evaluationDataWithCalculated.firmas));
 
     // ---------- Guardar
     const buf = await wb.xlsx.writeBuffer({ useStyles: true, useSharedStrings: true });

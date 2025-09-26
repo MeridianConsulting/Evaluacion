@@ -1388,28 +1388,42 @@ class EvaluationControllerNativo {
 
             // Obtener firmas y convertirlas a base64
             $firmas = $this->getFirmas($evaluationId);
-            $firmasBase64 = [];
+            $firmasBase64 = [
+                'firma_empleado' => null,
+                'firma_jefe' => null
+            ];
+            
+            // Debug: Log de firmas obtenidas
+            error_log("Firmas obtenidas para evaluación $evaluationId: " . print_r($firmas, true));
             
             if ($firmas) {
                 // Convertir firma del empleado a base64
                 if (!empty($firmas['firma_empleado'])) {
                     $firmaPath = __DIR__ . '/../' . $firmas['firma_empleado'];
+                    error_log("Intentando cargar firma empleado desde: $firmaPath");
                     if (file_exists($firmaPath)) {
                         // Detectar automáticamente el tipo de imagen
                         $imageInfo = getimagesize($firmaPath);
                         $mimeType = $imageInfo ? $imageInfo['mime'] : 'image/png';
                         $firmasBase64['firma_empleado'] = 'data:' . $mimeType . ';base64,' . base64_encode(file_get_contents($firmaPath));
+                        error_log("Firma empleado convertida a base64 exitosamente");
+                    } else {
+                        error_log("Archivo de firma empleado no encontrado: $firmaPath");
                     }
                 }
                 
                 // Convertir firma del jefe a base64
                 if (!empty($firmas['firma_jefe'])) {
                     $firmaPath = __DIR__ . '/../' . $firmas['firma_jefe'];
+                    error_log("Intentando cargar firma jefe desde: $firmaPath");
                     if (file_exists($firmaPath)) {
                         // Detectar automáticamente el tipo de imagen
                         $imageInfo = getimagesize($firmaPath);
                         $mimeType = $imageInfo ? $imageInfo['mime'] : 'image/png';
                         $firmasBase64['firma_jefe'] = 'data:' . $mimeType . ';base64,' . base64_encode(file_get_contents($firmaPath));
+                        error_log("Firma jefe convertida a base64 exitosamente");
+                    } else {
+                        error_log("Archivo de firma jefe no encontrado: $firmaPath");
                     }
                 }
             }
@@ -1451,6 +1465,8 @@ class EvaluationControllerNativo {
                 'firmas' => $firmasBase64
             ];
 
+            // Debug: Log de firmas finales enviadas al frontend
+            error_log("Firmas finales enviadas al frontend: " . print_r($firmasBase64, true));
             
             echo json_encode([
                 'success' => true,
