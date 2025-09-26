@@ -1010,10 +1010,8 @@ const generateExcel = async (evaluacion) => {
       const hseqResponse = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
       if (hseqResponse.ok) {
         const hseqResponseData = await hseqResponse.json();
-        console.log('Respuesta HSEQ completa:', hseqResponseData);
         
         if (hseqResponseData.success && Array.isArray(hseqResponseData.data)) {
-          console.log('Evaluaciones HSEQ encontradas:', hseqResponseData.data);
           
           // Buscar la evaluación HSEQ correspondiente al período de la evaluación actual
           let hseqEval = hseqResponseData.data.find(h => h.periodo_evaluacion === evaluacion.periodo_evaluacion);
@@ -1021,7 +1019,6 @@ const generateExcel = async (evaluacion) => {
           // Si no se encuentra para el período exacto, buscar la más reciente
           if (!hseqEval && hseqResponseData.data.length > 0) {
             hseqEval = hseqResponseData.data[0]; // La más reciente (ya están ordenadas por fecha DESC)
-            console.log('Usando evaluación HSEQ más reciente:', hseqEval);
           }
           
           if (hseqEval) {
@@ -1034,12 +1031,9 @@ const generateExcel = async (evaluacion) => {
                 const hseqDetailResponse = await fetch(`${apiUrl}/api/evaluations/hseq/${hseqEval.id_hseq_evaluacion}`);
                 if (hseqDetailResponse.ok) {
                   const hseqDetailData = await hseqDetailResponse.json();
-                  console.log('Detalles HSEQ obtenidos:', hseqDetailData);
                   
                   if (hseqDetailData.success && hseqDetailData.data && hseqDetailData.data.criterios) {
                     hseqData = hseqDetailData.data.criterios;
-                    console.log('Datos HSEQ procesados:', hseqData);
-                  } else {
                   }
                 } else {
                   // Error obteniendo detalles HSEQ
@@ -1055,7 +1049,7 @@ const generateExcel = async (evaluacion) => {
         }
       }
     } catch (hseqErr) {
-      console.error('Error obteniendo datos HSEQ:', hseqErr);
+      // Error obteniendo datos HSEQ
     }
 
     // Agregar los promedios calculados al objeto de datos
@@ -1397,10 +1391,8 @@ const generateConsolidatedExcel = async (evaluacion) => {
       const hseqResponse = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
       if (hseqResponse.ok) {
         const hseqResponseData = await hseqResponse.json();
-        console.log('Respuesta HSEQ completa (Excel):', hseqResponseData);
         
         if (hseqResponseData.success && Array.isArray(hseqResponseData.data)) {
-          console.log('Evaluaciones HSEQ encontradas (Excel):', hseqResponseData.data);
           
           // Buscar la evaluación HSEQ correspondiente al período de la evaluación actual
           let hseqEval = hseqResponseData.data.find(h => h.periodo_evaluacion === evaluacion.periodo_evaluacion);
@@ -1408,7 +1400,6 @@ const generateConsolidatedExcel = async (evaluacion) => {
           // Si no se encuentra para el período exacto, buscar la más reciente
           if (!hseqEval && hseqResponseData.data.length > 0) {
             hseqEval = hseqResponseData.data[0]; // La más reciente (ya están ordenadas por fecha DESC)
-            console.log('Usando evaluación HSEQ más reciente (Excel):', hseqEval);
           }
           
           if (hseqEval) {
@@ -1421,36 +1412,21 @@ const generateConsolidatedExcel = async (evaluacion) => {
                 const hseqDetailResponse = await fetch(`${apiUrl}/api/evaluations/hseq/${hseqEval.id_hseq_evaluacion}`);
                 if (hseqDetailResponse.ok) {
                   const hseqDetailData = await hseqDetailResponse.json();
-                  console.log('Detalles HSEQ obtenidos (Excel):', hseqDetailData);
                   
                   if (hseqDetailData.success && hseqDetailData.data && hseqDetailData.data.criterios) {
                     hseqData = hseqDetailData.data.criterios;
-                    console.log('Criterios HSEQ procesados (Excel):', hseqData);
                   }
-                } else {
-                  console.error('Error en respuesta de detalles HSEQ (Excel):', hseqDetailResponse.status);
                 }
               } catch (hseqDetailErr) {
-                console.error('Error obteniendo detalles HSEQ (Excel):', hseqDetailErr);
+                // Error obteniendo detalles HSEQ
               }
             }
-          } else {
-            console.warn(`No se encontró evaluación HSEQ para el empleado ${employeeId} (Excel)`);
           }
-        } else {
-          console.warn('No se encontraron evaluaciones HSEQ para el empleado (Excel)');
         }
-      } else {
-        console.error('Error en respuesta HSEQ (Excel):', hseqResponse.status);
       }
     } catch (hseqErr) {
-      console.error('Error obteniendo datos HSEQ (Excel):', hseqErr);
+      // Error obteniendo datos HSEQ
     }
-    
-    // Debug: verificar datos HSEQ
-    console.log('Datos HSEQ obtenidos (Excel):', hseqData);
-    console.log('Promedio HSEQ (Excel):', promedioHseq);
-    console.log('Período de evaluación (Excel):', evaluacion.periodo_evaluacion);
 
     // ---------- Paleta y helpers
     const PALETTE = {
