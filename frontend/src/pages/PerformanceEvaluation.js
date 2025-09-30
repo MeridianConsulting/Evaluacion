@@ -1947,7 +1947,8 @@ function PerformanceEvaluation() {
               marginTop: '16px',
               boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
               borderRadius: '8px',
-              overflow: 'hidden'
+              overflow: 'hidden',
+              minWidth: '100%'
             }}>
               <thead>
                 {/* Barra de título "ACTA DE COMPROMISO" con gradiente */}
@@ -2017,21 +2018,30 @@ function PerformanceEvaluation() {
               <tbody>
                 {actaCompromiso.map((acta, index) => (
                   <tr key={acta.id} style={{ backgroundColor: "#fff" }}>
-                    <td style={{ padding: "0.8rem", border: "1px solid #e5e7eb" }}>
-                      <input
-                        type="text"
+                    <td style={{ 
+                      padding: "0.8rem", 
+                      border: "1px solid #e5e7eb",
+                      width: "40%",
+                      verticalAlign: "top"
+                    }}>
+                      <textarea
                         placeholder="Criterio específico"
                         value={acta.criterio}
                         onChange={(e) => handleActaCompromisoChange(acta.id, 'criterio', e.target.value)}
                         style={{
                           ...getErrorStyle(`actaCompromiso_${index}_criterio`),
                           width: '100%',
-                          padding: '8px 12px',
+                          minHeight: '80px',
+                          padding: '12px',
                           border: '1px solid #d1d5db',
-                          borderRadius: '4px',
+                          borderRadius: '6px',
                           fontSize: '14px',
-                          backgroundColor: '#fff'
+                          backgroundColor: '#fff',
+                          resize: 'vertical',
+                          fontFamily: 'inherit',
+                          lineHeight: '1.4'
                         }}
+                        rows={3}
                       />
                       {visibleErrors[`actaCompromiso_${index}_criterio`] && (
                         <span className="error-message" style={{ display: 'block', marginTop: '4px', fontSize: '12px' }}>
@@ -2039,21 +2049,30 @@ function PerformanceEvaluation() {
                         </span>
                       )}
                     </td>
-                    <td style={{ padding: "0.8rem", border: "1px solid #e5e7eb" }}>
-                      <input
-                        type="text"
+                    <td style={{ 
+                      padding: "0.8rem", 
+                      border: "1px solid #e5e7eb",
+                      width: "40%",
+                      verticalAlign: "top"
+                    }}>
+                      <textarea
                         placeholder="Compromiso específico"
                         value={acta.compromiso}
                         onChange={(e) => handleActaCompromisoChange(acta.id, 'compromiso', e.target.value)}
                         style={{
                           ...getErrorStyle(`actaCompromiso_${index}_compromiso`),
                           width: '100%',
-                          padding: '8px 12px',
+                          minHeight: '80px',
+                          padding: '12px',
                           border: '1px solid #d1d5db',
-                          borderRadius: '4px',
+                          borderRadius: '6px',
                           fontSize: '14px',
-                          backgroundColor: '#fff'
+                          backgroundColor: '#fff',
+                          resize: 'vertical',
+                          fontFamily: 'inherit',
+                          lineHeight: '1.4'
                         }}
+                        rows={3}
                       />
                       {visibleErrors[`actaCompromiso_${index}_compromiso`] && (
                         <span className="error-message" style={{ display: 'block', marginTop: '4px', fontSize: '12px' }}>
@@ -2061,7 +2080,13 @@ function PerformanceEvaluation() {
                         </span>
                       )}
                     </td>
-                    <td style={{ padding: "0.8rem", border: "1px solid #e5e7eb", textAlign: "center" }}>
+                    <td style={{ 
+                      padding: "0.8rem", 
+                      border: "1px solid #e5e7eb", 
+                      textAlign: "center",
+                      width: "20%",
+                      verticalAlign: "top"
+                    }}>
                       <button
                         type="button"
                         onClick={() => removeActaCompromiso(acta.id)}
@@ -2431,6 +2456,46 @@ function PerformanceEvaluation() {
         onClose={() => { setShowCompletion(false); window.location.href = '/'; }}
         onPrimaryAction={() => (window.location.href = '/')}
       />
+      
+      {/* Estilos responsivos para ACTA DE COMPROMISO */}
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .compromiso-table {
+            font-size: 12px !important;
+          }
+          .compromiso-table th,
+          .compromiso-table td {
+            padding: 0.5rem !important;
+          }
+          .compromiso-table textarea {
+            min-height: 60px !important;
+            font-size: 12px !important;
+            padding: 8px !important;
+          }
+          .compromiso-table button {
+            padding: 4px 8px !important;
+            font-size: 11px !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .compromiso-table {
+            font-size: 11px !important;
+          }
+          .compromiso-table th,
+          .compromiso-table td {
+            padding: 0.4rem !important;
+          }
+          .compromiso-table textarea {
+            min-height: 50px !important;
+            font-size: 11px !important;
+            padding: 6px !important;
+          }
+          .compromiso-table button {
+            padding: 3px 6px !important;
+            font-size: 10px !important;
+          }
+        }
+      `}</style>
       </div>
     </>
   );
