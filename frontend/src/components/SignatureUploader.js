@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './SignatureUploader.css';
 
-const SignatureUploader = ({ label, onChange, value, disabled = false }) => {
+const SignatureUploader = ({ label, onChange, value, disabled = false, errorStyle = {} }) => {
   const [previewUrl, setPreviewUrl] = useState(value || '');
   const [error, setError] = useState('');
 
@@ -58,7 +58,7 @@ const SignatureUploader = ({ label, onChange, value, disabled = false }) => {
   return (
     <div className="signature-uploader">
       <label className="signature-label">{label}</label>
-      <div className={`signature-area ${previewUrl ? 'has-image' : ''}`}>
+      <div className={`signature-area ${previewUrl ? 'has-image' : ''}`} style={errorStyle}>
         {previewUrl ? (
           <div className="signature-preview">
             <img src={previewUrl} alt="Firma" />

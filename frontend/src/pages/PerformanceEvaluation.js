@@ -972,7 +972,7 @@ function PerformanceEvaluation() {
       // Construir mensaje específico basado en los errores encontrados
       const erroresDetectados = [];
       
-      // Verificar errores de competencias
+      // Verificar errores de competencias con detalles específicos
       const erroresCompetencias = Object.keys(erroresCalificaciones).filter(k => k.startsWith('competencia_'));
       if (erroresCompetencias.length > 0) {
         const erroresWorker = erroresCompetencias.filter(k => k.includes('_worker_') && !k.includes('_justificacion_'));
@@ -980,33 +980,60 @@ function PerformanceEvaluation() {
         const erroresJustificacion = erroresCompetencias.filter(k => k.includes('_justificacion_'));
         
         if (erroresWorker.length > 0) {
-          erroresDetectados.push(`${erroresWorker.length} calificación${erroresWorker.length > 1 ? 'es' : ''} del trabajador sin completar`);
+          const competenciasFaltantes = erroresWorker.map(error => {
+            const id = error.split('_')[2];
+            const competencia = rows.find(r => r.id == id);
+            return competencia ? `"${competencia.aspecto.substring(0, 50)}..."` : `competencia ${id}`;
+          });
+          erroresDetectados.push(`Calificaciones del trabajador faltantes: ${competenciasFaltantes.join(', ')}`);
         }
         if (erroresBoss.length > 0) {
-          erroresDetectados.push(`${erroresBoss.length} calificación${erroresBoss.length > 1 ? 'es' : ''} del jefe sin completar`);
+          const competenciasFaltantes = erroresBoss.map(error => {
+            const id = error.split('_')[2];
+            const competencia = rows.find(r => r.id == id);
+            return competencia ? `"${competencia.aspecto.substring(0, 50)}..."` : `competencia ${id}`;
+          });
+          erroresDetectados.push(`Calificaciones del jefe faltantes: ${competenciasFaltantes.join(', ')}`);
         }
         if (erroresJustificacion.length > 0) {
-          erroresDetectados.push(`${erroresJustificacion.length} justificación${erroresJustificacion.length > 1 ? 'es' : ''} requerida${erroresJustificacion.length > 1 ? 's' : ''} para calificaciones 1, 2 o 5`);
+          const justificacionesFaltantes = erroresJustificacion.map(error => {
+            const id = error.split('_')[3];
+            const competencia = rows.find(r => r.id == id);
+            const tipo = error.includes('_worker_') ? 'trabajador' : 'jefe';
+            return competencia ? `"${competencia.aspecto.substring(0, 40)}..." (${tipo})` : `competencia ${id} (${tipo})`;
+          });
+          erroresDetectados.push(`Justificaciones requeridas para calificaciones 1, 2 o 5: ${justificacionesFaltantes.join(', ')}`);
         }
       }
       
-      // Verificar errores de formulario
+      // Verificar errores de formulario con detalles específicos
       const erroresFormulario = Object.keys(validationErrors).filter(k => !k.startsWith('competencia_'));
       if (erroresFormulario.length > 0) {
         const camposFaltantes = [];
-        if (erroresFormulario.some(k => k.includes('datosGenerales_'))) camposFaltantes.push('datos generales');
-        if (erroresFormulario.some(k => k.includes('fortalezas'))) camposFaltantes.push('fortalezas');
-        if (erroresFormulario.some(k => k.includes('aspectosMejorar'))) camposFaltantes.push('aspectos a mejorar');
-        if (erroresFormulario.some(k => k.includes('planAccion_'))) camposFaltantes.push('plan de acción');
-        if (erroresFormulario.some(k => k.includes('actaCompromiso_'))) camposFaltantes.push('acta de compromiso');
+        
+        // Detalles específicos de datos generales
+        if (erroresFormulario.some(k => k.includes('datosGenerales_fechaIngreso'))) camposFaltantes.push('Fecha de ingreso');
+        if (erroresFormulario.some(k => k.includes('datosGenerales_fechaEvaluacion'))) camposFaltantes.push('Fecha de evaluación');
+        if (erroresFormulario.some(k => k.includes('datosGenerales_area'))) camposFaltantes.push('Área');
+        if (erroresFormulario.some(k => k.includes('datosGenerales_categoriaEvaluacion'))) camposFaltantes.push('Categoría de evaluación');
+        if (erroresFormulario.some(k => k.includes('datosGenerales_nombreEvaluador'))) camposFaltantes.push('Nombre del evaluador');
+        if (erroresFormulario.some(k => k.includes('datosGenerales_cargoEvaluador'))) camposFaltantes.push('Cargo del evaluador');
+        if (erroresFormulario.some(k => k.includes('datosGenerales_areaEvaluador'))) camposFaltantes.push('Área del evaluador');
+        
+        // Otros campos
+        if (erroresFormulario.some(k => k.includes('fortalezas'))) camposFaltantes.push('Fortalezas (mínimo 50 caracteres)');
+        if (erroresFormulario.some(k => k.includes('aspectosMejorar'))) camposFaltantes.push('Aspectos a mejorar (mínimo 50 caracteres)');
+        if (erroresFormulario.some(k => k.includes('necesidadesCapacitacion'))) camposFaltantes.push('Necesidades de capacitación (mínimo 30 caracteres)');
+        if (erroresFormulario.some(k => k.includes('planAccion_'))) camposFaltantes.push('Plan de acción (actividad y fecha obligatorias)');
+        if (erroresFormulario.some(k => k.includes('actaCompromiso_'))) camposFaltantes.push('Acta de compromiso (mínimo 30 caracteres por campo)');
         
         if (camposFaltantes.length > 0) {
-          erroresDetectados.push(`campos requeridos: ${camposFaltantes.join(', ')}`);
+          erroresDetectados.push(`Campos requeridos: ${camposFaltantes.join(', ')}`);
         }
       }
       
       const mensaje = erroresDetectados.length > 0 
-        ? `Por favor complete: ${erroresDetectados.join('; ')}.`
+        ? `Por favor complete los siguientes campos:\n\n${erroresDetectados.join('\n\n')}`
         : 'Por favor complete todos los campos obligatorios.';
       
       warning('Campos obligatorios', mensaje);
@@ -1371,18 +1398,14 @@ function PerformanceEvaluation() {
   };
 
 
-  // Gestionar la ocultación temporal de mensajes de error
+  // Gestionar la visibilidad de errores - los bordes rojos permanecen hasta que se corrijan
   useEffect(() => {
     if (Object.keys(validationErrors).length > 0) {
       // Mostrar los errores cuando se actualice validationErrors
       setVisibleErrors(validationErrors);
-      
-      // Configurar un temporizador para ocultarlos después de 6 segundos
-      const timer = setTimeout(() => {
-        setVisibleErrors({});  // Limpiar mensajes visibles pero mantener la validación
-      }, 6000);
-      
-      return () => clearTimeout(timer);
+    } else {
+      // Limpiar errores visibles cuando no hay errores de validación
+      setVisibleErrors({});
     }
   }, [validationErrors]);
   
@@ -1862,7 +1885,8 @@ function PerformanceEvaluation() {
           <div className="mejora-bloque">
             <h3 className="mejora-subtitulo">FORTALEZAS</h3>
             <p className="mejora-ayuda">
-              (Describa brevemente cuáles son las actividades del trabajo que mejor realiza y sus cualidades personales)
+              (Describa brevemente cuáles son las actividades del trabajo que mejor realiza y sus cualidades personales).<br/>
+              Al inicio del comentario, indique la palabra que corresponda: EVALUADO, JEFE INMEDIATO o HSEQ, para diferenciar los conceptos.
             </p>
             <textarea
               id="fortalezas"
@@ -1881,7 +1905,8 @@ function PerformanceEvaluation() {
           <div className="mejora-bloque">
             <h3 className="mejora-subtitulo">FACTORES A MEJORAR</h3>
             <p className="mejora-ayuda">
-              (Concreta en qué aspectos debe mejorar el colaborador)
+              (Concreta en qué aspectos debe mejorar el colaborador).<br/>
+              Al inicio del comentario, indique la palabra que corresponda: EVALUADO, JEFE INMEDIATO o HSEQ, para diferenciar los conceptos.
             </p>
             <textarea
               id="aspectosMejorar"
@@ -2362,6 +2387,7 @@ function PerformanceEvaluation() {
                   label="Firma (Evaluado)" 
                   onChange={setEmployeeSignature}
                   value={employeeSignature}
+                  errorStyle={getErrorStyle('employeeSignature')}
                 />
                 {visibleErrors.employeeSignature && (
                   <span className="error-message" style={{ position: 'absolute', bottom: '-20px', left: '0', right: '0', textAlign: 'center' }}>
@@ -2375,6 +2401,7 @@ function PerformanceEvaluation() {
                   label="Firma (Jefe Directo)" 
                   onChange={setBossSignature}
                   value={bossSignature}
+                  errorStyle={getErrorStyle('bossSignature')}
                 />
                 {visibleErrors.bossSignature && (
                   <span className="error-message" style={{ position: 'absolute', bottom: '-20px', left: '0', right: '0', textAlign: 'center' }}>
