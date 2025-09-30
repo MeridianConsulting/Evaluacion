@@ -843,11 +843,13 @@ function PerformanceEvaluationBoss() {
       const keys = Object.keys(plan).filter(k => k !== 'id');
       const hasAny = keys.some(k => plan[k] && String(plan[k]).trim() !== '');
       if (hasAny) {
-        const allFilled = keys.every(k => plan[k] && String(plan[k]).trim() !== '');
-        if (allFilled) {
+        // Para responsable y seguimiento, permitir cualquier cantidad de caracteres (incluso vacío)
+        const requiredFields = ['actividad', 'fecha']; // Solo actividad y fecha son obligatorios
+        const allRequiredFilled = requiredFields.every(k => plan[k] && String(plan[k]).trim() !== '');
+        if (allRequiredFilled) {
           hasValidPlan = true;
         } else {
-          keys.forEach(k => {
+          requiredFields.forEach(k => {
             if (!plan[k] || String(plan[k]).trim() === '') {
               errores[`planAccion_${index}_${k}`] = true;
               isValid = false;
@@ -977,11 +979,13 @@ function PerformanceEvaluationBoss() {
       const keys = Object.keys(plan).filter(k => k !== 'id');
       const hasAny = keys.some(k => plan[k] && String(plan[k]).trim() !== '');
       if (hasAny) {
-        const allFilled = keys.every(k => plan[k] && String(plan[k]).trim() !== '');
-        if (allFilled) {
+        // Para responsable y seguimiento, permitir cualquier cantidad de caracteres (incluso vacío)
+        const requiredFields = ['actividad', 'fecha']; // Solo actividad y fecha son obligatorios
+        const allRequiredFilled = requiredFields.every(k => plan[k] && String(plan[k]).trim() !== '');
+        if (allRequiredFilled) {
           hasValidPlan = true;
         } else {
-          keys.forEach(k => {
+          requiredFields.forEach(k => {
             if (!plan[k] || String(plan[k]).trim() === '') {
               errores[`planAccion_${index}_${k}`] = true;
             }
