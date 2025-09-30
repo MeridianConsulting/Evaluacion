@@ -155,14 +155,7 @@ function HseqEvaluation({ onLogout, userRole }) {
       return false;
     }
 
-    // Verificar que el usuario actual tenga permisos HSEQ
-    const evaluadorNombre = localStorage.getItem('employeeName');
-    const perfilesHseqPermitidos = ['Diana', 'Michael', 'Laura'];
-    
-    if (!evaluadorNombre || !perfilesHseqPermitidos.includes(evaluadorNombre)) {
-      warning('Sin permisos', 'Solo los perfiles HSEQ autorizados (Diana, Michael, Laura) pueden realizar evaluaciones HSEQ.');
-      return false;
-    }
+    // Validación de permisos HSEQ eliminada - cualquier usuario con acceso a esta vista puede realizar evaluaciones HSEQ
 
     // Validar que todas las calificaciones estén completas
     const calificacionesFaltantes = hseqItems.filter(item => 
@@ -208,9 +201,8 @@ function HseqEvaluation({ onLogout, userRole }) {
       formData.append('signatureName', 'Luis Guevara');
       formData.append('signatureTitle', 'Coordinador HSEQ');
       
-      // Si el evaluador actual es uno de los perfiles HSEQ permitidos, se registra como evaluador
-      const perfilesHseqPermitidos = ['Diana', 'Michael', 'Laura'];
-      if (evaluadorNombre && perfilesHseqPermitidos.includes(evaluadorNombre)) {
+      // Registrar el evaluador actual
+      if (evaluadorNombre) {
         formData.append('evaluatorName', evaluadorNombre);
         formData.append('evaluatorRole', 'HSEQ');
       }

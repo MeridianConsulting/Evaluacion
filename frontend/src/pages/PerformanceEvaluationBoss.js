@@ -2235,55 +2235,113 @@ function PerformanceEvaluationBoss() {
             <tbody>
               {planesAccion.map((plan, index) => (
                 <tr key={plan.id}>
-                  <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                    <input 
-                      type="text" 
+                  <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem", verticalAlign: "top" }}>
+                    <textarea
                       placeholder="Actividad" 
                       className="plan-accion-input"
                       value={plan.actividad}
                       onChange={(e) => handlePlanAccionChange(plan.id, 'actividad', e.target.value)}
-                      style={getErrorStyle(`planAccion_${index}_actividad`)}
+                      style={{
+                        ...getErrorStyle(`planAccion_${index}_actividad`),
+                        width: '100%',
+                        minHeight: '80px',
+                        padding: '12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        backgroundColor: '#fff',
+                        resize: 'vertical',
+                        fontFamily: 'inherit',
+                        lineHeight: '1.4',
+                        boxSizing: 'border-box'
+                      }}
+                      rows={3}
                     />
                     {visibleErrors[`planAccion_${index}_actividad`] && (
-                      <span className="error-message">Este campo es obligatorio</span>
+                      <span className="error-message" style={{ display: 'block', marginTop: '4px', fontSize: '12px' }}>
+                        Este campo es obligatorio
+                      </span>
                     )}
                   </td>
-                  <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                    <input 
-                      type="text" 
+                  <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem", verticalAlign: "top" }}>
+                    <textarea
                       placeholder="Responsable" 
                       className="plan-accion-input"
                       value={plan.responsable}
                       onChange={(e) => handlePlanAccionChange(plan.id, 'responsable', e.target.value)}
-                      style={getErrorStyle(`planAccion_${index}_responsable`)}
+                      style={{
+                        ...getErrorStyle(`planAccion_${index}_responsable`),
+                        width: '100%',
+                        minHeight: '80px',
+                        padding: '12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        backgroundColor: '#fff',
+                        resize: 'vertical',
+                        fontFamily: 'inherit',
+                        lineHeight: '1.4',
+                        boxSizing: 'border-box'
+                      }}
+                      rows={3}
                     />
                     {visibleErrors[`planAccion_${index}_responsable`] && (
-                      <span className="error-message">Este campo es obligatorio</span>
+                      <span className="error-message" style={{ display: 'block', marginTop: '4px', fontSize: '12px' }}>
+                        Este campo es obligatorio
+                      </span>
                     )}
                   </td>
-                  <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
-                    <input 
-                      type="text" 
+                  <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem", verticalAlign: "top" }}>
+                    <textarea
                       placeholder="Indicadores / Frecuencia" 
                       className="plan-accion-input"
                       value={plan.seguimiento}
                       onChange={(e) => handlePlanAccionChange(plan.id, 'seguimiento', e.target.value)}
-                      style={getErrorStyle(`planAccion_${index}_seguimiento`)}
+                      style={{
+                        ...getErrorStyle(`planAccion_${index}_seguimiento`),
+                        width: '100%',
+                        minHeight: '80px',
+                        padding: '12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        backgroundColor: '#fff',
+                        resize: 'vertical',
+                        fontFamily: 'inherit',
+                        lineHeight: '1.4',
+                        boxSizing: 'border-box'
+                      }}
+                      rows={3}
                     />
                     {visibleErrors[`planAccion_${index}_seguimiento`] && (
-                      <span className="error-message">Este campo es obligatorio</span>
+                      <span className="error-message" style={{ display: 'block', marginTop: '4px', fontSize: '12px' }}>
+                        Este campo es obligatorio
+                      </span>
                     )}
                   </td>
-                  <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem", position: 'relative' }}>
+                  <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem", position: 'relative', verticalAlign: "top" }}>
                     <input 
                       type="date" 
                       className="plan-accion-input"
                       value={plan.fecha}
                       onChange={(e) => handlePlanAccionChange(plan.id, 'fecha', e.target.value)}
-                      style={getErrorStyle(`planAccion_${index}_fecha`)}
+                      style={{
+                        ...getErrorStyle(`planAccion_${index}_fecha`),
+                        width: '100%',
+                        height: '80px',
+                        padding: '12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        backgroundColor: '#fff',
+                        fontFamily: 'inherit',
+                        boxSizing: 'border-box'
+                      }}
                     />
                     {visibleErrors[`planAccion_${index}_fecha`] && (
-                      <span className="error-message">Obligatorio</span>
+                      <span className="error-message" style={{ display: 'block', marginTop: '4px', fontSize: '12px' }}>
+                        Obligatorio
+                      </span>
                     )}
                     {planesAccion.length > 1 && (
                       <button
@@ -2312,21 +2370,25 @@ function PerformanceEvaluationBoss() {
                     )}
                   </td>
                   {isManagerView && (
-                    <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
+                    <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem", verticalAlign: "top" }}>
                       <textarea 
-                        rows="2"
+                        rows="3"
                         className="plan-accion-input"
                         placeholder="Comentarios del jefe"
                         value={plan.comentariosJefe}
                         onChange={(e) => handlePlanAccionChange(plan.id, 'comentariosJefe', e.target.value)}
                         style={{
                           width: '100%',
-                          minHeight: '40px',
-                          resize: 'vertical',
+                          minHeight: '80px',
+                          padding: '12px',
                           border: '1px solid #d1d5db',
-                          borderRadius: '4px',
-                          padding: '8px',
-                          fontSize: '14px'
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          backgroundColor: '#fff',
+                          resize: 'vertical',
+                          fontFamily: 'inherit',
+                          lineHeight: '1.4',
+                          boxSizing: 'border-box'
                         }}
                       />
                     </td>
@@ -2462,7 +2524,7 @@ function PerformanceEvaluationBoss() {
         onPrimaryAction={() => (window.location.href = '/')}
       />
       
-      {/* Estilos responsivos para ACTA DE COMPROMISO */}
+      {/* Estilos responsivos para ACTA DE COMPROMISO y PLAN DE ACCIÓN */}
       <style jsx>{`
         @media (max-width: 768px) {
           .compromiso-table {
@@ -2481,6 +2543,29 @@ function PerformanceEvaluationBoss() {
             padding: 4px 8px !important;
             font-size: 11px !important;
           }
+          
+          /* Estilos responsivos para PLAN DE ACCIÓN */
+          .plan-accion-table {
+            font-size: 12px !important;
+          }
+          .plan-accion-table th,
+          .plan-accion-table td {
+            padding: 0.5rem !important;
+          }
+          .plan-accion-table textarea {
+            min-height: 60px !important;
+            font-size: 12px !important;
+            padding: 8px !important;
+          }
+          .plan-accion-table input[type="date"] {
+            height: 60px !important;
+            font-size: 12px !important;
+            padding: 8px !important;
+          }
+          .plan-accion-table button {
+            padding: 4px 8px !important;
+            font-size: 11px !important;
+          }
         }
         @media (max-width: 480px) {
           .compromiso-table {
@@ -2496,6 +2581,29 @@ function PerformanceEvaluationBoss() {
             padding: 6px !important;
           }
           .compromiso-table button {
+            padding: 3px 6px !important;
+            font-size: 10px !important;
+          }
+          
+          /* Estilos responsivos para PLAN DE ACCIÓN en móvil */
+          .plan-accion-table {
+            font-size: 11px !important;
+          }
+          .plan-accion-table th,
+          .plan-accion-table td {
+            padding: 0.4rem !important;
+          }
+          .plan-accion-table textarea {
+            min-height: 50px !important;
+            font-size: 11px !important;
+            padding: 6px !important;
+          }
+          .plan-accion-table input[type="date"] {
+            height: 50px !important;
+            font-size: 11px !important;
+            padding: 6px !important;
+          }
+          .plan-accion-table button {
             padding: 3px 6px !important;
             font-size: 10px !important;
           }
