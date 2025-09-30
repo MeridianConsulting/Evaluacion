@@ -60,7 +60,6 @@ function EmpleadosCRUD({ onLogout, userRole }) {
         throw new Error(result.message || 'Error al cargar empleados');
       }
     } catch (error) {
-      console.error('Error al cargar empleados:', error);
       setError(error.message || 'Error al cargar empleados');
     } finally {
       setLoading(false);
@@ -165,7 +164,6 @@ function EmpleadosCRUD({ onLogout, userRole }) {
           throw new Error(result.message || 'Error al eliminar empleado');
         }
       } catch (error) {
-        console.error('Error al eliminar empleado:', error);
         showError('Error al eliminar', `Error al eliminar empleado: ${error.message}`);
       }
     }
@@ -230,7 +228,6 @@ function EmpleadosCRUD({ onLogout, userRole }) {
         throw new Error(result.message || `Error al ${isCreateOperation ? 'crear' : 'actualizar'} empleado`);
       }
     } catch (error) {
-      console.error(`Error al ${isEditing ? 'actualizar' : 'crear'} empleado:`, error);
       showError('Error de operación', `Error: ${error.message}`);
     }
   };

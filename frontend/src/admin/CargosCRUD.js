@@ -52,7 +52,6 @@ function CargosCRUD({ onLogout }) {
         throw new Error(result.message || 'Error al cargar cargos');
       }
     } catch (error) {
-      console.error('Error al cargar cargos:', error);
       setError(error.message || 'Error al cargar cargos');
     } finally {
       setLoading(false);
@@ -122,7 +121,6 @@ function CargosCRUD({ onLogout }) {
           throw new Error(result.message || 'Error al eliminar cargo');
         }
       } catch (error) {
-        console.error('Error al eliminar cargo:', error);
         showError('Error al eliminar', `Error al eliminar cargo: ${error.message}`);
       }
     }
@@ -188,7 +186,6 @@ function CargosCRUD({ onLogout }) {
         throw new Error(result.message || `Error al ${isCreateOperation ? 'crear' : 'actualizar'} cargo`);
       }
     } catch (error) {
-      console.error(`Error al ${isEditing ? 'actualizar' : 'crear'} cargo:`, error);
       showError('Error de operación', `Error: ${error.message}`);
     }
   };

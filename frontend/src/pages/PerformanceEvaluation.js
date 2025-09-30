@@ -470,7 +470,6 @@ function PerformanceEvaluation() {
         }
       }
     } catch (error) {
-      console.error('Error al obtener promedios reales:', error);
       // En caso de error, usar los promedios calculados localmente
       setRealAverages({
         promedioCompetencias: Number(calcularPromedioCompetencias()) || 0,
@@ -535,10 +534,8 @@ function PerformanceEvaluation() {
         if (response.ok) {
           setEmpleados(data && (data.data || data) || []);
         } else {
-          console.error('Error al cargar empleados:', data);
         }
       } catch (err) {
-        console.error('Error al cargar empleados:', err);
       }
     };
 
@@ -735,7 +732,7 @@ function PerformanceEvaluation() {
       isValid = false;
     }
 
-    // Validar planes de acción - OBLIGATORIO (al menos uno completo con mínimo de caracteres)
+    // Validar planes de acción - OBLIGATORIO (al menos uno completo)
     let hasValidPlan = false;
     planesAccion.forEach((plan, index) => {
       const keys = Object.keys(plan).filter(k => k !== 'id');
@@ -743,19 +740,7 @@ function PerformanceEvaluation() {
       if (hasAny) {
         const allFilled = keys.every(k => plan[k] && String(plan[k]).trim() !== '');
         if (allFilled) {
-          // Validar mínimo de caracteres para cada campo
-          const actividadOk = plan.actividad && plan.actividad.trim().length >= 30;
-          const responsableOk = plan.responsable && plan.responsable.trim().length >= 20;
-          const seguimientoOk = plan.seguimiento && plan.seguimiento.trim().length >= 30;
-          
-          if (actividadOk && responsableOk && seguimientoOk) {
-            hasValidPlan = true;
-          } else {
-            if (!actividadOk) errores[`planAccion_${index}_actividad`] = true;
-            if (!responsableOk) errores[`planAccion_${index}_responsable`] = true;
-            if (!seguimientoOk) errores[`planAccion_${index}_seguimiento`] = true;
-            isValid = false;
-          }
+          hasValidPlan = true;
         } else {
           keys.forEach(k => {
             if (!plan[k] || String(plan[k]).trim() === '') {
@@ -2234,7 +2219,7 @@ function PerformanceEvaluation() {
                       style={getErrorStyle(`planAccion_${index}_actividad`)}
                     />
                     {visibleErrors[`planAccion_${index}_actividad`] && (
-                      <span className="error-message">Obligatorio (mínimo 30 caracteres)</span>
+                      <span className="error-message">Este campo es obligatorio</span>
                     )}
                   </td>
                   <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
@@ -2247,7 +2232,7 @@ function PerformanceEvaluation() {
                       style={getErrorStyle(`planAccion_${index}_responsable`)}
                     />
                     {visibleErrors[`planAccion_${index}_responsable`] && (
-                      <span className="error-message">Obligatorio (mínimo 20 caracteres)</span>
+                      <span className="error-message">Este campo es obligatorio</span>
                     )}
                   </td>
                   <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem" }}>
@@ -2260,7 +2245,7 @@ function PerformanceEvaluation() {
                       style={getErrorStyle(`planAccion_${index}_seguimiento`)}
                     />
                     {visibleErrors[`planAccion_${index}_seguimiento`] && (
-                      <span className="error-message">Obligatorio (mínimo 30 caracteres)</span>
+                      <span className="error-message">Este campo es obligatorio</span>
                     )}
                   </td>
                   <td className="plan-accion-td" style={{ backgroundColor: "#fff", padding: "0.8rem", position: 'relative' }}>

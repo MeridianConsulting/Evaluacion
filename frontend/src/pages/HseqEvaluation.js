@@ -56,7 +56,6 @@ function HseqEvaluation({ onLogout, userRole }) {
         const empCt = (empRes.headers.get('content-type') || '').toLowerCase();
         if (!empRes.ok || !empCt.includes('application/json')) {
           const txt = await empRes.text();
-          console.error('Respuesta empleados no JSON/status:', empRes.status, txt.slice(0,500));
           throw new Error(`Empleados HTTP ${empRes.status}`);
         }
         const empJson = await empRes.json();
@@ -67,7 +66,6 @@ function HseqEvaluation({ onLogout, userRole }) {
           const globalCt = (globalRes.headers.get('content-type') || '').toLowerCase();
           if (!globalRes.ok || !globalCt.includes('application/json')) {
             const txt = await globalRes.text();
-            console.error('Respuesta hseq-evaluated no JSON/status:', globalRes.status, txt.slice(0,500));
             throw new Error(`HSEQ HTTP ${globalRes.status}`);
           }
           const globalJson = await globalRes.json();
@@ -81,7 +79,6 @@ function HseqEvaluation({ onLogout, userRole }) {
           setEvaluatedSet(new Set(rows.map(r => Number(r.id_empleado))));
         }
       } catch (e) {
-        console.error('Error cargando datos HSEQ:', e);
         setError('No se pudo cargar empleados');
       } finally {
         setLoading(false);

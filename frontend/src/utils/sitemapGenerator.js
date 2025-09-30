@@ -141,10 +141,8 @@ const pingGoogle = async () => {
     // Solo funciona en el servidor, no en el cliente
     if (typeof window === 'undefined') {
       const response = await fetch(pingUrl);
-      console.log('Google ping response:', response.status);
     }
   } catch (error) {
-    console.log('Error pinging Google:', error);
   }
 };
 

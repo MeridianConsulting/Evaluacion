@@ -96,7 +96,6 @@ const Login = ({ onLogin }) => {
         onLogin(false);
       }
     } catch (err) {
-      console.error("Error en el login:", err);
       setError(SAFE_ERRORS.network);
       onLogin(false);
     }

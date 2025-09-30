@@ -12,9 +12,7 @@ export default function CompletionCelebration({
   // 1) Por defecto no se autocierra
   autoCloseMs = 0,
   onClose,
-  onDownload,
   primaryActionText = "Volver al inicio",
-  secondaryActionText = "Descargar constancia",
   onPrimaryAction,
   // 2) Evitar cierres accidentales
   closeOnBackdrop = false,
@@ -110,9 +108,6 @@ export default function CompletionCelebration({
             }}
           >
             {primaryActionText}
-          </button>
-          <button className="cc-btn ghost" onClick={() => onDownload && onDownload()}>
-            {secondaryActionText}
           </button>
         </div>
       </div>
