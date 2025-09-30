@@ -214,7 +214,7 @@ function PerformanceEvaluation() {
     },
     {
       id: 3,
-      aspecto: "Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.",
+      aspecto: "Escucha con atención y comprende adecuadamente los mensajes o la información recibida, demostrando interés en lo que los demás expresan.",
       worker: "",
       boss: "",
       average: "",
@@ -232,7 +232,7 @@ function PerformanceEvaluation() {
     },
     {
       id: 5,
-      aspecto: "Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia",
+      aspecto: "Asume y aplica con responsabilidad las decisiones tomadas, tanto en sus tareas individuales como en las que corresponden al trabajo en equipo.",
       worker: "",
       boss: "",
       average: "",
@@ -241,7 +241,7 @@ function PerformanceEvaluation() {
     },
     {
       id: 6,
-      aspecto: "Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.",
+      aspecto: "Analiza las situaciones utilizando criterios claros y objetivos, logrando conclusiones justas y bien fundamentadas con las personas involucradas.",
       worker: "",
       boss: "",
       average: "",
@@ -259,7 +259,7 @@ function PerformanceEvaluation() {
     },
     {
       id: 8,
-      aspecto: "Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.",
+      aspecto: "Comparte su conocimiento y experiencia especializada para apoyar los procesos de toma de decisiones en temas relacionados con su área de competencia.",
       worker: "",
       boss: "",
       average: "",
@@ -268,7 +268,7 @@ function PerformanceEvaluation() {
     },
     {
       id: 9,
-      aspecto: "Anticipa problemas y posibles soluciones que advierten su carácter de especialista.",
+      aspecto: "Identifica de manera anticipada posibles problemas y plantea soluciones viables, evidenciando su capacidad como especialista.",
       worker: "",
       boss: "",
       average: "",
@@ -331,7 +331,7 @@ function PerformanceEvaluation() {
     },
     {
       id: 16,
-      aspecto: "Toma la iniciativa en el contacto con clientes internos y externos para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.",
+      aspecto: "Mantiene una comunicación proactiva con clientes internos y externos, tomando la iniciativa para informar, responder o coordinar, usando siempre un lenguaje claro y comprensible.",
       worker: "",
       boss: "",
       average: "",
@@ -1127,7 +1127,7 @@ function PerformanceEvaluation() {
           },
           {
             id: 3,
-            aspecto: "Mantiene escucha y lectura atenta a efectos de  comprender mejor los mensajes o información recibida.",
+            aspecto: "Escucha con atención y comprende adecuadamente los mensajes o la información recibida, demostrando interés en lo que los demás expresan.",
             worker: "",
             boss: "",
             average: "",
@@ -1141,14 +1141,14 @@ function PerformanceEvaluation() {
           },
           {
             id: 5,
-            aspecto: "Adopta las decisiones tomadas para ejercer sus actividades individuales y las adoptadas para el trabajo en equipo por preferencia",
+            aspecto: "Asume y aplica con responsabilidad las decisiones tomadas, tanto en sus tareas individuales como en las que corresponden al trabajo en equipo.",
             worker: "",
             boss: "",
             average: "",
           },
           {
             id: 6,
-            aspecto: "Maneja criterios objetivos para analizar las formas a deducir con las personas involucradas.",
+            aspecto: "Analiza las situaciones utilizando criterios claros y objetivos, logrando conclusiones justas y bien fundamentadas con las personas involucradas.",
             worker: "",
             boss: "",
             average: "",
@@ -1162,14 +1162,14 @@ function PerformanceEvaluation() {
           },
           {
             id: 8,
-            aspecto: "Informa su experiencia especializada en el proceso de toma de decisiones que involucran aspectos de su especialidad.",
+            aspecto: "Comparte su conocimiento y experiencia especializada para apoyar los procesos de toma de decisiones en temas relacionados con su área de competencia.",
             worker: "",
             boss: "",
             average: "",
           },
           {
             id: 9,
-            aspecto: "Anticipa problemas y posibles soluciones que advierten su carácter de especialista.",
+            aspecto: "Identifica de manera anticipada posibles problemas y plantea soluciones viables, evidenciando su capacidad como especialista.",
             worker: "",
             boss: "",
             average: "",
@@ -1218,7 +1218,7 @@ function PerformanceEvaluation() {
           },
           {
             id: 16,
-            aspecto: "Toma la iniciativa en el contacto con clientes internos y externos para dar avisos, citar o respuestas, utilizando un lenguaje claro para los destinatarios.",
+            aspecto: "Mantiene una comunicación proactiva con clientes internos y externos, tomando la iniciativa para informar, responder o coordinar, usando siempre un lenguaje claro y comprensible.",
             worker: "",
             boss: "",
             average: "",
