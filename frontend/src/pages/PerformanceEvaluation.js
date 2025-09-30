@@ -449,7 +449,21 @@ function PerformanceEvaluation() {
   };
 
   const clearFormData = () => {
+    // Limpiar todos los datos de cache relacionados con la evaluación
+    // NOTA: No se elimina el token de autenticación para mantener la sesión
     localStorage.removeItem('evaluationFormData');
+    localStorage.removeItem('instructionsRead');
+    localStorage.removeItem('lastEvaluationId');
+    
+    // Limpiar datos específicos del formulario que se guardan en cache
+    localStorage.removeItem('evaluationDatosGenerales');
+    localStorage.removeItem('evaluationCompetencias');
+    localStorage.removeItem('evaluationMejoramiento');
+    localStorage.removeItem('evaluationPlanesAccion');
+    localStorage.removeItem('evaluationActaCompromiso');
+    localStorage.removeItem('evaluationFirmas');
+    localStorage.removeItem('evaluationFormTouched');
+    localStorage.removeItem('evaluationValidationErrors');
   };
 
   // Función para obtener promedios reales de la base de datos
@@ -1127,11 +1141,8 @@ function PerformanceEvaluation() {
         // Obtener promedios reales de la base de datos
         await fetchRealAverages(evaluationId);
         
-        // Limpiar datos guardados y tokens
+        // Limpiar todos los datos de cache
         clearFormData();
-        localStorage.removeItem('evaluationToken');
-        localStorage.removeItem('evaluationTokenExpiry');
-        localStorage.removeItem('instructionsRead');
         
         // Mostrar animación de cierre épico
         setShowCompletion(true);
