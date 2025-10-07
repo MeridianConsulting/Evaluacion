@@ -99,6 +99,11 @@ function HseqEvaluation({ onLogout, userRole }) {
     let suma = 0;
     let count = 0;
     hseqItems.forEach(it => {
+      // Excluir cualquier item marcado como "No Aplica"
+      if (it.evaluacionJefe === 'NA') {
+        return; // No incluir en el cálculo del promedio
+      }
+      
       const v = Number(it.evaluacionJefe) || 0;
       if (v > 0) { suma += v; count += 1; }
     });
@@ -157,10 +162,15 @@ function HseqEvaluation({ onLogout, userRole }) {
 
     // Validación de permisos HSEQ eliminada - cualquier usuario con acceso a esta vista puede realizar evaluaciones HSEQ
 
-    // Validar que todas las calificaciones estén completas
-    const calificacionesFaltantes = hseqItems.filter(item => 
-      !item.evaluacionJefe || item.evaluacionJefe === '' || item.evaluacionJefe === '0'
-    );
+    // Validar que todas las calificaciones estén completas (excepto items marcados como "No Aplica")
+    const calificacionesFaltantes = hseqItems.filter(item => {
+      // Si está marcado como "No Aplica", no es requerido
+      if (item.evaluacionJefe === 'NA') {
+        return false;
+      }
+      // Para todos los demás items, verificar que tengan calificación
+      return !item.evaluacionJefe || item.evaluacionJefe === '' || item.evaluacionJefe === '0';
+    });
 
     if (calificacionesFaltantes.length > 0) {
       warning('Calificaciones incompletas', `Debe calificar todas las responsabilidades HSEQ. Faltan ${calificacionesFaltantes.length} calificaciones.`);

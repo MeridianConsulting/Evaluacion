@@ -133,6 +133,7 @@ function Hseq({
                   <option value="3">3 - Parcial</option>
                   <option value="4">4 - Satisfactorio</option>
                   <option value="5">5 - Excelente</option>
+                  <option value="NA">No Aplica</option>
                 </select>
               </td>
               <td style={{ 
