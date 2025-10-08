@@ -127,13 +127,13 @@ function DashboardSelector({ onLogout }) {
 
       // ===== HOJA DE COMPETENCIAS DETALLADAS =====
       wsCompetencias.getCell('A1').value = 'COMPETENCIAS DETALLADAS - MERIDIAN CONSULTING LTDA';
-      wsCompetencias.mergeCells('A1:H1');
+      wsCompetencias.mergeCells('A1:J1');
       const titleComp = wsCompetencias.getCell('A1');
       titleComp.font = { name: 'Calibri', size: 16, bold: true, color: { argb: 'FF1F3B73' } };
       titleComp.alignment = { horizontal: 'center', vertical: 'middle' };
 
       // Encabezados competencias
-      const headersComp = ['ID Evaluación', 'Empleado', 'Aspecto', 'Calificación Empleado', 'Calificación Jefe', 'Promedio', 'Fecha Creación'];
+      const headersComp = ['ID Evaluación', 'Empleado', 'Aspecto', 'Calificación Empleado', 'Justificación Empleado', 'Calificación Jefe', 'Justificación Jefe', 'Promedio', 'Fecha Creación'];
       const headerRowComp = wsCompetencias.addRow(headersComp);
       headerRowComp.eachCell((cell) => {
         cell.font = { name: 'Calibri', bold: true, color: { argb: 'FFFFFFFF' } };
@@ -151,7 +151,9 @@ function DashboardSelector({ onLogout }) {
               r.empleado_nombre,
               comp.aspecto,
               comp.calificacion_empleado || '',
+              comp.justificacion_empleado || '',
               comp.calificacion_jefe || '',
+              comp.justificacion_jefe || '',
               comp.promedio || '',
               formatDate(comp.fecha_creacion)
             ]);
@@ -164,7 +166,7 @@ function DashboardSelector({ onLogout }) {
       });
 
       // Anchos competencias
-      const widthsComp = [14, 30, 50, 20, 20, 15, 20];
+      const widthsComp = [14, 30, 50, 20, 40, 20, 40, 15, 20];
       widthsComp.forEach((w, i) => wsCompetencias.getColumn(i+1).width = w);
 
       // ===== HOJA DE HSEQ DETALLADO =====

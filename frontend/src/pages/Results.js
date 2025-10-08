@@ -273,14 +273,18 @@ const ConsolidatedReportDocument = ({ evaluationData }) => (
               <View style={[pdfStyles.tableRow, pdfStyles.tableHeader]}>
                 <Text style={pdfStyles.tableCellAspect}>Competencia</Text>
                 <Text style={pdfStyles.tableCellSm}>Autoeval.</Text>
+                <Text style={pdfStyles.tableCellObs}>Justificación Empleado</Text>
                 <Text style={pdfStyles.tableCellSm}>Jefe</Text>
+                <Text style={pdfStyles.tableCellObs}>Justificación Jefe</Text>
                 <Text style={pdfStyles.tableCellSm}>Promedio</Text>
               </View>
               {evaluationData.competencias.map((c, idx) => (
                 <View key={idx} style={pdfStyles.tableRow}>
                   <Text style={pdfStyles.tableCellAspect}>{c.aspecto || 'N/A'}</Text>
                   <Text style={pdfStyles.tableCellSm}>{c.calificacion_empleado ?? 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellObs}>{c.justificacion_empleado || 'Sin justificación'}</Text>
                   <Text style={pdfStyles.tableCellSm}>{c.calificacion_jefe ?? 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellObs}>{c.justificacion_jefe || 'Sin justificación'}</Text>
                   <Text style={pdfStyles.tableCellSm}>{c.promedio ?? 'N/A'}</Text>
                 </View>
               ))}
@@ -476,14 +480,18 @@ const MyDocument = ({ evaluationData }) => (
               <View style={[pdfStyles.tableRow, pdfStyles.tableHeader]}>
                 <Text style={pdfStyles.tableCellAspect}>Aspecto</Text>
                 <Text style={pdfStyles.tableCellSm}>Trabajador</Text>
+                <Text style={pdfStyles.tableCellObs}>Justificación Empleado</Text>
                 <Text style={pdfStyles.tableCellSm}>Jefe</Text>
+                <Text style={pdfStyles.tableCellObs}>Justificación Jefe</Text>
                 <Text style={pdfStyles.tableCellSm}>Promedio</Text>
               </View>
               {evaluationData.competencias.map((c, idx) => (
                 <View key={idx} style={pdfStyles.tableRow}>
                   <Text style={pdfStyles.tableCellAspect}>{c.aspecto || 'N/A'}</Text>
                   <Text style={pdfStyles.tableCellSm}>{c.calificacion_empleado ?? 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellObs}>{c.justificacion_empleado || 'Sin justificación'}</Text>
                   <Text style={pdfStyles.tableCellSm}>{c.calificacion_jefe ?? 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellObs}>{c.justificacion_jefe || 'Sin justificación'}</Text>
                   <Text style={pdfStyles.tableCellSm}>{c.promedio ?? 'N/A'}</Text>
                 </View>
               ))}
@@ -1081,26 +1089,27 @@ const generateExcel = async (evaluacion) => {
       }
     });
 
-    // 6 columnas para acomodar 3 KPIs horizontales (A:B, C:D, E:F)
+    // 8 columnas para acomodar las nuevas columnas de justificación
     ws.columns = [
-      { key: 'A', width: 30 }, { key: 'B', width: 18 },
-      { key: 'C', width: 30 }, { key: 'D', width: 18 },
-      { key: 'E', width: 30 }, { key: 'F', width: 18 },
+      { key: 'A', width: 30 }, { key: 'B', width: 15 },
+      { key: 'C', width: 40 }, { key: 'D', width: 15 },
+      { key: 'E', width: 40 }, { key: 'F', width: 15 },
+      { key: 'G', width: 15 }, { key: 'H', width: 15 },
     ];
 
     // ---------- Encabezado compacto: Título + Período + Estado
-    ws.mergeCells('A1:F1');
+    ws.mergeCells('A1:H1');
     const cTitle = ws.getCell('A1');
     cTitle.value = 'EVALUACIÓN DE DESEMPEÑO – MERIDIAN CONSULTING LTDA';
     cTitle.font = FONT_TITLE; cTitle.alignment = { horizontal: 'center', vertical: 'middle' };
     cTitle.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PALETTE.blue } };
     ws.addRow([]);
 
-    ws.mergeCells('A3:C3');
+    ws.mergeCells('A3:D3');
     ws.getCell('A3').value = `Período: ${dash(evaluationData.evaluacion?.periodo_evaluacion)}`;
     ws.getCell('A3').font = FONT_BODY;
 
-    ws.mergeCells('D3:F3');
+    ws.mergeCells('E3:H3');
     const st = estadoPorValor(evaluationData.promedios?.promedio_general);
     const estadoCell = ws.getCell('D3'); estadoCell.font = FONT_BODY;
     applyEstadoChip(estadoCell, st);
@@ -1153,7 +1162,7 @@ const generateExcel = async (evaluacion) => {
 
     // ---------- Datos del empleado (2 columnas)
     const addSectionHeader = (title) => {
-      const r = ws.addRow([title]); ws.mergeCells(`A${r.number}:F${r.number}`);
+      const r = ws.addRow([title]); ws.mergeCells(`A${r.number}:H${r.number}`);
       const c = ws.getCell(`A${r.number}`);
       c.font = FONT_SUB; c.alignment = { horizontal: 'left', vertical: 'middle' };
       c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4B5A6B' } };
@@ -1164,7 +1173,7 @@ const generateExcel = async (evaluacion) => {
     const rowStartDatos = ws.lastRow.number + 1;
     const putPair = (lA, vA, lB, vB) => {
       // A: etiqueta izquierda, B: valor (se expandirá a C), D: etiqueta derecha, E: valor (se expandirá a F)
-      const r = ws.addRow([lA, dash(vA), null, lB, dash(vB), null]);
+      const r = ws.addRow([lA, dash(vA), null, lB, dash(vB), null, null, null]);
 
       // Unimos SOLO las celdas de valor, no las de etiqueta
       ws.mergeCells(`B${r.number}:C${r.number}`);
@@ -1199,18 +1208,18 @@ const generateExcel = async (evaluacion) => {
       'Escala 1–5: 1=Insuficiente, 2=Regular, 3=Satisfactorio, 4–5=Superior. ' +
       'Estados: 4.0–5.0 Superior; 3.0–3.9 Satisfactorio; 2.0–2.9 Regular; <2.0 Insuficiente.'
     ]);
-    ws.mergeCells(`A${note.number}:F${note.number}`);
+    ws.mergeCells(`A${note.number}:H${note.number}`);
     ws.getCell(`A${note.number}`).font = { name:'Calibri', size:10, color:{ argb:'FF6B6B6B' } };
     ws.addRow([]);
 
-    // ---------- Competencias (tabla con Observaciones)
+    // ---------- Competencias (tabla con Justificaciones)
     addSectionHeader('RESULTADOS POR COMPETENCIA');
-    const hdrComp = ws.addRow(['Aspecto', 'Empleado', 'Jefe', 'Promedio', 'Estado', 'Observaciones']);
+    const hdrComp = ws.addRow(['Aspecto', 'Empleado', 'Justificación Empleado', 'Jefe', 'Justificación Jefe', 'Promedio', 'Estado']);
     hdrComp.eachCell((c, i) => {
-      if (i<=6) {
+      if (i<=7) {
         c.font = { name:'Calibri', bold:true, color:{ argb:'FFFFFFFF' } };
         c.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:'FF34495E' } };
-        c.alignment = { horizontal:'center', vertical:'middle', wrapText: i===6 };
+        c.alignment = { horizontal:'center', vertical:'middle', wrapText: i===3 || i===5 };
       }
     });
     const headerCompRow = hdrComp.number;
@@ -1222,29 +1231,31 @@ const generateExcel = async (evaluacion) => {
       const jef = numOrBlank(item.calificacion_jefe);
       const pro = numOrBlank(item.promedio);
       const est = estadoPorValor(pro);
-      const obs = normalizeObs(item);
+      const justEmp = item.justificacion_empleado || '';
+      const justJefe = item.justificacion_jefe || '';
 
-      const r = ws.addRow([dash(item.aspecto), emp, jef, pro, '', obs]);
+      const r = ws.addRow([dash(item.aspecto), emp, justEmp, jef, justJefe, pro, '', '']);
       r.eachCell((cell, col) => {
         cell.font = FONT_BODY;
         cell.border = { bottom:{ style:'thin', color:{ argb:PALETTE.border } } };
-        cell.alignment = { vertical:'middle', wrapText: col===6, horizontal: (col>=2 && col<=4) ? 'right' : (col===5 ? 'center' : 'left') };
-        if (zebra && col !== 4) cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:PALETTE.zebra } };
+        cell.alignment = { vertical:'middle', wrapText: col===3 || col===5, horizontal: (col===2 || col===4 || col===6) ? 'right' : (col===7 ? 'center' : 'left') };
+        if (zebra && col !== 6) cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:PALETTE.zebra } };
       });
       // formato 1 decimal
-      ['B','C','D'].forEach(col => { const c = ws.getCell(`${col}${r.number}`); if (c.value !== null) c.numFmt = ONE_DEC; });
+      ['B','D','F'].forEach(col => { const c = ws.getCell(`${col}${r.number}`); if (c.value !== null) c.numFmt = ONE_DEC; });
       // heat ONLY in Promedio
-      const dCell = ws.getCell(`D${r.number}`); const hf = heatFill(dCell.value); if (hf) dCell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:hf } };
+      const fCell = ws.getCell(`F${r.number}`); const hf = heatFill(fCell.value); if (hf) fCell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:hf } };
       // chip de estado
-      applyEstadoChip(ws.getCell(`E${r.number}`), est);
-      // auto altura segun observación
-      const obsLen = (`${obs}` || '').length; if (obsLen > 80) r.height = Math.min(140, 18 + Math.ceil(obsLen/70)*14);
+      applyEstadoChip(ws.getCell(`G${r.number}`), est);
+      // auto altura segun justificaciones
+      const justLen = Math.max((`${justEmp}` || '').length, (`${justJefe}` || '').length);
+      if (justLen > 80) r.height = Math.min(140, 18 + Math.ceil(justLen/70)*14);
     });
     ws.addRow([]);
 
     // ---------- HSEQ (tabla)
     addSectionHeader('RESPONSABILIDADES HSEQ');
-    const hdrH = ws.addRow(['Responsabilidad', 'Calificación', 'Estado', 'Observaciones']);
+    const hdrH = ws.addRow(['Responsabilidad', 'Calificación', 'Estado', 'Observaciones', '', '', '', '']);
     hdrH.eachCell((c, i) => {
       if (i<=4) {
         c.font = { name:'Calibri', bold:true, color:{ argb:'FFFFFFFF' } };
@@ -1284,7 +1295,7 @@ const generateExcel = async (evaluacion) => {
 
     // ---------- Plan de mejora (SMART + semáforo)
     addSectionHeader('PLAN DE MEJORA');
-    const hdrP = ws.addRow(['Acción', 'Métrica', 'Responsable', 'Fecha', 'Estado', 'Observaciones']);
+    const hdrP = ws.addRow(['Acción', 'Métrica', 'Responsable', 'Fecha', 'Estado', 'Observaciones', '', '']);
     hdrP.eachCell((c,i)=>{ if(i<=6){ c.font={ name:'Calibri', bold:true, color:{argb:'FFFFFFFF'} }; c.fill={ type:'pattern', pattern:'solid', fgColor:{argb:'FF34495E'} }; c.alignment={ horizontal:'center', vertical:'middle' }; } });
 
     const acciones = Array.isArray(evaluationData.plan_accion?.acciones)
@@ -1294,7 +1305,7 @@ const generateExcel = async (evaluacion) => {
       .forEach(a => {
         const r = ws.addRow([
           dash(a.actividad), dash(a.metrica || a.seguimiento), dash(a.responsable),
-          dash(a.fecha), '', dash(a.observaciones || '')
+          dash(a.fecha), '', dash(a.observaciones || ''), '', ''
         ]);
         r.eachCell((cell) => { cell.font = FONT_BODY; cell.border = { bottom:{ style:'thin', color:{ argb:PALETTE.border } } }; });
         const est = (a.estado || 'Pendiente').toUpperCase();
@@ -1305,10 +1316,10 @@ const generateExcel = async (evaluacion) => {
 
     // ---------- Firmas y validación (cajas ligeras)
     addSectionHeader('FIRMAS');
-    ws.addRow(['Evaluado:', dash(evaluationData.empleado?.nombre), '', 'Jefe Directo:', dash(evaluationData.evaluacion?.evaluador_nombre || ''), '']);
-    ws.addRow(['Cargo:', dash(evaluationData.empleado?.cargo), '', 'Cargo:', dash(evaluationData.evaluacion?.evaluador_cargo || ''), '']);
-    ws.addRow(['Firma del Empleado:', '', '', 'Firma del Jefe:', '', '']);
-    for (let i = 0; i < 6; i++) ws.addRow(['', '', '', '', '', '']);
+    ws.addRow(['Evaluado:', dash(evaluationData.empleado?.nombre), '', 'Jefe Directo:', dash(evaluationData.evaluacion?.evaluador_nombre || ''), '', '', '']);
+    ws.addRow(['Cargo:', dash(evaluationData.empleado?.cargo), '', 'Cargo:', dash(evaluationData.evaluacion?.evaluador_cargo || ''), '', '', '']);
+    ws.addRow(['Firma del Empleado:', '', '', 'Firma del Jefe:', '', '', '', '']);
+    for (let i = 0; i < 6; i++) ws.addRow(['', '', '', '', '', '', '', '']);
 
     const toDataUrl = (b64) => !b64 ? null : (b64.startsWith('data:image') ? b64 : `data:image/png;base64,${b64}`);
     const empDataUrl = toDataUrl(evaluationData.firmas?.firma_empleado);
@@ -1327,13 +1338,13 @@ const generateExcel = async (evaluacion) => {
     // ---------- Índice interno (hipervínculos) y pie con metadatos
     const idxStart = ws.rowCount + 1;
     ws.addRow(['Índice (clic para ir): KPIs | Datos | Competencias | HSEQ | Plan | Firmas']);
-    ws.mergeCells(`A${idxStart}:F${idxStart}`);
+    ws.mergeCells(`A${idxStart}:H${idxStart}`);
     ws.getCell(`A${idxStart}`).font = { name:'Calibri', size:10, color:{argb:'FF356DB1'} };
     ws.getCell(`A${idxStart}`).value = { text: 'Ir a Competencias', hyperlink: `#A${headerCompRow}` };
 
     ws.headerFooter.oddFooter = `&L ID Eval: ${dash(evaluationData.evaluacion?.id_evaluacion)}  |  Plantilla v1.0 &R Página &P de &N`;
     // área de impresión
-    ws.pageSetup.printArea = `A1:F${ws.lastRow.number}`;
+    ws.pageSetup.printArea = `A1:H${ws.lastRow.number}`;
 
     // ---------- Guardar
     const buf = await wb.xlsx.writeBuffer({ useStyles: true, useSharedStrings: true });
@@ -1508,26 +1519,27 @@ const generateConsolidatedExcel = async (evaluacion) => {
       }
     });
 
-    // 6 columnas para acomodar 3 KPIs horizontales (A:B, C:D, E:F)
+    // 8 columnas para acomodar las nuevas columnas de justificación
     ws.columns = [
-      { key: 'A', width: 30 }, { key: 'B', width: 18 },
-      { key: 'C', width: 30 }, { key: 'D', width: 18 },
-      { key: 'E', width: 30 }, { key: 'F', width: 18 },
+      { key: 'A', width: 30 }, { key: 'B', width: 15 },
+      { key: 'C', width: 40 }, { key: 'D', width: 15 },
+      { key: 'E', width: 40 }, { key: 'F', width: 15 },
+      { key: 'G', width: 15 }, { key: 'H', width: 15 },
     ];
 
     // ---------- Encabezado
-    ws.mergeCells('A1:F1');
+    ws.mergeCells('A1:H1');
     const cTitle = ws.getCell('A1');
     cTitle.value = 'REPORTE CONSOLIDADO DE EVALUACIÓN – MERIDIAN CONSULTING LTDA';
     cTitle.font = FONT_TITLE; cTitle.alignment = { horizontal: 'center', vertical: 'middle' };
     cTitle.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PALETTE.blue } };
     ws.addRow([]);
 
-    ws.mergeCells('A3:C3');
+    ws.mergeCells('A3:D3');
     ws.getCell('A3').value = `Período: ${dash(evaluationDataWithCalculated.evaluacion?.periodo_evaluacion)}`;
     ws.getCell('A3').font = FONT_BODY;
 
-    ws.mergeCells('D3:F3');
+    ws.mergeCells('E3:H3');
     const st = estadoPorValor(evaluationDataWithCalculated.promedios?.promedio_general);
     const estadoCell = ws.getCell('D3'); estadoCell.font = FONT_BODY;
     applyEstadoChip(estadoCell, st);
@@ -1577,7 +1589,7 @@ const generateConsolidatedExcel = async (evaluacion) => {
 
     // ---------- Calificación Final
     const addSectionHeader = (title) => {
-      const r = ws.addRow([title]); ws.mergeCells(`A${r.number}:F${r.number}`);
+      const r = ws.addRow([title]); ws.mergeCells(`A${r.number}:H${r.number}`);
       const c = ws.getCell(`A${r.number}`);
       c.font = FONT_SUB; c.alignment = { horizontal: 'left', vertical: 'middle' };
       c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4B5A6B' } };
@@ -1585,7 +1597,7 @@ const generateConsolidatedExcel = async (evaluacion) => {
     };
     addSectionHeader('CALIFICACIÓN FINAL PONDERADA');
 
-    const finalRow = ws.addRow(['Calificación Final:', dash(promFinal), '', 'Estado:', '', '']);
+    const finalRow = ws.addRow(['Calificación Final:', dash(promFinal), '', 'Estado:', '', '', '', '']);
     ws.mergeCells(`B${finalRow.number}:C${finalRow.number}`);
     ws.mergeCells(`E${finalRow.number}:F${finalRow.number}`);
     
@@ -1603,20 +1615,20 @@ const generateConsolidatedExcel = async (evaluacion) => {
 
     // ---------- Fórmula de Cálculo
     addSectionHeader('FÓRMULA DE CÁLCULO');
-    const formulaRow = ws.addRow(['Fórmula:', 'Calificación Final = (Autoevaluación × 0.20) + (Evaluación Jefe × 0.40) + (Evaluación HSEQ × 0.40)', '', '', '', '']);
-    ws.mergeCells(`B${formulaRow.number}:F${formulaRow.number}`);
+    const formulaRow = ws.addRow(['Fórmula:', 'Calificación Final = (Autoevaluación × 0.20) + (Evaluación Jefe × 0.40) + (Evaluación HSEQ × 0.40)', '', '', '', '', '', '']);
+    ws.mergeCells(`B${formulaRow.number}:H${formulaRow.number}`);
     formulaRow.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
     formulaRow.getCell(2).font = { name: 'Calibri', size: 11, color: { argb: 'FF2B2B2B' } };
     ws.addRow([]);
 
     // ---------- Detalle de Competencias
     addSectionHeader('DETALLE DE COMPETENCIAS');
-    const hdrComp = ws.addRow(['Competencia', 'Autoeval.', 'Jefe', 'Promedio', 'Estado', 'Observaciones']);
+    const hdrComp = ws.addRow(['Competencia', 'Autoeval.', 'Justificación Empleado', 'Jefe', 'Justificación Jefe', 'Promedio', 'Estado']);
     hdrComp.eachCell((c, i) => {
-      if (i<=6) {
+      if (i<=7) {
         c.font = { name:'Calibri', bold:true, color:{ argb:'FFFFFFFF' } };
         c.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:'FF34495E' } };
-        c.alignment = { horizontal:'center', vertical:'middle', wrapText: i===6 };
+        c.alignment = { horizontal:'center', vertical:'middle', wrapText: i===3 || i===5 };
       }
     });
     const headerCompRow = hdrComp.number;
@@ -1628,25 +1640,26 @@ const generateConsolidatedExcel = async (evaluacion) => {
       const jef = numOrBlank(item.calificacion_jefe);
       const pro = numOrBlank(item.promedio);
       const est = estadoPorValor(pro);
-      const obs = normalizeObs(item);
+      const justEmp = item.justificacion_empleado || '';
+      const justJefe = item.justificacion_jefe || '';
 
-      const r = ws.addRow([dash(item.aspecto), emp, jef, pro, '', obs]);
+      const r = ws.addRow([dash(item.aspecto), emp, justEmp, jef, justJefe, pro, '', '']);
       r.eachCell((cell, col) => {
         cell.font = FONT_BODY;
         cell.border = { bottom:{ style:'thin', color:{ argb:PALETTE.border } } };
-        cell.alignment = { vertical:'middle', wrapText: col===6, horizontal: (col>=2 && col<=4) ? 'right' : (col===5 ? 'center' : 'left') };
-        if (zebra && col !== 4) cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:PALETTE.zebra } };
+        cell.alignment = { vertical:'middle', wrapText: col===3 || col===5, horizontal: (col===2 || col===4 || col===6) ? 'right' : (col===7 ? 'center' : 'left') };
+        if (zebra && col !== 6) cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:PALETTE.zebra } };
       });
       // formato 1 decimal
-      ['B','C','D'].forEach(col => { const c = ws.getCell(`${col}${r.number}`); if (c.value !== null) c.numFmt = ONE_DEC; });
+      ['B','D','F'].forEach(col => { const c = ws.getCell(`${col}${r.number}`); if (c.value !== null) c.numFmt = ONE_DEC; });
       // chip de estado
-      applyEstadoChip(ws.getCell(`E${r.number}`), est);
+      applyEstadoChip(ws.getCell(`G${r.number}`), est);
     });
     ws.addRow([]);
 
     // ---------- Detalle de HSEQ
     addSectionHeader('DETALLE DE RESPONSABILIDADES HSEQ');
-    const hdrHseq = ws.addRow(['Responsabilidad', 'Calificación', 'Estado', 'Observaciones']);
+    const hdrHseq = ws.addRow(['Responsabilidad', 'Calificación', 'Estado', 'Observaciones', '', '', '', '']);
     hdrHseq.eachCell((c, i) => {
       if (i<=4) {
         c.font = { name:'Calibri', bold:true, color:{ argb:'FFFFFFFF' } };
@@ -1686,10 +1699,10 @@ const generateConsolidatedExcel = async (evaluacion) => {
 
     // ---------- Firmas
     addSectionHeader('FIRMAS');
-    ws.addRow(['Evaluado:', dash(evaluationDataWithCalculated.empleado?.nombre), '', 'Jefe Directo:', dash(evaluationDataWithCalculated.datos_generales?.nombreEvaluador || ''), '']);
-    ws.addRow(['Cargo:', dash(evaluationDataWithCalculated.empleado?.cargo), '', 'Cargo:', dash(evaluationDataWithCalculated.datos_generales?.cargoEvaluador || ''), '']);
-    ws.addRow(['Firma del Empleado:', '', '', 'Firma del Jefe:', '', '']);
-    for (let i = 0; i < 6; i++) ws.addRow(['', '', '', '', '', '']);
+    ws.addRow(['Evaluado:', dash(evaluationDataWithCalculated.empleado?.nombre), '', 'Jefe Directo:', dash(evaluationDataWithCalculated.datos_generales?.nombreEvaluador || ''), '', '', '']);
+    ws.addRow(['Cargo:', dash(evaluationDataWithCalculated.empleado?.cargo), '', 'Cargo:', dash(evaluationDataWithCalculated.datos_generales?.cargoEvaluador || ''), '', '', '']);
+    ws.addRow(['Firma del Empleado:', '', '', 'Firma del Jefe:', '', '', '', '']);
+    for (let i = 0; i < 6; i++) ws.addRow(['', '', '', '', '', '', '', '']);
 
     const toDataUrl = (b64) => !b64 ? null : (b64.startsWith('data:image') ? b64 : `data:image/png;base64,${b64}`);
     const empDataUrl = toDataUrl(evaluationDataWithCalculated.firmas?.firma_empleado);

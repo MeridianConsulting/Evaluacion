@@ -18,7 +18,7 @@ const CompetenciasTableBoss = ({
               {/* Barra de título "COMPETENCIAS" con un ÚNICO gradiente */}
               <tr>
                 <th
-                  colSpan={6}
+                  colSpan={7}
                   style={{
                     background: "linear-gradient(90deg, #1F3B73 0%, #0A0F1A 100%)",
                     color: "#FFFFFF",
@@ -48,7 +48,7 @@ const CompetenciasTableBoss = ({
                   borderLeft: "1px solid #243447",
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)",
-                  width: "15%"
+                  width: "12%"
                 }}>COMPETENCIA</th>
                 <th style={{ 
                   background: "#1E2A3A", 
@@ -62,7 +62,7 @@ const CompetenciasTableBoss = ({
                   borderLeft: "1px solid #243447",
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)",
-                  width: "20%"
+                  width: "18%"
                 }}>DEFINICIÓN DE LA COMPETENCIA</th>
                 <th style={{ 
                   background: "#1E2A3A", 
@@ -76,7 +76,7 @@ const CompetenciasTableBoss = ({
                   borderLeft: "1px solid #243447",
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)",
-                  width: "25%"
+                  width: "20%"
                 }}>ASPECTO A EVALUAR</th>
                 <th style={{ 
                   background: "#1E2A3A", 
@@ -90,7 +90,7 @@ const CompetenciasTableBoss = ({
                   borderLeft: "1px solid #243447",
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)",
-                  width: "12%"
+                  width: "10%"
                 }}>AUTOEVALUACIÓN</th>
                 <th style={{ 
                   background: "#1E2A3A", 
@@ -104,7 +104,21 @@ const CompetenciasTableBoss = ({
                   borderLeft: "1px solid #243447",
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)",
-                  width: "12%"
+                  width: "15%"
+                }}>JUSTIFICACIÓN EMPLEADO</th>
+                <th style={{ 
+                  background: "#1E2A3A", 
+                  color: "#FFFFFF", 
+                  padding: "0.6rem 0.4rem",
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  fontSize: "0.9rem",
+                  height: "24px",
+                  borderTop: "1px solid #1E2A3A",
+                  borderLeft: "1px solid #243447",
+                  borderBottom: "1px solid #243447",
+                  borderRight: "1px solid rgba(51,51,51,0.5)",
+                  width: "10%"
                 }}>JEFE</th>
                 <th style={{ 
                   background: "#1E2A3A", 
@@ -118,7 +132,7 @@ const CompetenciasTableBoss = ({
                   borderLeft: "1px solid #243447",
                   borderBottom: "1px solid #243447",
                   borderRight: "1px solid rgba(51,51,51,0.5)",
-                  width: "16%"
+                  width: "15%"
                 }}>JUSTIFICACIÓN JEFE</th>
                 
               </tr>
@@ -158,6 +172,20 @@ const CompetenciasTableBoss = ({
                 </td>
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[0].worker || '-'}
+                </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[0].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[0].justificacionTrabajador || 'Sin justificación'}
+                  </div>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
@@ -209,6 +237,20 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[1].worker || '-'}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[1].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[1].justificacionTrabajador || 'Sin justificación'}
+                  </div>
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
@@ -258,6 +300,20 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[2].worker || '-'}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[2].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[2].justificacionTrabajador || 'Sin justificación'}
+                  </div>
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
@@ -305,6 +361,20 @@ const CompetenciasTableBoss = ({
                 </td>
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[3].worker || '-'}
+                </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[3].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[3].justificacionTrabajador || 'Sin justificación'}
+                  </div>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
@@ -385,6 +455,20 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[4].worker || '-'}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[4].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[4].justificacionTrabajador || 'Sin justificación'}
+                  </div>
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
@@ -432,6 +516,20 @@ const CompetenciasTableBoss = ({
                 </td>
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[5].worker || '-'}
+                </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[5].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[5].justificacionTrabajador || 'Sin justificación'}
+                  </div>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
@@ -512,6 +610,20 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[6].worker || '-'}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[6].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[6].justificacionTrabajador || 'Sin justificación'}
+                  </div>
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
@@ -559,6 +671,20 @@ const CompetenciasTableBoss = ({
                 </td>
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[7].worker || '-'}
+                </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[7].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[7].justificacionTrabajador || 'Sin justificación'}
+                  </div>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
@@ -608,6 +734,20 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[8].worker || '-'}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[8].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[8].justificacionTrabajador || 'Sin justificación'}
+                  </div>
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
@@ -655,6 +795,20 @@ const CompetenciasTableBoss = ({
                 </td>
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[9].worker || '-'}
+                </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[9].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[9].justificacionTrabajador || 'Sin justificación'}
+                  </div>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
@@ -734,6 +888,20 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[10].worker || '-'}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[10].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[10].justificacionTrabajador || 'Sin justificación'}
+                  </div>
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
@@ -782,6 +950,20 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[11].worker || '-'}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[11].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[11].justificacionTrabajador || 'Sin justificación'}
+                  </div>
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
@@ -829,6 +1011,20 @@ const CompetenciasTableBoss = ({
                 </td>
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[12].worker || '-'}
+                </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[12].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[12].justificacionTrabajador || 'Sin justificación'}
+                  </div>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
@@ -909,6 +1105,20 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[13].worker || '-'}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[13].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[13].justificacionTrabajador || 'Sin justificación'}
+                  </div>
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
@@ -957,6 +1167,20 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[14].worker || '-'}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[14].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[14].justificacionTrabajador || 'Sin justificación'}
+                  </div>
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
@@ -1004,6 +1228,20 @@ const CompetenciasTableBoss = ({
                 </td>
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[15].worker || '-'}
+                </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[15].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[15].justificacionTrabajador || 'Sin justificación'}
+                  </div>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
@@ -1085,6 +1323,20 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[16].worker || '-'}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[16].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[16].justificacionTrabajador || 'Sin justificación'}
+                  </div>
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
@@ -1133,6 +1385,20 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[17].worker || '-'}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[17].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[17].justificacionTrabajador || 'Sin justificación'}
+                  </div>
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
@@ -1180,6 +1446,20 @@ const CompetenciasTableBoss = ({
                 </td>
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[18].worker || '-'}
+                </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[18].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[18].justificacionTrabajador || 'Sin justificación'}
+                  </div>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
@@ -1252,6 +1532,20 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[19].worker || '-'}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[19].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[19].justificacionTrabajador || 'Sin justificación'}
+                  </div>
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                   <select
                     className="rating-select"
@@ -1297,6 +1591,20 @@ const CompetenciasTableBoss = ({
                 </td>
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[20].worker || '-'}
+                </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[20].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[20].justificacionTrabajador || 'Sin justificación'}
+                  </div>
                 </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                     <select
@@ -1345,6 +1653,20 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[21].worker || '-'}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[21].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[21].justificacionTrabajador || 'Sin justificación'}
+                  </div>
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                     <select
                       className="rating-select"
@@ -1392,6 +1714,20 @@ const CompetenciasTableBoss = ({
                 <td style={{ backgroundColor: "#f8f9fa", padding: "0.5rem 0.4rem", textAlign: "center", fontWeight: "bold", color: "#495057" }}>
                   {rows[22].worker || '-'}
                 </td>
+                <td style={{ backgroundColor: "#f8f9fa", padding: "0.8rem", verticalAlign: "top" }}>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "#495057",
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    minHeight: "60px",
+                    fontStyle: rows[22].justificacionTrabajador ? "normal" : "italic"
+                  }}>
+                    {rows[22].justificacionTrabajador || 'Sin justificación'}
+                  </div>
+                </td>
                 <td style={{ backgroundColor: "#fff", padding: "0.5rem 0.4rem", textAlign: "center" }}>
                     <select
                       className="rating-select"
@@ -1431,7 +1767,7 @@ const CompetenciasTableBoss = ({
                   </td>
               </tr>
               <tr className="avg-row">
-                <td colSpan={6}>
+                <td colSpan={7}>
                   <div className="avg-wrap">
                     <span className="avg-label">PROMEDIO CALIFICACIÓN COMPETENCIAS:</span>
                     <span className="avg-value">{calcularPromedioCompetencias()}</span>

@@ -821,22 +821,26 @@ class EvaluationControllerNativo {
     private function saveCompetencias($evaluationId, $competenciasData) {
         $stmt = $this->db->prepare("
             INSERT INTO evaluacion_competencias 
-            (id_evaluacion, id_aspecto, aspecto, calificacion_empleado, calificacion_jefe, promedio) 
-            VALUES (?, ?, ?, ?, ?, ?)
+            (id_evaluacion, id_aspecto, aspecto, calificacion_empleado, justificacion_empleado, calificacion_jefe, justificacion_jefe, promedio) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ");
         
         foreach ($competenciasData as $competencia) {
             $id = $competencia['id'] ?? 0;
             $aspecto = $competencia['aspecto'] ?? '';
             $worker = $competencia['worker'] ?? '';
+            $justificacionTrabajador = $competencia['justificacionTrabajador'] ?? '';
             $boss = $competencia['boss'] ?? '';
+            $justificacionJefe = $competencia['justificacionJefe'] ?? '';
             $average = $competencia['average'] ?? '';
-            $stmt->bind_param('iissss', 
+            $stmt->bind_param('iissssss', 
                 $evaluationId,
                 $id,
                 $aspecto,
                 $worker,
+                $justificacionTrabajador,
                 $boss,
+                $justificacionJefe,
                 $average
             );
             $stmt->execute();
@@ -1783,13 +1787,15 @@ class EvaluationControllerNativo {
                 // -------- Hoja Competencias --------
                 $sheet2 = $spreadsheet->createSheet();
                 $sheet2->setTitle('Competencias');
-                $sheet2->fromArray(['Aspecto', 'Calificación Empleado', 'Calificación Jefe', 'Promedio'], NULL, 'A1');
+                $sheet2->fromArray(['Aspecto', 'Calificación Empleado', 'Justificación Empleado', 'Calificación Jefe', 'Justificación Jefe', 'Promedio'], NULL, 'A1');
                 $r = 2;
                 foreach ($competencias as $c) {
                     $sheet2->setCellValue('A'.$r, (string)($c['aspecto'] ?? ''));
                     $sheet2->setCellValue('B'.$r, (string)($c['calificacion_empleado'] ?? ''));
-                    $sheet2->setCellValue('C'.$r, (string)($c['calificacion_jefe'] ?? ''));
-                    $sheet2->setCellValue('D'.$r, (string)($c['promedio'] ?? ''));
+                    $sheet2->setCellValue('C'.$r, (string)($c['justificacion_empleado'] ?? ''));
+                    $sheet2->setCellValue('D'.$r, (string)($c['calificacion_jefe'] ?? ''));
+                    $sheet2->setCellValue('E'.$r, (string)($c['justificacion_jefe'] ?? ''));
+                    $sheet2->setCellValue('F'.$r, (string)($c['promedio'] ?? ''));
                     $r++;
                 }
 
@@ -1925,13 +1931,15 @@ class EvaluationControllerNativo {
                 <h3>COMPETENCIAS</h3>
                 <div class="section-content">
                     <table>
-                        <tr><th>Aspecto</th><th>Calificación Empleado</th><th>Calificación Jefe</th><th>Promedio</th></tr>';
+                        <tr><th>Aspecto</th><th>Calificación Empleado</th><th>Justificación Empleado</th><th>Calificación Jefe</th><th>Justificación Jefe</th><th>Promedio</th></tr>';
             
             foreach ($competencias as $competencia) {
                 $html .= '<tr>
                     <td>' . htmlspecialchars($competencia['aspecto']) . '</td>
                     <td>' . $competencia['calificacion_empleado'] . '</td>
+                    <td>' . htmlspecialchars($competencia['justificacion_empleado'] ?? '') . '</td>
                     <td>' . $competencia['calificacion_jefe'] . '</td>
+                    <td>' . htmlspecialchars($competencia['justificacion_jefe'] ?? '') . '</td>
                     <td>' . $competencia['promedio'] . '</td>
                 </tr>';
             }
