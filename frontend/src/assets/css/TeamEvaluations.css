@@ -152,6 +152,65 @@
   transform: translateY(0);
 }
 
+/* Estilos para botones de descarga */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.download-btn {
+  font-size: 11px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  min-width: 60px;
+}
+
+.download-btn:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.download-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pdf-btn {
+  background-color: #dc3545;
+  color: white;
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.25);
+}
+
+.pdf-btn:hover:not(:disabled) {
+  background-color: #c82333;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.35);
+}
+
+.excel-btn {
+  background-color: #28a745;
+  color: white;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.25);
+}
+
+.excel-btn:hover:not(:disabled) {
+  background-color: #218838;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.35);
+}
+
 .loading-container,
 .error-container,
 .no-members-message {
@@ -230,6 +289,18 @@
   .evaluate-button {
     width: 100%;
     margin-top: 8px;
+  }
+
+  .download-buttons {
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+  }
+
+  .download-btn {
+    width: 100%;
+    font-size: 12px;
+    padding: 8px 12px;
   }
 }
 
