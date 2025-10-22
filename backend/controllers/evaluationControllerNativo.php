@@ -564,6 +564,7 @@ class EvaluationControllerNativo {
                        hei.responsabilidad,
                        1 AS peso,
                        hei.calificacion,
+                       hei.no_aplica,
                        hei.justificacion AS observaciones,
                        hei.calificacion AS puntuacion
                 FROM hseq_evaluacion_items hei
@@ -585,12 +586,15 @@ class EvaluationControllerNativo {
                 error_log("Primer criterio: " . json_encode($criterios[0]));
             }
 
-            // Calcular totales
+            // Calcular totales excluyendo items "No Aplica"
             $totalPuntos = 0;
             $totalPeso = 0;
             foreach ($criterios as $criterio) {
-                $totalPuntos += $criterio['calificacion'];
-                $totalPeso += $criterio['peso'];
+                // ✅ CORRECCIÓN: Excluir items marcados como "No Aplica"
+                if (empty($criterio['no_aplica']) || $criterio['no_aplica'] == 0) {
+                    $totalPuntos += $criterio['calificacion'];
+                    $totalPeso += $criterio['peso'];
+                }
             }
             $promedioFinal = $totalPeso > 0 ? ($totalPuntos / $totalPeso) : 0;
 
@@ -1053,7 +1057,10 @@ class EvaluationControllerNativo {
                 foreach ($items as $it) {
                     $sheet->setCellValue('A'.$row, (string)($it['id_responsabilidad'] ?? ''));
                     $sheet->setCellValue('B'.$row, (string)($it['responsabilidad'] ?? ''));
-                    $sheet->setCellValue('C'.$row, (string)($it['calificacion'] ?? ''));
+                    // ✅ CORRECCIÓN: Mostrar "No Aplica" en lugar de NULL o 0
+                    $esNoAplica = isset($it['no_aplica']) && $it['no_aplica'] == 1;
+                    $calificacion = $esNoAplica ? 'No Aplica' : (string)($it['calificacion'] ?? '');
+                    $sheet->setCellValue('C'.$row, $calificacion);
                     $sheet->setCellValue('D'.$row, (string)($it['justificacion'] ?? ''));
                     $row++;
                 }
@@ -1083,10 +1090,13 @@ class EvaluationControllerNativo {
             fputcsv($out, []);
             fputcsv($out, ['ID Resp.', 'Responsabilidad', 'Calificación', 'Justificación']);
             foreach ($items as $it) {
+                // ✅ CORRECCIÓN: Mostrar "No Aplica" en lugar de NULL o 0
+                $esNoAplica = isset($it['no_aplica']) && $it['no_aplica'] == 1;
+                $calificacion = $esNoAplica ? 'No Aplica' : (string)($it['calificacion'] ?? '');
                 fputcsv($out, [
                     (string)($it['id_responsabilidad'] ?? ''),
                     (string)($it['responsabilidad'] ?? ''),
-                    (string)($it['calificacion'] ?? ''),
+                    $calificacion,
                     (string)($it['justificacion'] ?? ''),
                 ]);
             }
@@ -1123,10 +1133,13 @@ class EvaluationControllerNativo {
 
         $html .= '<div class="section"><h3>RESPONSABILIDADES</h3><div class="section-content"><table><tr><th>ID</th><th>Responsabilidad</th><th>Calificación</th><th>Justificación</th></tr>';
         foreach ($items as $it) {
+            // ✅ CORRECCIÓN: Mostrar "No Aplica" en lugar de NULL o 0
+            $esNoAplica = isset($it['no_aplica']) && $it['no_aplica'] == 1;
+            $calificacion = $esNoAplica ? 'No Aplica' : (string)($it['calificacion'] ?? '');
             $html .= '<tr>'
                   . '<td>'.htmlspecialchars((string)($it['id_responsabilidad'] ?? '')).'</td>'
                   . '<td>'.htmlspecialchars($it['responsabilidad'] ?? '').'</td>'
-                  . '<td>'.htmlspecialchars((string)($it['calificacion'] ?? '')).'</td>'
+                  . '<td>'.htmlspecialchars($calificacion).'</td>'
                   . '<td>'.htmlspecialchars($it['justificacion'] ?? '').'</td>'
                   . '</tr>';
         }
@@ -1261,7 +1274,7 @@ class EvaluationControllerNativo {
             // Obtener los items de la evaluación HSEQ
             $sqlItems = "
                 SELECT hei.id_item, hei.id_responsabilidad, hei.responsabilidad, 
-                       hei.calificacion, hei.justificacion, hei.fecha_creacion
+                       hei.calificacion, hei.no_aplica, hei.justificacion, hei.fecha_creacion
                 FROM hseq_evaluacion_items hei
                 WHERE hei.id_hseq_evaluacion = ?
                 ORDER BY hei.id_item
@@ -2087,16 +2100,33 @@ class EvaluationControllerNativo {
                 $stmt->close();
 
                 // 2. Insertar items HSEQ
-                $stmtItem = $this->db->prepare('INSERT INTO hseq_evaluacion_items (id_hseq_evaluacion, id_responsabilidad, responsabilidad, calificacion, justificacion) VALUES (?, ?, ?, ?, ?)');
+                $stmtItem = $this->db->prepare('INSERT INTO hseq_evaluacion_items (id_hseq_evaluacion, id_responsabilidad, responsabilidad, calificacion, no_aplica, justificacion) VALUES (?, ?, ?, ?, ?, ?)');
                 if (!$stmtItem) {
                     throw new Exception('Error al preparar INSERT hseq_evaluacion_items: ' . $this->db->error);
                 }
                 foreach ($hseqData as $h) {
                     $idResp = isset($h['id']) ? (int)$h['id'] : 0;
                     $resp = $h['responsabilidad'] ?? '';
-                    $calif = isset($h['calificacion']) ? (float)$h['calificacion'] : (isset($h['evaluacionJefe']) ? (float)$h['evaluacionJefe'] : null);
+                    
+                    // ✅ CORRECCIÓN BUG: Detectar "No Aplica" ANTES del cast a float
+                    $evaluacionValue = $h['calificacion'] ?? $h['evaluacionJefe'] ?? null;
+                    $esNoAplica = 0;
+                    $calif = null;
+                    
+                    if ($evaluacionValue === 'NA' || strtoupper((string)$evaluacionValue) === 'NA') {
+                        // Es "No Aplica": marcar flag y dejar calificación en NULL
+                        $esNoAplica = 1;
+                        $calif = null;
+                        error_log("Item HSEQ ID {$idResp}: Marcado como No Aplica");
+                    } else if (is_numeric($evaluacionValue)) {
+                        // Es una calificación numérica válida
+                        $calif = (float)$evaluacionValue;
+                    }
+                    // Si no es ni NA ni numérico, queda NULL (item sin calificar)
+                    
                     $just = $h['justificacion'] ?? ($h['justificacionJefe'] ?? null);
-                    $stmtItem->bind_param('iisds', $hseqEvalId, $idResp, $resp, $calif, $just);
+                    
+                    $stmtItem->bind_param('iisdis', $hseqEvalId, $idResp, $resp, $calif, $esNoAplica, $just);
                     if (!$stmtItem->execute()) {
                         throw new Exception('Error al ejecutar INSERT hseq_evaluacion_items: ' . $stmtItem->error);
                     }
@@ -2939,7 +2969,7 @@ class EvaluationControllerNativo {
                 $evaluacion['promedio_autoevaluacion'] = $promedioEmpleado;
                 $evaluacion['promedio_evaluacion_jefe'] = $promedioJefe;
                 
-                // Calcular promedio HSEQ
+                // Calcular promedio HSEQ excluyendo items "No Aplica"
                 $promedioHseq = 0;
                 $totalHseq = count($hseqData);
                 
@@ -2948,7 +2978,10 @@ class EvaluationControllerNativo {
                     $countHseq = 0;
                     
                     foreach ($hseqData as $hseq) {
-                        if (!empty($hseq['calificacion']) && is_numeric($hseq['calificacion'])) {
+                        // ✅ CORRECCIÓN: Excluir items marcados como "No Aplica"
+                        $esNoAplica = isset($hseq['no_aplica']) && $hseq['no_aplica'] == 1;
+                        
+                        if (!$esNoAplica && !empty($hseq['calificacion']) && is_numeric($hseq['calificacion'])) {
                             $sumaHseq += floatval($hseq['calificacion']);
                             $countHseq++;
                         }

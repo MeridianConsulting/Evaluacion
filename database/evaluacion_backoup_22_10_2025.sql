@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 22-10-2025 a las 06:57:16
+-- Tiempo de generación: 22-10-2025 a las 10:30:36
 -- Versión del servidor: 10.6.23-MariaDB-cll-lve
 -- Versión de PHP: 8.3.25
 
@@ -5453,11 +5453,9 @@ CREATE TABLE `hseq_evaluacion_items` (
   `id_responsabilidad` int(11) NOT NULL,
   `responsabilidad` text NOT NULL,
   `calificacion` decimal(5,2) DEFAULT NULL,
-  `no_aplica` tinyint(1) NOT NULL DEFAULT 0,
   `justificacion` text DEFAULT NULL,
   `fecha_creacion` datetime DEFAULT current_timestamp(),
-  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  KEY `idx_no_aplica` (`no_aplica`)
+  `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
