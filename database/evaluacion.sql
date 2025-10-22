@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 21-10-2025 a las 07:02:23
+-- Tiempo de generación: 22-10-2025 a las 06:57:16
 -- Versión del servidor: 10.6.23-MariaDB-cll-lve
 -- Versión de PHP: 8.3.25
 
@@ -499,7 +499,11 @@ INSERT INTO `evaluacion` (`id_evaluacion`, `id_empleado`, `fecha_evaluacion`, `p
 (157, 134, '2025-10-20 07:51:53', '2025-10', 'Anual', NULL, 'AUTOEVALUACION_COMPLETADA', 2, '2025-10-20 07:51:53', '2025-10-20 07:51:53', '2025-10-20 07:51:53', NULL, NULL, NULL, NULL),
 (158, 46, '2025-10-20 08:15:01', '2025-10', 'Anual', NULL, 'AUTOEVALUACION_COMPLETADA', 2, '2025-10-20 08:15:01', '2025-10-20 08:15:01', '2025-10-20 08:15:01', NULL, NULL, NULL, NULL),
 (159, 74, '2025-10-20 08:49:32', '2025-10', 'Anual', NULL, 'AUTOEVALUACION_COMPLETADA', 21, '2025-10-20 08:49:32', '2025-10-20 08:49:32', '2025-10-20 08:49:32', NULL, NULL, NULL, NULL),
-(160, 80, '2025-10-20 12:20:17', '2025-10', 'Anual', NULL, 'AUTOEVALUACION_COMPLETADA', 2, '2025-10-20 12:20:17', '2025-10-20 12:20:17', '2025-10-20 12:20:17', NULL, NULL, NULL, NULL);
+(160, 80, '2025-10-20 12:20:17', '2025-10', 'Anual', NULL, 'AUTOEVALUACION_COMPLETADA', 2, '2025-10-20 12:20:17', '2025-10-20 12:20:17', '2025-10-20 12:20:17', NULL, NULL, NULL, NULL),
+(161, 191, '2025-10-21 10:35:45', '2025-10', 'Anual', NULL, 'AUTOEVALUACION_COMPLETADA', 156, '2025-10-21 10:35:45', '2025-10-21 10:35:45', '2025-10-21 10:35:45', NULL, NULL, NULL, NULL),
+(162, 118, '2025-10-21 13:58:49', '2025-10', 'Anual', NULL, 'AUTOEVALUACION_COMPLETADA', 21, '2025-10-21 13:58:49', '2025-10-21 13:58:49', '2025-10-21 13:58:49', NULL, NULL, NULL, NULL),
+(163, 201, '2025-10-21 19:17:17', '2025-10', 'Anual', NULL, 'AUTOEVALUACION_COMPLETADA', NULL, '2025-10-21 19:17:17', '2025-10-21 19:17:17', '2025-10-21 19:17:17', NULL, NULL, NULL, NULL),
+(164, 162, '2025-10-21 19:44:06', '2025-10', 'Anual', NULL, 'AUTOEVALUACION_COMPLETADA', 2, '2025-10-21 19:44:06', '2025-10-21 19:44:06', '2025-10-21 19:44:06', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -738,7 +742,14 @@ INSERT INTO `evaluacion_acta_compromiso` (`id_acta_compromiso`, `id_evaluacion`,
 (260, 157, 'Fortalecer mi segunda lengua\nFortalecer software de producción SAHARA\nReforzar mi análisis crítico frente a los resultados obtenidos en los laboratorios', 'Continuar con el fortalecimiento de los software y segunda lengua ingles a través de tutoriales encontrados en youtube y en diferentes paginas de internet.', '2025-10-20 07:51:53', '2025-10-20 07:51:53'),
 (261, 158, 'Respuesta de mensajes por parte de la empresa.', 'Me comprometo a revisar diariamente el correo institucional para evitar demoras en la respuesta de mensajes.', '2025-10-20 08:15:01', '2025-10-20 08:15:01'),
 (262, 159, 'manejo del tiempo para optimizar entregas por medio de cronogramas ', 'establecer un cronograma de trabajo semanal para mejorar el manejo del tiempo de trabajo y optimizar entregables ', '2025-10-20 08:49:32', '2025-10-20 08:49:32'),
-(263, 160, 'Gestion de horario de trabajo sin extender jornadas extensas. ', 'Cumplir los horarios de trabajo sin extender mucho las jornadas en la medida de lo posible, sin afectar la calidad de mis entregables. ', '2025-10-20 12:20:17', '2025-10-20 12:20:17');
+(263, 160, 'Gestion de horario de trabajo sin extender jornadas extensas. ', 'Cumplir los horarios de trabajo sin extender mucho las jornadas en la medida de lo posible, sin afectar la calidad de mis entregables. ', '2025-10-20 12:20:17', '2025-10-20 12:20:17'),
+(264, 161, 'Evitar Procrastinación.\nMejorar la Organización.\n', 'Evitar Procrastinar y ser mas organizado en mi lugar de trabajo.', '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(265, 162, 'Gestionar el tiempo para el manejo de las tareas secundarias en situaciones es de alta exigencia laboral en periodos de tiempo específicos de certificación en el año', 'Manejo de la herramienta to do para organizar de mejor manera las tareas de largo y corto plazo', '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(266, 162, 'Manejo de la presión en situaciones de alto estrés por fechas límites para el cumplimiento de entregables externos', 'Aprender ejercicios de respiración ', '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(267, 163, 'Reportar falta de internet en el equipo ', 'Cuando no se tenga internet en el equipo reportarlo y no solo solucionar con el celular personal ', '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(268, 164, 'Implementación código de cutoff de permeabilidad generado en python para el análisis, diseño y propuesta de estimulaciones matriciales e hidráulicas ejecutadas en la gerencia de operaciones GAA, GLH y GOR en pozos inyectores, productores y conversiones ', 'Modificar el lenguaje de programación del código en python con el fin de obtener cortes de permeabilidad en menor tiempo con mayor eficiencia en el diseño de estimulaciones matriciales ', '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(269, 164, 'Análisis de datos enfocados en la evaluación de la efectividad de tecnologías a lo largo de los años de implementación para las operaciones de estimulaciones matriciales e hidráulicas ejecutadas en la gerencia de operaciones GAA, GLH y GOR en pozos inyectores, productores y conversiones ', 'Generar gráficos e interpretación de la información de forma clara y entendible al lector con el fin de mostrar la gestión realizada a través de la ejecución de las diferentes tecnologías ', '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(270, 164, 'Implementación y uso de software Stim pro y frac pro para la lectura de data cruda en las operaciones de estimulaciones matriciales e hidráulicas ejecutadas en la gerencia de operaciones GAA, GLH y GOR en pozos inyectores, productores y conversiones ', 'Implementar el uso de los programas Stim pro y Frac pro para obtener las gráficas de las operaciones con la data cruda que suministrada en campo y con ellas realizar interpretación de las propiedades de los yacimientos ', '2025-10-21 19:44:06', '2025-10-21 19:44:06');
 
 -- --------------------------------------------------------
 
@@ -4228,7 +4239,100 @@ INSERT INTO `evaluacion_competencias` (`id_competencia`, `id_evaluacion`, `id_as
 (4321, 160, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '5', 'Siempre realizo mis entregas en los tiempos establecidos, cumpliendo al 100% con la calidad del trabajo priorizando los tiempos para las entregas.', '', '', 2.50, '2025-10-20 12:20:17', '2025-10-20 12:20:17'),
 (4322, 160, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '4', '', '', '', 2.00, '2025-10-20 12:20:17', '2025-10-20 12:20:17'),
 (4323, 160, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '4', '', '', '', 2.00, '2025-10-20 12:20:17', '2025-10-20 12:20:17'),
-(4324, 160, 23, 'Prioriza y organiza sus funciones para asegurar el cumplimiento sin reprocesos.', '4', '', '', '', 2.00, '2025-10-20 12:20:17', '2025-10-20 12:20:17');
+(4324, 160, 23, 'Prioriza y organiza sus funciones para asegurar el cumplimiento sin reprocesos.', '4', '', '', '', 2.00, '2025-10-20 12:20:17', '2025-10-20 12:20:17'),
+(4325, 161, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '5', 'Buena comunicación con mis compañeros de trabajo y con el cliente.', '', '', 2.50, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4326, 161, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '4', '', '', '', 2.00, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4327, 161, 3, 'Escucha con atención y comprende adecuadamente los mensajes o la información recibida, demostrando interés en lo que los demás expresan.', '4', '', '', '', 2.00, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4328, 161, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '5', 'Buena comunicación con mis compañeros de trabajo y con el cliente.', '', '', 2.50, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4329, 161, 5, 'Asume y aplica con responsabilidad las decisiones tomadas, tanto en sus tareas individuales como en las que corresponden al trabajo en equipo.', '4', '', '', '', 2.00, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4330, 161, 6, 'Analiza las situaciones utilizando criterios claros y objetivos, logrando conclusiones justas y bien fundamentadas con las personas involucradas.', '5', 'Siempre aporto para el mejor desarrollo de la intervenciones y sigo las instrucciones dadas por el cliente.', '', '', 2.50, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4331, 161, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '5', 'Soy el referente en el grupo de trabajo en mis saberes específicos. ', '', '', 2.50, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4332, 161, 8, 'Comparte su conocimiento y experiencia especializada para apoyar los procesos de toma de decisiones en temas relacionados con su área de competencia.', '5', 'Incluso brindo soporte y consultoría en días de descanso, ya que mi análisis brinda confianza al cliente.', '', '', 2.50, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4333, 161, 9, 'Identifica de manera anticipada posibles problemas y plantea soluciones viables, evidenciando su capacidad como especialista.', '5', 'Soy el referente en el grupo de trabajo en mis saberes específicos. brindo ayuda en la elaboración de planes de trabajo', '', '', 2.50, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4334, 161, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativas al propio, para analizar y proponer soluciones posibles.', '5', 'Soy el referente en el grupo de trabajo en mis saberes específicos. ', '', '', 2.50, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4335, 161, 11, 'Articula sus actuaciones con las de los demás', '5', 'Soy el referente en el grupo de trabajo en mis saberes específicos. Siempre colaboro con asesoría a mis compañeros y al cliente.', '', '', 2.50, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4336, 161, 12, 'Cumple los compromisos adquiridos', '4', 'Soy el referente en el grupo de trabajo en mis saberes específicos. Siempre colaboro con asesoría a mis compañeros y al cliente', '', '', 2.00, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4337, 161, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '5', 'Soy el referente en el grupo de trabajo en mis saberes específicos. Siempre colaboro con asesoría a mis compañeros y al cliente', '', '', 2.50, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4338, 161, 14, 'Escucha con interés y capta las necesidades de los demás.', '5', 'La mejores relaciones con el cliente, tanto que siempre soy persona solicitada para trabajos de alto perfil en mi experiencia especifica.', '', '', 2.50, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4339, 161, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '5', 'La mejores relaciones con el cliente, tanto que siempre soy persona solicitada para trabajos de alto perfil en mi experiencia especifica.', '', '', 2.50, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4340, 161, 16, 'Mantiene una comunicación proactiva con clientes internos y externos, tomando la iniciativa para informar, responder o coordinar, usando siempre un lenguaje claro y comprensible.', '5', 'La mejores relaciones con el cliente, tanto que siempre soy persona solicitada para trabajos de alto perfil en mi experiencia especifica.', '', '', 2.50, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4341, 161, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '4', '', '', '', 2.00, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4342, 161, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '4', '', '', '', 2.00, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4343, 161, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '4', '', '', '', 2.00, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4344, 161, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '4', '', '', '', 2.00, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4345, 161, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '5', 'Tanto así que solicitan extensión de mi turno de trabajo.', '', '', 2.50, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4346, 161, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '4', '', '', '', 2.00, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4347, 161, 23, 'Prioriza y organiza sus funciones para asegurar el cumplimiento sin reprocesos.', '5', 'Tanto así que solicitan extensión de mi turno de trabajo.', '', '', 2.50, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(4348, 162, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4349, 162, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '5', 'Aparte de los informes colaborativos que se entregan para la certificación de reservas y los seguimientos trimestrales, se anexan tableros de trabajo para todo el equipo para que el flujo sea mucho más eficiente y se puedan verificar los datos de una manera efectiva', '', '', 2.50, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4350, 162, 3, 'Escucha con atención y comprende adecuadamente los mensajes o la información recibida, demostrando interés en lo que los demás expresan.', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4351, 162, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4352, 162, 5, 'Asume y aplica con responsabilidad las decisiones tomadas, tanto en sus tareas individuales como en las que corresponden al trabajo en equipo.', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4353, 162, 6, 'Analiza las situaciones utilizando criterios claros y objetivos, logrando conclusiones justas y bien fundamentadas con las personas involucradas.', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4354, 162, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '5', 'Dentro de las tareas asignadas de acuerdo a los entregables, se optimizan flujos de trabajo entre las herramientas ARPs, ASSEMBLER y Well count para que  el flujo siempre sea eficiente entre los equipos de largo plazo y corto plazo y las posibilidades de error se reduzcan significativamente.', '', '', 2.50, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4355, 162, 8, 'Comparte su conocimiento y experiencia especializada para apoyar los procesos de toma de decisiones en temas relacionados con su área de competencia.', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4356, 162, 9, 'Identifica de manera anticipada posibles problemas y plantea soluciones viables, evidenciando su capacidad como especialista.', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4357, 162, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativas al propio, para analizar y proponer soluciones posibles.', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4358, 162, 11, 'Articula sus actuaciones con las de los demás', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4359, 162, 12, 'Cumple los compromisos adquiridos', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4360, 162, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4361, 162, 14, 'Escucha con interés y capta las necesidades de los demás.', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4362, 162, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4363, 162, 16, 'Mantiene una comunicación proactiva con clientes internos y externos, tomando la iniciativa para informar, responder o coordinar, usando siempre un lenguaje claro y comprensible.', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4364, 162, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4365, 162, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4366, 162, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4367, 162, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4368, 162, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4369, 162, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4370, 162, 23, 'Prioriza y organiza sus funciones para asegurar el cumplimiento sin reprocesos.', '4', '', '', '', 2.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(4371, 163, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '5', 'Comunicación efectiva diariamente tanto con el cliente como con meridian con el fin de reportar el día a día operacional.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4372, 163, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '5', 'Comunicación efectiva diariamente tanto con el cliente como con meridian con el fin de reportar el día a día operacional.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4373, 163, 3, 'Escucha con atención y comprende adecuadamente los mensajes o la información recibida, demostrando interés en lo que los demás expresan.', '5', 'Comunicación efectiva diariamente tanto con el cliente como con meridian con el fin de reportar el día a día operacional.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4374, 163, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '5', 'Comunicación efectiva diariamente tanto con el cliente como con meridian con el fin de reportar el día a día operacional.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17');
+INSERT INTO `evaluacion_competencias` (`id_competencia`, `id_evaluacion`, `id_aspecto`, `aspecto`, `calificacion_empleado`, `justificacion_empleado`, `calificacion_jefe`, `justificacion_jefe`, `promedio`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(4375, 163, 5, 'Asume y aplica con responsabilidad las decisiones tomadas, tanto en sus tareas individuales como en las que corresponden al trabajo en equipo.', '5', 'Debido a los años de experiencia en situaciones diarias operativas me brindan la capacidad de tomas de decisiones enfocadas y orientadas a salva guardar la integridad de todo el personal involucrado en la operación, cuidado del medio ambiente y protección de los activos tanto del cliente como de los aliados siempre reportando tanto al ingeniero de campo y al personal de meridian en el reporte diario.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4376, 163, 6, 'Analiza las situaciones utilizando criterios claros y objetivos, logrando conclusiones justas y bien fundamentadas con las personas involucradas.', '5', 'Debido a los años de experiencia en situaciones diarias operativas me brindan la capacidad de tomas de decisiones enfocadas y orientadas a salva guardar la integridad de todo el personal involucrado en la operación, cuidado del medio ambiente y protección de los activos tanto del cliente como de los aliados siempre reportando tanto al ingeniero de campo y al personal de meridian en el reporte diario.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4377, 163, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '5', 'Siempre con la disposición de aportar lo aprendido a lo largo de la experiencia laboral y poder mejorar y optimizar la operación y los recursos en pro de un objetivo común que es terminar la intervención de los pozos sin incidentes y/o accidentes, cuidando el medio ambiente y activos tanto del cliente como el de los aliados.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4378, 163, 8, 'Comparte su conocimiento y experiencia especializada para apoyar los procesos de toma de decisiones en temas relacionados con su área de competencia.', '5', 'Siempre con la disposición de aportar lo aprendido a lo largo de la experiencia laboral y poder mejorar y optimizar la operación y los recursos en pro de un objetivo común que es terminar la intervención de los pozos sin incidentes y/o accidentes, cuidando el medio ambiente y activos tanto del cliente como el de los aliados.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4379, 163, 9, 'Identifica de manera anticipada posibles problemas y plantea soluciones viables, evidenciando su capacidad como especialista.', '5', 'Siempre con la disposición de aportar lo aprendido a lo largo de la experiencia laboral y poder mejorar y optimizar la operación y los recursos en pro de un objetivo común que es terminar la intervención de los pozos sin incidentes y/o accidentes, cuidando el medio ambiente y activos tanto del cliente como el de los aliados.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4380, 163, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativas al propio, para analizar y proponer soluciones posibles.', '5', 'Siempre con la disposición de aportar lo aprendido a lo largo de la experiencia laboral y poder mejorar y optimizar la operación y los recursos en pro de un objetivo común que es terminar la intervención de los pozos sin incidentes y/o accidentes, cuidando el medio ambiente y activos tanto del cliente como el de los aliados.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4381, 163, 11, 'Articula sus actuaciones con las de los demás', '5', 'El exito de una labor es la sinergia entre el equipo de trabajo y entender que el aporte de todos nos lleva al objetivo en común para finiquitar el pozo con éxito.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4382, 163, 12, 'Cumple los compromisos adquiridos', '5', 'El exito de una labor es la sinergia entre el equipo de trabajo y entender que el aporte de todos nos lleva al objetivo en común para finiquitar el pozo con éxito.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4383, 163, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '5', 'El exito de una labor es la sinergia entre el equipo de trabajo y entender que el aporte de todos nos lleva al objetivo en común para finiquitar el pozo con éxito.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4384, 163, 14, 'Escucha con interés y capta las necesidades de los demás.', '5', 'Al tener un excelente ambiente laboral, escuchando y transmitiendo las ideas para consolidar y tomar las mejores decisiones nos llevan a completar los objetivos propuestos con éxito.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4385, 163, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '5', 'Al tener un excelente ambiente laboral, escuchando y transmitiendo las ideas para consolidar y tomar las mejores decisiones nos llevan a completar los objetivos propuestos con éxito.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4386, 163, 16, 'Mantiene una comunicación proactiva con clientes internos y externos, tomando la iniciativa para informar, responder o coordinar, usando siempre un lenguaje claro y comprensible.', '5', 'Al tener un excelente ambiente laboral, escuchando y transmitiendo las ideas para consolidar y tomar las mejores decisiones nos llevan a completar los objetivos propuestos con éxito.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4387, 163, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '5', 'Tener claro los procedimientos a seguir con el fin de cumplirlos a cabalidad y en caso de una desviación informar al ingeniero de campo para tomar la mejor decisión.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4388, 163, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '5', 'Tener claro los procedimientos a seguir con el fin de cumplirlos a cabalidad y en caso de una desviación informar al ingeniero de campo para tomar la mejor decisión.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4389, 163, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '5', 'Tener claro los procedimientos a seguir con el fin de cumplirlos a cabalidad y en caso de una desviación informar al ingeniero de campo para tomar la mejor decisión.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4390, 163, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '5', 'Teniendo en cuenta el manual control trabajo se cumple a cabalidad con las funciones del cargo soportado en los años de experiencia en este rol.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4391, 163, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '5', 'Teniendo en cuenta el manual control trabajo se cumple a cabalidad con las funciones del cargo soportado en los años de experiencia en este rol.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4392, 163, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '5', 'Teniendo en cuenta el manual control trabajo se cumple a cabalidad con las funciones del cargo soportado en los años de experiencia en este rol.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4393, 163, 23, 'Prioriza y organiza sus funciones para asegurar el cumplimiento sin reprocesos.', '5', 'Teniendo en cuenta el manual control trabajo se cumple a cabalidad con las funciones del cargo soportado en los años de experiencia en este rol.', '', '', 2.50, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(4394, 164, 1, 'Utiliza canales de comunicación, en su diversa expresión, con claridad, precisión y tono agradable para el receptor', '5', 'A lo largo de mi experiencia, he tenido la oportunidad de tener personal a cargo lo hizo que mejorara de manera significativa la forma de comunicarme con las personas, logrando ser asertiva y a la vez concisa ', '', '', 2.50, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4395, 164, 2, 'Redacta textos, informes, mensajes, cuadros o  gráficas con claridad en la expresión para ser efectiva y sencilla la comprensión', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4396, 164, 3, 'Escucha con atención y comprende adecuadamente los mensajes o la información recibida, demostrando interés en lo que los demás expresan.', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4397, 164, 4, 'Da respuesta a cada comunicación recibida de modo inmediato', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4398, 164, 5, 'Asume y aplica con responsabilidad las decisiones tomadas, tanto en sus tareas individuales como en las que corresponden al trabajo en equipo.', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4399, 164, 6, 'Analiza las situaciones utilizando criterios claros y objetivos, logrando conclusiones justas y bien fundamentadas con las personas involucradas.', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4400, 164, 7, 'Aporta soluciones alternativas en lo que refiere a sus saberes específicos.', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4401, 164, 8, 'Comparte su conocimiento y experiencia especializada para apoyar los procesos de toma de decisiones en temas relacionados con su área de competencia.', '5', 'En el desarrollo del cargo actual, he aportado conocimientos específicos que he adquirido a lo largo de mi experiencia laboral y como investigadora', '', '', 2.50, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4402, 164, 9, 'Identifica de manera anticipada posibles problemas y plantea soluciones viables, evidenciando su capacidad como especialista.', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4403, 164, 10, 'Asume la interdisciplinariedad aprovechando puntos de vista diversos y alternativas al propio, para analizar y proponer soluciones posibles.', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4404, 164, 11, 'Articula sus actuaciones con las de los demás', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4405, 164, 12, 'Cumple los compromisos adquiridos', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4406, 164, 13, 'Facilita la labor de sus supervisores y compañeros de trabajo', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4407, 164, 14, 'Escucha con interés y capta las necesidades de los demás.', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4408, 164, 15, 'Transmite la información de forma fidedigna evitando situaciones que puedan generar deterioro en el ambiente laboral.', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4409, 164, 16, 'Mantiene una comunicación proactiva con clientes internos y externos, tomando la iniciativa para informar, responder o coordinar, usando siempre un lenguaje claro y comprensible.', '5', 'Fomento y dirijo espacios en los que se mantiene una trazabilidad de las operaciones ejecutadas, con el fin de comunicar de forma clara lecciones aprendidas ', '', '', 2.50, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4410, 164, 17, 'Ejecuta sus tareas con los criterios de calidad establecidos.', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4411, 164, 18, 'Revisa procedimientos e instrumentos para mejorar tiempos y resultados y para anticipar soluciones a problemas.', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4412, 164, 19, 'Desarrolla las actividades de acuerdo con las pautas y protocolos definidos.', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4413, 164, 20, 'Cumple de manera consistente y oportuna las funciones específicas asignadas a su cargo.', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4414, 164, 21, 'Demuestra dominio técnico y procedimental en las tareas críticas del rol.', '5', 'Doy especial soporte en operaciones de alta criticidad, aportando conocimiento y generando experiencia para futuras intervenciones ', '', '', 2.50, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4415, 164, 22, 'Entrega resultados alineados con los estándares y tiempos definidos para su cargo.', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06'),
+(4416, 164, 23, 'Prioriza y organiza sus funciones para asegurar el cumplimiento sin reprocesos.', '4', '', '', '', 2.00, '2025-10-21 19:44:06', '2025-10-21 19:44:06');
 
 -- --------------------------------------------------------
 
@@ -4422,7 +4526,11 @@ INSERT INTO `evaluacion_estado_historial` (`id_historial`, `id_evaluacion`, `est
 (184, 157, NULL, 'AUTOEVALUACION_COMPLETADA', '2025-10-20 07:51:53', 134, NULL),
 (185, 158, NULL, 'AUTOEVALUACION_COMPLETADA', '2025-10-20 08:15:01', 46, NULL),
 (186, 159, NULL, 'AUTOEVALUACION_COMPLETADA', '2025-10-20 08:49:32', 74, NULL),
-(187, 160, NULL, 'AUTOEVALUACION_COMPLETADA', '2025-10-20 12:20:17', 80, NULL);
+(187, 160, NULL, 'AUTOEVALUACION_COMPLETADA', '2025-10-20 12:20:17', 80, NULL),
+(188, 161, NULL, 'AUTOEVALUACION_COMPLETADA', '2025-10-21 10:35:45', 191, NULL),
+(189, 162, NULL, 'AUTOEVALUACION_COMPLETADA', '2025-10-21 13:58:49', 118, NULL),
+(190, 163, NULL, 'AUTOEVALUACION_COMPLETADA', '2025-10-21 19:17:17', 201, NULL),
+(191, 164, NULL, 'AUTOEVALUACION_COMPLETADA', '2025-10-21 19:44:06', 162, NULL);
 
 -- --------------------------------------------------------
 
@@ -4593,7 +4701,11 @@ INSERT INTO `evaluacion_firmas` (`id_firma`, `id_evaluacion`, `firma_empleado`, 
 (158, 157, 'uploads/signatures/employee_134_1760971913.png', '', '2025-10-20 07:51:53', '2025-10-20 07:51:53'),
 (159, 158, 'uploads/signatures/employee_46_1760973301.png', '', '2025-10-20 08:15:01', '2025-10-20 08:15:01'),
 (160, 159, 'uploads/signatures/employee_74_1760975372.png', '', '2025-10-20 08:49:32', '2025-10-20 08:49:32'),
-(161, 160, 'uploads/signatures/employee_80_1760988017.png', '', '2025-10-20 12:20:17', '2025-10-20 12:20:17');
+(161, 160, 'uploads/signatures/employee_80_1760988017.png', '', '2025-10-20 12:20:17', '2025-10-20 12:20:17'),
+(162, 161, 'uploads/signatures/employee_191_1761068145.png', '', '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(163, 162, 'uploads/signatures/employee_118_1761080329.png', '', '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(164, 163, 'uploads/signatures/employee_201_1761099437.png', '', '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(165, 164, 'uploads/signatures/employee_162_1761101046.png', '', '2025-10-21 19:44:06', '2025-10-21 19:44:06');
 
 -- --------------------------------------------------------
 
@@ -4786,7 +4898,11 @@ INSERT INTO `evaluacion_mejoramiento` (`id_mejoramiento`, `id_evaluacion`, `fort
 (185, 157, 'EVALUADO: siempre estoy dispuesta y atenta a los requerimientos que van saliendo, aun cuando no están programados. Trabajo de manera puntual respetuosa ofreciendo una alta calidad en los entregables, presentaciones y material que se requiera tanto para el cliente como para el equipo de trabajo.', 'EVALUADO: Estar mas alerta de los protocolos definidos.', 'EVALUADO: Siempre eta la necesidad de estar actualizados con los ultimos sofware que ofrece el negocio. Para ello vivo informandome con dichas actualizacione a traves de las paginas de consultoria y vieos de you yube.', '', NULL, '2025-10-20 07:51:53', '2025-10-20 07:51:53'),
 (186, 158, 'Puntualidad, responsabilidad, liderazgo, trabajo en equipo, Capacidad de adaptación, compromiso, paciencia/tolerancia, honestidad, trabajo productivo, desempeño de excelencia.', 'Hacer uso de muchas más herramientas que permitan dinamizar y mejorar tiempo de entrega de resultados.', 'Capacitación de herramientas que hagan uso de inteligencia artificial.', '', NULL, '2025-10-20 08:15:01', '2025-10-20 08:15:01'),
 (187, 159, 'Integración de información de diversas áreas\nInrterpretación y socialización de resultados\nManejo de gran cantidad de información para socialización.\n', 'Manejo del tiempo, establecer un esquema de trabajo para los entregables que sea mas eficiente \n\n', 'Geoquímica, biomarcadores, analitica de datos aplkicada a la geoquimica \nGeiqumica inorganica \nmejora en manejo de ArcMap y ArcGis Pro\n', '', NULL, '2025-10-20 08:49:32', '2025-10-20 08:49:32'),
-(188, 160, 'Considero que soy fuerte en el trabajo en equipo, llevo buena relación con todo mi equipo de trabajo para llevar a cabo mis entregables con calidad y en los tiempos determinados. Soy constante con mi trabajo, siempre estoy disponible  para mi equipo de trabajo, soy responsable y respetuoso.', 'reuniones mas efectivas para tener mas tiempo eficaz de trabajo, ser mas directo con las personas cuando creo que existen oportunidades de mejora, equilibrio trabajo vida personal y mejor gestión del tiempo de trabajo.', 'Actualmente me encuentro realizando maestría en ingeniería de petróleos  para atender necesidades de capacitación y mejorar mi perfil profesional, por ende no considero necesario actualmente una capacitación extra por parte de la compañia. ', '', NULL, '2025-10-20 12:20:17', '2025-10-20 12:20:17');
+(188, 160, 'Considero que soy fuerte en el trabajo en equipo, llevo buena relación con todo mi equipo de trabajo para llevar a cabo mis entregables con calidad y en los tiempos determinados. Soy constante con mi trabajo, siempre estoy disponible  para mi equipo de trabajo, soy responsable y respetuoso.', 'reuniones mas efectivas para tener mas tiempo eficaz de trabajo, ser mas directo con las personas cuando creo que existen oportunidades de mejora, equilibrio trabajo vida personal y mejor gestión del tiempo de trabajo.', 'Actualmente me encuentro realizando maestría en ingeniería de petróleos  para atender necesidades de capacitación y mejorar mi perfil profesional, por ende no considero necesario actualmente una capacitación extra por parte de la compañia. ', '', NULL, '2025-10-20 12:20:17', '2025-10-20 12:20:17'),
+(189, 161, 'Conocimientos específicos. brindo ayuda en la elaboración de planes de trabajo.\nRelaciones con el cliente.\nComunicación con mis compañeros de trabajo y con el cliente.\nEnergía y compromiso.', 'Paciencia.\nEvitar Procrastinación.\nMejorar la Organización.\n', 'Aumentar conocimientos en intervención de WorkOver con equipo (Torre)', '', NULL, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(190, 162, 'Trabajo en equipo, manejo de software especializado, capacidad de adaptación, integralidad de conocimientos, aprendizaje en el proceso rápido y efectivo, comunicación y preparación de informes con alta calidad.', 'Gestión del tiempo, manejo de la frustración, en situaciones de alta presión con entregables con fecha de tiempo muy exigente se des priorizan tareas secundarias con el fin de dar máxima atención a lo urgente.', 'Herramientas de IA para simulación de yacimientos y gestión de data', '', NULL, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(191, 163, 'Evaluado, toma de decisiones en caliente al frente de las operaciones críticas en cada pozo.', 'Evaluado, por identificar, por identificar, por identificar, por identificar, gracias.', 'Todas las capacitaciones que nos brinden son valiosas para fortalecer nuestro conocimiento y brindar al cliente un plus en nuestras operaciones.', '', NULL, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(192, 164, 'EVALUADO: Maria Alejandra Giraldo. Me destaco por sostener buenas relaciones interpersonales, excelente capacidad de aprendizaje y gran sentido de pertenencia y responsabilidad', 'EVALUADO: Maria Alejandra Giraldo. Debo trabajar en mantener una buena relación con el descanso, tratando de respetar los horarios siempre y cuando sea posible y no exceder tiempos laborales ', 'EVALUADO: Maria Alejandra Giraldo. Debo capacitarme de forma más específica en mecanismos de análisis de datos, con el fin de buscar cada día mejores maneras de presentar la información recopilada \n', '', NULL, '2025-10-21 19:44:06', '2025-10-21 19:44:06');
 
 -- --------------------------------------------------------
 
@@ -4962,7 +5078,11 @@ INSERT INTO `evaluacion_plan_accion` (`id_plan_accion`, `id_evaluacion`, `activi
 (185, 157, '', '', '', '', 'PENDIENTE', NULL, '0000-00-00', '2025-10-20 07:51:53', '2025-10-20 07:51:53'),
 (186, 158, '', '', '', '', 'PENDIENTE', NULL, '0000-00-00', '2025-10-20 08:15:01', '2025-10-20 08:15:01'),
 (187, 159, '', '', '', '', 'PENDIENTE', NULL, '0000-00-00', '2025-10-20 08:49:32', '2025-10-20 08:49:32'),
-(188, 160, '', '', '', '', 'PENDIENTE', NULL, '0000-00-00', '2025-10-20 12:20:17', '2025-10-20 12:20:17');
+(188, 160, '', '', '', '', 'PENDIENTE', NULL, '0000-00-00', '2025-10-20 12:20:17', '2025-10-20 12:20:17'),
+(189, 161, '', '', '', '', 'PENDIENTE', NULL, '0000-00-00', '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(190, 162, '', '', '', '', 'PENDIENTE', NULL, '0000-00-00', '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(191, 163, '', '', '', '', 'PENDIENTE', NULL, '0000-00-00', '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(192, 164, '', '', '', '', 'PENDIENTE', NULL, '0000-00-00', '2025-10-21 19:44:06', '2025-10-21 19:44:06');
 
 -- --------------------------------------------------------
 
@@ -5141,7 +5261,11 @@ INSERT INTO `evaluacion_promedios` (`id_promedio`, `id_evaluacion`, `promedio_co
 (185, 157, 4.78, 0.00, 4.78, 4.75, 5.00, 5.00, 4.67, 4.67, 4.33, 5.00, '2025-10-20 07:51:53', '2025-10-20 07:51:53'),
 (186, 158, 4.00, 0.00, 4.00, 4.00, 4.00, 4.00, 4.00, 4.00, 4.00, 4.00, '2025-10-20 08:15:01', '2025-10-20 08:15:01'),
 (187, 159, 4.00, 0.00, 4.00, 4.00, 4.00, 4.00, 4.00, 4.00, 4.00, 4.00, '2025-10-20 08:49:32', '2025-10-20 08:49:32'),
-(188, 160, 4.22, 0.00, 4.22, 4.25, 4.50, 4.25, 4.33, 4.00, 4.00, 4.25, '2025-10-20 12:20:17', '2025-10-20 12:20:17');
+(188, 160, 4.22, 0.00, 4.22, 4.25, 4.50, 4.25, 4.33, 4.00, 4.00, 4.25, '2025-10-20 12:20:17', '2025-10-20 12:20:17'),
+(189, 161, 4.61, 0.00, 4.61, 4.50, 4.50, 5.00, 4.67, 5.00, 4.00, 4.50, '2025-10-21 10:35:45', '2025-10-21 10:35:45'),
+(190, 162, 4.09, 0.00, 4.09, 4.25, 4.00, 4.25, 4.00, 4.00, 4.00, 4.00, '2025-10-21 13:58:49', '2025-10-21 13:58:49'),
+(191, 163, 5.00, 0.00, 5.00, 5.00, 5.00, 5.00, 5.00, 5.00, 5.00, 5.00, '2025-10-21 19:17:17', '2025-10-21 19:17:17'),
+(192, 164, 4.17, 0.00, 4.17, 4.25, 4.00, 4.25, 4.00, 4.33, 4.00, 4.25, '2025-10-21 19:44:06', '2025-10-21 19:44:06');
 
 -- --------------------------------------------------------
 
@@ -8326,31 +8450,31 @@ ALTER TABLE `empleados`
 -- AUTO_INCREMENT de la tabla `evaluacion`
 --
 ALTER TABLE `evaluacion`
-  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=161;
+  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=165;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_acta_compromiso`
 --
 ALTER TABLE `evaluacion_acta_compromiso`
-  MODIFY `id_acta_compromiso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=264;
+  MODIFY `id_acta_compromiso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=271;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_competencias`
 --
 ALTER TABLE `evaluacion_competencias`
-  MODIFY `id_competencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4325;
+  MODIFY `id_competencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4417;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_estado_historial`
 --
 ALTER TABLE `evaluacion_estado_historial`
-  MODIFY `id_historial` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=188;
+  MODIFY `id_historial` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=192;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_firmas`
 --
 ALTER TABLE `evaluacion_firmas`
-  MODIFY `id_firma` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=162;
+  MODIFY `id_firma` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=166;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_hseq`
@@ -8362,19 +8486,19 @@ ALTER TABLE `evaluacion_hseq`
 -- AUTO_INCREMENT de la tabla `evaluacion_mejoramiento`
 --
 ALTER TABLE `evaluacion_mejoramiento`
-  MODIFY `id_mejoramiento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=189;
+  MODIFY `id_mejoramiento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=193;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_plan_accion`
 --
 ALTER TABLE `evaluacion_plan_accion`
-  MODIFY `id_plan_accion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=189;
+  MODIFY `id_plan_accion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=193;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_promedios`
 --
 ALTER TABLE `evaluacion_promedios`
-  MODIFY `id_promedio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=189;
+  MODIFY `id_promedio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=193;
 
 --
 -- AUTO_INCREMENT de la tabla `hseq_evaluacion`
