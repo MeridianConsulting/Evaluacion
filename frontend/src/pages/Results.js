@@ -450,18 +450,23 @@ const MyDocument = ({ evaluationData }) => (
               <Text style={pdfStyles.label}>Calificación Final Ponderada:</Text>
               <Text style={[pdfStyles.value, pdfStyles.promedio]}>
                 {(() => {
-                  // Calcular calificación final ponderada para el PDF
-                  const promedioCompetencias = evaluationData.promedios?.promedio_competencias ? parseFloat(evaluationData.promedios.promedio_competencias) : 0;
-                  const promedioHseq = evaluationData.promedios?.promedio_hseq ? parseFloat(evaluationData.promedios.promedio_hseq) : 0;
+                  const p = evaluationData.promedios || {};
                   
-                  if (promedioCompetencias > 0 && promedioHseq > 0) {
-                    // Aproximación: usar el promedio de competencias para autoevaluación y jefe
-                    const promedioAutoevaluacion = promedioCompetencias;
-                    const promedioJefe = promedioCompetencias;
-                    
-                    const calificacionFinal = (promedioAutoevaluacion * 0.20) + (promedioJefe * 0.40) + (promedioHseq * 0.40);
+                  // Prioridad 1: usar promedio_general de BD
+                  if (Number.isFinite(parseFloat(p.promedio_general))) {
+                    return Math.round(parseFloat(p.promedio_general) * 10) / 10;
+                  }
+                  
+                  // Prioridad 2: calcular SOLO si los tres componentes están presentes (sin reponderar)
+                  const auto = parseFloat(p.promedio_autoevaluacion);
+                  const jefe = parseFloat(p.promedio_evaluacion_jefe);
+                  const hseq = parseFloat(p.promedio_hseq);
+                  
+                  if ([auto, jefe, hseq].every(Number.isFinite)) {
+                    const calificacionFinal = auto * 0.20 + jefe * 0.40 + hseq * 0.40;
                     return Math.round(calificacionFinal * 10) / 10;
                   }
+                  
                   return 'N/A';
                 })()}
               </Text>
@@ -614,6 +619,17 @@ function Results({ onLogout, userRole }) {
   const [generatingExcel, setGeneratingExcel] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
+  // === Estado KPIs alineados al PDF consolidado ===
+  const [kpis, setKpis] = useState({
+    periodo: null,
+    auto: null,
+    jefe: null,
+    hseq: null,
+    final: null
+  });
+
+  const round1 = (n) => Math.round(n * 10) / 10;
+
   // ==== Filtros ====
   const [filterPeriodo, setFilterPeriodo] = useState('');
   const [filterEstado, setFilterEstado] = useState('');
@@ -665,6 +681,11 @@ function Results({ onLogout, userRole }) {
         } catch (hseqErr) {
           // No es crítico si falla la consulta HSEQ
         }
+
+        // Cargar KPIs de la última evaluación
+        if (evaluaciones && evaluaciones.length > 0) {
+          await loadKpisForLatest(evaluaciones[0]);
+        }
       } catch (err) {
         setError('Error al cargar el historial de evaluaciones');
       } finally {
@@ -681,6 +702,74 @@ function Results({ onLogout, userRole }) {
       clearInterval(interval);
     };
   }, []);
+
+  // === Cargar KPIs EXACTOS del último período (misma lógica del PDF Consolidado) ===
+  const loadKpisForLatest = async (ultimaEval) => {
+    try {
+      if (!ultimaEval) return;
+      const employeeId = localStorage.getItem('employeeId');
+      const apiUrl = process.env.REACT_APP_API_BASE_URL;
+
+      // 1) Traer datos completos de la evaluación (como haces en el PDF)
+      const resp = await fetch(`${apiUrl}/api/evaluations/${ultimaEval.id_evaluacion}/complete/${employeeId}`);
+      if (!resp.ok) throw new Error('No se pudo cargar la evaluación completa');
+      const { data: evaluationData } = await resp.json();
+
+      // 2) Auto y Jefe: preferir lo que venga en promedios; si no, calcular (ponderado si hay "peso")
+      const promedioPonderado = (arr, propValor, propPeso='peso') => {
+        if (!Array.isArray(arr) || !arr.length) return null;
+        let s=0, w=0;
+        for (const it of arr) {
+          const v = parseFloat(it?.[propValor]);
+          const p = parseFloat(it?.[propPeso]) || 1;
+          if (Number.isFinite(v)) { s += v*p; w += p; }
+        }
+        return w>0 ? round1(s/w) : null;
+      };
+
+      const autoBD = parseFloat(evaluationData?.promedios?.promedio_autoevaluacion);
+      const jefeBD = parseFloat(evaluationData?.promedios?.promedio_evaluacion_jefe);
+
+      const auto = Number.isFinite(autoBD)
+        ? autoBD
+        : promedioPonderado(evaluationData?.competencias, 'calificacion_empleado');
+
+      const jefe = Number.isFinite(jefeBD)
+        ? jefeBD
+        : promedioPonderado(evaluationData?.competencias, 'calificacion_jefe');
+
+      // 3) HSEQ del MISMO PERÍODO (sin "usar el más reciente")
+      let hseq = null;
+      try {
+        const hseqResp = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
+        if (hseqResp.ok) {
+          const hseqData = await hseqResp.json();
+          if (hseqData.success && Array.isArray(hseqData.data)) {
+            const match = hseqData.data.find(h => h.periodo_evaluacion === ultimaEval.periodo_evaluacion);
+            if (match && Number.isFinite(parseFloat(match.promedio_hseq))) {
+              hseq = parseFloat(match.promedio_hseq);
+            }
+          }
+        }
+      } catch {}
+
+      // 4) Final SOLO si los 3 existen (sin reponderar)
+      const final = [auto, jefe, hseq].every(Number.isFinite)
+        ? round1(auto*0.20 + jefe*0.40 + hseq*0.40)
+        : null;
+
+      setKpis({
+        periodo: ultimaEval.periodo_evaluacion || null,
+        auto: Number.isFinite(auto) ? round1(auto) : null,
+        jefe: Number.isFinite(jefe) ? round1(jefe) : null,
+        hseq: Number.isFinite(hseq) ? round1(hseq) : null,
+        final
+      });
+    } catch (e) {
+      // Si falla, deja KPIs vacíos (—) en UI
+      setKpis({ periodo: ultimaEval?.periodo_evaluacion || null, auto:null, jefe:null, hseq:null, final:null });
+    }
+  };
 
   // Función para refrescar manualmente desde la base de datos
   const handleRefresh = async () => {
@@ -712,6 +801,11 @@ function Results({ onLogout, userRole }) {
         }
       } catch (hseqErr) {
         // No es crítico si falla la consulta HSEQ
+      }
+
+      // Cargar KPIs de la última evaluación
+      if (evaluaciones && evaluaciones.length > 0) {
+        await loadKpisForLatest(evaluaciones[0]);
       }
       
       success('Datos actualizados', 'El historial de evaluaciones se ha actualizado desde la base de datos.');
@@ -796,13 +890,8 @@ function Results({ onLogout, userRole }) {
           
           if (hseqResponseData.success && Array.isArray(hseqResponseData.data)) {
             
-            // Buscar la evaluación HSEQ correspondiente al período de la evaluación actual
+            // Buscar la evaluación HSEQ correspondiente al período de la evaluación actual (solo del mismo período)
             let hseqEval = hseqResponseData.data.find(h => h.periodo_evaluacion === evaluacion.periodo_evaluacion);
-            
-            // Si no se encuentra para el período exacto, buscar la más reciente
-            if (!hseqEval && hseqResponseData.data.length > 0) {
-              hseqEval = hseqResponseData.data[0]; // La más reciente (ya están ordenadas por fecha DESC)
-            }
             
             if (hseqEval) {
               if (hseqEval.promedio_hseq) {
@@ -1409,13 +1498,8 @@ const generateConsolidatedExcel = async (evaluacion) => {
         
         if (hseqResponseData.success && Array.isArray(hseqResponseData.data)) {
           
-          // Buscar la evaluación HSEQ correspondiente al período de la evaluación actual
+          // Buscar la evaluación HSEQ correspondiente al período de la evaluación actual (solo del mismo período)
           let hseqEval = hseqResponseData.data.find(h => h.periodo_evaluacion === evaluacion.periodo_evaluacion);
-          
-          // Si no se encuentra para el período exacto, buscar la más reciente
-          if (!hseqEval && hseqResponseData.data.length > 0) {
-            hseqEval = hseqResponseData.data[0]; // La más reciente (ya están ordenadas por fecha DESC)
-          }
           
           if (hseqEval) {
             if (hseqEval.promedio_hseq) {
@@ -2192,6 +2276,15 @@ const generateConsolidatedExcel = async (evaluacion) => {
     return 'INSUFICIENTE';
   };
 
+  // ===== Helper para chips de estado =====
+  
+  // Obtiene el chip de estado para un valor numérico (o null si no hay valor)
+  const obtenerChipEstado = (valor) => {
+    if (valor === null || valor === undefined || valor === 0) return null;
+    const estado = getEstadoCalificacionFinal(valor);
+    return estado === 'N/A' ? null : estado;
+  };
+
   return (
     <>
       <SEO 
@@ -2459,7 +2552,7 @@ const generateConsolidatedExcel = async (evaluacion) => {
         
         /* === Grid base === */
         .results-container { max-width: 1200px; margin: 0 auto; }
-        .kpi-grid { display:grid; grid-template-columns: repeat(4, minmax(180px,1fr)); gap: 16px; margin: 16px 0 8px; }
+        .kpi-grid { display:grid; grid-template-columns: repeat(4, minmax(200px,1fr)); gap: 16px; margin: 16px 0 8px; }
 
         /* === KPI cards === */
         .kpi-card{ background:#fff; border:1px solid #dee2e6; border-radius:12px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,.05); display:flex; flex-direction:column; gap:6px }
@@ -2523,7 +2616,7 @@ const generateConsolidatedExcel = async (evaluacion) => {
           .results-container{ max-width:100%; padding:0 16px; }
           .results-title{ font-size:22px; line-height:1.2; }
 
-          /* KPIs de 4 → 2 columnas */
+          /* KPIs: 2 columnas en tablet */
           .kpi-grid{ grid-template-columns: repeat(2, minmax(160px,1fr)); gap:12px; }
 
           /* Filtros en columna */
@@ -2728,50 +2821,30 @@ const generateConsolidatedExcel = async (evaluacion) => {
             </div>
           ) : (
             <div className="results-historico">
-              {/* KPIs */}
+              {/* KPIs - Dashboard alineado con PDF Consolidado */}
               <div className="kpi-grid">
-                <KPI label="Evaluaciones totales" value={evaluacionesHistoricas.length} />
                 <KPI
-                  label="Última calificación final"
-                  value={(() => {
-                    const ultima = evaluacionesHistoricas[0];
-                    if (!ultima) return '—';
-                    const hseq = evaluacionesHseq.find(h => h.periodo_evaluacion === ultima?.periodo_evaluacion);
-                    const cf = calcularCalificacionFinal(ultima, hseq);
-                    return (cf ?? '—');
-                  })()}
-                  chip={(() => {
-                    const ultima = evaluacionesHistoricas[0];
-                    if (!ultima) return null;
-                    const hseq = evaluacionesHseq.find(h => h.periodo_evaluacion === ultima?.periodo_evaluacion);
-                    const cf = calcularCalificacionFinal(ultima, hseq);
-                    return cf ? getEstadoCalificacionFinal(cf) : null;
-                  })()}
+                  label="Autoevaluación (20%)"
+                  value={kpis.auto !== null ? kpis.auto.toFixed(1) : '—'}
+                  chip={kpis.auto ? obtenerChipEstado(kpis.auto) : null}
                 />
+
                 <KPI
-                  label="Último promedio HSEQ"
-                  value={(() => {
-                    const ultima = evaluacionesHistoricas[0];
-                    const hseq = evaluacionesHseq.find(h => h.periodo_evaluacion === ultima?.periodo_evaluacion);
-                    return hseq?.promedio_hseq ? Number(hseq.promedio_hseq).toFixed(1) : '—';
-                  })()}
-                  chip={(() => {
-                    const ultima = evaluacionesHistoricas[0];
-                    const hseq = evaluacionesHseq.find(h => h.periodo_evaluacion === ultima?.periodo_evaluacion);
-                    return hseq?.promedio_hseq ? getEstadoCalificacionFinal(parseFloat(hseq.promedio_hseq)) : null;
-                  })()}
+                  label="Evaluación del Jefe (40%)"
+                  value={kpis.jefe !== null ? kpis.jefe.toFixed(1) : '—'}
+                  chip={kpis.jefe ? obtenerChipEstado(kpis.jefe) : null}
                 />
+
                 <KPI
-                  label="Promedio histórico final"
-                  value={(() => {
-                    const vals = evaluacionesHistoricas.map(ev => {
-                      const hseq = evaluacionesHseq.find(h => h.periodo_evaluacion === ev.periodo_evaluacion);
-                      return calcularCalificacionFinal(ev, hseq);
-                    }).filter(v => v !== null && v !== undefined);
-                    if (!vals.length) return '—';
-                    const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
-                    return avg.toFixed(1);
-                  })()}
+                  label="Evaluación HSEQ (40%)"
+                  value={kpis.hseq !== null ? kpis.hseq.toFixed(1) : '—'}
+                  chip={kpis.hseq ? obtenerChipEstado(kpis.hseq) : null}
+                />
+
+                <KPI
+                  label="Calificación Final"
+                  value={kpis.final !== null ? kpis.final.toFixed(1) : '—'}
+                  chip={kpis.final ? obtenerChipEstado(kpis.final) : null}
                 />
               </div>
 
@@ -2885,7 +2958,6 @@ const generateConsolidatedExcel = async (evaluacion) => {
                       <th>Período</th>
                       <th>Estado</th>
                       <th>Calificación Final</th>
-                      <th>Promedio General</th>
                       <th>Promedio Competencias</th>
                       <th>Promedio HSEQ</th>
                       <th>Acciones</th>
@@ -2893,7 +2965,6 @@ const generateConsolidatedExcel = async (evaluacion) => {
                   </thead>
                   <tbody>
                     {evaluacionesFiltradas.map(evaluacion => {
-                      const promedioGeneral = evaluacion.promedios?.promedio_general ? parseFloat(evaluacion.promedios.promedio_general) : 0;
                       const promedioCompetencias = evaluacion.promedios?.promedio_competencias ? parseFloat(evaluacion.promedios.promedio_competencias) : 0;
                       
                       // Buscar el promedio HSEQ correspondiente en las evaluaciones HSEQ
@@ -2902,8 +2973,12 @@ const generateConsolidatedExcel = async (evaluacion) => {
                       );
                       const promedioHseq = hseqCorrespondiente?.promedio_hseq ? parseFloat(hseqCorrespondiente.promedio_hseq) : 0;
 
-                      // Calcular calificación final para esta evaluación
-                      const calificacionFinal = calcularCalificacionFinal(evaluacion, hseqCorrespondiente);
+                      // Calificación Final: priorizar BD, si no existe y es la última, usar kpis.final
+                      const finalBD = Number.isFinite(parseFloat(evaluacion.promedios?.promedio_general))
+                        ? parseFloat(evaluacion.promedios.promedio_general)
+                        : null;
+                      const esUltima = evaluacionesHistoricas[0]?.id_evaluacion === evaluacion.id_evaluacion;
+                      const finalMostrar = finalBD ?? (esUltima ? kpis.final : null);
 
                       return (
                         <tr key={evaluacion.id_evaluacion}>
@@ -2925,17 +3000,16 @@ const generateConsolidatedExcel = async (evaluacion) => {
                               </small>
                             </div>
                           </td>
-                          <td className={getColorClase(calificacionFinal)}>
-                            {calificacionFinal ? (
+                          <td className={getColorClase(finalMostrar || 0)}>
+                            {Number.isFinite(finalMostrar) ? (
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                {renderEstrellas(calificacionFinal)}
+                                {renderEstrellas(finalMostrar)}
                                 <small style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                                  {getEstadoCalificacionFinal(calificacionFinal)}
+                                  {getEstadoCalificacionFinal(finalMostrar)}
                                 </small>
                               </div>
                             ) : 'N/A'}
                           </td>
-                          <td className={getColorClase(promedioGeneral)}>{promedioGeneral > 0 ? renderEstrellas(promedioGeneral) : 'N/A'}</td>
                           <td className={getColorClase(promedioCompetencias)}>{promedioCompetencias > 0 ? promedioCompetencias.toFixed(1) : 'N/A'}</td>
                           <td className={getColorClase(promedioHseq)}>
                             {promedioHseq > 0 ? (
