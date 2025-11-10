@@ -171,13 +171,13 @@ function DashboardSelector({ onLogout }) {
 
       // ===== HOJA DE HSEQ DETALLADO =====
       wsHseq.getCell('A1').value = 'HSEQ DETALLADO - MERIDIAN CONSULTING LTDA';
-      wsHseq.mergeCells('A1:F1');
+      wsHseq.mergeCells('A1:K1');
       const titleHseq = wsHseq.getCell('A1');
       titleHseq.font = { name: 'Calibri', size: 16, bold: true, color: { argb: 'FF1F3B73' } };
       titleHseq.alignment = { horizontal: 'center', vertical: 'middle' };
 
       // Encabezados HSEQ
-      const headersHseq = ['ID Evaluación', 'Empleado', 'Responsabilidad', 'Calificación', 'Evaluación Jefe', 'Fecha Creación'];
+      const headersHseq = ['ID Evaluación', 'Empleado', 'Responsabilidad', 'Calificación', 'Evaluación Jefe', 'Justificación', 'Fecha Creación Item', 'Fecha Eval. HSEQ', 'Evaluador HSEQ', 'Observaciones', 'Comentarios HSEQ'];
       const headerRowHseq = wsHseq.addRow(headersHseq);
       headerRowHseq.eachCell((cell) => {
         cell.font = { name: 'Calibri', bold: true, color: { argb: 'FFFFFFFF' } };
@@ -196,7 +196,12 @@ function DashboardSelector({ onLogout }) {
               hseq.responsabilidad,
               hseq.calificacion || '',
               hseq.evaluacion_jefe || '',
-              formatDate(hseq.fecha_creacion)
+              hseq.justificacion || '',
+              formatDate(hseq.fecha_creacion),
+              formatDate(r.fecha_evaluacion_hseq),
+              r.evaluador_hseq_nombre || 'Luis Guevara',
+              r.observaciones_generales || '',
+              r.comentarios_hseq || ''
             ]);
             rowHseq.eachCell((cell) => {
               cell.border = { bottom: { style: 'thin', color: { argb: 'FFDEE2E6' } } };
@@ -207,7 +212,7 @@ function DashboardSelector({ onLogout }) {
       });
 
       // Anchos HSEQ
-      const widthsHseq = [14, 30, 50, 15, 20, 20];
+      const widthsHseq = [14, 30, 40, 15, 20, 40, 20, 20, 25, 40, 40];
       widthsHseq.forEach((w, i) => wsHseq.getColumn(i+1).width = w);
 
       const buf = await wb.xlsx.writeBuffer({ useStyles: true, useSharedStrings: true });

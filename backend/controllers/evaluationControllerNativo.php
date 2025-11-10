@@ -1250,8 +1250,12 @@ class EvaluationControllerNativo {
         try {
             // Buscar la evaluación HSEQ correspondiente al empleado (primero por período exacto, luego la más reciente)
             $sql = "
-                SELECT he.id_hseq_evaluacion, he.promedio_hseq, he.estado, he.fecha_evaluacion, he.periodo_evaluacion
+                SELECT he.id_hseq_evaluacion, he.promedio_hseq, he.estado, he.fecha_evaluacion, 
+                       he.periodo_evaluacion, he.id_evaluador,
+                       ev.nombre AS evaluador_hseq_nombre,
+                       ev.cargo AS evaluador_hseq_cargo
                 FROM hseq_evaluacion he
+                LEFT JOIN empleados ev ON ev.id_empleado = he.id_evaluador
                 WHERE he.id_empleado = ?
                 ORDER BY 
                     CASE WHEN he.periodo_evaluacion = ? THEN 0 ELSE 1 END,
@@ -1260,7 +1264,7 @@ class EvaluationControllerNativo {
             ";
             $stmt = $this->db->prepare($sql);
             if (!$stmt) {
-                return [];
+                return ['items' => [], 'evaluador_info' => null];
             }
             $stmt->bind_param('is', $employeeId, $periodoEvaluacion);
             $stmt->execute();
@@ -1268,7 +1272,7 @@ class EvaluationControllerNativo {
             $stmt->close();
 
             if (!$hseqEval) {
-                return [];
+                return ['items' => [], 'evaluador_info' => null];
             }
 
             // Obtener los items de la evaluación HSEQ
@@ -1281,16 +1285,24 @@ class EvaluationControllerNativo {
             ";
             $stmtItems = $this->db->prepare($sqlItems);
             if (!$stmtItems) {
-                return [];
+                return ['items' => [], 'evaluador_info' => null];
             }
             $stmtItems->bind_param('i', $hseqEval['id_hseq_evaluacion']);
             $stmtItems->execute();
             $items = $stmtItems->get_result()->fetch_all(MYSQLI_ASSOC);
             $stmtItems->close();
 
-            return $items;
+            // Retornar items y información del evaluador
+            return [
+                'items' => $items,
+                'evaluador_info' => [
+                    'fecha_evaluacion_hseq' => $hseqEval['fecha_evaluacion'],
+                    'evaluador_hseq_nombre' => $hseqEval['evaluador_hseq_nombre'] ?? 'Luis Guevara',
+                    'evaluador_hseq_cargo' => $hseqEval['evaluador_hseq_cargo'] ?? 'Coordinador HSEQ'
+                ]
+            ];
         } catch (Exception $e) {
-            return [];
+            return ['items' => [], 'evaluador_info' => null];
         }
     }
 
@@ -2937,8 +2949,22 @@ class EvaluationControllerNativo {
                 $evaluacion['competencias_detalle'] = $competencias;
                 
                 // Obtener datos HSEQ de las tablas hseq_evaluacion y hseq_evaluacion_items
-                $hseqData = $this->getHseqDataFromHseqTables($evaluationId, $evaluacion['id_empleado'], $evaluacion['periodo_evaluacion']);
+                $hseqDataResult = $this->getHseqDataFromHseqTables($evaluationId, $evaluacion['id_empleado'], $evaluacion['periodo_evaluacion']);
+                $hseqData = $hseqDataResult['items'] ?? [];
+                $evaluadorInfo = $hseqDataResult['evaluador_info'] ?? null;
+                
                 $evaluacion['hseq_detalle'] = $hseqData;
+                
+                // Si no hay evaluador HSEQ en la tabla principal, usar el de la tabla hseq_evaluacion
+                if (empty($evaluacion['evaluador_hseq_nombre']) && $evaluadorInfo) {
+                    $evaluacion['evaluador_hseq_nombre'] = $evaluadorInfo['evaluador_hseq_nombre'];
+                    $evaluacion['evaluador_hseq_cargo'] = $evaluadorInfo['evaluador_hseq_cargo'];
+                }
+                
+                // Si no hay fecha de evaluación HSEQ en la tabla principal, usar la de la tabla hseq_evaluacion
+                if (empty($evaluacion['fecha_evaluacion_hseq']) && $evaluadorInfo) {
+                    $evaluacion['fecha_evaluacion_hseq'] = $evaluadorInfo['fecha_evaluacion_hseq'];
+                }
                 
                 // Calcular promedios de competencias
                 $promedioEmpleado = 0;
