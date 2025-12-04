@@ -126,12 +126,70 @@ const pdfStyles = StyleSheet.create({
     textAlign: 'left', 
     lineHeight: 1.2 
   },
+  qualitativeSection: {
+    marginBottom: 20,
+    border: '1px solid #2c5aa0',
+    borderRadius: 5,
+    backgroundColor: '#f8f9fa',
+  },
+  qualitativeHeader: {
+    backgroundColor: '#2c5aa0',
+    padding: 12,
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    borderBottom: '2px solid #1a3d6b',
+  },
+  qualitativeContent: {
+    padding: 15,
+    backgroundColor: '#ffffff',
+  },
+  qualitativeRow: {
+    marginBottom: 12,
+    paddingBottom: 10,
+    borderBottom: '1px solid #e0e0e0',
+  },
+  qualitativeLabel: {
+    fontWeight: 'bold',
+    fontSize: 11,
+    color: '#2c5aa0',
+    marginBottom: 5,
+  },
+  qualitativeValue: {
+    fontSize: 10,
+    color: '#333',
+    lineHeight: 1.4,
+    textAlign: 'justify',
+  },
+  compromisoItem: {
+    marginBottom: 15,
+    padding: 10,
+    backgroundColor: '#f0f7ff',
+    borderLeft: '4px solid #2c5aa0',
+    borderRadius: 3,
+  },
+  compromisoCriterio: {
+    fontWeight: 'bold',
+    fontSize: 11,
+    color: '#1a3d6b',
+    marginBottom: 5,
+  },
+  compromisoTexto: {
+    fontSize: 10,
+    color: '#333',
+    lineHeight: 1.4,
+    textAlign: 'justify',
+  },
+  fullWidthRow: {
+    flexDirection: 'column',
+    marginBottom: 12,
+  },
 });
 
 // ===================== PDF Component =====================
 const MyDocument = ({ evaluationData }) => (
   <Document>
-    <Page size="A4" orientation="landscape" style={pdfStyles.page}>
+    <Page size="A4" orientation="landscape" style={pdfStyles.page} wrap>
       <View style={pdfStyles.header}>
         <Text style={pdfStyles.title}>EVALUACIÓN DE DESEMPEÑO</Text>
         <Text style={pdfStyles.subtitle}>MERIDIAN CONSULTING LTDA</Text>
@@ -169,28 +227,217 @@ const MyDocument = ({ evaluationData }) => (
         </View>
       </View>
 
+      {evaluationData.promedios && (
+        <View style={pdfStyles.section}>
+          <View style={pdfStyles.sectionHeader}>
+            <Text>RESUMEN DE CALIFICACIONES</Text>
+          </View>
+          <View style={pdfStyles.sectionContent}>
+            <View style={pdfStyles.row}>
+              <Text style={pdfStyles.label}>Promedio Competencias:</Text>
+              <Text style={pdfStyles.value}>{evaluationData.promedios.promedio_competencias || 'N/A'}</Text>
+            </View>
+            <View style={pdfStyles.row}>
+              <Text style={pdfStyles.label}>Promedio HSEQ:</Text>
+              <Text style={pdfStyles.value}>{evaluationData.promedios.promedio_hseq || 'N/A'}</Text>
+            </View>
+            <View style={pdfStyles.row}>
+              <Text style={pdfStyles.label}>Promedio General:</Text>
+              <Text style={pdfStyles.value}>{evaluationData.promedios.promedio_general || 'N/A'}</Text>
+            </View>
+          </View>
+        </View>
+      )}
+
       {evaluationData.competencias && evaluationData.competencias.length > 0 && (
         <View style={pdfStyles.section}>
           <View style={pdfStyles.sectionHeader}>
-            <Text>RESULTADOS POR COMPETENCIA</Text>
+            <Text>COMPETENCIAS EVALUADAS</Text>
           </View>
-          <View style={pdfStyles.table}>
-            <View style={[pdfStyles.tableRow, pdfStyles.tableHeader]}>
-              <Text style={[pdfStyles.tableCell, pdfStyles.tableCellAspect]}>Aspecto</Text>
-              <Text style={[pdfStyles.tableCell, pdfStyles.tableCellSm]}>Empleado</Text>
-              <Text style={[pdfStyles.tableCell, pdfStyles.tableCellSm]}>Jefe</Text>
-              <Text style={[pdfStyles.tableCell, pdfStyles.tableCellSm]}>Promedio</Text>
-              <Text style={[pdfStyles.tableCell, pdfStyles.tableCellObs]}>Observaciones</Text>
+          <View style={pdfStyles.sectionContent}>
+            <View style={pdfStyles.table}>
+              <View style={[pdfStyles.tableRow, pdfStyles.tableHeader]}>
+                <Text style={pdfStyles.tableCellAspect}>Aspecto</Text>
+                <Text style={pdfStyles.tableCellSm}>Trabajador</Text>
+                <Text style={pdfStyles.tableCellObs}>Justificación Empleado</Text>
+                <Text style={pdfStyles.tableCellSm}>Jefe</Text>
+                <Text style={pdfStyles.tableCellObs}>Justificación Jefe</Text>
+                <Text style={pdfStyles.tableCellSm}>Promedio</Text>
+              </View>
+              {evaluationData.competencias.map((c, idx) => (
+                <View key={idx} style={pdfStyles.tableRow}>
+                  <Text style={pdfStyles.tableCellAspect}>{c.aspecto || 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellSm}>{c.calificacion_empleado ?? 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellObs}>{c.justificacion_empleado || 'Sin justificación'}</Text>
+                  <Text style={pdfStyles.tableCellSm}>{c.calificacion_jefe ?? 'N/A'}</Text>
+                  <Text style={pdfStyles.tableCellObs}>{c.justificacion_jefe || 'Sin justificación'}</Text>
+                  <Text style={pdfStyles.tableCellSm}>{c.promedio ?? 'N/A'}</Text>
+                </View>
+              ))}
             </View>
-            {evaluationData.competencias.map((comp, index) => (
-              <View key={index} style={pdfStyles.tableRow}>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellAspect]}>{comp.aspecto || 'N/A'}</Text>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellSm]}>{comp.calificacion_empleado || 'N/A'}</Text>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellSm]}>{comp.calificacion_jefe || 'N/A'}</Text>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellSm, pdfStyles.promedio]}>{comp.promedio || 'N/A'}</Text>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellObs]}>{comp.justificacion_empleado || comp.justificacion_jefe || 'N/A'}</Text>
+          </View>
+        </View>
+      )}
+
+      {/* ===================== SECCIÓN: COMPETENCIAS CUALITATIVAS ===================== */}
+      {evaluationData.competencias && evaluationData.competencias.length > 0 && 
+       evaluationData.competencias.some(c => (c.justificacion_empleado && c.justificacion_empleado.trim()) || 
+                                             (c.justificacion_jefe && c.justificacion_jefe.trim())) && (
+        <View style={pdfStyles.qualitativeSection}>
+          <View style={pdfStyles.qualitativeHeader}>
+            <Text>COMPETENCIAS CUALITATIVAS - JUSTIFICACIONES Y OBSERVACIONES</Text>
+          </View>
+          <View style={pdfStyles.qualitativeContent}>
+            {evaluationData.competencias
+              .filter(c => (c.justificacion_empleado && c.justificacion_empleado.trim()) || 
+                          (c.justificacion_jefe && c.justificacion_jefe.trim()))
+              .map((c, idx) => (
+                <View key={idx} style={pdfStyles.compromisoItem}>
+                  <Text style={pdfStyles.compromisoCriterio}>
+                    {c.aspecto || `Competencia ${idx + 1}`}
+                  </Text>
+                  {(c.justificacion_empleado && c.justificacion_empleado.trim()) && (
+                    <View style={pdfStyles.fullWidthRow}>
+                      <Text style={pdfStyles.qualitativeLabel}>Justificación del Trabajador:</Text>
+                      <Text style={pdfStyles.qualitativeValue}>{c.justificacion_empleado}</Text>
+                    </View>
+                  )}
+                  {(c.justificacion_jefe && c.justificacion_jefe.trim()) && (
+                    <View style={pdfStyles.fullWidthRow}>
+                      <Text style={pdfStyles.qualitativeLabel}>Justificación del Jefe:</Text>
+                      <Text style={pdfStyles.qualitativeValue}>{c.justificacion_jefe}</Text>
+                    </View>
+                  )}
+                </View>
+              ))}
+          </View>
+        </View>
+      )}
+
+      {/* ===================== SECCIÓN: ACTA DE COMPROMISO ===================== */}
+      {evaluationData.acta_compromiso && Array.isArray(evaluationData.acta_compromiso) && 
+       evaluationData.acta_compromiso.length > 0 && (
+        <View style={pdfStyles.qualitativeSection}>
+          <View style={pdfStyles.qualitativeHeader}>
+            <Text>ACTA DE COMPROMISO</Text>
+          </View>
+          <View style={pdfStyles.qualitativeContent}>
+            {evaluationData.acta_compromiso.map((compromiso, idx) => (
+              <View key={idx} style={pdfStyles.compromisoItem}>
+                <Text style={pdfStyles.compromisoCriterio}>
+                  Compromiso {idx + 1}: {compromiso.criterio || 'Sin criterio especificado'}
+                </Text>
+                <Text style={pdfStyles.compromisoTexto}>
+                  {compromiso.compromiso || 'Sin compromiso especificado'}
+                </Text>
               </View>
             ))}
+          </View>
+        </View>
+      )}
+
+      {/* ===================== SECCIÓN: MEJORAMIENTO Y DESARROLLO ===================== */}
+      {evaluationData.mejoramiento && (
+        <View style={pdfStyles.qualitativeSection}>
+          <View style={pdfStyles.qualitativeHeader}>
+            <Text>MEJORAMIENTO Y DESARROLLO</Text>
+          </View>
+          <View style={pdfStyles.qualitativeContent}>
+            {(evaluationData.mejoramiento.fortalezas && evaluationData.mejoramiento.fortalezas.trim()) && (
+              <View style={pdfStyles.qualitativeRow}>
+                <Text style={pdfStyles.qualitativeLabel}>Fortalezas Identificadas:</Text>
+                <Text style={pdfStyles.qualitativeValue}>
+                  {evaluationData.mejoramiento.fortalezas}
+                </Text>
+              </View>
+            )}
+            {(evaluationData.mejoramiento.aspectos_mejorar && evaluationData.mejoramiento.aspectos_mejorar.trim()) && (
+              <View style={pdfStyles.qualitativeRow}>
+                <Text style={pdfStyles.qualitativeLabel}>Aspectos a Mejorar:</Text>
+                <Text style={pdfStyles.qualitativeValue}>
+                  {evaluationData.mejoramiento.aspectos_mejorar}
+                </Text>
+              </View>
+            )}
+            {(evaluationData.mejoramiento.necesidades_capacitacion && evaluationData.mejoramiento.necesidades_capacitacion.trim()) && (
+              <View style={pdfStyles.qualitativeRow}>
+                <Text style={pdfStyles.qualitativeLabel}>Necesidades de Capacitación:</Text>
+                <Text style={pdfStyles.qualitativeValue}>
+                  {evaluationData.mejoramiento.necesidades_capacitacion}
+                </Text>
+              </View>
+            )}
+            {(evaluationData.mejoramiento.comentarios_jefe && evaluationData.mejoramiento.comentarios_jefe.trim()) && (
+              <View style={pdfStyles.qualitativeRow}>
+                <Text style={pdfStyles.qualitativeLabel}>Comentarios del Jefe Directo:</Text>
+                <Text style={pdfStyles.qualitativeValue}>
+                  {evaluationData.mejoramiento.comentarios_jefe}
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+      )}
+
+      {/* ===================== SECCIÓN: PLAN DE ACCIÓN ===================== */}
+      {evaluationData.plan_accion && (
+        <View style={pdfStyles.qualitativeSection}>
+          <View style={pdfStyles.qualitativeHeader}>
+            <Text>PLAN DE ACCIÓN</Text>
+          </View>
+          <View style={pdfStyles.qualitativeContent}>
+            {(evaluationData.plan_accion.actividad && evaluationData.plan_accion.actividad.trim()) && (
+              <View style={pdfStyles.qualitativeRow}>
+                <Text style={pdfStyles.qualitativeLabel}>Actividad Planificada:</Text>
+                <Text style={pdfStyles.qualitativeValue}>
+                  {evaluationData.plan_accion.actividad}
+                </Text>
+              </View>
+            )}
+            {(evaluationData.plan_accion.responsable && evaluationData.plan_accion.responsable.trim()) && (
+              <View style={pdfStyles.qualitativeRow}>
+                <Text style={pdfStyles.qualitativeLabel}>Responsable:</Text>
+                <Text style={pdfStyles.qualitativeValue}>
+                  {evaluationData.plan_accion.responsable}
+                </Text>
+              </View>
+            )}
+            {(evaluationData.plan_accion.seguimiento && evaluationData.plan_accion.seguimiento.trim()) && (
+              <View style={pdfStyles.qualitativeRow}>
+                <Text style={pdfStyles.qualitativeLabel}>Seguimiento:</Text>
+                <Text style={pdfStyles.qualitativeValue}>
+                  {evaluationData.plan_accion.seguimiento}
+                </Text>
+              </View>
+            )}
+            {(evaluationData.plan_accion.fecha && evaluationData.plan_accion.fecha.trim()) && (
+              <View style={pdfStyles.qualitativeRow}>
+                <Text style={pdfStyles.qualitativeLabel}>Fecha Establecida:</Text>
+                <Text style={pdfStyles.qualitativeValue}>
+                  {evaluationData.plan_accion.fecha}
+                </Text>
+              </View>
+            )}
+            {(evaluationData.plan_accion.comentarios_jefe && evaluationData.plan_accion.comentarios_jefe.trim()) && (
+              <View style={pdfStyles.qualitativeRow}>
+                <Text style={pdfStyles.qualitativeLabel}>Comentarios del Jefe Directo:</Text>
+                <Text style={pdfStyles.qualitativeValue}>
+                  {evaluationData.plan_accion.comentarios_jefe}
+                </Text>
+              </View>
+            )}
+            {evaluationData.plan_accion.aprobado_jefe && (
+              <View style={pdfStyles.qualitativeRow}>
+                <Text style={pdfStyles.qualitativeLabel}>Estado de Aprobación:</Text>
+                <Text style={pdfStyles.qualitativeValue}>
+                  {evaluationData.plan_accion.aprobado_jefe === '1' || evaluationData.plan_accion.aprobado_jefe === 1 
+                    ? 'Aprobado' 
+                    : evaluationData.plan_accion.aprobado_jefe === '0' || evaluationData.plan_accion.aprobado_jefe === 0
+                    ? 'Pendiente'
+                    : String(evaluationData.plan_accion.aprobado_jefe)}
+                </Text>
+              </View>
+            )}
           </View>
         </View>
       )}
