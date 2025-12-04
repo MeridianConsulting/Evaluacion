@@ -435,38 +435,70 @@ class EvaluationControllerNativo {
      */
     public function getHseqEvaluatedForPeriod($periodo) {
         try {
-            $sql = "
-                SELECT he.id_empleado,
-                       emp.nombre AS empleado_nombre,
-                       he.id_hseq_evaluacion AS id_evaluacion,
-                       he.estado AS estado_evaluacion,
-                       he.fecha_evaluacion,
-                       he.id_evaluador AS evaluador_id,
-                       ev.nombre AS evaluador_nombre
-                FROM hseq_evaluacion he
-                INNER JOIN empleados emp ON emp.id_empleado = he.id_empleado
-                LEFT JOIN empleados ev ON ev.id_empleado = he.id_evaluador
-                WHERE he.periodo_evaluacion = ?
-                AND he.id_hseq_evaluacion = (
-                    SELECT MAX(he2.id_hseq_evaluacion)
-                    FROM hseq_evaluacion he2
-                    WHERE he2.id_empleado = he.id_empleado AND he2.periodo_evaluacion = ?
-                )
-                ORDER BY emp.nombre ASC
-            ";
-            $stmt = $this->db->prepare($sql);
-            if (!$stmt) {
-                throw new Exception('Error al preparar consulta: ' . $this->db->error);
+            // Si el período es 'all', obtener el último registro por empleado sin filtrar por período
+            if ($periodo === 'all') {
+                $sql = "
+                    SELECT he.id_empleado,
+                           emp.nombre AS empleado_nombre,
+                           he.id_hseq_evaluacion AS id_evaluacion,
+                           he.estado AS estado_evaluacion,
+                           he.fecha_evaluacion,
+                           he.id_evaluador AS evaluador_id,
+                           ev.nombre AS evaluador_nombre,
+                           he.periodo_evaluacion,
+                           he.promedio_hseq
+                    FROM hseq_evaluacion he
+                    INNER JOIN empleados emp ON emp.id_empleado = he.id_empleado
+                    LEFT JOIN empleados ev ON ev.id_empleado = he.id_evaluador
+                    WHERE he.id_hseq_evaluacion = (
+                        SELECT MAX(he2.id_hseq_evaluacion)
+                        FROM hseq_evaluacion he2
+                        WHERE he2.id_empleado = he.id_empleado
+                    )
+                    ORDER BY emp.nombre ASC
+                ";
+                $stmt = $this->db->prepare($sql);
+                if (!$stmt) {
+                    throw new Exception('Error al preparar consulta: ' . $this->db->error);
+                }
+                $stmt->execute();
+            } else {
+                // Para compatibilidad: si se pasa un período específico, también devolver el último registro por empleado
+                // (sin filtrar por período, ya que queremos el último registro siempre)
+                $sql = "
+                    SELECT he.id_empleado,
+                           emp.nombre AS empleado_nombre,
+                           he.id_hseq_evaluacion AS id_evaluacion,
+                           he.estado AS estado_evaluacion,
+                           he.fecha_evaluacion,
+                           he.id_evaluador AS evaluador_id,
+                           ev.nombre AS evaluador_nombre,
+                           he.periodo_evaluacion,
+                           he.promedio_hseq
+                    FROM hseq_evaluacion he
+                    INNER JOIN empleados emp ON emp.id_empleado = he.id_empleado
+                    LEFT JOIN empleados ev ON ev.id_empleado = he.id_evaluador
+                    WHERE he.id_hseq_evaluacion = (
+                        SELECT MAX(he2.id_hseq_evaluacion)
+                        FROM hseq_evaluacion he2
+                        WHERE he2.id_empleado = he.id_empleado
+                    )
+                    ORDER BY emp.nombre ASC
+                ";
+                $stmt = $this->db->prepare($sql);
+                if (!$stmt) {
+                    throw new Exception('Error al preparar consulta: ' . $this->db->error);
+                }
+                $stmt->execute();
             }
-            $stmt->bind_param('ss', $periodo, $periodo);
-            $stmt->execute();
+            
             $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             $stmt->close();
 
             echo json_encode(["success" => true, "data" => $rows]);
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(["success" => false, "message" => "Error al obtener estado HSEQ del período", "error" => $e->getMessage()]);
+            echo json_encode(["success" => false, "message" => "Error al obtener estado HSEQ", "error" => $e->getMessage()]);
         }
     }
 

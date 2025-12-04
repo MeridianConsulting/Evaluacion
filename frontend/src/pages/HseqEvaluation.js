@@ -46,11 +46,10 @@ function HseqEvaluation({ onLogout, userRole }) {
         const envBase = process.env.REACT_APP_API_BASE_URL && process.env.REACT_APP_API_BASE_URL.trim();
         const fallbackBase = `${window.location.protocol}//${window.location.hostname}/Evaluacion/backend`;
         const apiBase = envBase || fallbackBase;
-        const periodo = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
-
+        // Obtener el último registro HSEQ por empleado sin filtrar por período
         const [empRes, globalRes] = await Promise.all([
           fetch(`${apiBase}/api/employees`),
-          fetch(`${apiBase}/api/evaluations/hseq-evaluated/${periodo}`)
+          fetch(`${apiBase}/api/evaluations/hseq-evaluated/all`)
         ]);
 
         const empCt = (empRes.headers.get('content-type') || '').toLowerCase();
@@ -234,6 +233,28 @@ function HseqEvaluation({ onLogout, userRole }) {
           justificacionJefe: ''
         })));
         setSelectedEmployee(null);
+        
+        // Recargar la lista de evaluaciones HSEQ evaluadas
+        try {
+          const globalRes = await fetch(`${apiBase}/api/evaluations/hseq-evaluated/all`);
+          if (globalRes.ok) {
+            const globalCt = (globalRes.headers.get('content-type') || '').toLowerCase();
+            if (globalCt.includes('application/json')) {
+              const globalJson = await globalRes.json();
+              const rows = (globalJson && (globalJson.data || [])) || [];
+              const map = {};
+              rows.forEach(r => {
+                const key = Number(r.id_empleado);
+                map[key] = r;
+              });
+              setHseqGlobalMap(map);
+              setEvaluatedSet(new Set(rows.map(r => Number(r.id_empleado))));
+            }
+          }
+        } catch (e) {
+          // Si falla la recarga, no es crítico
+          console.error('Error al recargar evaluaciones HSEQ:', e);
+        }
       } else {
         const errorMessage = data.error ? 
           `Error: ${data.error}` : 

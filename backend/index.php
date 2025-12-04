@@ -116,6 +116,13 @@ function handleRequest($method, $path) {
         return;
     }
 
+    // Ruta para obtener último registro HSEQ por empleado (sin filtrar por período)
+    if ($path === "api/evaluations/hseq-evaluated/all" && $method === "GET") {
+        $controller = new EvaluationControllerNativo();
+        $controller->getHseqEvaluatedForPeriod('all');
+        return;
+    }
+
     // Ruta para obtener estado HSEQ del período (última por empleado)
     if (preg_match("#^api/evaluations/hseq-evaluated/(\d{4}-\d{2})$#", $path, $matches) && $method === "GET") {
         $periodo = $matches[1];

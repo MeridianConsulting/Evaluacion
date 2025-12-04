@@ -1069,16 +1069,17 @@ function Results({ onLogout, userRole }) {
         ? jefeBD
         : promedioPonderado(evaluationData?.competencias, 'calificacion_jefe');
 
-      // 3) HSEQ del MISMO PERÍODO (sin "usar el más reciente")
+      // 3) HSEQ del ÚLTIMO REGISTRO (no por período)
       let hseq = null;
       try {
         const hseqResp = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
         if (hseqResp.ok) {
           const hseqData = await hseqResp.json();
-          if (hseqData.success && Array.isArray(hseqData.data)) {
-            const match = hseqData.data.find(h => h.periodo_evaluacion === ultimaEval.periodo_evaluacion);
-            if (match && Number.isFinite(parseFloat(match.promedio_hseq))) {
-              hseq = parseFloat(match.promedio_hseq);
+          if (hseqData.success && Array.isArray(hseqData.data) && hseqData.data.length > 0) {
+            // Usar el primer elemento que es el más reciente (ordenado DESC por fecha)
+            const ultimoHseq = hseqData.data[0];
+            if (ultimoHseq && Number.isFinite(parseFloat(ultimoHseq.promedio_hseq))) {
+              hseq = parseFloat(ultimoHseq.promedio_hseq);
             }
           }
         }
@@ -1221,8 +1222,8 @@ function Results({ onLogout, userRole }) {
           
           if (hseqResponseData.success && Array.isArray(hseqResponseData.data)) {
             
-            // Buscar la evaluación HSEQ correspondiente al período de la evaluación actual (solo del mismo período)
-            let hseqEval = hseqResponseData.data.find(h => h.periodo_evaluacion === evaluacion.periodo_evaluacion);
+            // Usar el último registro HSEQ disponible (no por período)
+            let hseqEval = hseqResponseData.data.length > 0 ? hseqResponseData.data[0] : null;
             
             if (hseqEval) {
               if (hseqEval.promedio_hseq) {
@@ -1444,13 +1445,8 @@ const generateExcel = async (evaluacion) => {
         
         if (hseqResponseData.success && Array.isArray(hseqResponseData.data)) {
           
-          // Buscar la evaluación HSEQ correspondiente al período de la evaluación actual
-          let hseqEval = hseqResponseData.data.find(h => h.periodo_evaluacion === evaluacion.periodo_evaluacion);
-          
-          // Si no se encuentra para el período exacto, buscar la más reciente
-          if (!hseqEval && hseqResponseData.data.length > 0) {
-            hseqEval = hseqResponseData.data[0]; // La más reciente (ya están ordenadas por fecha DESC)
-          }
+          // Usar el último registro HSEQ disponible (no por período)
+          let hseqEval = hseqResponseData.data.length > 0 ? hseqResponseData.data[0] : null;
           
           if (hseqEval) {
             if (hseqEval.promedio_hseq) {
@@ -3542,10 +3538,8 @@ const generateConsolidatedExcel = async (evaluacion) => {
                     {evaluacionesFiltradas.map(evaluacion => {
                       const promedioCompetencias = evaluacion.promedios?.promedio_competencias ? parseFloat(evaluacion.promedios.promedio_competencias) : 0;
                       
-                      // Buscar el promedio HSEQ correspondiente en las evaluaciones HSEQ
-                      const hseqCorrespondiente = evaluacionesHseq.find(hseq => 
-                        hseq.periodo_evaluacion === evaluacion.periodo_evaluacion
-                      );
+                      // Buscar el último registro HSEQ disponible (no por período)
+                      const hseqCorrespondiente = evaluacionesHseq.length > 0 ? evaluacionesHseq[0] : null;
                       const promedioHseq = hseqCorrespondiente?.promedio_hseq ? parseFloat(hseqCorrespondiente.promedio_hseq) : 0;
 
                       // Calificación Final: priorizar BD, si no existe y es la última, usar kpis.final
