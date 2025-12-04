@@ -403,29 +403,30 @@ const ConsolidatedReportDocument = ({ evaluationData }) => (
       {evaluationData.competencias && evaluationData.competencias.length > 0 && 
        evaluationData.competencias.some(c => (c.justificacion_empleado && c.justificacion_empleado.trim()) || 
                                              (c.justificacion_jefe && c.justificacion_jefe.trim())) && (
-        <View style={pdfStyles.qualitativeSection}>
-          <View style={pdfStyles.qualitativeHeader}>
+        <View style={pdfStyles.section}>
+          <View style={pdfStyles.sectionHeader}>
             <Text>COMPETENCIAS CUALITATIVAS - JUSTIFICACIONES Y OBSERVACIONES</Text>
           </View>
-          <View style={pdfStyles.qualitativeContent}>
+          <View style={pdfStyles.sectionContent}>
             {evaluationData.competencias
               .filter(c => (c.justificacion_empleado && c.justificacion_empleado.trim()) || 
                           (c.justificacion_jefe && c.justificacion_jefe.trim()))
               .map((c, idx) => (
-                <View key={idx} style={pdfStyles.compromisoItem}>
-                  <Text style={pdfStyles.compromisoCriterio}>
-                    {c.aspecto || `Competencia ${idx + 1}`}
-                  </Text>
+                <View key={idx} style={{ marginBottom: 15 }}>
+                  <View style={pdfStyles.row}>
+                    <Text style={pdfStyles.label}>Competencia:</Text>
+                    <Text style={pdfStyles.value}>{c.aspecto || `Competencia ${idx + 1}`}</Text>
+                  </View>
                   {(c.justificacion_empleado && c.justificacion_empleado.trim()) && (
-                    <View style={pdfStyles.fullWidthRow}>
-                      <Text style={pdfStyles.qualitativeLabel}>Justificación del Trabajador:</Text>
-                      <Text style={pdfStyles.qualitativeValue}>{c.justificacion_empleado}</Text>
+                    <View style={pdfStyles.row}>
+                      <Text style={pdfStyles.label}>Justificación del Trabajador:</Text>
+                      <Text style={pdfStyles.value}>{c.justificacion_empleado}</Text>
                     </View>
                   )}
                   {(c.justificacion_jefe && c.justificacion_jefe.trim()) && (
-                    <View style={pdfStyles.fullWidthRow}>
-                      <Text style={pdfStyles.qualitativeLabel}>Justificación del Jefe:</Text>
-                      <Text style={pdfStyles.qualitativeValue}>{c.justificacion_jefe}</Text>
+                    <View style={pdfStyles.row}>
+                      <Text style={pdfStyles.label}>Justificación del Jefe:</Text>
+                      <Text style={pdfStyles.value}>{c.justificacion_jefe}</Text>
                     </View>
                   )}
                 </View>
@@ -437,19 +438,21 @@ const ConsolidatedReportDocument = ({ evaluationData }) => (
       {/* ===================== SECCIÓN: ACTA DE COMPROMISO ===================== */}
       {evaluationData.acta_compromiso && Array.isArray(evaluationData.acta_compromiso) && 
        evaluationData.acta_compromiso.length > 0 && (
-        <View style={pdfStyles.qualitativeSection}>
-          <View style={pdfStyles.qualitativeHeader}>
+        <View style={pdfStyles.section}>
+          <View style={pdfStyles.sectionHeader}>
             <Text>ACTA DE COMPROMISO</Text>
           </View>
-          <View style={pdfStyles.qualitativeContent}>
+          <View style={pdfStyles.sectionContent}>
             {evaluationData.acta_compromiso.map((compromiso, idx) => (
-              <View key={idx} style={pdfStyles.compromisoItem}>
-                <Text style={pdfStyles.compromisoCriterio}>
-                  Compromiso {idx + 1}: {compromiso.criterio || 'Sin criterio especificado'}
-                </Text>
-                <Text style={pdfStyles.compromisoTexto}>
-                  {compromiso.compromiso || 'Sin compromiso especificado'}
-                </Text>
+              <View key={idx} style={{ marginBottom: 15 }}>
+                <View style={pdfStyles.row}>
+                  <Text style={pdfStyles.label}>Compromiso {idx + 1}:</Text>
+                  <Text style={pdfStyles.value}>{compromiso.criterio || 'Sin criterio especificado'}</Text>
+                </View>
+                <View style={pdfStyles.row}>
+                  <Text style={pdfStyles.label}>Compromiso:</Text>
+                  <Text style={pdfStyles.value}>{compromiso.compromiso || 'Sin compromiso especificado'}</Text>
+                </View>
               </View>
             ))}
           </View>
@@ -458,39 +461,39 @@ const ConsolidatedReportDocument = ({ evaluationData }) => (
 
       {/* ===================== SECCIÓN: MEJORAMIENTO Y DESARROLLO ===================== */}
       {evaluationData.mejoramiento && (
-        <View style={pdfStyles.qualitativeSection}>
-          <View style={pdfStyles.qualitativeHeader}>
+        <View style={pdfStyles.section}>
+          <View style={pdfStyles.sectionHeader}>
             <Text>MEJORAMIENTO Y DESARROLLO</Text>
           </View>
-          <View style={pdfStyles.qualitativeContent}>
+          <View style={pdfStyles.sectionContent}>
             {(evaluationData.mejoramiento.fortalezas && evaluationData.mejoramiento.fortalezas.trim()) && (
-              <View style={pdfStyles.qualitativeRow}>
-                <Text style={pdfStyles.qualitativeLabel}>Fortalezas Identificadas:</Text>
-                <Text style={pdfStyles.qualitativeValue}>
+              <View style={pdfStyles.row}>
+                <Text style={pdfStyles.label}>Fortalezas Identificadas:</Text>
+                <Text style={pdfStyles.value}>
                   {evaluationData.mejoramiento.fortalezas}
                 </Text>
               </View>
             )}
             {(evaluationData.mejoramiento.aspectos_mejorar && evaluationData.mejoramiento.aspectos_mejorar.trim()) && (
-              <View style={pdfStyles.qualitativeRow}>
-                <Text style={pdfStyles.qualitativeLabel}>Aspectos a Mejorar:</Text>
-                <Text style={pdfStyles.qualitativeValue}>
+              <View style={pdfStyles.row}>
+                <Text style={pdfStyles.label}>Aspectos a Mejorar:</Text>
+                <Text style={pdfStyles.value}>
                   {evaluationData.mejoramiento.aspectos_mejorar}
                 </Text>
               </View>
             )}
             {(evaluationData.mejoramiento.necesidades_capacitacion && evaluationData.mejoramiento.necesidades_capacitacion.trim()) && (
-              <View style={pdfStyles.qualitativeRow}>
-                <Text style={pdfStyles.qualitativeLabel}>Necesidades de Capacitación:</Text>
-                <Text style={pdfStyles.qualitativeValue}>
+              <View style={pdfStyles.row}>
+                <Text style={pdfStyles.label}>Necesidades de Capacitación:</Text>
+                <Text style={pdfStyles.value}>
                   {evaluationData.mejoramiento.necesidades_capacitacion}
                 </Text>
               </View>
             )}
             {(evaluationData.mejoramiento.comentarios_jefe && evaluationData.mejoramiento.comentarios_jefe.trim()) && (
-              <View style={pdfStyles.qualitativeRow}>
-                <Text style={pdfStyles.qualitativeLabel}>Comentarios del Jefe Directo:</Text>
-                <Text style={pdfStyles.qualitativeValue}>
+              <View style={pdfStyles.row}>
+                <Text style={pdfStyles.label}>Comentarios del Jefe Directo:</Text>
+                <Text style={pdfStyles.value}>
                   {evaluationData.mejoramiento.comentarios_jefe}
                 </Text>
               </View>
@@ -501,55 +504,55 @@ const ConsolidatedReportDocument = ({ evaluationData }) => (
 
       {/* ===================== SECCIÓN: PLAN DE ACCIÓN ===================== */}
       {evaluationData.plan_accion && (
-        <View style={pdfStyles.qualitativeSection}>
-          <View style={pdfStyles.qualitativeHeader}>
+        <View style={pdfStyles.section}>
+          <View style={pdfStyles.sectionHeader}>
             <Text>PLAN DE ACCIÓN</Text>
           </View>
-          <View style={pdfStyles.qualitativeContent}>
+          <View style={pdfStyles.sectionContent}>
             {(evaluationData.plan_accion.actividad && evaluationData.plan_accion.actividad.trim()) && (
-              <View style={pdfStyles.qualitativeRow}>
-                <Text style={pdfStyles.qualitativeLabel}>Actividad Planificada:</Text>
-                <Text style={pdfStyles.qualitativeValue}>
+              <View style={pdfStyles.row}>
+                <Text style={pdfStyles.label}>Actividad Planificada:</Text>
+                <Text style={pdfStyles.value}>
                   {evaluationData.plan_accion.actividad}
                 </Text>
               </View>
             )}
             {(evaluationData.plan_accion.responsable && evaluationData.plan_accion.responsable.trim()) && (
-              <View style={pdfStyles.qualitativeRow}>
-                <Text style={pdfStyles.qualitativeLabel}>Responsable:</Text>
-                <Text style={pdfStyles.qualitativeValue}>
+              <View style={pdfStyles.row}>
+                <Text style={pdfStyles.label}>Responsable:</Text>
+                <Text style={pdfStyles.value}>
                   {evaluationData.plan_accion.responsable}
                 </Text>
               </View>
             )}
             {(evaluationData.plan_accion.seguimiento && evaluationData.plan_accion.seguimiento.trim()) && (
-              <View style={pdfStyles.qualitativeRow}>
-                <Text style={pdfStyles.qualitativeLabel}>Seguimiento:</Text>
-                <Text style={pdfStyles.qualitativeValue}>
+              <View style={pdfStyles.row}>
+                <Text style={pdfStyles.label}>Seguimiento:</Text>
+                <Text style={pdfStyles.value}>
                   {evaluationData.plan_accion.seguimiento}
                 </Text>
               </View>
             )}
             {(evaluationData.plan_accion.fecha && evaluationData.plan_accion.fecha.trim()) && (
-              <View style={pdfStyles.qualitativeRow}>
-                <Text style={pdfStyles.qualitativeLabel}>Fecha Establecida:</Text>
-                <Text style={pdfStyles.qualitativeValue}>
+              <View style={pdfStyles.row}>
+                <Text style={pdfStyles.label}>Fecha Establecida:</Text>
+                <Text style={pdfStyles.value}>
                   {evaluationData.plan_accion.fecha}
                 </Text>
               </View>
             )}
             {(evaluationData.plan_accion.comentarios_jefe && evaluationData.plan_accion.comentarios_jefe.trim()) && (
-              <View style={pdfStyles.qualitativeRow}>
-                <Text style={pdfStyles.qualitativeLabel}>Comentarios del Jefe Directo:</Text>
-                <Text style={pdfStyles.qualitativeValue}>
+              <View style={pdfStyles.row}>
+                <Text style={pdfStyles.label}>Comentarios del Jefe Directo:</Text>
+                <Text style={pdfStyles.value}>
                   {evaluationData.plan_accion.comentarios_jefe}
                 </Text>
               </View>
             )}
             {evaluationData.plan_accion.aprobado_jefe && (
-              <View style={pdfStyles.qualitativeRow}>
-                <Text style={pdfStyles.qualitativeLabel}>Estado de Aprobación:</Text>
-                <Text style={pdfStyles.qualitativeValue}>
+              <View style={pdfStyles.row}>
+                <Text style={pdfStyles.label}>Estado de Aprobación:</Text>
+                <Text style={pdfStyles.value}>
                   {evaluationData.plan_accion.aprobado_jefe === '1' || evaluationData.plan_accion.aprobado_jefe === 1 
                     ? 'Aprobado' 
                     : evaluationData.plan_accion.aprobado_jefe === '0' || evaluationData.plan_accion.aprobado_jefe === 0
@@ -2125,25 +2128,48 @@ const generateConsolidatedExcel = async (evaluacion) => {
       );
       
       competenciasConJustificacion.forEach((c, idx) => {
-        ws.addRow([`Competencia: ${c.aspecto || `Competencia ${idx + 1}`}`, '', '', '', '', '', '', '']);
-        ws.mergeCells(`A${ws.lastRow.number}:H${ws.lastRow.number}`);
-        ws.getCell(`A${ws.lastRow.number}`).font = { name: 'Calibri', bold: true, color: { argb: 'FF1a3d6b' } };
-        ws.getCell(`A${ws.lastRow.number}`).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF0F7FF' } };
-        
         if (c.justificacion_empleado && c.justificacion_empleado.trim()) {
-          ws.addRow(['Justificación del Trabajador:', c.justificacion_empleado, '', '', '', '', '', '']);
-          ws.mergeCells(`B${ws.lastRow.number}:H${ws.lastRow.number}`);
-          ws.getCell(`A${ws.lastRow.number}`).font = { name: 'Calibri', bold: true, color: { argb: 'FF2c5aa0' } };
-          ws.getCell(`B${ws.lastRow.number}`).font = FONT_BODY;
-          ws.getCell(`B${ws.lastRow.number}`).alignment = { wrapText: true, vertical: 'middle' };
+          const r = ws.addRow(['Competencia:', c.aspecto || `Competencia ${idx + 1}`, '', '', '', '', '', '']);
+          ws.mergeCells(`B${r.number}:H${r.number}`);
+          r.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+          r.getCell(2).font = FONT_BODY;
+          r.eachCell(cell => {
+            cell.border = { bottom: { style: 'thin', color: { argb: PALETTE.border } } };
+            cell.alignment = { vertical: 'middle' };
+          });
+          
+          const r2 = ws.addRow(['Justificación del Trabajador:', c.justificacion_empleado, '', '', '', '', '', '']);
+          ws.mergeCells(`B${r2.number}:H${r2.number}`);
+          r2.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+          r2.getCell(2).font = FONT_BODY;
+          r2.getCell(2).alignment = { wrapText: true, vertical: 'middle' };
+          r2.eachCell(cell => {
+            cell.border = { bottom: { style: 'thin', color: { argb: PALETTE.border } } };
+            cell.alignment = cell.alignment || { vertical: 'middle' };
+          });
         }
         
         if (c.justificacion_jefe && c.justificacion_jefe.trim()) {
-          ws.addRow(['Justificación del Jefe:', c.justificacion_jefe, '', '', '', '', '', '']);
-          ws.mergeCells(`B${ws.lastRow.number}:H${ws.lastRow.number}`);
-          ws.getCell(`A${ws.lastRow.number}`).font = { name: 'Calibri', bold: true, color: { argb: 'FF2c5aa0' } };
-          ws.getCell(`B${ws.lastRow.number}`).font = FONT_BODY;
-          ws.getCell(`B${ws.lastRow.number}`).alignment = { wrapText: true, vertical: 'middle' };
+          if (!(c.justificacion_empleado && c.justificacion_empleado.trim())) {
+            const r = ws.addRow(['Competencia:', c.aspecto || `Competencia ${idx + 1}`, '', '', '', '', '', '']);
+            ws.mergeCells(`B${r.number}:H${r.number}`);
+            r.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+            r.getCell(2).font = FONT_BODY;
+            r.eachCell(cell => {
+              cell.border = { bottom: { style: 'thin', color: { argb: PALETTE.border } } };
+              cell.alignment = { vertical: 'middle' };
+            });
+          }
+          
+          const r3 = ws.addRow(['Justificación del Jefe:', c.justificacion_jefe, '', '', '', '', '', '']);
+          ws.mergeCells(`B${r3.number}:H${r3.number}`);
+          r3.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+          r3.getCell(2).font = FONT_BODY;
+          r3.getCell(2).alignment = { wrapText: true, vertical: 'middle' };
+          r3.eachCell(cell => {
+            cell.border = { bottom: { style: 'thin', color: { argb: PALETTE.border } } };
+            cell.alignment = cell.alignment || { vertical: 'middle' };
+          });
         }
         
         ws.addRow([]);
@@ -2157,16 +2183,24 @@ const generateConsolidatedExcel = async (evaluacion) => {
       addSectionHeader('ACTA DE COMPROMISO');
       
       evaluationDataWithCalculated.acta_compromiso.forEach((compromiso, idx) => {
-        ws.addRow([`Compromiso ${idx + 1}: ${compromiso.criterio || 'Sin criterio especificado'}`, '', '', '', '', '', '', '']);
-        ws.mergeCells(`A${ws.lastRow.number}:H${ws.lastRow.number}`);
-        ws.getCell(`A${ws.lastRow.number}`).font = { name: 'Calibri', bold: true, color: { argb: 'FF1a3d6b' } };
-        ws.getCell(`A${ws.lastRow.number}`).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF0F7FF' } };
+        const r1 = ws.addRow([`Compromiso ${idx + 1}:`, compromiso.criterio || 'Sin criterio especificado', '', '', '', '', '', '']);
+        ws.mergeCells(`B${r1.number}:H${r1.number}`);
+        r1.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+        r1.getCell(2).font = FONT_BODY;
+        r1.eachCell(cell => {
+          cell.border = { bottom: { style: 'thin', color: { argb: PALETTE.border } } };
+          cell.alignment = { vertical: 'middle' };
+        });
         
-        ws.addRow(['Compromiso:', compromiso.compromiso || 'Sin compromiso especificado', '', '', '', '', '', '']);
-        ws.mergeCells(`B${ws.lastRow.number}:H${ws.lastRow.number}`);
-        ws.getCell(`A${ws.lastRow.number}`).font = { name: 'Calibri', bold: true, color: { argb: 'FF2c5aa0' } };
-        ws.getCell(`B${ws.lastRow.number}`).font = FONT_BODY;
-        ws.getCell(`B${ws.lastRow.number}`).alignment = { wrapText: true, vertical: 'middle' };
+        const r2 = ws.addRow(['Compromiso:', compromiso.compromiso || 'Sin compromiso especificado', '', '', '', '', '', '']);
+        ws.mergeCells(`B${r2.number}:H${r2.number}`);
+        r2.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+        r2.getCell(2).font = FONT_BODY;
+        r2.getCell(2).alignment = { wrapText: true, vertical: 'middle' };
+        r2.eachCell(cell => {
+          cell.border = { bottom: { style: 'thin', color: { argb: PALETTE.border } } };
+          cell.alignment = cell.alignment || { vertical: 'middle' };
+        });
         
         ws.addRow([]);
       });
@@ -2182,35 +2216,51 @@ const generateConsolidatedExcel = async (evaluacion) => {
         addSectionHeader('MEJORAMIENTO Y DESARROLLO');
         
         if (mej.fortalezas && mej.fortalezas.trim()) {
-          ws.addRow(['Fortalezas Identificadas:', mej.fortalezas, '', '', '', '', '', '']);
-          ws.mergeCells(`B${ws.lastRow.number}:H${ws.lastRow.number}`);
-          ws.getCell(`A${ws.lastRow.number}`).font = { name: 'Calibri', bold: true, color: { argb: 'FF2c5aa0' } };
-          ws.getCell(`B${ws.lastRow.number}`).font = FONT_BODY;
-          ws.getCell(`B${ws.lastRow.number}`).alignment = { wrapText: true, vertical: 'middle' };
+          const r = ws.addRow(['Fortalezas Identificadas:', mej.fortalezas, '', '', '', '', '', '']);
+          ws.mergeCells(`B${r.number}:H${r.number}`);
+          r.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+          r.getCell(2).font = FONT_BODY;
+          r.getCell(2).alignment = { wrapText: true, vertical: 'middle' };
+          r.eachCell(cell => {
+            cell.border = { bottom: { style: 'thin', color: { argb: PALETTE.border } } };
+            cell.alignment = cell.alignment || { vertical: 'middle' };
+          });
         }
         
         if (mej.aspectos_mejorar && mej.aspectos_mejorar.trim()) {
-          ws.addRow(['Aspectos a Mejorar:', mej.aspectos_mejorar, '', '', '', '', '', '']);
-          ws.mergeCells(`B${ws.lastRow.number}:H${ws.lastRow.number}`);
-          ws.getCell(`A${ws.lastRow.number}`).font = { name: 'Calibri', bold: true, color: { argb: 'FF2c5aa0' } };
-          ws.getCell(`B${ws.lastRow.number}`).font = FONT_BODY;
-          ws.getCell(`B${ws.lastRow.number}`).alignment = { wrapText: true, vertical: 'middle' };
+          const r = ws.addRow(['Aspectos a Mejorar:', mej.aspectos_mejorar, '', '', '', '', '', '']);
+          ws.mergeCells(`B${r.number}:H${r.number}`);
+          r.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+          r.getCell(2).font = FONT_BODY;
+          r.getCell(2).alignment = { wrapText: true, vertical: 'middle' };
+          r.eachCell(cell => {
+            cell.border = { bottom: { style: 'thin', color: { argb: PALETTE.border } } };
+            cell.alignment = cell.alignment || { vertical: 'middle' };
+          });
         }
         
         if (mej.necesidades_capacitacion && mej.necesidades_capacitacion.trim()) {
-          ws.addRow(['Necesidades de Capacitación:', mej.necesidades_capacitacion, '', '', '', '', '', '']);
-          ws.mergeCells(`B${ws.lastRow.number}:H${ws.lastRow.number}`);
-          ws.getCell(`A${ws.lastRow.number}`).font = { name: 'Calibri', bold: true, color: { argb: 'FF2c5aa0' } };
-          ws.getCell(`B${ws.lastRow.number}`).font = FONT_BODY;
-          ws.getCell(`B${ws.lastRow.number}`).alignment = { wrapText: true, vertical: 'middle' };
+          const r = ws.addRow(['Necesidades de Capacitación:', mej.necesidades_capacitacion, '', '', '', '', '', '']);
+          ws.mergeCells(`B${r.number}:H${r.number}`);
+          r.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+          r.getCell(2).font = FONT_BODY;
+          r.getCell(2).alignment = { wrapText: true, vertical: 'middle' };
+          r.eachCell(cell => {
+            cell.border = { bottom: { style: 'thin', color: { argb: PALETTE.border } } };
+            cell.alignment = cell.alignment || { vertical: 'middle' };
+          });
         }
         
         if (mej.comentarios_jefe && mej.comentarios_jefe.trim()) {
-          ws.addRow(['Comentarios del Jefe Directo:', mej.comentarios_jefe, '', '', '', '', '', '']);
-          ws.mergeCells(`B${ws.lastRow.number}:H${ws.lastRow.number}`);
-          ws.getCell(`A${ws.lastRow.number}`).font = { name: 'Calibri', bold: true, color: { argb: 'FF2c5aa0' } };
-          ws.getCell(`B${ws.lastRow.number}`).font = FONT_BODY;
-          ws.getCell(`B${ws.lastRow.number}`).alignment = { wrapText: true, vertical: 'middle' };
+          const r = ws.addRow(['Comentarios del Jefe Directo:', mej.comentarios_jefe, '', '', '', '', '', '']);
+          ws.mergeCells(`B${r.number}:H${r.number}`);
+          r.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+          r.getCell(2).font = FONT_BODY;
+          r.getCell(2).alignment = { wrapText: true, vertical: 'middle' };
+          r.eachCell(cell => {
+            cell.border = { bottom: { style: 'thin', color: { argb: PALETTE.border } } };
+            cell.alignment = cell.alignment || { vertical: 'middle' };
+          });
         }
         
         ws.addRow([]);
@@ -2229,41 +2279,61 @@ const generateConsolidatedExcel = async (evaluacion) => {
         addSectionHeader('PLAN DE ACCIÓN');
         
         if (plan.actividad && plan.actividad.trim()) {
-          ws.addRow(['Actividad Planificada:', plan.actividad, '', '', '', '', '', '']);
-          ws.mergeCells(`B${ws.lastRow.number}:H${ws.lastRow.number}`);
-          ws.getCell(`A${ws.lastRow.number}`).font = { name: 'Calibri', bold: true, color: { argb: 'FF2c5aa0' } };
-          ws.getCell(`B${ws.lastRow.number}`).font = FONT_BODY;
-          ws.getCell(`B${ws.lastRow.number}`).alignment = { wrapText: true, vertical: 'middle' };
+          const r = ws.addRow(['Actividad Planificada:', plan.actividad, '', '', '', '', '', '']);
+          ws.mergeCells(`B${r.number}:H${r.number}`);
+          r.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+          r.getCell(2).font = FONT_BODY;
+          r.getCell(2).alignment = { wrapText: true, vertical: 'middle' };
+          r.eachCell(cell => {
+            cell.border = { bottom: { style: 'thin', color: { argb: PALETTE.border } } };
+            cell.alignment = cell.alignment || { vertical: 'middle' };
+          });
         }
         
         if (plan.responsable && plan.responsable.trim()) {
-          ws.addRow(['Responsable:', plan.responsable, '', '', '', '', '', '']);
-          ws.mergeCells(`B${ws.lastRow.number}:H${ws.lastRow.number}`);
-          ws.getCell(`A${ws.lastRow.number}`).font = { name: 'Calibri', bold: true, color: { argb: 'FF2c5aa0' } };
-          ws.getCell(`B${ws.lastRow.number}`).font = FONT_BODY;
+          const r = ws.addRow(['Responsable:', plan.responsable, '', '', '', '', '', '']);
+          ws.mergeCells(`B${r.number}:H${r.number}`);
+          r.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+          r.getCell(2).font = FONT_BODY;
+          r.eachCell(cell => {
+            cell.border = { bottom: { style: 'thin', color: { argb: PALETTE.border } } };
+            cell.alignment = { vertical: 'middle' };
+          });
         }
         
         if (plan.seguimiento && plan.seguimiento.trim()) {
-          ws.addRow(['Seguimiento:', plan.seguimiento, '', '', '', '', '', '']);
-          ws.mergeCells(`B${ws.lastRow.number}:H${ws.lastRow.number}`);
-          ws.getCell(`A${ws.lastRow.number}`).font = { name: 'Calibri', bold: true, color: { argb: 'FF2c5aa0' } };
-          ws.getCell(`B${ws.lastRow.number}`).font = FONT_BODY;
-          ws.getCell(`B${ws.lastRow.number}`).alignment = { wrapText: true, vertical: 'middle' };
+          const r = ws.addRow(['Seguimiento:', plan.seguimiento, '', '', '', '', '', '']);
+          ws.mergeCells(`B${r.number}:H${r.number}`);
+          r.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+          r.getCell(2).font = FONT_BODY;
+          r.getCell(2).alignment = { wrapText: true, vertical: 'middle' };
+          r.eachCell(cell => {
+            cell.border = { bottom: { style: 'thin', color: { argb: PALETTE.border } } };
+            cell.alignment = cell.alignment || { vertical: 'middle' };
+          });
         }
         
         if (plan.fecha && plan.fecha.trim()) {
-          ws.addRow(['Fecha Establecida:', plan.fecha, '', '', '', '', '', '']);
-          ws.mergeCells(`B${ws.lastRow.number}:H${ws.lastRow.number}`);
-          ws.getCell(`A${ws.lastRow.number}`).font = { name: 'Calibri', bold: true, color: { argb: 'FF2c5aa0' } };
-          ws.getCell(`B${ws.lastRow.number}`).font = FONT_BODY;
+          const r = ws.addRow(['Fecha Establecida:', plan.fecha, '', '', '', '', '', '']);
+          ws.mergeCells(`B${r.number}:H${r.number}`);
+          r.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+          r.getCell(2).font = FONT_BODY;
+          r.eachCell(cell => {
+            cell.border = { bottom: { style: 'thin', color: { argb: PALETTE.border } } };
+            cell.alignment = { vertical: 'middle' };
+          });
         }
         
         if (plan.comentarios_jefe && plan.comentarios_jefe.trim()) {
-          ws.addRow(['Comentarios del Jefe Directo:', plan.comentarios_jefe, '', '', '', '', '', '']);
-          ws.mergeCells(`B${ws.lastRow.number}:H${ws.lastRow.number}`);
-          ws.getCell(`A${ws.lastRow.number}`).font = { name: 'Calibri', bold: true, color: { argb: 'FF2c5aa0' } };
-          ws.getCell(`B${ws.lastRow.number}`).font = FONT_BODY;
-          ws.getCell(`B${ws.lastRow.number}`).alignment = { wrapText: true, vertical: 'middle' };
+          const r = ws.addRow(['Comentarios del Jefe Directo:', plan.comentarios_jefe, '', '', '', '', '', '']);
+          ws.mergeCells(`B${r.number}:H${r.number}`);
+          r.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+          r.getCell(2).font = FONT_BODY;
+          r.getCell(2).alignment = { wrapText: true, vertical: 'middle' };
+          r.eachCell(cell => {
+            cell.border = { bottom: { style: 'thin', color: { argb: PALETTE.border } } };
+            cell.alignment = cell.alignment || { vertical: 'middle' };
+          });
         }
         
         if (plan.aprobado_jefe) {
@@ -2272,10 +2342,14 @@ const generateConsolidatedExcel = async (evaluacion) => {
             : plan.aprobado_jefe === '0' || plan.aprobado_jefe === 0
             ? 'Pendiente'
             : String(plan.aprobado_jefe);
-          ws.addRow(['Estado de Aprobación:', estadoAprobacion, '', '', '', '', '', '']);
-          ws.mergeCells(`B${ws.lastRow.number}:H${ws.lastRow.number}`);
-          ws.getCell(`A${ws.lastRow.number}`).font = { name: 'Calibri', bold: true, color: { argb: 'FF2c5aa0' } };
-          ws.getCell(`B${ws.lastRow.number}`).font = FONT_BODY;
+          const r = ws.addRow(['Estado de Aprobación:', estadoAprobacion, '', '', '', '', '', '']);
+          ws.mergeCells(`B${r.number}:H${r.number}`);
+          r.getCell(1).font = { name: 'Calibri', bold: true, color: { argb: 'FF2B2B2B' } };
+          r.getCell(2).font = FONT_BODY;
+          r.eachCell(cell => {
+            cell.border = { bottom: { style: 'thin', color: { argb: PALETTE.border } } };
+            cell.alignment = { vertical: 'middle' };
+          });
         }
         
         ws.addRow([]);
