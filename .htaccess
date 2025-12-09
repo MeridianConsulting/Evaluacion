@@ -1,8 +1,24 @@
-# Archivo .htaccess temporalmente deshabilitado para diagnóstico
-# RewriteEngine On
+# Configuración básica - Meridian Consulting LTDA
+# Sistema de Evaluación de Desempeño
 
-# Para el frontend (React), redirigir todo al index.html excepto /backend/
-# RewriteCond %{REQUEST_FILENAME} !-f
-# RewriteCond %{REQUEST_FILENAME} !-d
-# RewriteCond %{REQUEST_URI} !^/backend/
-# RewriteRule ^ index.html [QSA,L]
+# Habilitar UTF-8
+AddDefaultCharset UTF-8
+
+# Proteger archivos sensibles
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|sql|bak)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Proteger directorio de configuración
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # Proteger archivos de configuración
+    RewriteRule ^(config|database|\.git) - [F,L]
+</IfModule>
+
+# Configuración de errores (opcional, comentado por defecto)
+# ErrorDocument 404 /404.html
+# ErrorDocument 500 /500.html

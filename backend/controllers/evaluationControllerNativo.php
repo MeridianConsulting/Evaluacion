@@ -3068,6 +3068,11 @@ class EvaluationControllerNativo {
                 $competencias = $this->getCompetencias($evaluationId);
                 $evaluacion['competencias_detalle'] = $competencias;
                 
+                // Obtener datos de compromiso y seguimiento
+                $evaluacion['mejoramiento'] = $this->getMejoramiento($evaluationId);
+                $evaluacion['plan_accion'] = $this->getPlanAccion($evaluationId);
+                $evaluacion['acta_compromiso'] = $this->getActaCompromiso($evaluationId);
+                
                 // Obtener datos HSEQ de las tablas hseq_evaluacion y hseq_evaluacion_items
                 $hseqDataResult = $this->getHseqDataFromHseqTables($evaluationId, $evaluacion['id_empleado'], $evaluacion['periodo_evaluacion']);
                 $hseqData = $hseqDataResult['items'] ?? [];

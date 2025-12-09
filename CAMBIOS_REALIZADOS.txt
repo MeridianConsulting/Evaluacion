@@ -1,1 +1,20 @@
-
+Corregí la lógica de cálculo de promedio general para que siempre use el valor almacenado en la base de datos sin recalcular en el frontend
+Estandaricé el redondeo a dos decimales en todo el sistema para evitar conflictos de precisión
+Modifiqué el componente PDF para que muestre directamente el promedio general de la base de datos sin redondeos adicionales
+Actualicé la generación de Excel individual para usar el valor de la base de datos en lugar de recalcular
+Corregí el Excel consolidado para que muestre el promedio general directamente desde la base de datos
+Ajusté la visualización en la página web de resultados para priorizar siempre el valor de la base de datos
+Modifiqué el backend para recalcular correctamente el promedio general antes de guardarlo usando la fórmula ponderada
+Creé función en el backend que recalcula el promedio general con pesos del veinte por ciento autoevaluación cuarenta jefe cuarenta HSEQ
+Implementé ajuste proporcional de pesos cuando faltan componentes de evaluación en el cálculo del promedio general
+Eliminé todos los recálculos en el frontend para garantizar que siempre se muestre el valor autoritativo de la base de datos
+Corregí el componente DashboardSelector para usar correctamente los campos promedio autoevaluación evaluación jefe y HSEQ detalle
+Creé script SQL para recalcular todos los promedios generales históricos en la base de datos usando la fórmula correcta
+Agregué nueva hoja en el Excel consolidado llamada Compromisos y Seguimiento con información de mejoramiento plan de acción y actas
+Modifiqué el endpoint del backend para incluir datos de mejoramiento plan de acción y acta de compromiso en las respuestas
+Actualicé la estructura del Excel consolidado para mostrar fortalezas aspectos a mejorar y necesidades de capacitación
+Implementé visualización de compromisos con descripción responsable fecha y estado en la nueva hoja del Excel
+Agregué formato consistente con encabezados bordes y estilo zebra en la nueva hoja de compromisos y seguimiento
+Creé archivo htaccess básico con protección de archivos sensibles y configuración UTF ocho sin afectar funcionalidad
+Verifiqué que todos los campos referenciados en el script SQL correspondan a tablas y columnas reales de la base de datos
+Corregí error de compilación relacionado con variables no definidas promedioAuto promedioJefe y promedioHseq en DashboardSelector

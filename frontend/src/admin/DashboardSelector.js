@@ -46,6 +46,9 @@ function DashboardSelector({ onLogout }) {
       
       // Hoja para HSEQ detallado
       const wsHseq = wb.addWorksheet('HSEQ Detallado', { views: [{ state: 'frozen', ySplit: 1 }] });
+      
+      // Hoja para Compromisos y Seguimiento
+      const wsCompromisos = wb.addWorksheet('Compromisos y Seguimiento', { views: [{ state: 'frozen', ySplit: 1 }] });
 
       // Título
       ws.mergeCells('A1:X1');
@@ -220,6 +223,101 @@ function DashboardSelector({ onLogout }) {
       // Anchos HSEQ
       const widthsHseq = [14, 30, 40, 15, 20, 40, 20, 20, 25, 40, 40];
       widthsHseq.forEach((w, i) => wsHseq.getColumn(i+1).width = w);
+
+      // ===== HOJA DE COMPROMISOS Y SEGUIMIENTO =====
+      wsCompromisos.getCell('A1').value = 'COMPROMISOS Y SEGUIMIENTO - MERIDIAN CONSULTING LTDA';
+      wsCompromisos.mergeCells('A1:O1');
+      const titleCompromisos = wsCompromisos.getCell('A1');
+      titleCompromisos.font = { name: 'Calibri', size: 16, bold: true, color: { argb: 'FF1F3B73' } };
+      titleCompromisos.alignment = { horizontal: 'center', vertical: 'middle' };
+
+      // Encabezados compromisos y seguimiento
+      const headersCompromisos = [
+        'ID Evaluación', 'Empleado', 'Período', 'Estado',
+        'Fortalezas', 'Aspectos a Mejorar', 'Necesidades Capacitación',
+        'Plan Actividad', 'Plan Responsable', 'Plan Seguimiento', 'Plan Fecha',
+        'Compromiso Descripción', 'Compromiso Responsable', 'Compromiso Fecha', 'Compromiso Estado'
+      ];
+      const headerRowCompromisos = wsCompromisos.addRow(headersCompromisos);
+      headerRowCompromisos.eachCell((cell) => {
+        cell.font = { name: 'Calibri', bold: true, color: { argb: 'FFFFFFFF' } };
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF34495E' } };
+        cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+        cell.border = { top:{style:'thin'}, left:{style:'thin'}, right:{style:'thin'}, bottom:{style:'thin'} };
+      });
+
+      // Datos compromisos y seguimiento
+      rows.forEach((r, idx) => {
+        const mejoramiento = r.mejoramiento || {};
+        const planAccion = r.plan_accion || {};
+        const actaCompromiso = Array.isArray(r.acta_compromiso) ? r.acta_compromiso : [];
+        
+        // Si hay acta de compromiso, crear una fila por cada compromiso
+        if (actaCompromiso.length > 0) {
+          actaCompromiso.forEach((compromiso, compIdx) => {
+            const rowCompromiso = wsCompromisos.addRow([
+              r.id_evaluacion,
+              r.empleado_nombre,
+              r.periodo_evaluacion,
+              r.estado_evaluacion,
+              compIdx === 0 ? (mejoramiento.fortalezas || mejoramiento.fortaleza || '') : '',
+              compIdx === 0 ? (mejoramiento.aspectos_mejorar || mejoramiento.aspectosMejorar || '') : '',
+              compIdx === 0 ? (mejoramiento.necesidades_capacitacion || mejoramiento.necesidadesCapacitacion || '') : '',
+              compIdx === 0 ? (planAccion.actividad || '') : '',
+              compIdx === 0 ? (planAccion.responsable || '') : '',
+              compIdx === 0 ? (planAccion.seguimiento || '') : '',
+              compIdx === 0 ? (planAccion.fecha ? formatDate(planAccion.fecha) : '') : '',
+              compromiso.descripcion || compromiso.compromiso || '',
+              compromiso.responsable || '',
+              compromiso.fecha ? formatDate(compromiso.fecha) : '',
+              compromiso.estado || compromiso.cumplido || ''
+            ]);
+            rowCompromiso.eachCell((cell) => {
+              cell.border = { bottom: { style: 'thin', color: { argb: 'FFDEE2E6' } } };
+              cell.alignment = { vertical: 'middle', wrapText: true };
+            });
+            // Zebra
+            if ((idx + compIdx) % 2 === 0) {
+              rowCompromiso.eachCell((cell) => {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8F9FA' } };
+              });
+            }
+          });
+        } else {
+          // Si no hay acta de compromiso, crear una fila con mejoramiento y plan de acción
+          const rowCompromiso = wsCompromisos.addRow([
+            r.id_evaluacion,
+            r.empleado_nombre,
+            r.periodo_evaluacion,
+            r.estado_evaluacion,
+            mejoramiento.fortalezas || mejoramiento.fortaleza || '',
+            mejoramiento.aspectos_mejorar || mejoramiento.aspectosMejorar || '',
+            mejoramiento.necesidades_capacitacion || mejoramiento.necesidadesCapacitacion || '',
+            planAccion.actividad || '',
+            planAccion.responsable || '',
+            planAccion.seguimiento || '',
+            planAccion.fecha ? formatDate(planAccion.fecha) : '',
+            '',
+            '',
+            '',
+            ''
+          ]);
+          rowCompromiso.eachCell((cell) => {
+            cell.border = { bottom: { style: 'thin', color: { argb: 'FFDEE2E6' } } };
+            cell.alignment = { vertical: 'middle', wrapText: true };
+          });
+          // Zebra
+          if (idx % 2 === 0) {
+            rowCompromiso.eachCell((cell) => {
+              cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8F9FA' } };
+            });
+          }
+        }
+      });
+
+      // Anchos compromisos
+      const widthsCompromisos = [14, 30, 14, 16, 40, 40, 30, 40, 25, 40, 20, 50, 25, 20, 15];
+      widthsCompromisos.forEach((w, i) => wsCompromisos.getColumn(i+1).width = w);
 
       const buf = await wb.xlsx.writeBuffer({ useStyles: true, useSharedStrings: true });
       const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
