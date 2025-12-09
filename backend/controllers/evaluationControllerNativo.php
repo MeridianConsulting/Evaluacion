@@ -885,9 +885,97 @@ class EvaluationControllerNativo {
     }
 
     /**
+     * Recalcula el promedio general usando la fórmula ponderada: 20% autoevaluación, 40% jefe, 40% HSEQ
+     */
+    private function recalcularPromedioGeneral($evaluationId) {
+        // Obtener promedios de autoevaluación y evaluación del jefe desde competencias
+        $promedioAutoevaluacion = 0;
+        $promedioJefe = 0;
+        
+        $stmtComp = $this->db->prepare("
+            SELECT AVG(CASE WHEN calificacion_empleado > 0 THEN calificacion_empleado ELSE NULL END) as promedio_auto,
+                   AVG(CASE WHEN calificacion_jefe > 0 THEN calificacion_jefe ELSE NULL END) as promedio_jefe
+            FROM evaluacion_competencias
+            WHERE id_evaluacion = ?
+        ");
+        $stmtComp->bind_param('i', $evaluationId);
+        $stmtComp->execute();
+        $resultComp = $stmtComp->get_result();
+        if ($row = $resultComp->fetch_assoc()) {
+            $promedioAutoevaluacion = $row['promedio_auto'] ?? 0;
+            $promedioJefe = $row['promedio_jefe'] ?? 0;
+        }
+        $stmtComp->close();
+        
+        // Obtener promedio HSEQ desde la tabla hseq_evaluacion
+        $promedioHseq = 0;
+        $stmtEval = $this->db->prepare("
+            SELECT e.id_empleado, e.periodo_evaluacion
+            FROM evaluacion e
+            WHERE e.id_evaluacion = ?
+        ");
+        $stmtEval->bind_param('i', $evaluationId);
+        $stmtEval->execute();
+        $resultEval = $stmtEval->get_result();
+        if ($rowEval = $resultEval->fetch_assoc()) {
+            $idEmpleado = $rowEval['id_empleado'];
+            $periodo = $rowEval['periodo_evaluacion'];
+            
+            // Buscar evaluación HSEQ del mismo período
+            $stmtHseq = $this->db->prepare("
+                SELECT promedio_hseq
+                FROM hseq_evaluacion
+                WHERE id_empleado = ? AND periodo_evaluacion = ?
+                ORDER BY fecha_evaluacion DESC
+                LIMIT 1
+            ");
+            $stmtHseq->bind_param('is', $idEmpleado, $periodo);
+            $stmtHseq->execute();
+            $resultHseq = $stmtHseq->get_result();
+            if ($rowHseq = $resultHseq->fetch_assoc()) {
+                $promedioHseq = $rowHseq['promedio_hseq'] ?? 0;
+            }
+            $stmtHseq->close();
+        }
+        $stmtEval->close();
+        
+        // Calcular promedio general usando la fórmula ponderada
+        $promedioGeneral = 0;
+        $totalPeso = 0;
+        
+        if ($promedioAutoevaluacion > 0) {
+            $promedioGeneral += $promedioAutoevaluacion * 0.20;
+            $totalPeso += 0.20;
+        }
+        
+        if ($promedioJefe > 0) {
+            $promedioGeneral += $promedioJefe * 0.40;
+            $totalPeso += 0.40;
+        }
+        
+        if ($promedioHseq > 0) {
+            $promedioGeneral += $promedioHseq * 0.40;
+            $totalPeso += 0.40;
+        }
+        
+        // Si no tenemos todas las evaluaciones, ajustar el peso
+        if ($totalPeso < 1.0 && $totalPeso > 0) {
+            $promedioGeneral = $promedioGeneral / $totalPeso;
+        }
+        
+        return $totalPeso > 0 ? round($promedioGeneral, 2) : 0;
+    }
+
+    /**
      * Guarda promedios
      */
     private function savePromedios($evaluationId, $promedioCompetencias, $hseqAverage, $generalAverage, $groupAverages) {
+        // Recalcular el promedio general usando la fórmula correcta
+        $promedioGeneralRecalculado = $this->recalcularPromedioGeneral($evaluationId);
+        
+        // Usar el recalculado si es válido, sino usar el que viene del frontend
+        $promedioGeneralFinal = $promedioGeneralRecalculado > 0 ? $promedioGeneralRecalculado : ($generalAverage ?? 0);
+        
         $stmt = $this->db->prepare("
             INSERT INTO evaluacion_promedios 
             (id_evaluacion, promedio_competencias, promedio_hseq, promedio_general,
@@ -912,7 +1000,7 @@ class EvaluationControllerNativo {
             $evaluationId,
             $promedioCompetencias,
             $hseqAverage,
-            $generalAverage,
+            $promedioGeneralFinal,
             $comunicacion,
             $instrumentalidad,
             $aporte,
@@ -3049,6 +3137,33 @@ class EvaluationControllerNativo {
                 }
                 
                 $evaluacion['promedio_hseq_detalle'] = $promedioHseq;
+                
+                // Calcular promedio general usando la fórmula ponderada: 20% autoevaluación, 40% jefe, 40% HSEQ
+                $promedioGeneral = 0;
+                $totalPeso = 0;
+                
+                if ($promedioEmpleado > 0) {
+                    $promedioGeneral += $promedioEmpleado * 0.20;
+                    $totalPeso += 0.20;
+                }
+                
+                if ($promedioJefe > 0) {
+                    $promedioGeneral += $promedioJefe * 0.40;
+                    $totalPeso += 0.40;
+                }
+                
+                if ($promedioHseq > 0) {
+                    $promedioGeneral += $promedioHseq * 0.40;
+                    $totalPeso += 0.40;
+                }
+                
+                // Si no tenemos todas las evaluaciones, ajustar el peso
+                if ($totalPeso < 1.0 && $totalPeso > 0) {
+                    $promedioGeneral = $promedioGeneral / $totalPeso;
+                }
+                
+                // Redondear a 2 decimales
+                $evaluacion['promedio_general'] = $totalPeso > 0 ? round($promedioGeneral, 2) : 0;
             }
 
             echo json_encode(["success" => true, "data" => $evaluaciones], JSON_UNESCAPED_UNICODE);

@@ -83,6 +83,12 @@ function DashboardSelector({ onLogout }) {
 
       // Datos principales
       rows.forEach((r, idx) => {
+        // Usar SIEMPRE los valores de BD sin recalcular
+        const promedioAuto = parseFloat(r.promedio_autoevaluacion) || 0;
+        const promedioJefe = parseFloat(r.promedio_evaluacion_jefe) || 0;
+        const promedioHseq = parseFloat(r.promedio_hseq_detalle) || 0;
+        const promedioGeneral = parseFloat(r.promedio_general) || 0;
+        
         const row = ws.addRow([
           r.id_evaluacion,
           r.id_empleado,
@@ -104,10 +110,10 @@ function DashboardSelector({ onLogout }) {
           r.evaluador_hseq_cargo,
           r.observaciones_generales,
           r.comentarios_hseq,
-          r.promedio_autoevaluacion || 0,
-          r.promedio_evaluacion_jefe || 0,
-          r.promedio_hseq_detalle || 0,
-          r.promedio_general || 0
+          promedioAuto || 0,
+          promedioJefe || 0,
+          promedioHseq || 0,
+          promedioGeneral || 0
         ]);
         // Zebra
         if (idx % 2 === 0) {

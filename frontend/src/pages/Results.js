@@ -305,13 +305,10 @@ const ConsolidatedReportDocument = ({ evaluationData }) => (
             <Text style={pdfStyles.label}>Calificación Final Ponderada:</Text>
             <Text style={[pdfStyles.value, pdfStyles.promedio]}>
               {(() => {
-                const auto = evaluationData.promedios?.promedio_autoevaluacion ? parseFloat(evaluationData.promedios.promedio_autoevaluacion) : 0;
-                const jefe = evaluationData.promedios?.promedio_evaluacion_jefe ? parseFloat(evaluationData.promedios.promedio_evaluacion_jefe) : 0;
-                const hseq = evaluationData.promedios?.promedio_hseq ? parseFloat(evaluationData.promedios.promedio_hseq) : 0;
-                
-                if (auto > 0 && jefe > 0 && hseq > 0) {
-                  const calificacionFinal = (auto * 0.20) + (jefe * 0.40) + (hseq * 0.40);
-                  return Math.round(calificacionFinal * 10) / 10;
+                // Usar SIEMPRE el promedio_general de BD sin recalcular
+                const p = evaluationData.promedios || {};
+                if (Number.isFinite(parseFloat(p.promedio_general))) {
+                  return parseFloat(p.promedio_general).toFixed(2);
                 }
                 return 'N/A';
               })()}
@@ -676,19 +673,9 @@ const MyDocument = ({ evaluationData }) => (
                 {(() => {
                   const p = evaluationData.promedios || {};
                   
-                  // Prioridad 1: usar promedio_general de BD
+                  // Usar SIEMPRE el promedio_general de BD sin redondear
                   if (Number.isFinite(parseFloat(p.promedio_general))) {
-                    return Math.round(parseFloat(p.promedio_general) * 10) / 10;
-                  }
-                  
-                  // Prioridad 2: calcular SOLO si los tres componentes están presentes (sin reponderar)
-                  const auto = parseFloat(p.promedio_autoevaluacion);
-                  const jefe = parseFloat(p.promedio_evaluacion_jefe);
-                  const hseq = parseFloat(p.promedio_hseq);
-                  
-                  if ([auto, jefe, hseq].every(Number.isFinite)) {
-                    const calificacionFinal = auto * 0.20 + jefe * 0.40 + hseq * 0.40;
-                    return Math.round(calificacionFinal * 10) / 10;
+                    return parseFloat(p.promedio_general).toFixed(2);
                   }
                   
                   return 'N/A';
@@ -1085,9 +1072,11 @@ function Results({ onLogout, userRole }) {
         }
       } catch {}
 
-      // 4) Final SOLO si los 3 existen (sin reponderar)
-      const final = [auto, jefe, hseq].every(Number.isFinite)
-        ? round1(auto*0.20 + jefe*0.40 + hseq*0.40)
+      // 4) Final: usar SIEMPRE el promedio_general de BD sin recalcular
+      const final = ultimaEval.promedios?.promedio_general 
+        ? (Number.isFinite(parseFloat(ultimaEval.promedios.promedio_general)) 
+            ? parseFloat(ultimaEval.promedios.promedio_general) 
+            : null)
         : null;
 
       setKpis({
@@ -1535,24 +1524,15 @@ const generateExcel = async (evaluacion) => {
     // ---------- Tarjetas KPI (3 horizontales, una cifra decimal)
     const promComp = numOrBlank(evaluationData.promedios?.promedio_competencias);
     const promHseq = numOrBlank(evaluationData.promedios?.promedio_hseq);
+    // Usar SIEMPRE el promedio_general de BD sin recalcular
     const promGral = numOrBlank(evaluationData.promedios?.promedio_general);
     
-    // Calcular calificación final ponderada para Excel
-    let promFinal = null;
-    if (promComp && promHseq) {
-      // Aproximación: usar el promedio de competencias para autoevaluación y jefe
-      const promedioAutoevaluacion = promComp;
-      const promedioJefe = promComp;
-      promFinal = (promedioAutoevaluacion * 0.20) + (promedioJefe * 0.40) + (promHseq * 0.40);
-      promFinal = Math.round(promFinal * 10) / 10;
-    }
-    
-    const estadoGral = estadoPorValor(promFinal || promGral);
+    const estadoGral = estadoPorValor(promGral);
 
     const drawCard = (range, value, label, estadoOpt=null) => {
       ws.mergeCells(range);
       const c = ws.getCell(range.split(':')[0]);
-      const big = (value===null ? '—' : value.toFixed(1));
+      const big = (value===null ? '—' : value.toFixed(2));
       c.value = { richText: [
         { text: `${big}\n`, font: { name:'Calibri', size: 22, bold: true, color:{ argb:'FF'+PALETTE.text } } },
         { text: label,        font: { name:'Calibri', size: 11, color:{ argb:'FF'+PALETTE.text } } },
@@ -1573,7 +1553,7 @@ const generateExcel = async (evaluacion) => {
     const kpiTop = 5;
     drawCard(`A${kpiTop}:B${kpiTop+3}`, promComp, 'Promedio Competencias');
     drawCard(`C${kpiTop}:D${kpiTop+3}`, promHseq, 'Promedio HSEQ');
-    drawCard(`E${kpiTop}:F${kpiTop+3}`, promFinal || promGral, 'Calificación Final', estadoGral);
+    drawCard(`E${kpiTop}:F${kpiTop+3}`, promGral, 'Calificación Final', estadoGral);
     ws.addRow([]); ws.addRow([]);
 
     // ---------- Datos del empleado (2 columnas)
@@ -1962,19 +1942,15 @@ const generateConsolidatedExcel = async (evaluacion) => {
     const promJefe = numOrBlank(evaluationDataWithCalculated.promedios?.promedio_evaluacion_jefe);
     const promHseq = numOrBlank(evaluationDataWithCalculated.promedios?.promedio_hseq);
     
-    // Calcular calificación final ponderada
-    let promFinal = null;
-    if (promAuto && promJefe && promHseq) {
-      promFinal = (promAuto * 0.20) + (promJefe * 0.40) + (promHseq * 0.40);
-      promFinal = Math.round(promFinal * 10) / 10;
-    }
+    // Usar SIEMPRE el promedio_general de BD sin recalcular
+    const promFinal = numOrBlank(evaluationDataWithCalculated.promedios?.promedio_general);
     
     const estadoFinal = estadoPorValor(promFinal);
 
     const drawCard = (range, value, label, estadoOpt=null) => {
       ws.mergeCells(range);
       const c = ws.getCell(range.split(':')[0]);
-      const big = (value===null ? '—' : value.toFixed(1));
+      const big = (value===null ? '—' : value.toFixed(2));
       c.value = { richText: [
         { text: `${big}\n`, font: { name:'Calibri', size: 22, bold: true, color:{ argb:'FF'+PALETTE.text } } },
         { text: label,        font: { name:'Calibri', size: 11, color:{ argb:'FF'+PALETTE.text } } },
@@ -2759,78 +2735,17 @@ const generateConsolidatedExcel = async (evaluacion) => {
     return progresos[estado] || 0;
   };
 
-  // Función para calcular la calificación final ponderada
+  // Función para obtener la calificación final desde la BD (sin recalcular)
   const calcularCalificacionFinal = (evaluacion, hseqEval) => {
     try {
-      // Obtener promedios disponibles
-      const promedioCompetencias = evaluacion.promedios?.promedio_competencias ? parseFloat(evaluacion.promedios.promedio_competencias) : 0;
-      const promedioHseq = hseqEval?.promedio_hseq ? parseFloat(hseqEval.promedio_hseq) : 0;
-
-      // Intentar obtener datos detallados de competencias
-      let promedioAutoevaluacion = 0;
-      let promedioJefe = 0;
-
-      // Verificar si tenemos competencias detalladas
-      if (evaluacion.competencias_detalle && evaluacion.competencias_detalle.length > 0) {
-        // Calcular promedio de autoevaluación
-        const sumaAutoevaluacion = evaluacion.competencias_detalle.reduce((sum, comp) => {
-          const calif = parseFloat(comp.calificacion_empleado) || 0;
-          return sum + calif;
-        }, 0);
-        promedioAutoevaluacion = sumaAutoevaluacion / evaluacion.competencias_detalle.length;
-
-        // Calcular promedio de evaluación del jefe
-        const sumaJefe = evaluacion.competencias_detalle.reduce((sum, comp) => {
-          const calif = parseFloat(comp.calificacion_jefe) || 0;
-          return sum + calif;
-        }, 0);
-        promedioJefe = sumaJefe / evaluacion.competencias_detalle.length;
-      } else {
-        // Si no tenemos datos detallados, usar el promedio de competencias como base
-        if (promedioCompetencias > 0) {
-          // Aproximación: dividir el promedio de competencias entre empleado y jefe
-          // Asumimos que el promedio de competencias es el promedio entre ambos
-          promedioAutoevaluacion = promedioCompetencias;
-          promedioJefe = promedioCompetencias;
-        }
-      }
-
-      // Verificar que tengamos datos para calcular
-      if (promedioAutoevaluacion === 0 && promedioJefe === 0 && promedioHseq === 0) {
-        return null;
-      }
-
-      // Calcular promedio ponderado: Autoevaluación 20%, Jefe 40%, HSEQ 40%
-      let calificacionFinal = 0;
-      let totalPeso = 0;
-
-      // Autoevaluación (20%)
-      if (promedioAutoevaluacion > 0) {
-        calificacionFinal += promedioAutoevaluacion * 0.20;
-        totalPeso += 0.20;
-      }
-
-      // Evaluación del jefe (40%)
-      if (promedioJefe > 0) {
-        calificacionFinal += promedioJefe * 0.40;
-        totalPeso += 0.40;
-      }
-
-      // Evaluación HSEQ (40%)
-      if (promedioHseq > 0) {
-        calificacionFinal += promedioHseq * 0.40;
-        totalPeso += 0.40;
-      }
-
-      // Si no tenemos todas las evaluaciones, ajustar el peso
-      if (totalPeso < 1.0 && totalPeso > 0) {
-        calificacionFinal = calificacionFinal / totalPeso;
-      }
-
-      // Redondear a 1 decimal
-      const calificacionRedondeada = totalPeso > 0 ? Math.round(calificacionFinal * 10) / 10 : null;
+      // Usar SIEMPRE el promedio_general de BD sin recalcular ni redondear
+      const promedioGeneral = evaluacion.promedios?.promedio_general;
       
-      return calificacionRedondeada;
+      if (Number.isFinite(parseFloat(promedioGeneral))) {
+        return parseFloat(promedioGeneral);
+      }
+      
+      return null;
     } catch (error) {
       return null;
     }
@@ -3414,7 +3329,7 @@ const generateConsolidatedExcel = async (evaluacion) => {
 
                 <KPI
                   label="Calificación Final"
-                  value={kpis.final !== null ? kpis.final.toFixed(1) : '—'}
+                  value={kpis.final !== null ? kpis.final.toFixed(2) : '—'}
                   chip={kpis.final ? obtenerChipEstado(kpis.final) : null}
                 />
               </div>
@@ -3542,12 +3457,11 @@ const generateConsolidatedExcel = async (evaluacion) => {
                       const hseqCorrespondiente = evaluacionesHseq.length > 0 ? evaluacionesHseq[0] : null;
                       const promedioHseq = hseqCorrespondiente?.promedio_hseq ? parseFloat(hseqCorrespondiente.promedio_hseq) : 0;
 
-                      // Calificación Final: priorizar BD, si no existe y es la última, usar kpis.final
+                      // Calificación Final: usar SIEMPRE el promedio_general de BD sin recalcular
                       const finalBD = Number.isFinite(parseFloat(evaluacion.promedios?.promedio_general))
                         ? parseFloat(evaluacion.promedios.promedio_general)
                         : null;
-                      const esUltima = evaluacionesHistoricas[0]?.id_evaluacion === evaluacion.id_evaluacion;
-                      const finalMostrar = finalBD ?? (esUltima ? kpis.final : null);
+                      const finalMostrar = finalBD;
 
                       return (
                         <tr key={evaluacion.id_evaluacion}>
@@ -3572,6 +3486,9 @@ const generateConsolidatedExcel = async (evaluacion) => {
                           <td className={getColorClase(finalMostrar || 0)}>
                             {Number.isFinite(finalMostrar) ? (
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <span style={{ fontSize: '16px', fontWeight: 'bold' }}>
+                                  {finalMostrar.toFixed(2)}
+                                </span>
                                 {renderEstrellas(finalMostrar)}
                                 <small style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
                                   {getEstadoCalificacionFinal(finalMostrar)}
@@ -3579,7 +3496,7 @@ const generateConsolidatedExcel = async (evaluacion) => {
                               </div>
                             ) : 'N/A'}
                           </td>
-                          <td className={getColorClase(promedioCompetencias)}>{promedioCompetencias > 0 ? promedioCompetencias.toFixed(1) : 'N/A'}</td>
+                          <td className={getColorClase(promedioCompetencias)}>{promedioCompetencias > 0 ? promedioCompetencias.toFixed(2) : 'N/A'}</td>
                           <td className={getColorClase(promedioHseq)}>
                             {promedioHseq > 0 ? (
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
