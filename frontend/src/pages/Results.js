@@ -298,7 +298,7 @@ const ConsolidatedReportDocument = ({ evaluationData }) => (
           <View style={pdfStyles.row}>
             <Text style={pdfStyles.label}>Evaluación HSEQ (40%):</Text>
             <Text style={[pdfStyles.value, pdfStyles.promedio]}>
-              {evaluationData.promedios?.promedio_hseq || 'N/A'}
+              {evaluationData.promedios?.promedio_hseq_detalle || 'N/A'}
             </Text>
           </View>
           <View style={pdfStyles.row}>
@@ -661,7 +661,7 @@ const MyDocument = ({ evaluationData }) => (
             </View>
             <View style={pdfStyles.row}>
               <Text style={pdfStyles.label}>Promedio HSEQ:</Text>
-              <Text style={pdfStyles.value}>{evaluationData.promedios.promedio_hseq || 'N/A'}</Text>
+              <Text style={pdfStyles.value}>{evaluationData.promedios.promedio_hseq_detalle || 'N/A'}</Text>
             </View>
             <View style={pdfStyles.row}>
               <Text style={pdfStyles.label}>Promedio General:</Text>
@@ -1033,58 +1033,20 @@ function Results({ onLogout, userRole }) {
       if (!resp.ok) throw new Error('No se pudo cargar la evaluación completa');
       const { data: evaluationData } = await resp.json();
 
-      // 2) Auto y Jefe: preferir lo que venga en promedios; si no, calcular (ponderado si hay "peso")
-      const promedioPonderado = (arr, propValor, propPeso='peso') => {
-        if (!Array.isArray(arr) || !arr.length) return null;
-        let s=0, w=0;
-        for (const it of arr) {
-          const v = parseFloat(it?.[propValor]);
-          const p = parseFloat(it?.[propPeso]) || 1;
-          if (Number.isFinite(v)) { s += v*p; w += p; }
-        }
-        return w>0 ? round1(s/w) : null;
-      };
-
-      const autoBD = parseFloat(evaluationData?.promedios?.promedio_autoevaluacion);
-      const jefeBD = parseFloat(evaluationData?.promedios?.promedio_evaluacion_jefe);
-
-      const auto = Number.isFinite(autoBD)
-        ? autoBD
-        : promedioPonderado(evaluationData?.competencias, 'calificacion_empleado');
-
-      const jefe = Number.isFinite(jefeBD)
-        ? jefeBD
-        : promedioPonderado(evaluationData?.competencias, 'calificacion_jefe');
-
-      // 3) HSEQ del ÚLTIMO REGISTRO (no por período)
-      let hseq = null;
-      try {
-        const hseqResp = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
-        if (hseqResp.ok) {
-          const hseqData = await hseqResp.json();
-          if (hseqData.success && Array.isArray(hseqData.data) && hseqData.data.length > 0) {
-            // Usar el primer elemento que es el más reciente (ordenado DESC por fecha)
-            const ultimoHseq = hseqData.data[0];
-            if (ultimoHseq && Number.isFinite(parseFloat(ultimoHseq.promedio_hseq))) {
-              hseq = parseFloat(ultimoHseq.promedio_hseq);
-            }
-          }
-        }
-      } catch {}
-
-      // 4) Final: usar SIEMPRE el promedio_general de BD sin recalcular
-      const final = ultimaEval.promedios?.promedio_general 
-        ? (Number.isFinite(parseFloat(ultimaEval.promedios.promedio_general)) 
-            ? parseFloat(ultimaEval.promedios.promedio_general) 
-            : null)
-        : null;
+      // Usar SIEMPRE los valores de BD sin recalcular (igual que admin)
+      const auto = parseFloat(evaluationData?.promedios?.promedio_autoevaluacion) || null;
+      const jefe = parseFloat(evaluationData?.promedios?.promedio_evaluacion_jefe) || null;
+      const hseq = parseFloat(evaluationData?.promedios?.promedio_hseq_detalle) || null;
+      
+      // Final: usar SIEMPRE el promedio_general de BD sin recalcular
+      const final = parseFloat(evaluationData?.promedios?.promedio_general) || null;
 
       setKpis({
         periodo: ultimaEval.periodo_evaluacion || null,
-        auto: Number.isFinite(auto) ? round1(auto) : null,
-        jefe: Number.isFinite(jefe) ? round1(jefe) : null,
-        hseq: Number.isFinite(hseq) ? round1(hseq) : null,
-        final
+        auto: Number.isFinite(auto) ? parseFloat(auto.toFixed(2)) : null,
+        jefe: Number.isFinite(jefe) ? parseFloat(jefe.toFixed(2)) : null,
+        hseq: Number.isFinite(hseq) ? parseFloat(hseq.toFixed(2)) : null,
+        final: Number.isFinite(final) ? parseFloat(final.toFixed(2)) : null
       });
     } catch (e) {
       // Si falla, deja KPIs vacíos (—) en UI
@@ -1175,51 +1137,24 @@ function Results({ onLogout, userRole }) {
       const { data: evaluationData } = await response.json();
       
       
-      // Calcular promedios de autoevaluación y evaluación del jefe desde las competencias
-      let promedioAutoevaluacion = 0;
-      let promedioEvaluacionJefe = 0;
-      let promedioHseq = 0;
-      
-      if (evaluationData.competencias && evaluationData.competencias.length > 0) {
-        const competencias = evaluationData.competencias;
-        let sumaAutoevaluacion = 0;
-        let sumaJefe = 0;
-        let countAutoevaluacion = 0;
-        let countJefe = 0;
-        
-        competencias.forEach(comp => {
-          if (comp.calificacion_empleado && !isNaN(parseFloat(comp.calificacion_empleado))) {
-            sumaAutoevaluacion += parseFloat(comp.calificacion_empleado);
-            countAutoevaluacion++;
-          }
-          if (comp.calificacion_jefe && !isNaN(parseFloat(comp.calificacion_jefe))) {
-            sumaJefe += parseFloat(comp.calificacion_jefe);
-            countJefe++;
-          }
-        });
-        
-        promedioAutoevaluacion = countAutoevaluacion > 0 ? Math.round((sumaAutoevaluacion / countAutoevaluacion) * 10) / 10 : 0;
-        promedioEvaluacionJefe = countJefe > 0 ? Math.round((sumaJefe / countJefe) * 10) / 10 : 0;
-      }
+      // Usar SIEMPRE los valores de BD sin recalcular (igual que admin)
+      const promedioAutoevaluacion = parseFloat(evaluationData.promedios?.promedio_autoevaluacion) || 0;
+      const promedioEvaluacionJefe = parseFloat(evaluationData.promedios?.promedio_evaluacion_jefe) || 0;
+      const promedioHseq = parseFloat(evaluationData.promedios?.promedio_hseq_detalle) || 0;
       
       // Obtener datos detallados de HSEQ desde las evaluaciones HSEQ del empleado
-      let hseqData = [];
-      try {
-        const hseqResponse = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
-        if (hseqResponse.ok) {
-          const hseqResponseData = await hseqResponse.json();
-          
-          if (hseqResponseData.success && Array.isArray(hseqResponseData.data)) {
+      let hseqData = evaluationData.hseq_data || [];
+      if (!hseqData || hseqData.length === 0) {
+        try {
+          const hseqResponse = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
+          if (hseqResponse.ok) {
+            const hseqResponseData = await hseqResponse.json();
             
-            // Usar el último registro HSEQ disponible (no por período)
-            let hseqEval = hseqResponseData.data.length > 0 ? hseqResponseData.data[0] : null;
-            
-            if (hseqEval) {
-              if (hseqEval.promedio_hseq) {
-                promedioHseq = parseFloat(hseqEval.promedio_hseq);
-              }
-              // Obtener los datos detallados de HSEQ usando el ID de la evaluación
-              if (hseqEval.id_hseq_evaluacion) {
+            if (hseqResponseData.success && Array.isArray(hseqResponseData.data)) {
+              // Usar el último registro HSEQ disponible (no por período)
+              let hseqEval = hseqResponseData.data.length > 0 ? hseqResponseData.data[0] : null;
+              
+              if (hseqEval && hseqEval.id_hseq_evaluacion) {
                 try {
                   const hseqDetailResponse = await fetch(`${apiUrl}/api/evaluations/hseq/${hseqEval.id_hseq_evaluacion}`);
                   if (hseqDetailResponse.ok) {
@@ -1228,20 +1163,16 @@ function Results({ onLogout, userRole }) {
                     if (hseqDetailData.success && hseqDetailData.data && hseqDetailData.data.criterios) {
                       hseqData = hseqDetailData.data.criterios;
                     }
-                  } else {
                   }
                 } catch (hseqDetailErr) {
                   // Error obteniendo detalles HSEQ
                 }
               }
-            } else {
             }
-          } else {
           }
-        } else {
+        } catch (hseqErr) {
+          // Error obteniendo datos HSEQ
         }
-      } catch (hseqErr) {
-        // Error obteniendo datos HSEQ
       }
       
       // Asegurar que las firmas estén disponibles y sean un objeto
@@ -1252,14 +1183,19 @@ function Results({ onLogout, userRole }) {
         };
       }
 
-      // Agregar los promedios calculados al objeto de datos
+      // Usar los valores de BD directamente (igual que admin)
+      const promedioAutoevaluacionBD = parseFloat(evaluationData.promedios?.promedio_autoevaluacion) || 0;
+      const promedioEvaluacionJefeBD = parseFloat(evaluationData.promedios?.promedio_evaluacion_jefe) || 0;
+      const promedioHseqBD = parseFloat(evaluationData.promedios?.promedio_hseq_detalle) || 0;
+      
+      // Agregar los promedios de BD al objeto de datos
       const evaluationDataWithCalculated = {
         ...evaluationData,
         promedios: {
           ...evaluationData.promedios,
-          promedio_autoevaluacion: promedioAutoevaluacion,
-          promedio_evaluacion_jefe: promedioEvaluacionJefe,
-          promedio_hseq: promedioHseq
+          promedio_autoevaluacion: promedioAutoevaluacionBD,
+          promedio_evaluacion_jefe: promedioEvaluacionJefeBD,
+          promedio_hseq_detalle: promedioHseqBD
         },
         hseq_data: hseqData,
         firmas: evaluationData.firmas // Asegurar que las firmas se mantengan
@@ -1398,51 +1334,24 @@ const generateExcel = async (evaluacion) => {
       return PALETTE.heat.red;
     };
 
-    // Calcular promedios de autoevaluación y evaluación del jefe desde las competencias
-    let promedioAutoevaluacion = 0;
-    let promedioEvaluacionJefe = 0;
-    let promedioHseq = 0;
-    
-    if (evaluationData.competencias && evaluationData.competencias.length > 0) {
-      const competencias = evaluationData.competencias;
-      let sumaAutoevaluacion = 0;
-      let sumaJefe = 0;
-      let countAutoevaluacion = 0;
-      let countJefe = 0;
-      
-      competencias.forEach(comp => {
-        if (comp.calificacion_empleado && !isNaN(parseFloat(comp.calificacion_empleado))) {
-          sumaAutoevaluacion += parseFloat(comp.calificacion_empleado);
-          countAutoevaluacion++;
-        }
-        if (comp.calificacion_jefe && !isNaN(parseFloat(comp.calificacion_jefe))) {
-          sumaJefe += parseFloat(comp.calificacion_jefe);
-          countJefe++;
-        }
-      });
-      
-      promedioAutoevaluacion = countAutoevaluacion > 0 ? Math.round((sumaAutoevaluacion / countAutoevaluacion) * 10) / 10 : 0;
-      promedioEvaluacionJefe = countJefe > 0 ? Math.round((sumaJefe / countJefe) * 10) / 10 : 0;
-    }
+    // Usar SIEMPRE los valores de BD sin recalcular (igual que admin)
+    const promedioAutoevaluacion = parseFloat(evaluationData.promedios?.promedio_autoevaluacion) || 0;
+    const promedioEvaluacionJefe = parseFloat(evaluationData.promedios?.promedio_evaluacion_jefe) || 0;
+    const promedioHseq = parseFloat(evaluationData.promedios?.promedio_hseq_detalle) || 0;
     
     // Obtener datos detallados de HSEQ desde las evaluaciones HSEQ del empleado
-    let hseqData = [];
-    try {
-      const hseqResponse = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
-      if (hseqResponse.ok) {
-        const hseqResponseData = await hseqResponse.json();
-        
-        if (hseqResponseData.success && Array.isArray(hseqResponseData.data)) {
+    let hseqData = evaluationData.hseq_data || [];
+    if (!hseqData || hseqData.length === 0) {
+      try {
+        const hseqResponse = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
+        if (hseqResponse.ok) {
+          const hseqResponseData = await hseqResponse.json();
           
-          // Usar el último registro HSEQ disponible (no por período)
-          let hseqEval = hseqResponseData.data.length > 0 ? hseqResponseData.data[0] : null;
-          
-          if (hseqEval) {
-            if (hseqEval.promedio_hseq) {
-              promedioHseq = parseFloat(hseqEval.promedio_hseq);
-            }
-            // Obtener los datos detallados de HSEQ usando el ID de la evaluación
-            if (hseqEval.id_hseq_evaluacion) {
+          if (hseqResponseData.success && Array.isArray(hseqResponseData.data)) {
+            // Usar el último registro HSEQ disponible (no por período)
+            let hseqEval = hseqResponseData.data.length > 0 ? hseqResponseData.data[0] : null;
+            
+            if (hseqEval && hseqEval.id_hseq_evaluacion) {
               try {
                 const hseqDetailResponse = await fetch(`${apiUrl}/api/evaluations/hseq/${hseqEval.id_hseq_evaluacion}`);
                 if (hseqDetailResponse.ok) {
@@ -1451,31 +1360,26 @@ const generateExcel = async (evaluacion) => {
                   if (hseqDetailData.success && hseqDetailData.data && hseqDetailData.data.criterios) {
                     hseqData = hseqDetailData.data.criterios;
                   }
-                } else {
-                  // Error obteniendo detalles HSEQ
                 }
               } catch (detailErr) {
                 // Error en request de detalles HSEQ
               }
-            } else {
             }
-          } else {
           }
-        } else {
         }
+      } catch (hseqErr) {
+        // Error obteniendo datos HSEQ
       }
-    } catch (hseqErr) {
-      // Error obteniendo datos HSEQ
     }
 
-    // Agregar los promedios calculados al objeto de datos
+    // Usar los valores de BD directamente (igual que admin)
     const evaluationDataWithCalculated = {
       ...evaluationData,
       promedios: {
         ...evaluationData.promedios,
         promedio_autoevaluacion: promedioAutoevaluacion,
         promedio_evaluacion_jefe: promedioEvaluacionJefe,
-        promedio_hseq: promedioHseq
+        promedio_hseq_detalle: promedioHseq
       },
       hseq_data: hseqData
     };
@@ -1523,7 +1427,7 @@ const generateExcel = async (evaluacion) => {
 
     // ---------- Tarjetas KPI (3 horizontales, una cifra decimal)
     const promComp = numOrBlank(evaluationData.promedios?.promedio_competencias);
-    const promHseq = numOrBlank(evaluationData.promedios?.promedio_hseq);
+    const promHseq = numOrBlank(evaluationData.promedios?.promedio_hseq_detalle);
     // Usar SIEMPRE el promedio_general de BD sin recalcular
     const promGral = numOrBlank(evaluationData.promedios?.promedio_general);
     
@@ -1769,51 +1673,24 @@ const generateConsolidatedExcel = async (evaluacion) => {
     const { data: evaluationData } = responseData;
     
     
-    // Calcular promedios de autoevaluación y evaluación del jefe desde las competencias
-    let promedioAutoevaluacion = 0;
-    let promedioEvaluacionJefe = 0;
-    let promedioHseq = 0;
-    
-    if (evaluationData.competencias && evaluationData.competencias.length > 0) {
-      const competencias = evaluationData.competencias;
-      let sumaAutoevaluacion = 0;
-      let sumaJefe = 0;
-      let countAutoevaluacion = 0;
-      let countJefe = 0;
-      
-      competencias.forEach(comp => {
-        if (comp.calificacion_empleado && !isNaN(parseFloat(comp.calificacion_empleado))) {
-          sumaAutoevaluacion += parseFloat(comp.calificacion_empleado);
-          countAutoevaluacion++;
-        }
-        if (comp.calificacion_jefe && !isNaN(parseFloat(comp.calificacion_jefe))) {
-          sumaJefe += parseFloat(comp.calificacion_jefe);
-          countJefe++;
-        }
-      });
-      
-      promedioAutoevaluacion = countAutoevaluacion > 0 ? Math.round((sumaAutoevaluacion / countAutoevaluacion) * 10) / 10 : 0;
-      promedioEvaluacionJefe = countJefe > 0 ? Math.round((sumaJefe / countJefe) * 10) / 10 : 0;
-    }
+    // Usar SIEMPRE los valores de BD sin recalcular (igual que admin)
+    const promedioAutoevaluacion = parseFloat(evaluationData.promedios?.promedio_autoevaluacion) || 0;
+    const promedioEvaluacionJefe = parseFloat(evaluationData.promedios?.promedio_evaluacion_jefe) || 0;
+    const promedioHseq = parseFloat(evaluationData.promedios?.promedio_hseq_detalle) || 0;
     
     // Obtener datos detallados de HSEQ desde las evaluaciones HSEQ del empleado
-    let hseqData = [];
-    try {
-      const hseqResponse = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
-      if (hseqResponse.ok) {
-        const hseqResponseData = await hseqResponse.json();
-        
-        if (hseqResponseData.success && Array.isArray(hseqResponseData.data)) {
+    let hseqData = evaluationData.hseq_data || [];
+    if (!hseqData || hseqData.length === 0) {
+      try {
+        const hseqResponse = await fetch(`${apiUrl}/api/evaluations/hseq/employee/${employeeId}`);
+        if (hseqResponse.ok) {
+          const hseqResponseData = await hseqResponse.json();
           
-          // Buscar la evaluación HSEQ correspondiente al período de la evaluación actual (solo del mismo período)
-          let hseqEval = hseqResponseData.data.find(h => h.periodo_evaluacion === evaluacion.periodo_evaluacion);
-          
-          if (hseqEval) {
-            if (hseqEval.promedio_hseq) {
-              promedioHseq = parseFloat(hseqEval.promedio_hseq);
-            }
-            // Obtener los datos detallados de HSEQ usando el ID de la evaluación
-            if (hseqEval.id_hseq_evaluacion) {
+          if (hseqResponseData.success && Array.isArray(hseqResponseData.data)) {
+            // Buscar la evaluación HSEQ correspondiente al período de la evaluación actual (solo del mismo período)
+            let hseqEval = hseqResponseData.data.find(h => h.periodo_evaluacion === evaluacion.periodo_evaluacion);
+            
+            if (hseqEval && hseqEval.id_hseq_evaluacion) {
               try {
                 const hseqDetailResponse = await fetch(`${apiUrl}/api/evaluations/hseq/${hseqEval.id_hseq_evaluacion}`);
                 if (hseqDetailResponse.ok) {
@@ -1829,9 +1706,9 @@ const generateConsolidatedExcel = async (evaluacion) => {
             }
           }
         }
+      } catch (hseqErr) {
+        // Error obteniendo datos HSEQ
       }
-    } catch (hseqErr) {
-      // Error obteniendo datos HSEQ
     }
 
     // ---------- Paleta y helpers
@@ -1883,14 +1760,14 @@ const generateConsolidatedExcel = async (evaluacion) => {
       };
     }
 
-    // Agregar los promedios calculados y datos HSEQ al objeto de datos
+    // Usar los valores de BD directamente (igual que admin)
     const evaluationDataWithCalculated = {
       ...evaluationData,
       promedios: {
         ...evaluationData.promedios,
         promedio_autoevaluacion: promedioAutoevaluacion,
         promedio_evaluacion_jefe: promedioEvaluacionJefe,
-        promedio_hseq: promedioHseq
+        promedio_hseq_detalle: promedioHseq
       },
       hseq_data: hseqData,
       firmas: evaluationData.firmas // Asegurar que las firmas se mantengan
@@ -1940,7 +1817,7 @@ const generateConsolidatedExcel = async (evaluacion) => {
     // ---------- KPIs de Componentes (3 horizontales)
     const promAuto = numOrBlank(evaluationDataWithCalculated.promedios?.promedio_autoevaluacion);
     const promJefe = numOrBlank(evaluationDataWithCalculated.promedios?.promedio_evaluacion_jefe);
-    const promHseq = numOrBlank(evaluationDataWithCalculated.promedios?.promedio_hseq);
+    const promHseq = numOrBlank(evaluationDataWithCalculated.promedios?.promedio_hseq_detalle);
     
     // Usar SIEMPRE el promedio_general de BD sin recalcular
     const promFinal = numOrBlank(evaluationDataWithCalculated.promedios?.promedio_general);
@@ -3311,19 +3188,19 @@ const generateConsolidatedExcel = async (evaluacion) => {
               <div className="kpi-grid">
                 <KPI
                   label="Autoevaluación (20%)"
-                  value={kpis.auto !== null ? kpis.auto.toFixed(1) : '—'}
+                  value={kpis.auto !== null ? kpis.auto.toFixed(2) : '—'}
                   chip={kpis.auto ? obtenerChipEstado(kpis.auto) : null}
                 />
 
                 <KPI
                   label="Evaluación del Jefe (40%)"
-                  value={kpis.jefe !== null ? kpis.jefe.toFixed(1) : '—'}
+                  value={kpis.jefe !== null ? kpis.jefe.toFixed(2) : '—'}
                   chip={kpis.jefe ? obtenerChipEstado(kpis.jefe) : null}
                 />
 
                 <KPI
                   label="Evaluación HSEQ (40%)"
-                  value={kpis.hseq !== null ? kpis.hseq.toFixed(1) : '—'}
+                  value={kpis.hseq !== null ? kpis.hseq.toFixed(2) : '—'}
                   chip={kpis.hseq ? obtenerChipEstado(kpis.hseq) : null}
                 />
 
